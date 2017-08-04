@@ -1,0 +1,8 @@
+{
+    "name": "cesnet/simplesamlphp-module-perun",
+    "description": "Module which allows SSP to communicate with Perun IAM https://perun.cesnet.cz",
+    "type": "simplesamlphp-module",
+    "require": {
+        "simplesamlphp/composer-module-installer": "~1.0"
+    }
+}
