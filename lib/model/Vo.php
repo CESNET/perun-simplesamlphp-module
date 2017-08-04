@@ -1,0 +1,46 @@
+<?php
+
+/**
+ * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ */
+class sspmod_perun_model_Vo implements sspmod_perun_model_HasId
+{
+	private $id;
+	private $name;
+	private $shortName;
+
+	/**
+	 * sspmod_perun_model_Vo constructor.
+	 * @param int $id
+	 * @param string $name
+	 * @param string $shortName
+	 */
+	public function __construct($id, $name, $shortName)
+	{
+		$this->id = $id;
+		$this->name = $name;
+		$this->shortName = $shortName;
+	}
+
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getName()
+	{
+		return $this->name;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getShortName()
+	{
+		return $this->shortName;
+	}
+
+}
