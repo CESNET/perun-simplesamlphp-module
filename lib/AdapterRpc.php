@@ -40,14 +40,19 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getMemberGroups($user, $vo)
 	{
-		$member = sspmod_perun_RpcConnector::get('membersManager', 'getMemberByUser', array(
-			'vo' => $vo->getId(),
-			'user' => $user->getId(),
-		));
+		try {
+			$member = sspmod_perun_RpcConnector::get('membersManager', 'getMemberByUser', array(
+				'vo' => $vo->getId(),
+				'user' => $user->getId(),
+			));
+		
 
-		$memberGroups = sspmod_perun_RpcConnector::get('groupsManager', 'getAllMemberGroups', array(
-			'member' => $member['id'],
-		));
+			$memberGroups = sspmod_perun_RpcConnector::get('groupsManager', 'getAllMemberGroups', array(
+				'member' => $member['id'],
+			));
+		} catch (sspmod_perun_Exception $e) {
+                        return array();
+                }
 
 		$convertedGroups = array();
 		foreach ($memberGroups as $group) {
