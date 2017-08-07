@@ -68,7 +68,6 @@ function sendError($msg, $code = 500) {
 		'result' => 'ERROR',
 		'msg' => $msg
 	));
-	print_r($_REQUEST);
 	exit;
 }
 
