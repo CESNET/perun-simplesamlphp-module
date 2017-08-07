@@ -49,8 +49,6 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 				"(objectClass=perunGroup)",
 				array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 			);
-			# SHOULD BE REMOVED, because Perun cannot work with groupName which do not contain voName - edited on 28.6.2017 by michalp
-			#$groupName = substr($group['perunUniqueGroupName'][0], strlen($vo->getShortName().':'));
 			array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
 		}
 
@@ -73,8 +71,6 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 					"(objectClass=perunGroup)",
 					array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 				);
-				# SHOULD BE REMOVED, because Perun cannot work with groupName which do not contain voName - edited on 28.6.2017 by michalp
-				#$groupName = substr($group['perunUniqueGroupName'][0], strlen($vo->getShortName().':'));
 				array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
 			}
 		}
