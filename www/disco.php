@@ -1,7 +1,7 @@
 <?php
 
 try {
-	$discoHandler = new sspmod_perun_Disco(array('saml20-idp-remote', 'shib13-idp-remote'), 'poweridpdisco');
+	$discoHandler = new sspmod_perun_Disco(array('saml20-idp-remote'), 'poweridpdisco');
 } catch (Exception $exception) {
 	// An error here should be caused by invalid query parameters
 	throw new SimpleSAML_Error_Error('DISCOPARAMS', $exception);
