@@ -87,6 +87,13 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
 		return (isset($this->data['originalsp']['disco.doNotFilterIdps']) && $this->data['originalsp']['disco.doNotFilterIdps'] === TRUE);
 	}
 
+	/**
+	 * @return bool true if SP has property 'disco.addInstitutionApp' set to true in its metadata. False otherwise.
+	 */
+	public function isAddInstitutionApp() {
+		return (isset($this->data['originalsp']['disco.addInstitutionApp']) && $this->data['originalsp']['disco.addInstitutionApp'] === TRUE);
+	}
+
 
 	/**
 	 * @param string $idpEntityId
