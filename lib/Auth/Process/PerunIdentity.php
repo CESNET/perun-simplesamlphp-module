@@ -27,6 +27,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	const CALLBACK_PARAM_NAME = 'callbackParamName';
 	const INTERFACE_PROPNAME = 'interface';
 	const SOURCE_IDP_ENTITY_ID_ATTR = 'sourceIdPEntityIDAttr';
+	const FORCE_REGISTRATION_TO_GROUPS = 'forceRegistrationToGroups';
 
 	private $uidAttr;
 	private $registerUrl;
@@ -34,6 +35,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	private $callbackParamName;
 	private $interface;
 	private $sourceIdPEntityIDAttr;
+	private $forceRegistrationToGroups;
 
 	/**
 	 * @var sspmod_perun_Adapter
@@ -63,6 +65,9 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		if (!isset($config[self::SOURCE_IDP_ENTITY_ID_ATTR])) {
 			$config[self::SOURCE_IDP_ENTITY_ID_ATTR] = sspmod_perun_Auth_Process_RetainIdPEntityID::DEFAULT_ATTR_NAME;
 		}
+		if (!isset($config[self::FORCE_REGISTRATION_TO_GROUPS])) {
+                        $config[self::FORCE_REGISTRATION_TO_GROUPS] = false;
+                }
 
 		$this->uidAttr = (string) $config[self::UID_ATTR];
 		$this->registerUrl = (string) $config[self::REGISTER_URL];
@@ -70,6 +75,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$this->callbackParamName = (string) $config[self::CALLBACK_PARAM_NAME];
 		$this->interface = (string) $config[self::INTERFACE_PROPNAME];
 		$this->sourceIdPEntityIDAttr = $config[self::SOURCE_IDP_ENTITY_ID_ATTR];
+		$this->forceRegistrationToGroups = $config[self::FORCE_REGISTRATION_TO_GROUPS];
 		$this->adapter = sspmod_perun_Adapter::getInstance($this->interface);
 	}
 
@@ -182,7 +188,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$stateId  = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
 		$callback = SimpleSAML_Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
-		if ($this->containsGroupWithName($groups, 'members')) {
+		if ($this->containsMembersGroup($groups) || $this->forceRegistrationToGroups === false) {
 			$this->registerDirectly($registerUrl, $callbackParamName, $callback, $vo);
 		}
 		if (sizeof($groups) === 1) {
@@ -276,14 +282,15 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	}
 
 	/**
+	 * Returns true, if entities contains VO members group
+	 *
 	 * @param sspmod_perun_model_Group[] $entities
-	 * @param string $name
 	 * @return bool
 	 */
-	private function containsGroupWithName($entities, $name)
+	private function containsMembersGroup($entities)
 	{
 		foreach ($entities as $entity) {
-			if ($entity->getName() === $name) {
+			if (preg_match('/[^:]*:members$/', $entity->getName())) {
 				return true;
 			}
 		}
