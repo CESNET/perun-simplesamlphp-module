@@ -145,9 +145,8 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$groups = $this->intersectById($spGroups, $memberGroups);
 
 		if (empty($groups)) {
-			SimpleSAML_Logger::info('Perun user with identity: '.$uid.' has been found but SP does NOT have sufficient rights to get information about him. '.
-				'User has to register to specific VO or Group. He is being redirected to register. ');
-			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
+			SimpleSAML_Logger::info('Perun user with identity: '.$uid.' is not member of any assigned group for resource (' . $spEntityId . ')');
+                        $this->unauthorized($request);
 		}
 
 		SimpleSAML_Logger::info('Perun user with identity: '.$uid.' has been found and SP has sufficient rights to get info about him. '.
@@ -297,5 +296,24 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		return false;
 	}
 
-
+	/**
+         * When the process logic determines that the user is not
+         * authorized for this service, then forward the user to
+         * an 403 unauthorized page.
+         *
+         * Separated this code into its own method so that child
+         * classes can override it and change the action. Forward
+         * thinking in case a "chained" ACL is needed, more complex
+         * permission logic.
+         *
+         * @param array $request
+         */
+        protected function unauthorized(&$request) {
+                // Save state and redirect to 403 page
+                $id = SimpleSAML_Auth_State::saveState($request,
+                                'authorize:Authorize');
+                $url = SimpleSAML_Module::getModuleURL(
+                                'authorize/authorize_403.php');
+                \SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id));
+        }
 }
