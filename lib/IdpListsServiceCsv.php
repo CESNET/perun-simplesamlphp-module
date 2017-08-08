@@ -155,7 +155,7 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 				rewind($gf);
 
 				foreach ($greylist as $idp) {
-					fputcsv($wf, array_values($idp['timestamp']));
+					fputcsv($gf, array_values($idp));
 				}
 
 				fflush($wf);
