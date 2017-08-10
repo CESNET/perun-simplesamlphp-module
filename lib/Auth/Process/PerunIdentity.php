@@ -120,11 +120,11 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$spGroups = $this->adapter->getSpGroups($spEntityId, $vo);
 
 		if (empty($spGroups)) {
-			throw new SimpleSAML_Error_Exception(
-				'No Perun groups in VO '.$vo->getName().'are assigned with SP entityID '.$spEntityId.'. ' .
-				'Hint1: create facility in Perun with attribute entityID of your SP. ' .
-				'Hint2: assign groups in VO '.$vo->getName().' to resource of the facility in Perun. '
+			SimpleSAML_Logger::warning('No Perun groups in VO '.$vo->getName().'are assigned with SP entityID '.$spEntityId.'. ' .
+                                'Hint1: create facility in Perun with attribute entityID of your SP. ' .
+                                'Hint2: assign groups in VO '.$vo->getName().' to resource of the facility in Perun.'
 			);
+                        $this->unauthorized($request);
 		}
 
 		SimpleSAML_Logger::debug("SP GROUPs - ".var_export($spGroups, true));
@@ -139,13 +139,13 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 
 		$memberGroups = $this->adapter->getMemberGroups($user, $vo);
 
-		SimpleSAML_Logger::info('member groups: '.var_export($memberGroups, true));
-		SimpleSAML_Logger::info('sp groups: '.var_export($spGroups, true));
+		SimpleSAML_Logger::debug('member groups: '.var_export($memberGroups, true));
+		SimpleSAML_Logger::debug('sp groups: '.var_export($spGroups, true));
 
 		$groups = $this->intersectById($spGroups, $memberGroups);
 
 		if (empty($groups)) {
-			SimpleSAML_Logger::info('Perun user with identity: '.$uid.' is not member of any assigned group for resource (' . $spEntityId . ')');
+			SimpleSAML_Logger::warning('Perun user with identity: '.$uid.' is not member of any assigned group for resource (' . $spEntityId . ')');
                         $this->unauthorized($request);
 		}
 
