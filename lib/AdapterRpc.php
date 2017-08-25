@@ -9,32 +9,38 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 {
 
 
-	public function getPerunUser($idpEntityId, $uid)
+	public function getPerunUser($idpEntityId, $uids)
 	{
-		try {
-			$user = sspmod_perun_RpcConnector::get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
-				'extSourceName' => $idpEntityId,
-				'extLogin' => $uid,
-			));
+		$user = null;
 
-			$name = '';
-			if (!empty($user['titleBefore'])) $name .= $user['titleBefore'].' ';
-			if (!empty($user['titleBefore'])) $name .= $user['firstName'].' ';
-			if (!empty($user['titleBefore'])) $name .= $user['middleName'].' ';
-			if (!empty($user['titleBefore'])) $name .= $user['lastName'];
-			if (!empty($user['titleBefore'])) $name .= ' '.$user['titleAfter'];
+		foreach ($uids as $uid) {
+			try {
+				$user = sspmod_perun_RpcConnector::get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
+					'extSourceName' => $idpEntityId,
+					'extLogin' => $uid,
+				));
 
-			return new sspmod_perun_model_User($user['id'], $name);
-		} catch (sspmod_perun_Exception $e) {
-			if ($e->getName() === 'UserExtSourceNotExistsException') {
-				return null;
-			} else if ($e->getName() === 'ExtSourceNotExistsException') {
-				// Because use of original/source entityID as extSourceName
-				return null;
-			} else {
-				throw $e;
+				$name = '';
+				if (!empty($user['titleBefore'])) $name .= $user['titleBefore'].' ';
+				if (!empty($user['titleBefore'])) $name .= $user['firstName'].' ';
+				if (!empty($user['titleBefore'])) $name .= $user['middleName'].' ';
+				if (!empty($user['titleBefore'])) $name .= $user['lastName'];
+				if (!empty($user['titleBefore'])) $name .= ' '.$user['titleAfter'];
+
+				return new sspmod_perun_model_User($user['id'], $name);
+			} catch (sspmod_perun_Exception $e) {
+				if ($e->getName() === 'UserExtSourceNotExistsException') {
+					continue;
+				} else if ($e->getName() === 'ExtSourceNotExistsException') {
+					// Because use of original/source entityID as extSourceName
+					continue;
+				} else {
+					throw $e;
+				}
 			}
 		}
+
+		return $user;
 	}
 
 

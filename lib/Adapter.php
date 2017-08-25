@@ -26,10 +26,10 @@ abstract class sspmod_perun_Adapter
 
 	/**
 	 * @param string $idpEntityId entity id of hosted idp used as extSourceName
-	 * @param string $uid user identifier received from remote idp used as userExtSourceLogin
+	 * @param string $uids list of user identifiers received from remote idp used as userExtSourceLogin
 	 * @return sspmod_perun_model_User or null if not exists
 	 */
-	public abstract function getPerunUser($idpEntityId, $uid);
+	public abstract function getPerunUser($idpEntityId, $uids);
 
 	/**
 	 * @param sspmod_perun_model_Vo $vo

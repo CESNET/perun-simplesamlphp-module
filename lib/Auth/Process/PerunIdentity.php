@@ -18,10 +18,11 @@
  * It relays on RetainIdPEntityID filter. Config it properly before this filter. (in SP context)
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Michal Prochazka <michalp@ics.muni.cz>
  */
 class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_ProcessingFilter
 {
-	const UID_ATTR = 'uidAttr';
+	const UIDS_ATTR = 'uidsAttr';
 	const VO_SHORTNAME = 'voShortName';
 	const REGISTER_URL = 'registerUrl';
 	const CALLBACK_PARAM_NAME = 'callbackParamName';
@@ -29,7 +30,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	const SOURCE_IDP_ENTITY_ID_ATTR = 'sourceIdPEntityIDAttr';
 	const FORCE_REGISTRATION_TO_GROUPS = 'forceRegistrationToGroups';
 
-	private $uidAttr;
+	private $uidsAttr;
 	private $registerUrl;
 	private $voShortName;
 	private $callbackParamName;
@@ -47,8 +48,8 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	{
 		parent::__construct($config, $reserved);
 
-		if (!isset($config[self::UID_ATTR])) {
-			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::UID_ATTR."'.");
+		if (!isset($config[self::UIDS_ATTR])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::UIDS_ATTR."'.");
 		}
 		if (!isset($config[self::REGISTER_URL])) {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::REGISTER_URL."'.");
@@ -69,7 +70,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
                         $config[self::FORCE_REGISTRATION_TO_GROUPS] = false;
                 }
 
-		$this->uidAttr = (string) $config[self::UID_ATTR];
+		$this->uidsAttr = $config[self::UIDS_ATTR];
 		$this->registerUrl = (string) $config[self::REGISTER_URL];
 		$this->voShortName = (string) $config[self::VO_SHORTNAME];
 		$this->callbackParamName = (string) $config[self::CALLBACK_PARAM_NAME];
@@ -84,11 +85,17 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	{
 		assert('is_array($request)');
 
-		if (isset($request['Attributes'][$this->uidAttr][0])) {
-			$uid = $request['Attributes'][$this->uidAttr][0];
-		} else {
+		# Store all user ids in an array
+		$uids = array();
+
+		foreach ($this->uidsAttr as $uidAttr) {
+			if (isset($request['Attributes'][$uidAttr][0])) {
+				array_push($uids,$request['Attributes'][$uidAttr][0]);
+			}
+		}
+		if (empty($uids)) {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: " .
-				"missing mandatory attribute " . $this->uidAttr . " in request.");
+				"missing one of the mandatory attribute " . implode(', ', $this->uidsAttr) . " in request.");
 		}
 
 		if (isset($request['Attributes'][$this->sourceIdPEntityIDAttr][0])) {
@@ -129,10 +136,10 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 
 		SimpleSAML_Logger::debug("SP GROUPs - ".var_export($spGroups, true));
 
-		$user = $this->adapter->getPerunUser($idpEntityId, $uid);
+		$user = $this->adapter->getPerunUser($idpEntityId, $uids);
 
 		if ($user === null) {
-			SimpleSAML_Logger::info('Perun user with identity: '.$uid.' has NOT been found. He is being redirected to register.');
+			SimpleSAML_Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
 			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
 		}
 
@@ -145,11 +152,11 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$groups = $this->intersectById($spGroups, $memberGroups);
 
 		if (empty($groups)) {
-			SimpleSAML_Logger::warning('Perun user with identity: '.$uid.' is not member of any assigned group for resource (' . $spEntityId . ')');
+			SimpleSAML_Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');
                         $this->unauthorized($request);
 		}
 
-		SimpleSAML_Logger::info('Perun user with identity: '.$uid.' has been found and SP has sufficient rights to get info about him. '.
+		SimpleSAML_Logger::info('Perun user with identity/ies: '. implode(',', $uids) .' has been found and SP has sufficient rights to get info about him. '.
 				'User '.$user->getName().' with id: '.$user->getId().' is being set to request');
 
 		if (!isset($request['perun'])) {
@@ -176,7 +183,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	protected function register($request, $registerUrl, $callbackParamName, $vo, $groups, $interface) {
 
 		$request['config'] = array(
-			self::UID_ATTR => $this->uidAttr,
+			self::UIDS_ATTR => $this->uidsAttr,
 			self::VO_SHORTNAME => $this->voShortName,
 			self::REGISTER_URL => $this->registerUrl,
 			self::CALLBACK_PARAM_NAME => $this->callbackParamName,
