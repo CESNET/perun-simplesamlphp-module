@@ -9,12 +9,23 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 {
 
 
-	public function getPerunUser($idpEntityId, $uid)
+	public function getPerunUser($idpEntityId, $uids)
 	{
+		# Build a LDAP query, we are searching for the user who has at least one of the uid
+		$query = '';
+                foreach ($uids as $uid) {
+			$query .= "(eduPersonPrincipalNames=$uid)";
+		}
+
+		if ($empty($query)) {
+			return null;
+		}
+
 		$user = sspmod_perun_LdapConnector::searchForEntity("ou=People,dc=perun,dc=cesnet,dc=cz",
-			"(eduPersonPrincipalNames=$uid)",
+			"(!$query)",
 			array("perunUserId", "displayName", "cn", "givenName", "sn", "preferredMail", "mail")
 		);
+
 		if (is_null($user)) {
 			return $user;
 		}
