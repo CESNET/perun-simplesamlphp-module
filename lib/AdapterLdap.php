@@ -17,12 +17,12 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 			$query .= "(eduPersonPrincipalNames=$uid)";
 		}
 
-		if ($empty($query)) {
+		if (empty($query)) {
 			return null;
 		}
 
 		$user = sspmod_perun_LdapConnector::searchForEntity("ou=People,dc=perun,dc=cesnet,dc=cz",
-			"(!$query)",
+			"(|$query)",
 			array("perunUserId", "displayName", "cn", "givenName", "sn", "preferredMail", "mail")
 		);
 
