@@ -3,16 +3,21 @@
 /**
  * Class sspmod_perun_Auth_Process_PerunGroups
  *
- * This filter extracts group names from cached groups from PerunIdentity filter and save them into attribute.
- * It means it strongly relays on it.
- * It also translates (renames) given name of group based on associative array 'groupMapping' in SP metadata.
+ * This filter extracts group names from cached groups from PerunIdentity filter and save them into attribute defined by attrName. 
+ * By default attribute value will be filled with the groupNamePrefix + groupName.
+ *
+ * It is also capable of translation of (renames) group names using 'groupMapping' attribute in SP metadata.
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Michal Prochazka <michalp@ics.muni.cz>
  */
 class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFilter
 {
 
+	const GROUPNAMEPREFIX_ATTR = 'groupNamePrefix';
+
 	private $attrName;
+	private $groupNamePrefix;
 
 	public function __construct($config, $reserved)
 	{
@@ -24,6 +29,13 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 			throw new SimpleSAML_Error_Exception("perun:PerunGroups: missing mandatory configuration option 'attrName'.");
 		}
 		$this->attrName = (string) $config['attrName'];
+
+		if (!isset($config[self::GROUPNAMEPREFIX_ATTR])) {
+			SimpleSAML_Logger::warning("perun:PerunGroups: optional attribute '". self::GROUPNAMEPREFIX_ATTR . "' is missing, assuming empty prefix");
+			$this->groupNamePrefix = '';
+                } else {
+			$this->groupNamePrefix = (string) $config[self::GROUPNAMEPREFIX_ATTR];
+		}
 	}
 
 
@@ -58,10 +70,13 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 		if (isset($request["SPMetadata"]["groupMapping"]) && isset($request["SPMetadata"]["groupMapping"][$groupName])) {
 			SimpleSAML_Logger::debug("Mapping $groupName to " . $request["SPMetadata"]["groupMapping"][$groupName] . " for SP " . $request["SPMetadata"]["entityid"]);
 			return $request["SPMetadata"]["groupMapping"][$groupName];
+		} else if (isset($request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR])) {
+			SimpleSAML_Logger::debug("GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] . " to " . $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR]);
+			return $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR] . $groupName;
 		} else {
-			# No mapping defined
+			# No mapping defined, so just put groupNamePrefix in front of the group
 			SimpleSAML_Logger::debug("No mapping found for group $groupName for SP " . $request["SPMetadata"]["entityid"]);
-			return $groupName;
+			return $this->groupNamePrefix . $groupName;
 		}
 	}
 
