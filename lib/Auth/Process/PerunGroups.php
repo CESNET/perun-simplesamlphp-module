@@ -30,11 +30,11 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 		}
 		$this->attrName = (string) $config['attrName'];
 
-		if (!isset($config[GROUPNAMEPREFIX_ATTR])) {
-			SimpleSAML_Logger::warning("perun:PerunGroups: optional attribute '". GROUPNAMEPREFIX_ATTR . "' is missing, assuming empty prefix");
+		if (!isset($config[self::GROUPNAMEPREFIX_ATTR])) {
+			SimpleSAML_Logger::warning("perun:PerunGroups: optional attribute '". self::GROUPNAMEPREFIX_ATTR . "' is missing, assuming empty prefix");
 			$this->groupNamePrefix = '';
                 } else {
-			$this->groupNamePrefix = (string) $config[GROUPNAMEPREFIX_ATTR];
+			$this->groupNamePrefix = (string) $config[self::GROUPNAMEPREFIX_ATTR];
 		}
 	}
 
@@ -70,9 +70,9 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 		if (isset($request["SPMetadata"]["groupMapping"]) && isset($request["SPMetadata"]["groupMapping"][$groupName])) {
 			SimpleSAML_Logger::debug("Mapping $groupName to " . $request["SPMetadata"]["groupMapping"][$groupName] . " for SP " . $request["SPMetadata"]["entityid"]);
 			return $request["SPMetadata"]["groupMapping"][$groupName];
-		} else if (isset($request["SPMetadata"][GROUPNAMEPREFIX_ATTR])) {
-			SimpleSAML_Logger::debug("GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] . " to " . $request["SPMetadata"][GROUPNAMEPREFIX_ATTR]);
-			return $request["SPMetadata"][GROUPNAMEPREFIX_ATTR] . $groupName;
+		} else if (isset($request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR])) {
+			SimpleSAML_Logger::debug("GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] . " to " . $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR]);
+			return $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR] . $groupName;
 		} else {
 			# No mapping defined, so just put groupNamePrefix in front of the group
 			SimpleSAML_Logger::debug("No mapping found for group $groupName for SP " . $request["SPMetadata"]["entityid"]);
