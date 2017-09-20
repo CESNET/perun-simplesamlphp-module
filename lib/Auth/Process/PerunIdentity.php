@@ -19,6 +19,7 @@
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Michal Prochazka <michalp@ics.muni.cz>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_ProcessingFilter
 {
@@ -143,13 +144,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
 		}
 
-
-		$memberGroups = $this->adapter->getMemberGroups($user, $vo);
-
-		SimpleSAML_Logger::debug('member groups: '.var_export($memberGroups, true));
-		SimpleSAML_Logger::debug('sp groups: '.var_export($spGroups, true));
-
-		$groups = $this->intersectById($spGroups, $memberGroups);
+		$groups = $this->adapter->isUserOnFacility($spEntityId,$user->getId());
 
 		if (empty($groups)) {
 			SimpleSAML_Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');
@@ -251,40 +246,6 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 			'callbackUrl' => $callback,
 		));
 
-	}
-
-
-
-
-	/**
-	 * @param sspmod_perun_model_HasId[] $spGroups
-	 * @param sspmod_perun_model_HasId[] $memberGroups
-	 * @return sspmod_perun_model_HasId[]
-	 */
-	private function intersectById($spGroups, $memberGroups)
-	{
-		$intersection = array();
-		foreach ($spGroups as $spGroup) {
-			if ($this->containsId($memberGroups, $spGroup->getId())) {
-				array_push($intersection, $spGroup);
-			}
-		}
-		return $intersection;
-	}
-
-	/**
-	 * @param sspmod_perun_model_HasId[] $entities
-	 * @param int $value
-	 * @return bool
-	 */
-	private function containsId($entities, $value)
-	{
-		foreach ($entities as $entity) {
-			if ($entity->getId() === $value) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	/**

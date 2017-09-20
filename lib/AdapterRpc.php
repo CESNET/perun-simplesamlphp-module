@@ -152,4 +152,9 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	}
 
 
+	public  function isUserOnFacility($spEntityId, $userId)
+	{
+		throw new BadMethodCallException("NotImplementedException");
+	}
+
 }

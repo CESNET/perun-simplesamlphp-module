@@ -69,6 +69,12 @@ abstract class sspmod_perun_Adapter
 	 */
 	public abstract function getUserAttributes($user, $attrNames);
 
+	/**
+	 * @param string $spEntityId entity id of the sp
+	 * @param int $userId
+	 * @return sspmod_perun_model_Group[] from vo which are assigned to all facilities with spEntityId for this userId
+	 */
+	public abstract function isUserOnFacility($spEntityId, $userId);
 
 	/**
 	 * @param sspmod_perun_model_HasId[] $entities
