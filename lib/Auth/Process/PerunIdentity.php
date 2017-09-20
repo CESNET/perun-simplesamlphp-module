@@ -277,11 +277,21 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
          * @param array $request
          */
         protected function unauthorized(&$request) {
-                // Save state and redirect to 403 page
-                $id = SimpleSAML_Auth_State::saveState($request,
-                                'authorize:Authorize');
-                $url = SimpleSAML_Module::getModuleURL(
-                                'authorize/authorize_403.php');
-                \SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id));
-        }
+		$id = SimpleSAML_Auth_State::saveState($request,
+			'perunauthorize:Perunauthorize');
+		$url = SimpleSAML_Module::getModuleURL(
+			'perunauthorize/perunauthorize_403.php');
+		if (isset($request['SPMetadata']['InformationURL']['en'])){
+			\SimpleSAML\Utils\HTTP::redirectTrustedURL($url,
+				array('StateId' => $id,
+                    'informationURL' => $request['SPMetadata']['InformationURL']['en'],
+					'administrationContact' => $request['SPMetadata']['administrationContact'],
+					'serviceName' => $request['SPMetadata']['name']['en']));
+		} else {
+			\SimpleSAML\Utils\HTTP::redirectTrustedURL($url,
+				array('StateId' => $id,
+                    'administrationContact' => $request['SPMetadata']['administrationContact'],
+					'serviceName' => $request['SPMetadata']['name']['en']));
+		}
+	}
 }
