@@ -57,8 +57,8 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 				'member' => $member['id'],
 			));
 		} catch (sspmod_perun_Exception $e) {
-                        return array();
-                }
+						return array();
+				}
 
 		$convertedGroups = array();
 		foreach ($memberGroups as $group) {
