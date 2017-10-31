@@ -12,7 +12,7 @@
 
 class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_ProcessingFilter
 {
-	private $uidAttr;
+	private $uidsAttr;
 	private $prefix;
 
 	public function __construct($config, $reserved)
@@ -21,14 +21,14 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
 
 		assert('is_array($config)');
 
-		if (!isset($config['uidAttr'])) {
-			throw new SimpleSAML_Error_Exception("perun:ProcessTargetedID: missing mandatory configuration option 'uidAttr'.");
+		if (!isset($config['uidsAttr'])) {
+			throw new SimpleSAML_Error_Exception("perun:ProcessTargetedID: missing mandatory configuration option 'uidsAttr'.");
 		}
 		if (!isset($config['prefix'])) {
 			throw new SimpleSAML_Error_Exception("perun:ProcessTargetedID: missing mandatory configuration option 'prefix'.");
 		}
 
-		$this->uidAttr = (string) $config['uidAttr'];
+		$this->uidsAttr = $config['uidsAttr'];
 		$this->prefix = (string) $config['prefix'];
 	}
 
@@ -36,12 +36,19 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
 	{
 		assert('is_array($request)');
 
-		if (isset($request['Attributes'][$this->uidAttr][0])) {
-			$uid = $request['Attributes'][$this->uidAttr][0];
-		} else {
-			throw new SimpleSAML_Error_Exception("perun:ProcessTargetedID: " .
-					"missing mandatory attribute " . $this->uidAttr . " in request.");
-		}
+		# Iterate through provided attributes and simply get first value
+                $uid = "";
+                foreach ($this->uidsAttr as $uidAttr) {
+                        if (isset($request['Attributes'][$uidAttr][0])) {
+                               $uid = $request['Attributes'][$uidAttr][0];
+                               break;
+                        }
+                }
+
+                if (empty($uid)) {
+                        # There is no TargetedID in the request, so we can quit
+                        return;
+                }
 
 		# Do not continue if we have user id with scope
 		if (strpos($uid, '@') !== false) {
