@@ -77,8 +77,12 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
 		# Set uid and also eduPersonPrincipalName, so all the modules and Perun will be happy
 		$request['Attributes'][$this->uidAttr] = array($newEduPersonPrincipalName);
 		# TODO line below must be removed after ELIXIR will be switched to default behaviour, so Perun will consume original eppn and entityID
-		$request['Attributes']['eduPersonPrincipalName'] = array($newEduPersonPrincipalName);
-
+		if (!isset($request['Attributes']['eduPersonPrincipalName']) || empty($request['Attributes']['eduPersonPrincipalName'])) {
+                        $request['Attributes']['eduPersonPrincipalName'] = array($newEduPersonPrincipalName);
+                }
+                # TODO Temporary hack when users from EBI will have targetedID in edupersonprincial name, so Perun can recognise them. They have just eptid in Perun. We need to add storing eppn and epuid to Perun on each request and also Perun needs to search users based on all three attributes eppn, epuid and eptid, not just via REMOTE_USER
+                if (isset($request['Attributes']['eduPersonPrincipalName']) && strrpos($request['Attributes']['eduPersonPrincipalName'][0], '@ebi.ac.uk') !== false) {
+                        $request['Attributes']['eduPersonPrincipalName'] = array($newEduPersonPrincipalName);
+                }
 	}
-
 }
