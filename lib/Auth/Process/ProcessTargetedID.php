@@ -75,7 +75,7 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
 
 		# Set attributes back to the response
 		# Set uid and also eduPersonPrincipalName, so all the modules and Perun will be happy
-		$request['Attributes'][$this->uidAttr] = array($newEduPersonPrincipalName);
+		$request['Attributes']['uid'] = array($newEduPersonPrincipalName);
 		# TODO line below must be removed after ELIXIR will be switched to default behaviour, so Perun will consume original eppn and entityID
 		if (!isset($request['Attributes']['eduPersonPrincipalName']) || empty($request['Attributes']['eduPersonPrincipalName'])) {
                         $request['Attributes']['eduPersonPrincipalName'] = array($newEduPersonPrincipalName);
