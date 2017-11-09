@@ -1,0 +1,23 @@
+{
+  "consent_privacypolicy" : {
+	"en": "Privacy policy"
+  },
+  "forwardedscopedaffiliation": {
+	"en": "Home organization affiliation"
+  },
+  "edupersonscopedaffiliation": {
+	"en": "Community affiliation"
+  },
+  "loa":{
+	"en": "Level of Assurance"
+  },
+  "edupersonuniqueid":{
+	"en": "Person’s unique Id"
+  },
+  "edupersonprincipalname":{
+	"en": "Person’s principal name"
+  },
+  "forwardedpersonprincipalnames":{
+	"en": "Person’s principal names from home organization(s)"
+  }
+}
