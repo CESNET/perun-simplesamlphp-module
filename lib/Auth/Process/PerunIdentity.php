@@ -144,7 +144,16 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		}
 
 
-		$memberGroups = $this->adapter->getMemberGroups($user, $vo);
+		try {
+			$memberGroups = $this->adapter->getMemberGroups($user, $vo);
+		} catch (sspmod_perun_Exception $e) {
+			if ($e->getName() === 'MemberNotExistsException') {
+				SimpleSAML_Logger::info('User ('. $user . ') not registered with our VO, redirecting them to the register');
+				$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
+			} else {
+				throw $e;
+			}
+		}
 
 		SimpleSAML_Logger::debug('member groups: '.var_export($memberGroups, true));
 		SimpleSAML_Logger::debug('sp groups: '.var_export($spGroups, true));
