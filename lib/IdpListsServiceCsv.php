@@ -5,6 +5,7 @@
  * first column is timestamp, second entityid and third reason
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 {
@@ -136,6 +137,8 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 
 	function whitelistIdp($entityID, $reason = null)
 	{
+		$changedWhiteList = false;
+		$changedGreylist = false;
 		$wf = fopen($this->whitelistFile, 'a');
 		if (flock($wf, LOCK_EX)) {
 			$gf = fopen($this->greylistFile, 'c+');
@@ -143,6 +146,7 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 
 				$idp = array(date('Y-m-d H:i:s'), $entityID, $reason);
 				fputcsv($wf, $idp);
+				$changedWhiteList = true;
 
 				$greylist = array();
 				while (($idp = $this->arrayToIdp(fgetcsv($gf))) !== false) {
@@ -156,6 +160,7 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 
 				foreach ($greylist as $idp) {
 					fputcsv($gf, array_values($idp));
+					$changedGreylist = true;
 				}
 
 				fflush($wf);
@@ -171,6 +176,12 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 		}
 		fclose($wf);
 		fclose($gf);
+		if ($changedWhiteList === true) {
+			$this->commit($this->whitelistFile, $entityID);
+		}
+		if ($changedGreylist === true){
+			$this->commit($this->greylistFile, $entityID);
+		}
 
 	}
 
@@ -182,6 +193,12 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 		$idp['entityid'] = $csv[1];
 		$idp['reason'] = $csv[2];
 		return $idp;
+	}
+
+	private function commit($file, $entityID){
+		$idpListsDir = dirname($file);
+		$fileName = basename($file);
+		shell_exec("cd $idpListsDir && git add $file && git commit -m\"Updated $fileName  \n\n * Added record with entityId: $entityID to $fileName\"");
 	}
 
 }
