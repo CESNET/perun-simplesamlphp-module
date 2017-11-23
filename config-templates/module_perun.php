@@ -25,6 +25,8 @@ $config = array(
 	 */
 	'ldap.hostname' => 'ldaps://perun.inside.cz',
 
+	'ldap.base' => 'dc=perun,dc=inside,dc=cz',
+
 	/**
 	 * ldap credentials if ldap search is protected. If it is null or not set at all. No user is used for bind.
 	 */
