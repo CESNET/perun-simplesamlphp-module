@@ -46,14 +46,11 @@ try {
 
 	$service->whitelistIdp($entityid, $reason);
 
-	$whitelist = $service->getLatestWhitelist();
-	$greylist = $service->getLatestGreylist();
 
 	header('Content-Type: application/json');
 	echo json_encode(array(
 		'result' => 'ADDED',
-		'whitelist' => $whitelist,
-		'greylist' => $greylist
+		'msg' => "IdP '$entityid' has been succesfully added to whitelist."
 	));
 
 } catch (SimpleSAML_Error_Exception $e) {
