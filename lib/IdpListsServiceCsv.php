@@ -5,6 +5,7 @@
  * first column is timestamp, second entityid and third reason
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 {
@@ -172,6 +173,36 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 		fclose($wf);
 		fclose($gf);
 
+	}
+
+	function listToArray($listName){
+		if ($listName === "whitelist"){
+			$list = $this->whitelistFile;
+		} else{
+			$list = $this->greylistFile;
+		}
+
+		$resultList = array();
+
+		if (!file_exists($list)) {
+			return $resultList;
+		}
+
+		$f = fopen($list, 'r');
+		if (flock($f, LOCK_SH)) {
+
+			while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
+				array_push($resultList, $idp['entityid']);
+			}
+
+			fflush($f);
+			flock($f, LOCK_UN);
+		} else {
+			throw new SimpleSAML_Error_Exception("IdpListsServiceCsv - unable to get file lock. Hint: Try to create folder config/idplists and add write rights.");
+		}
+		fclose($f);
+
+		return $resultList;
 	}
 
 	private function arrayToIdp($csv) {

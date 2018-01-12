@@ -11,6 +11,7 @@
  * comment them out or in case of automated metadata fetching configure blacklist in config-metarefresh.php
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 {
@@ -18,6 +19,9 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 	const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
 
 	private $originalsp;
+	private $whitelist;
+	private $greylist;
+	private $service;
 
 	public function __construct(array $metadataSets, $instance)
 	{
@@ -27,6 +31,9 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		$id = explode(":", $query['AuthID'])[0];
 		$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso');
 		$this->originalsp = $state['SPMetadata'];
+		$this->service = new sspmod_perun_IdpListsServiceCsv();
+		$this->whitelist = $this->service->listToArray("whitelist");
+		$this->greylist = $this->service->listToArray("greylist");
 	}
 
 
@@ -115,10 +122,10 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
 	protected function whitelisting($list)
 	{
-		$service = new sspmod_perun_IdpListsServiceCsv();
 		foreach ($list as $entityId => $idp) {
 			$unset = true;
-			if ($service->isWhitelisted($entityId)) {
+
+			if (in_array($entityId, $this->whitelist)){
 				$unset = false;
 			}
 			if (isset($idp['EntityAttributes']['http://macedir.org/entity-category-support'])) {
@@ -149,9 +156,8 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
 	protected function greylisting($list)
 	{
-		$service = new sspmod_perun_IdpListsServiceCsv();
 		foreach ($list as $entityId => $idp) {
-			if ($service->isGreylisted($entityId)) {
+			if (in_array($entityId, $this->greylist)) {
 				unset($list[$entityId]);
 			}
 		}

@@ -12,6 +12,7 @@
  * Note that implementation should be thread/concurrency safe.
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 interface sspmod_perun_IdpListsService
 {
@@ -49,4 +50,10 @@ interface sspmod_perun_IdpListsService
 	 * @param null|string $reason
 	 */
 	function whitelistIdp($entityID, $reason = null);
+
+	/**
+	 * @param string $listName "whitelist" or "greylist"
+	 * @return array of entityIdPs
+	 */
+	function listToArray($listName);
 }
