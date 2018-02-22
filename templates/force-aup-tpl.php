@@ -17,7 +17,7 @@ $this->includeAtTemplateBase('includes/header.php');
 
 
 
-	<form method="post" action="<?php echo SimpleSAML_Module::getModuleURL('perun/force_aup_continue.php'); ?>" >
+	<form method="post" action="<?php echo SimpleSAML\Module::getModuleURL('perun/force_aup_continue.php'); ?>" >
 
 		<input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>" >
 

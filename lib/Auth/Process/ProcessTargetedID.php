@@ -70,7 +70,7 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
 		# Construct new eppn
 		$newEduPersonPrincipalName = $this->prefix . '_' . $hash . '@' . $scope;
 
-		SimpleSAML_Logger::info("perun.ProcessTargetedID: Converting eduPersonTargetedID '" . $uid . "' " .
+		SimpleSAML\Logger::info("perun.ProcessTargetedID: Converting eduPersonTargetedID '" . $uid . "' " .
 				"to the new ID '" . $newEduPersonPrincipalName . "'");
 
 		# Set attributes back to the response

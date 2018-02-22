@@ -44,7 +44,7 @@ sspmod_perun_RpcConnector::post('attributesManager', 'setAttribute', array(
 
 
 
-SimpleSAML_Logger::info('Perun.ForceAup - User accepted usage policy');
+SimpleSAML\Logger::info('Perun.ForceAup - User accepted usage policy');
 
 SimpleSAML_Auth_ProcessingChain::resumeProcessing($state);
 

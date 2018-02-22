@@ -72,7 +72,7 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
 			$request['aupUrl'] = $this->aupUrl;
 			$request['aupVersion']  = $forceAup;
 			$id  = SimpleSAML_Auth_State::saveState($request, 'perun:forceAup');
-			$url = SimpleSAML_Module::getModuleURL('perun/force_aup_page.php');
+			$url = SimpleSAML\Module::getModuleURL('perun/force_aup_page.php');
 			\SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id));
 		}
 

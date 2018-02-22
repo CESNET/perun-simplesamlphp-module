@@ -41,7 +41,7 @@ class sspmod_perun_Auth_Process_RetainIdPEntityID extends SimpleSAML_Auth_Proces
 		}
 
 		$request['Attributes'][$this->attrName] = array($entityId);
-		SimpleSAML_Logger::debug("perun:RetainIdPEntityID: entityID '$entityId' was extracted to attribute ".$this->attrName);
+		SimpleSAML\Logger::debug("perun:RetainIdPEntityID: entityID '$entityId' was extracted to attribute ".$this->attrName);
 	}
 
 
