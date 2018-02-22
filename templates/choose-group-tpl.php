@@ -11,11 +11,11 @@
 $vo = $this->data['vo'];
 $groups = $this->data['groups'];
 
-$this->data['header'] = 'Select group which fits you most';
+$this->data['header'] = $this->t('{perun:perun:choose-group-tpl_header}');
 
 $this->includeAtTemplateBase('includes/header.php');
 
-echo 'It will give you access to the requested service.';
+echo $this->t('{perun:perun:choose-group-tpl_text}');
 
 echo '<div class="list-group">';
 foreach ($groups as $group) {

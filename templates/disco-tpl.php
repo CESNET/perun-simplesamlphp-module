@@ -13,15 +13,15 @@ $this->includeAtTemplateBase('includes/header.php');
 
 if (!empty($this->getPreferredIdp())) {
 
-	echo'<h4>your previous selection</h4>' .
+	echo'<h4>' . $this->t('{perun:perun:disco-tpl_previous-selection}') . '</h4>' .
 			'<div class="metalist list-group">' .
 				buildEntry($this, $this->getPreferredIdp(), true) .
 			'</div>' .
-		'<p style="text-align: center"> - or - </p>';
+		'<p style="text-align: center"> - ' . $this->t('{perun:perun:disco-tpl_or}') . ' - </p>';
 }
 
 
-echo '<h4>your institutional account</h4>';
+echo '<h4>' . $this->t('{perun:perun:disco-tpl_institutional-account}') . '</h4>';
 
 
 foreach ($this->getTaggedIdps() AS $tag => $idplist) {

@@ -1,23 +1,30 @@
 {
-  "consent_privacypolicy" : {
-	"en": "Privacy policy"
-  },
   "forwardedscopedaffiliation": {
-	"en": "Home organization affiliation"
+	"en": "Home organization affiliation",
+	"cs": "Vztah k domovské(ým) organizaci(cím)"
   },
   "edupersonscopedaffiliation": {
-	"en": "Community affiliation"
+	"en": "Community affiliation",
+	"cs": "Vztah k AAI"
   },
   "loa":{
-	"en": "Level of Assurance"
+	"en": "Level of Assurance",
+	"cs": "Úroveň jistoty"
   },
   "edupersonuniqueid":{
-	"en": "Person’s unique Id"
+	"en": "Person’s unique Id",
+	"cs": "Unikátní identifikátor osoby"
   },
   "edupersonprincipalname":{
-	"en": "Person’s principal name"
+	"en": "Person’s principal name",
+	"cs": "Identifikátor osoby v organizaci"
   },
   "forwardedpersonprincipalnames":{
-	"en": "Person’s principal names from home organization(s)"
+	"en": "Person’s principal names from home organization(s)",
+	"cs": "Identifikátor(y) osoby z domovské(ých) organizace(cí)"
+  },
+  "displayname": {
+	"en": "displayName",
+	"cs": "Jméno uživatele"
   }
 }
