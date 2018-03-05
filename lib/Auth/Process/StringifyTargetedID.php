@@ -50,11 +50,8 @@ class sspmod_perun_Auth_Process_StringifyTargetedID extends SimpleSAML_Auth_Proc
 	 * Convert NameID value into the text representation.
 	 */
 	private function stringify($attributeValue) {
-		if (is_object($attributeValue) && get_class($attributeValue) == "DOMNodeList") {
-
-			$nameid = new SAML2_XML_saml_NameID($attributeValue->item(0));
-
-			return $nameid->NameQualifier . '!' . $nameid->SPNameQualifier . '!' . $nameid->value;
+		if (is_object($attributeValue) && get_class($attributeValue) == "SAML2\XML\saml\NameID") {
+            return $attributeValue->NameQualifier . '!' . $attributeValue->SPNameQualifier . '!' . $attributeValue->value;
 		} else {
 			return $attributeValue;
 		}
