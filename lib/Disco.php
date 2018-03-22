@@ -197,5 +197,20 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		return $url;
 	}
 
+	/**
+	 * @param $entityID
+	 * @param $return
+	 * @param $returnIDParam
+	 * @return string url where user should be redirected when he choose idp
+	 */
+	public static function buildContinueUrlWithoutIdPEntityId($entityID, $return, $returnIDParam) {
+		$url = '?' .
+			'entityID=' . urlencode($entityID) . '&' .
+			'return=' . urlencode($return) . '&' .
+			'returnIDParam=' . urlencode($returnIDParam);
+
+		return $url;
+	}
+
 
 }
