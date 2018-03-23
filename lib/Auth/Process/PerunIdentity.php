@@ -123,24 +123,17 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 			$this->voShortName = $request['SPMetadata'][self::VO_SHORTNAME];
 		}
 
-		$vo = $this->adapter->getVoByShortName($this->voShortName);
-
-		$spGroups = $this->adapter->getSpGroups($spEntityId, $vo);
-
-		if (empty($spGroups)) {
-			SimpleSAML_Logger::warning('No Perun groups in VO '.$vo->getName().'are assigned with SP entityID '.$spEntityId.'. ' .
-                                'Hint1: create facility in Perun with attribute entityID of your SP. ' .
-                                'Hint2: assign groups in VO '.$vo->getName().' to resource of the facility in Perun.'
-			);
-                        $this->unauthorized($request);
-		}
-
-		SimpleSAML_Logger::debug("SP GROUPs - ".var_export($spGroups, true));
-
 		$user = $this->adapter->getPerunUser($idpEntityId, $uids);
 
 		if ($user === null) {
 			SimpleSAML_Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
+
+			$vo = $this->adapter->getVoByShortName($this->voShortName);
+
+			$spGroups = $this->adapter->getSpGroups($spEntityId, $vo);
+
+			SimpleSAML_Logger::debug("SP GROUPs - ".var_export($spGroups, true));
+
 			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
 		}
 
@@ -256,6 +249,9 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	 */
 	private function containsMembersGroup($entities)
 	{
+		if (empty($entities)){
+			return false;
+		}
 		foreach ($entities as $entity) {
 			if (preg_match('/[^:]*:members$/', $entity->getName())) {
 				return true;
