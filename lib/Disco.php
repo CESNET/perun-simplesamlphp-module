@@ -29,7 +29,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
 		parse_str(parse_url($this->returnURL)['query'], $query);
 		$id = explode(":", $query['AuthID'])[0];
-		$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso');
+		$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
 		$this->originalsp = $state['SPMetadata'];
 		$this->service = new sspmod_perun_IdpListsServiceCsv();
 		$this->whitelist = $this->service->listToArray("whitelist");
