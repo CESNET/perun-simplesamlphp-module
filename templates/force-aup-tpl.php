@@ -22,10 +22,10 @@ $this->includeAtTemplateBase('includes/header.php');
 		<input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>" >
 
 		<div class="form-group">
-			<input type="submit" value="I agree with the Acceptable Usage Policy" class="btn btn-lg btn-primary btn-block">
+			<input type="submit" value="<?php echo $this->t('{perun:perun:fource-aup-tpl_agree}'); ?>" class="btn btn-lg btn-primary btn-block">
 		</div>
 		<p>
-			See the <a href="<?php echo $aupUrl; ?>" target="_blank">Acceptable Usage Policy <i class="glyphicon glyphicon-new-window"></i></a>.
+			See the <a href="<?php echo $aupUrl; ?>" target="_blank"> <?php echo $this->t('{perun:perun:fource-aup-tpl_aup}'); ?> <i class="glyphicon glyphicon-new-window"></i></a>.
 		</p>
 	</form>
 

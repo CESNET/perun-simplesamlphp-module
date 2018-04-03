@@ -17,12 +17,12 @@ $this->includeAtTemplateBase('includes/header.php');
         <form method="post" action="<?php echo SimpleSAML_Module::getModuleURL('perun/warning_test_sp_continue.php'); ?>" >
 
                 <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>" >
-                <h3>You are about to access service, which is in testing environment.</h3>
+                <h3> <?php echo $this->t('{perun:perun:warning-test-sp-tpl_text}')?> </h3>
                 </hr>
                 </br>
 
                 <div class="form-group">
-                        <input type="submit" value="Continue" class="btn btn-lg btn-primary btn-block">
+                        <input type="submit" value="<?php echo $this->t('{perun:perun:continue}')?>" class="btn btn-lg btn-primary btn-block">
                 </div>
         </form>
 

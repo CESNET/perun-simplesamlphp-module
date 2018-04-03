@@ -1,0 +1,38 @@
+{
+  "choose-group-tpl_header": {
+	"en": "Select group which fits you most",
+	"cs": "Vyberte si odpovídající skupinu"
+  },
+  "choose-group-tpl_text": {
+	"en": "It will give you access to the requested service.",
+	"cs": "Získáte tak přístup k požadované službě."
+  },
+  "disco-tpl_previous-selection": {
+	"en": "your previous selection",
+	"cs": "vaše předchozí volba"
+  },
+  "disco-tpl_institutional-account": {
+	"en": "your institutional account",
+	"cs": "váš univerzitní účet"
+  },
+  "dico-tpl_or": {
+	"en": "or",
+	"cs": "nebo"
+  },
+  "fource-aup-tpl_aup": {
+	"en": "Acceptable Usage Policy",
+	"cs": "Podmíny užití"
+  },
+  "fource-aup-tpl_agree": {
+	"en": "I agree with the Acceptable Usage Policy",
+	"cs": "Souhlasím s podmínkami užití"
+  },
+  "warning-test-sp-tpl_text": {
+	"en": "You are about to access service, which is in testing environment.",
+	"cs": "Přistupujete ke službě, která je v testovacím režimu. "
+  },
+  "continue": {
+	"en": "Continue",
+	"cs": "Pokračovat"
+  }
+}
