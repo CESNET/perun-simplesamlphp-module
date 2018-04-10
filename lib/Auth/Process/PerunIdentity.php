@@ -140,11 +140,11 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$groups = $this->adapter->isUserOnFacility($spEntityId,$user->getId());
 
 		if (empty($groups)) {
-			SimpleSAML_Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');
+			SimpleSAML\Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');
                         $this->unauthorized($request);
 		}
 
-		SimpleSAML_Logger::info('Perun user with identity/ies: '. implode(',', $uids) .' has been found and SP has sufficient rights to get info about him. '.
+		SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids) .' has been found and SP has sufficient rights to get info about him. '.
 				'User '.$user->getName().' with id: '.$user->getId().' is being set to request');
 
 		if (!isset($request['perun'])) {
@@ -180,7 +180,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		);
 
 		$stateId  = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
-		$callback = SimpleSAML_Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+		$callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
 		if ($this->containsMembersGroup($groups) || $this->forceRegistrationToGroups === false) {
 			$this->registerDirectly($registerUrl, $callbackParamName, $callback, $vo);
@@ -223,7 +223,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	 */
 	protected function registerChooseGroup($registerUrl, $callbackParamName, $callback, $vo, $groups, $interface) {
 
-		$chooseGroupUrl = SimpleSAML_Module::getModuleURL('perun/perun_identity_choose_group.php');
+		$chooseGroupUrl = SimpleSAML\Module::getModuleURL('perun/perun_identity_choose_group.php');
 
 		$groupNames = array();
 		foreach ($groups as $group) {
@@ -275,7 +275,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
         protected function unauthorized(&$request) {
 		$id = SimpleSAML_Auth_State::saveState($request,
 			'perunauthorize:Perunauthorize');
-		$url = SimpleSAML_Module::getModuleURL(
+		$url = SimpleSAML\Module::getModuleURL(
 			'perunauthorize/perunauthorize_403.php');
 		if (isset($request['SPMetadata']['InformationURL']['en'])){
 			\SimpleSAML\Utils\HTTP::redirectTrustedURL($url,

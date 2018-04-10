@@ -60,7 +60,7 @@ class sspmod_perun_Auth_Process_ProxyFilter extends SimpleSAML_Auth_ProcessingFi
 			$currentSp = $request['Destination']['entityid'];
 			if ($sp == $currentSp) {
 
-				SimpleSAML_Logger::info("perun.ProxyFilter: Filtering out filter $this->nestedClass for SP $currentSp");
+				SimpleSAML\Logger::info("perun.ProxyFilter: Filtering out filter $this->nestedClass for SP $currentSp");
 
 				return;
 			}

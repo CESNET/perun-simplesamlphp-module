@@ -76,7 +76,7 @@ class sspmod_perun_Auth_Process_PerunAttributes extends SimpleSAML_Auth_Processi
 				"Attribute name: $attrName, Supported types: null, string, array, associative array.");
 			}
 
-			SimpleSAML_Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
+			SimpleSAML\Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
 					"Value ".implode(",", $value)." is being setted to ssp attribute $sspAttr");
 
 			$request['Attributes'][$sspAttr] = $value;
