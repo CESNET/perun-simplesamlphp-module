@@ -139,6 +139,29 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		return $attributes;
 	}
 
+	public function getFacilitiesByEntityId($spEntityId)
+	{
+		// TODO: Implement getEntityByEntityId() method.
+	}
+
+	public function getEntitylessAttribute($attrName)
+	{
+		throw new BadMethodCallException("NotImplementedException");
+		// TODO: Implement getEntitylessAttribute() method.
+	}
+
+	public function getVoAttributes($vo, $attrNames)
+	{
+		throw new BadMethodCallException("NotImplementedException");
+		// TODO: Implement getVoAttribute() method.
+	}
+
+	public function getFacilityAttribute($facility, $attrName)
+	{
+		throw new BadMethodCallException("NotImplementedException");
+		// TODO: Implement getFacilityAttribute() method.
+	}
+
 
 	public function isUserOnFacility($spEntityId, $userId)
 	{
@@ -171,5 +194,6 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		SimpleSAML\Logger::debug("Groups - ".var_export($resultGroups, true));
 		return $resultGroups;
 	}
+
 
 }
