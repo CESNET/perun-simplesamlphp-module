@@ -6,6 +6,10 @@
  * This filter extracts group names from cached groups from PerunIdentity filter and save them into attribute defined by attrName. 
  * By default attribute value will be filled with the groupNamePrefix + groupName.
  *
+ * If groupNameAARC is enabled for SP or it is enabled globaly in perun_module.conf, then use groupNamePrefix
+ * and groupNameAuthority to construct group name according to the
+ * https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
+ *
  * It is also capable of translation of (renames) group names using 'groupMapping' attribute in SP metadata.
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
@@ -14,14 +18,30 @@
 class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFilter
 {
 
+	const CONFIG_FILE_NAME = 'module_perun.php';
+
 	const GROUPNAMEPREFIX_ATTR = 'groupNamePrefix';
+	const GROUPNAMEAARC_ATTR = 'groupNameAARC';
+	const GROUPNAMEAUTHORITY_ATTR = 'groupNameAuthority';
 
 	private $attrName;
 	private $groupNamePrefix;
+	private $groupNameAARC;
+	private $groupNameAuthority;
 
 	public function __construct($config, $reserved)
 	{
 		parent::__construct($config, $reserved);
+
+		$conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+
+		$this->groupNamePrefix = $conf->getString(self::GROUPNAMEPREFIX_ATTR, '');
+		$this->groupNameAuthority = $conf->getString(self::GROUPNAMEAUTHORITY_ATTR, '');
+		$this->groupNameAARC = $conf->getBoolean(self::GROUPNAMEAARC_ATTR, false);
+
+		if ($this->groupNameAARC && (empty($this->groupNameAuthority) || empty($this->groupNamePrefix))) {
+			throw new SimpleSAML_Error_Exception("perun:PerunGroups: 'groupNameAARC' has been set, 'groupNameAuthority' and 'groupNamePrefix' options must be set as well");
+		}
 
 		assert('is_array($config)');
 
@@ -30,12 +50,6 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 		}
 		$this->attrName = (string) $config['attrName'];
 
-		if (!isset($config[self::GROUPNAMEPREFIX_ATTR])) {
-			SimpleSAML_Logger::warning("perun:PerunGroups: optional attribute '". self::GROUPNAMEPREFIX_ATTR . "' is missing, assuming empty prefix");
-			$this->groupNamePrefix = '';
-                } else {
-			$this->groupNamePrefix = (string) $config[self::GROUPNAMEPREFIX_ATTR];
-		}
 	}
 
 
@@ -55,7 +69,17 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 
 		$request['Attributes'][$this->attrName] = array();
 		foreach ($groups as $group) {
-			$groupName = $this->mapGroupName($request, $group->getName());
+			if (isset($request["SPMetadata"]["groupNameAARC"]) || $this->groupNameAARC) {
+				# https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
+				# Example: urn:geant:elixir-europe.org:group:elixir:<groupName>:<subGroupName>#perun.elixir-czech.cz
+				if (empty($this->groupNameAuthority) || empty($this->groupNamePrefix)) {
+					throw new SimpleSAML_Error_Exception("perun:PerunGroups: missing mandatory configuration options 'groupNameAuthority' or 'groupNamePrefix'.");
+				}
+
+				$groupName = $this->groupNamePrefix . $group->getName() . '#' . $this->groupNameAuthority;
+			} else {
+				$groupName = $this->mapGroupName($request, $group->getName());
+			}
 			array_push($request['Attributes'][$this->attrName], $groupName);
 		}
 	}
@@ -74,9 +98,9 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 			SimpleSAML_Logger::debug("GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] . " to " . $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR]);
 			return $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR] . $groupName;
 		} else {
-			# No mapping defined, so just put groupNamePrefix in front of the group
+			# No mapping defined
 			SimpleSAML_Logger::debug("No mapping found for group $groupName for SP " . $request["SPMetadata"]["entityid"]);
-			return $this->groupNamePrefix . $groupName;
+			return $groupName;
 		}
 	}
 
