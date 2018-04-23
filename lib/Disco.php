@@ -22,6 +22,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 	private $whitelist;
 	private $greylist;
 	private $service;
+	private $authnContextClassRef = array();
 
 	public function __construct(array $metadataSets, $instance)
 	{
@@ -34,6 +35,9 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		$this->service = new sspmod_perun_IdpListsServiceCsv();
 		$this->whitelist = $this->service->listToArray("whitelist");
 		$this->greylist = $this->service->listToArray("greylist");
+		if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
+			$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
+		}
 	}
 
 
@@ -67,6 +71,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		$t->data['entityID'] = $this->spEntityId;
 		$t->data['return'] = $this->returnURL;
 		$t->data['returnIDParam'] = $this->returnIdParam;
+		$t->data['AuthnContextClassRef'] = $this->authnContextClassRef;
 		$t->show();
 	}
 
@@ -211,6 +216,5 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
 		return $url;
 	}
-
 
 }
