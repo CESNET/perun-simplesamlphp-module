@@ -1,4 +1,12 @@
 {
+  "remember": {
+    "en": "Do not ask again",
+    "cs": "Příště se již neptat"
+  },
+  "consent_attributes_header": {
+    "en":"Information that will be sent to SPNAME",
+    "cs":"Atributy, které budou zaslány službě SPNAME"
+  },
   "forwardedscopedaffiliation": {
 	"en": "Home organization affiliation",
 	"cs": "Vztah k domovské(ým) organizaci(cím)"
@@ -24,7 +32,7 @@
 	"cs": "Identifikátor(y) osoby z domovské(ých) organizace(cí)"
   },
   "displayname": {
-	"en": "displayName",
+	"en": "Person's name",
 	"cs": "Jméno uživatele"
   }
 }
