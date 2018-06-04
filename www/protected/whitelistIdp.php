@@ -31,9 +31,6 @@ try {
 	if ($service->isWhitelisted($entityid)) {
 		if (!$service->isGreylisted($entityid)) {
 
-			// Save new timestamp
-			$service->whitelistIdp($entityid, $reason);
-
 			header('Content-Type: application/json');
 			echo json_encode(array(
 				'result' => 'ALREADY_THERE',
