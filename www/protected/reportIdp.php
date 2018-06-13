@@ -35,8 +35,17 @@ if (!isset($_POST['redirectUri'])) {
 
 
 $config = SimpleSAML_Configuration::getInstance();
+$auth_config = SimpleSAML_Configuration::getConfig("authsources.php");
+//name of institution that provides the list of IDPS (elixir, cesnet etc...)
+$name = array_values($auth_config->getArray("default-sp")['name'])[0];
 
 $message = <<<EOD
+
+Dear administrator of Identity Provider,
+
+this email has been sent to you as this IdP has been requested to be added to the list of IdPs for {$name}.
+Below you can find the result of configuration inspection. If you wish to add the IdP and the result 
+shows incorrect configuration, please change it.
 
 User message: {$_POST['body']}
 
