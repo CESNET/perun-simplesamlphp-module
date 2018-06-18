@@ -137,7 +137,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
 		}
 
-		$groups = $this->adapter->isUserOnFacility($spEntityId,$user->getId());
+		$groups = $this->adapter->getUsersGroupsOnFacility($spEntityId,$user->getId());
 
 		if (empty($groups)) {
 			SimpleSAML\Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');

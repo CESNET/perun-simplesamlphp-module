@@ -4,6 +4,8 @@
  * Class sspmod_perun_AdapterRpc
  *
  * Perun adapter which uses Perun RPC interface
+ * @author Michal Prochazka <michalp@ics.muni.cz>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 {
@@ -152,9 +154,47 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	}
 
 
-	public  function isUserOnFacility($spEntityId, $userId)
+	public  function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
-		throw new BadMethodCallException("NotImplementedException");
+		$facilities = sspmod_perun_RpcConnector::get('facilitiesManager', 'getFacilitiesByAttribute', array(
+			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+			'attributeValue' => $spEntityId,
+		));
+
+		$allowedResources = array();
+		foreach ($facilities as $facility) {
+			$resources = sspmod_perun_RpcConnector::get('facilitiesManager', 'getAssignedResources', array(
+				'facility' => $facility['id'],
+			));
+			$allowedResources = array_merge($allowedResources, $resources);
+		}
+
+		$members = sspmod_perun_RpcConnector::get('membersManager', 'getMembersByUser', array(
+			'user' => $userId,
+		));
+
+		$validMembers = array();
+		foreach ($members as $member) {
+			if ($member['status'] === 'VALID') {
+				array_push($validMembers, $member);
+			}
+		}
+
+		$allGroups = array();
+		foreach ($allowedResources as $resource) {
+			foreach ($validMembers as $member) {
+				$groups = sspmod_perun_RpcConnector::get('resourcesManager', 'getAssignedGroups', array(
+					'resource' => $resource['id'],
+					'member' => $member['id'],
+				));
+				foreach ($groups as $group) {
+					array_push($allGroups, new sspmod_perun_model_Group($group['id'], $group['name'], $group['description']));
+				}
+			}
+		}
+
+		$allGroups = $this->removeDuplicateEntities($allGroups);
+		return $allGroups;
 	}
 
 }
