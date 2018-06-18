@@ -74,7 +74,7 @@ abstract class sspmod_perun_Adapter
 	 * @param int $userId
 	 * @return sspmod_perun_model_Group[] from vo which are assigned to all facilities with spEntityId for this userId
 	 */
-	public abstract function isUserOnFacility($spEntityId, $userId);
+	public abstract function getUsersGroupsOnFacility($spEntityId, $userId);
 
 	/**
 	 * @param sspmod_perun_model_HasId[] $entities

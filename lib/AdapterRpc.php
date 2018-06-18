@@ -154,7 +154,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	}
 
 
-	public  function isUserOnFacility($spEntityId, $userId)
+	public  function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
 		$facilities = sspmod_perun_RpcConnector::get('facilitiesManager', 'getFacilitiesByAttribute', array(
 			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',

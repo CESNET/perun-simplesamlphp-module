@@ -140,7 +140,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 	}
 
 
-	public function isUserOnFacility($spEntityId, $userId)
+	public function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
 		$resources = sspmod_perun_LdapConnector::searchForEntities($this->ldapBase,
 			"(&(objectClass=perunResource)(entityID=$spEntityId))",
