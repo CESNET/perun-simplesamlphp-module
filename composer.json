@@ -4,6 +4,6 @@
     "type": "simplesamlphp-module",
     "require": {
         "simplesamlphp/composer-module-installer": "~1.0",
-        "cesnet/simplesamlphp-module-perunauthorize": "dev-master"
+        "cesnet/simplesamlphp-module-perunauthorize": "~1.0"
     }
 }
