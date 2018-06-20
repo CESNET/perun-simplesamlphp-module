@@ -8,6 +8,7 @@
  *
  * Author: Michal Prochazka <michalp@ics.muni.cz>
  * Author: Ondrej Velisek <ondrejvelisek@gmail.com>
+ * Author: Pavel Vyskocil <vyskocilpavel@muni.cz>
  *
  * TODO: Use standardized format (JSON)
  */
@@ -15,13 +16,13 @@
 $metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
 $idpsMetadata = $metadataHandler->getList('saml20-idp-remote');
 
-$service = new sspmod_perun_IdpListsServiceCsv();
+$service = sspmod_perun_IdpListsService::getInstance();
 
 header('Content-Type: text/plain');
 
 $delimiter = '^';
 
-$idps = $service->getLatestWhitelist();
+$idps = $service->getWhitelist();
 
 foreach($idps as $idp) {
 	$entityID = $idp['entityid'];
