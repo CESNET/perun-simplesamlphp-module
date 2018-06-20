@@ -8,43 +8,42 @@ $state = SimpleSAML_Auth_State::loadState($id, 'perun:forceAup');
  */
 $user = $state['perun']['user'];
 
-
-
-$forceAup = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
-	'user' => $user->getId(),
-	'attributeName' => $state['perunForceAttr'],
-));
-
-$aup = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
-	'user' => $user->getId(),
-	'attributeName' => $state['perunAupAttr'],
-));
-
-
-
-if (empty($aup['value'])) {
-	$aup['value'] = array($forceAup['value']);
-} else {
-	array_push($aup['value'], $forceAup['value']);
+try {
+	$userAupsAttr = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
+		'user' => $user->getId(),
+		'attributeName' => $state['perunUserAupAttr'],
+	));
+	$userAups = $userAupsAttr['value'];
+} catch (Exception $exception) {
+	SimpleSAML\Logger::error('Perun.ForceAup - Error during get userAupsAttr from Perun');
 }
 
-$forceAup['value'] = null;
+foreach ($state['newAups'] as $key=>$newAup) {
 
+    if (!($userAups === null) && array_key_exists($key, $userAups)) {
+        $userAupList = json_decode($userAups[$key]);
+    } else {
+        $userAupList = array();
+    }
 
+    $newAup->signed_on = date('Y-m-d');
+    array_push($userAupList, $newAup);
+    $userAups[$key] = json_encode($userAupList);
+}
 
-sspmod_perun_RpcConnector::post('attributesManager', 'setAttribute', array(
-	'user' => $user->getId(),
-	'attribute' => $aup,
-));
+$userAupsAttr['value'] = $userAups;
 
-sspmod_perun_RpcConnector::post('attributesManager', 'setAttribute', array(
-	'user' => $user->getId(),
-	'attribute' => $forceAup,
-));
+try {
+	sspmod_perun_RpcConnector::post('attributesManager', 'setAttribute', array(
+		'user' => $user->getId(),
+		'attribute' => $userAupsAttr,
+	));
 
+	SimpleSAML\Logger::info('Perun.ForceAup - User accepted usage policy');
 
-
-SimpleSAML\Logger::info('Perun.ForceAup - User accepted usage policy');
+} catch (Exception $exception) {
+	SimpleSAML\Logger::error('Perun.ForceAup - Error during post data to Perun');
+}
 
 SimpleSAML_Auth_ProcessingChain::resumeProcessing($state);
 

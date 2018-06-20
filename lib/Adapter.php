@@ -70,11 +70,39 @@ abstract class sspmod_perun_Adapter
 	public abstract function getUserAttributes($user, $attrNames);
 
 	/**
+	 * @param string $attrName
+	 * @return array of all entityless attributes with attrName (for all namespaces of same attribute).
+	 */
+	public abstract function getEntitylessAttribute($attrName);
+
+	/**
+	 * @param sspmod_perun_model_Vo $vo
+	 * @param array $attrNames
+	 * @return array associative of attributes. Keys are attribute names
+	 * and values are attr values (can be null, string, array, associative array)* @return
+	 */
+	public abstract function getVoAttributes($vo, $attrNames);
+
+	/**
+	 * @param sspmod_perun_model_Facility $facility
+	 * @param string $attrName
+	 * @return array with attribute value
+	 */
+	public abstract function getFacilityAttribute($facility, $attrName);
+
+	/**
+	 * @param string $spEntityId
+	 * @return sspmod_perun_model_Facility entities[]
+	 */
+	public abstract function getFacilitiesByEntityId($spEntityId);
+
+	/**
 	 * @param string $spEntityId entity id of the sp
 	 * @param int $userId
 	 * @return sspmod_perun_model_Group[] from vo which are assigned to all facilities with spEntityId for this userId
 	 */
 	public abstract function getUsersGroupsOnFacility($spEntityId, $userId);
+
 
 	/**
 	 * @param sspmod_perun_model_HasId[] $entities

@@ -153,6 +153,49 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		return $attributes;
 	}
 
+	public function getEntitylessAttribute($attrName)
+	{
+		$perunAttrs = sspmod_perun_RpcConnector::get('attributesManager', 'getEntitylessAttributes', array(
+			'attrName' => $attrName,
+		));
+
+		$attributes = array();
+		foreach ($perunAttrs as $perunAttr) {
+			$attributes[key($perunAttr['value'])] = $perunAttr['value'][key($perunAttr['value'])];
+		}
+
+		return $attributes;
+
+	}
+
+	public function getVoAttributes($vo, $attrNames)
+	{
+		$perunAttrs = sspmod_perun_RpcConnector::get('attributesManager', 'getAttributes', array(
+			'vo' => $vo->getId(),
+			'attrNames' => $attrNames,
+		));
+
+		$attributes = array();
+		foreach ($perunAttrs as $perunAttr) {
+
+			$perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
+
+			$attributes[$perunAttrName] = $perunAttr['value'];
+		}
+
+		return $attributes;
+	}
+
+	public function getFacilityAttribute($facility, $attrName)
+	{
+		$perunAttr = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
+			'facility' => $facility->getId(),
+			'attributeName' => $attrName,
+		));
+
+		return $perunAttr['value'];
+	}
+
 
 	public  function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
@@ -195,6 +238,19 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 		$allGroups = $this->removeDuplicateEntities($allGroups);
 		return $allGroups;
+	}
+
+	public function getFacilitiesByEntityId($spEntityId)
+	{
+		$perunAttrs = sspmod_perun_RpcConnector::get('facilitiesManager', 'getFacilitiesByAttribute', array(
+			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+			'attributeValue' => $spEntityId,
+		));
+		$facilities = array();
+		foreach ($perunAttrs as $perunAttr) {
+			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $spEntityId));
+		}
+		return $facilities;
 	}
 
 }

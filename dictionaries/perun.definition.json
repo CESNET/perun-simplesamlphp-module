@@ -20,11 +20,23 @@
 	"cs": "nebo"
   },
   "force-aup-tpl_aup": {
-	"en": "Acceptable Usage Policy",
-	"cs": "Podmíny užití"
+	"en": "Acceptable usage policy",
+	"cs": "Podmínky užití"
+  },
+  "force-aup-tpl_aup_organization": {
+    "en": "Acceptable usage policy for organization ",
+    "cs": "Podmínky užití služeb v organizaci "
+  },
+  "force-aup-tpl_aup_redirect": {
+    "en": "See the acceptable usage policy in version ",
+    "cs": "Podmínky užití ve verzi "
+  },
+  "force-aup-tpl_aup_accept": {
+    "en": "You must agree to the following acceptable usage policies: ",
+    "cs": "Musíte souhlasit s následujícími podmínkami užití: "
   },
   "force-aup-tpl_agree": {
-	"en": "I agree with the Acceptable Usage Policy",
+	"en": "I agree with the acceptable usage policy",
 	"cs": "Souhlasím s podmínkami užití"
   },
   "warning-test-sp-tpl_text": {
@@ -34,5 +46,13 @@
   "continue": {
 	"en": "Continue",
 	"cs": "Pokračovat"
+  },
+  "here": {
+    "en": "here.",
+    "cs": "zde."
+  },
+  "organization": {
+    "en": "Organization / Virtual Organization ",
+    "cs": "Organizace / Virtuální organizace "
   }
 }
