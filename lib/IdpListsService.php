@@ -14,46 +14,74 @@
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-interface sspmod_perun_IdpListsService
+abstract class sspmod_perun_IdpListsService
 {
+	const CONFIG_FILE_NAME = 'module_perun.php';
+	const PROPNAME_IDP_LIST_SERVICE_TYPE = 'idpListServiceType';
+
+	const CSV = 'csv';
+	const DB = 'db';
 
 	/**
-	 * @return array of all latest (by timestamp) whitelisted IdPs.
-	 * note that each IdP can be presented only once with the latest timestamp.
+	 * Function returns the instance of sspmod_perun_IdPListsService by configuration
+	 * Default is CSV
+	 * @return sspmod_perun_IdpListsServiceCsv|sspmod_perun_IdpListsServiceDB
 	 */
-	function getLatestWhitelist();
+	public static function getInstance() {
+		$configuration = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+		$idpListServiceType = $configuration->getString(self::PROPNAME_IDP_LIST_SERVICE_TYPE, self::CSV);
+		if ($idpListServiceType === self::CSV) {
+			return new sspmod_perun_IdpListsServiceCsv();
+		} else if ($idpListServiceType === self::DB) {
+			return new sspmod_perun_IdpListsServiceDB();
+		} else {
+			throw new SimpleSAML_Error_Exception('Unknown idpListService type. Hint: try ' . self::CSV . ' or ' . self::DB);
+		}
+	}
+
+	/**
+	 * Function returns all whitelisted IdPs as array
+	 * @return array of all whitelisted IdPs, every IdP is represents as array
+	 */
+	public abstract function getWhitelist();
+
+	/**
+	 * Function returns all greylisted IdPs as array
+	 * @return array of all greylisted IdPs, every IdP is represents as array
+	 */
+	public abstract function getGreylist();
+
+	/**
+	 * Function returns all whitelisted entityIds as array
+	 * @return array of all whitelisted entityIds
+	 */
+	public abstract function getWhitelistEntityIds();
+
+	/**
+	 * Function returns all greylisted entityIds as array
+	 * @return array of all greylisted entityIds
+	 */
+	public abstract function getGreylistEntityIds();
 
 	/**
 	 * @param string $entityID
 	 * @return bool true if whitelist contains given entityID, false otherwise.
 	 */
-	function isWhitelisted($entityID);
-
-
-	/**
-	 * @return array of all latest (by timestamp) greylisted IdPs.
-	 * note that each IdP can be presented only once with the latest timestamp.
-	 */
-	function getLatestGreylist();
+	public abstract function isWhitelisted($entityID);
 
 	/**
 	 * @param string $entityID
 	 * @return bool true if greylist contains given entityID, false otherwise.
 	 */
-	function isGreylisted($entityID);
+	public abstract function isGreylisted($entityID);
 
 
 	/**
-	 * Basically do the same as addIdpToWhitelist and removeIdpFromGreylist methods.
-	 * Note implementation should take care of transaction.
+	 * Function check if this entity is already whitelisted. If not, it will be added into
+	 * whitelist and if this entityId is greylisted, it will be removed from greylist.
 	 * @param string $entityID
 	 * @param null|string $reason
 	 */
-	function whitelistIdp($entityID, $reason = null);
+	public abstract function whitelistIdp($entityID, $reason = null);
 
-	/**
-	 * @param string $listName "whitelist" or "greylist"
-	 * @return array of entityIdPs
-	 */
-	function listToArray($listName);
 }

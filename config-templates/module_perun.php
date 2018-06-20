@@ -40,6 +40,12 @@ $config = array(
 	//'disco.disableWhitelisting' => true,
 
 	/**
+	 * specify which type of IdPListService will be used
+	 * Expected values: csv, db
+	 */
+	'idpListServiceType' => '',
+
+	/**
 	 * Specify prefix for filtering AuthnContextClassRef
 	 * All AuthnContextClassRef values starts with this prefix will be removed before the request will be send to IdP
 	 */

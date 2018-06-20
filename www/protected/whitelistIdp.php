@@ -8,6 +8,8 @@
  * https://login.example.org/proxy/module.php/perun/protected/whitelistIdp.php?entityId=hey&reason=Attribute%20check%20by%20user
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Michal Prochazka <michalp@ics.muni.cz>
+ * @author Michal Prochazka <vyskocipavel@muni.cz>
  */
 
 if (!isset($_REQUEST['entityId'])) {
@@ -26,7 +28,7 @@ if (!array_key_exists($entityid, $idpsMatadata)) {
 
 try {
 	//FIXME: Not thread safe!!!
-	$service = new sspmod_perun_IdpListsServiceCsv();
+	$service = sspmod_perun_IdpListsService::getInstance();
 
 	if ($service->isWhitelisted($entityid)) {
 		if (!$service->isGreylisted($entityid)) {
@@ -43,14 +45,10 @@ try {
 
 	$service->whitelistIdp($entityid, $reason);
 
-	$whitelist = $service->getLatestWhitelist();
-	$greylist = $service->getLatestGreylist();
-
 	header('Content-Type: application/json');
 	echo json_encode(array(
 		'result' => 'ADDED',
-		'whitelist' => $whitelist,
-		'greylist' => $greylist
+		'msg' => "IdP '$entityid' was added to whitelist."
 	));
 
 } catch (SimpleSAML_Error_Exception $e) {
