@@ -17,6 +17,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 {
 	const CONFIG_FILE_NAME = 'module_perun.php';
 	const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
+	const PROPNAME_PREFIX = "disco.removeAuthnContextClassRefPrefix";
 
 	private $originalsp;
 	private $whitelist;
@@ -26,18 +27,33 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
 	public function __construct(array $metadataSets, $instance)
 	{
-		parent::__construct($metadataSets, $instance);
-
-		parse_str(parse_url($this->returnURL)['query'], $query);
+		if (!array_key_exists('return', $_GET)) {
+			throw new Exception('Missing parameter: return');
+		} else {
+			$returnURL = \SimpleSAML\Utils\HTTP::checkURLAllowed($_GET['return']);
+		}
+		parse_str(parse_url($returnURL)['query'], $query);
 		$id = explode(":", $query['AuthID'])[0];
 		$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
+
+		if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
+			$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
+			$this->removeAuthContextClassRefWithPrefix($state);
+		}
+		SimpleSAML\Logger::debug(print_r($state['saml:RequestedAuthnContext'], true));
+
+		$id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
+
+		$e = explode("=", $returnURL)[0];
+		$newReturnURL = $e . "=" . urlencode($id);
+		$_GET['return'] = $newReturnURL;
+
+		parent::__construct($metadataSets, $instance);
+
 		$this->originalsp = $state['SPMetadata'];
 		$this->service = new sspmod_perun_IdpListsServiceCsv();
 		$this->whitelist = $this->service->listToArray("whitelist");
 		$this->greylist = $this->service->listToArray("greylist");
-		if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
-			$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
-		}
 	}
 
 
@@ -215,6 +231,29 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 			'returnIDParam=' . urlencode($returnIDParam);
 
 		return $url;
+	}
+
+	/**
+	 * This method remove all AuthnContextClassRef which start with prefix from configuration
+	 * @param $state
+	 */
+	public function removeAuthContextClassRefWithPrefix(&$state) {
+		$conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+		$prefix = $conf->getString(self::PROPNAME_PREFIX, null);
+
+		if (is_null($prefix)) {
+			return;
+		}
+		unset($state['saml:RequestedAuthnContext']['AuthnContextClassRef']);
+		$array = array();
+		foreach ($this->authnContextClassRef as $value) {
+			if (!(substr($value, 0, strlen($prefix)) === $prefix)) {
+				array_push($array, $value);
+			}
+		}
+		if (!empty($array)) {
+			$state['saml:RequestedAuthnContext']['AuthnContextClassRef'] = $array;
+		}
 	}
 
 }

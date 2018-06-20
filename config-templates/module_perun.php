@@ -39,4 +39,10 @@ $config = array(
 	 */
 	//'disco.disableWhitelisting' => true,
 
+	/**
+	 * Specify prefix for filtering AuthnContextClassRef
+	 * All AuthnContextClassRef values starts with this prefix will be removed before the request will be send to IdP
+	 */
+	'disco.removeAuthnContextClassRefPrefix' => 'urn:cesnet:proxyidp:',
+
 );
