@@ -7,7 +7,7 @@
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
+class sspmod_perun_IdpListsServiceCsv extends sspmod_perun_IdpListsService
 {
 	private $whitelistFile;
 	private $greylistFile;
@@ -22,117 +22,14 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 		$this->greylistFile = $dir.DIRECTORY_SEPARATOR.'idplists'.DIRECTORY_SEPARATOR.'greylist.csv';
 	}
 
-
-	function getLatestWhitelist()
-	{
-		if (!file_exists($this->whitelistFile)) {
-			return array();
-		}
-
-		$f = fopen($this->whitelistFile, 'r');
-		if (flock($f, LOCK_SH)) {
-
-			$latest = array();
-			while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
-				if (!isset($latest[$idp['entityid']])) {
-					$latest[$idp['entityid']] = $idp;
-				} else {
-					if ($idp['timestamp'] > $latest[$idp['entityid']]['timestamp']) {
-						$latest[$idp['entityid']] = $idp;
-					}
-				}
-			}
-
-			fflush($f);
-			flock($f, LOCK_UN);
-		} else {
-			throw new SimpleSAML_Error_Exception("IdpListsServiceCsv - unable to get file lock. Hint: Try to create folder config/idplists and add write rights.");
-		}
-		fclose($f);
-
-		return array_values($latest);
-	}
-
 	function isWhitelisted($entityID)
 	{
-		if (!file_exists($this->whitelistFile)) {
-			return false;
-		}
-
-		$result = false;
-		$f = fopen($this->whitelistFile, 'r');
-		if (flock($f, LOCK_SH)) {
-
-			while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
-				if ($idp['entityid'] === $entityID) {
-					$result = true;
-					break;
-				}
-			}
-
-			fflush($f);
-			flock($f, LOCK_UN);
-		} else {
-			throw new SimpleSAML_Error_Exception("IdpListsServiceCsv - unable to get file lock. Hint: Try to create folder config/idplists and add write rights.");
-		}
-		fclose($f);
-		return $result;
-	}
-
-	function getLatestGreylist()
-	{
-		if (!file_exists($this->greylistFile)) {
-			return array();
-		}
-
-		$f = fopen($this->greylistFile, 'r');
-		if (flock($f, LOCK_SH)) {
-
-			$latest = array();
-			while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
-				if (isset($latest[$idp['entityid']])) {
-					$latest[$idp['entityid']] = $idp;
-				} else {
-					if ($idp['timestamp'] > $latest[$idp['entityid']]['timestamp']) {
-						$latest[$idp['entityid']] = $idp;
-					}
-				}
-			}
-
-			fflush($f);
-			flock($f, LOCK_UN);
-		} else {
-			throw new SimpleSAML_Error_Exception("IdpListsServiceCsv - unable to get file lock. Hint: Try to create folder config/idplists and add write rights.");
-		}
-		fclose($f);
-
-		return array_values($latest);
+		return in_array($this->getWhitelistEntityIds(), $entityID);
 	}
 
 	function isGreylisted($entityID)
 	{
-		if (!file_exists($this->greylistFile)) {
-			return false;
-		}
-
-		$result = false;
-		$f = fopen($this->greylistFile, 'r');
-		if (flock($f, LOCK_SH)) {
-
-			while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
-				if ($idp['entityid'] === $entityID) {
-					$result = true;
-					break;
-				}
-			}
-
-			fflush($f);
-			flock($f, LOCK_UN);
-		} else {
-			throw new SimpleSAML_Error_Exception("IdpListsServiceCsv - unable to get file lock. Hint: Try to create folder config/idplists and add write rights.");
-		}
-		fclose($f);
-		return $result;
+		return in_array($this->getGreylistEntityIds(), $entityID);
 	}
 
 	function whitelistIdp($entityID, $reason = null)
@@ -175,7 +72,32 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 
 	}
 
-	function listToArray($listName){
+	function getWhitelist()
+	{
+		return $this->listToArray("whitelist", true);
+	}
+
+	function getGreylist()
+	{
+		return $this->listToArray("greyList", true);
+	}
+
+	function getWhitelistEntityIds()
+	{
+		return $this->listToArray("whitelist", false);
+	}
+
+	function getGreylistEntityIds()
+	{
+		return $this->listToArray("greyList", false);
+	}
+
+	/**
+	 * @param string $listName "whitelist" or "greylist".
+	 * @param boolean $all
+	 * @return array of IdPS if $all is true or arrayOf entityIds
+	 */
+	function listToArray($listName, $all){
 		if ($listName === "whitelist"){
 			$list = $this->whitelistFile;
 		} else{
@@ -192,7 +114,14 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 		if (flock($f, LOCK_SH)) {
 
 			while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
-				array_push($resultList, $idp['entityid']);
+				if ($all) {
+					if (!in_array($idp, $resultList)) {
+						array_push($resultList, $idp);
+					}
+				} else {
+					if (!in_array($idp['entityid'], $resultList))
+					array_push($resultList, $idp['entityid']);
+				}
 			}
 
 			fflush($f);
@@ -201,7 +130,6 @@ class sspmod_perun_IdpListsServiceCsv implements sspmod_perun_IdpListsService
 			throw new SimpleSAML_Error_Exception("IdpListsServiceCsv - unable to get file lock. Hint: Try to create folder config/idplists and add write rights.");
 		}
 		fclose($f);
-
 		return $resultList;
 	}
 

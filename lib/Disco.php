@@ -40,7 +40,6 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 			$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
 			$this->removeAuthContextClassRefWithPrefix($state);
 		}
-		SimpleSAML\Logger::debug(print_r($state['saml:RequestedAuthnContext'], true));
 
 		$id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
 
@@ -51,9 +50,9 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		parent::__construct($metadataSets, $instance);
 
 		$this->originalsp = $state['SPMetadata'];
-		$this->service = new sspmod_perun_IdpListsServiceCsv();
-		$this->whitelist = $this->service->listToArray("whitelist");
-		$this->greylist = $this->service->listToArray("greylist");
+		$this->service = sspmod_perun_IdpListsService::getInstance();
+		$this->whitelist = $this->service->getWhitelistEntityIds();
+		$this->greylist = $this->service->getGreylistEntityIds();
 	}
 
 
