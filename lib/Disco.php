@@ -68,7 +68,11 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
 		// no choice possible. Show discovery service page
 		$idpList = $this->getIdPList();
-		$idpList = $this->filterList($idpList);
+		if (isset($this->originalsp['disco.addInstitutionApp']) && $this->originalsp['disco.addInstitutionApp'] === true ) {
+			$idpList = $this->filterAddInstitutionList($idpList);
+		} else {
+			$idpList = $this->filterList($idpList);
+		}
 		$preferredIdP = $this->getRecommendedIdP();
 		$preferredIdP = array_key_exists($preferredIdP, $idpList) ? $preferredIdP : null;
 
@@ -119,6 +123,29 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		}
 
 		return $list;
+	}
+
+	/**
+	 * Filter a list of entities for addInstitution app according to if entityID is whitelisted or not
+	 *
+	 * @param array $list A map of entities to filter.
+	 * @return array The list in $list after filtering entities.
+	 * @throws SimpleSAML_Error_Exception if all IdPs are filtered out and no one left.
+	 */
+	protected function filterAddInstitutionList($list)
+	{
+		foreach ($list as $entityId => $idp) {
+			if (in_array($entityId, $this->whitelist)){
+				unset($list[$entityId]);
+			}
+		}
+
+		if (empty($list)) {
+			throw new SimpleSAML_Error_Exception('All IdPs has been filtered out. And no one left.');
+		}
+
+		return $list;
+
 	}
 
 	/**
