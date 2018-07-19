@@ -71,7 +71,8 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 		foreach ($groups as $group) {
 			if (isset($request["SPMetadata"]["groupNameAARC"]) || $this->groupNameAARC) {
 				# https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
-				# Example: urn:geant:elixir-europe.org:group:elixir:<groupName>:<subGroupName>#perun.elixir-czech.cz
+				# Group name is URL encoded by RFC 3986 (http://www.ietf.org/rfc/rfc3986.txt)
+				# Example: urn:geant:elixir-europe.org:group:elixir<groupName>%3A<subGroupName>#perun.elixir-czech.cz
 				if (empty($this->groupNameAuthority) || empty($this->groupNamePrefix)) {
 					throw new SimpleSAML_Error_Exception("perun:PerunGroups: missing mandatory configuration options 'groupNameAuthority' or 'groupNamePrefix'.");
 				}
@@ -92,14 +93,14 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 	 */
 	protected function mapGroupName($request, $groupName) {
 		if (isset($request["SPMetadata"]["groupMapping"]) && isset($request["SPMetadata"]["groupMapping"][$groupName])) {
-			SimpleSAML_Logger::debug("Mapping $groupName to " . $request["SPMetadata"]["groupMapping"][$groupName] . " for SP " . $request["SPMetadata"]["entityid"]);
+			SimpleSAML\Logger::debug("Mapping $groupName to " . $request["SPMetadata"]["groupMapping"][$groupName] . " for SP " . $request["SPMetadata"]["entityid"]);
 			return $request["SPMetadata"]["groupMapping"][$groupName];
 		} else if (isset($request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR])) {
-			SimpleSAML_Logger::debug("GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] . " to " . $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR]);
+			SimpleSAML\Logger::debug("GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] . " to " . $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR]);
 			return $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR] . $groupName;
 		} else {
 			# No mapping defined
-			SimpleSAML_Logger::debug("No mapping found for group $groupName for SP " . $request["SPMetadata"]["entityid"]);
+			SimpleSAML\Logger::debug("No mapping found for group $groupName for SP " . $request["SPMetadata"]["entityid"]);
 			return $groupName;
 		}
 	}
