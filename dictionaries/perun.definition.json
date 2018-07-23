@@ -54,5 +54,13 @@
   "organization": {
     "en": "Organization / Virtual Organization ",
     "cs": "Organizace / Virtuální organizace "
+  },
+  "unsupported_redirection": {
+    "en": "Unsupported redirection",
+    "cs": "Nepodporované přesměrování"
+  },
+  "go_back": {
+    "en": "Go back to ",
+    "cs": "Vraťte se zpět na "
   }
 }
