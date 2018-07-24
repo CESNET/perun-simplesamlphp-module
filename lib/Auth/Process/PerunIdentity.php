@@ -126,13 +126,13 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$user = $this->adapter->getPerunUser($idpEntityId, $uids);
 
 		if ($user === null) {
-			SimpleSAML_Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
+			SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
 
 			$vo = $this->adapter->getVoByShortName($this->voShortName);
 
 			$spGroups = $this->adapter->getSpGroups($spEntityId, $vo);
 
-			SimpleSAML_Logger::debug("SP GROUPs - ".var_export($spGroups, true));
+			SimpleSAML\Logger::debug("SP GROUPs - ".var_export($spGroups, true));
 
 			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
 		}

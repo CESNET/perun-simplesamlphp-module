@@ -59,7 +59,7 @@ class databaseConnector
 	{
 		$conn = mysqli_init();
 		if ($this->encryption === true) {
-			SimpleSAML_Logger::debug("Getting connection with encryption.");
+			SimpleSAML\Logger::debug("Getting connection with encryption.");
 			mysqli_ssl_set($conn, $this->sslKey, $this->sslCert, $this->sslCA, $this->sslCAPath, null);
 			if ($this->port === null) {
 				mysqli_real_connect($conn, $this->serverName, $this->username, $this->password, $this->databaseName);
