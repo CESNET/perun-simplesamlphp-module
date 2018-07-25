@@ -62,9 +62,9 @@ if ($toAddress !== 'N/A') {
 	$email->send();
 }
 
-echo '<h1>Unssuported redirection</h1>';
+echo '<h1>' . $this->t('{perun:perun:unsupported_redirection}') . '</h1>';
 
-echo "Go back to <a href='{$_POST['redirectUri']}'>{$_POST['redirectUri']}</a>";
+echo $this->t('{perun:perun:go_back}') . "<a href='{$_POST['redirectUri']}'>{$_POST['redirectUri']}</a>";
 
 // redirect the user back
 \SimpleSAML\Utils\HTTP::redirectTrustedURL($_POST['redirectUri'], array('mailSended' => true));
