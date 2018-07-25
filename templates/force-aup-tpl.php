@@ -15,7 +15,7 @@ $this->includeAtTemplateBase('includes/header.php');
 ?>
 
     <h3><?php echo $this->t('{perun:perun:force-aup-tpl_aup_accept}'); ?></h3>
-    <form method="post" action="<?php echo SimpleSAML_Module::getModuleURL('perun/force_aup_continue.php'); ?>" >
+    <form method="post" action="<?php echo SimpleSAML\Module::getModuleURL('perun/force_aup_continue.php'); ?>" >
 
         <?php
         foreach ($newAups as $key => $aup) {
