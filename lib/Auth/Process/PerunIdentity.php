@@ -29,6 +29,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	const CALLBACK_PARAM_NAME = 'callbackParamName';
 	const INTERFACE_PROPNAME = 'interface';
 	const SOURCE_IDP_ENTITY_ID_ATTR = 'sourceIdPEntityIDAttr';
+	const CHECK_GROUP_MEMBERSHIP_ATTR = 'checkGroupMembershipAttr';
 	const FORCE_REGISTRATION_TO_GROUPS = 'forceRegistrationToGroups';
 
 	private $uidsAttr;
@@ -37,12 +38,20 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	private $callbackParamName;
 	private $interface;
 	private $sourceIdPEntityIDAttr;
+	private $checkGroupMembershipAttr;
 	private $forceRegistrationToGroups;
+
+	private $checkGroupMembership;
 
 	/**
 	 * @var sspmod_perun_Adapter
 	 */
 	private $adapter;
+
+	/**
+	 * @var sspmod_perun_AdapterRpc
+	 */
+	private $rpcAdapter;
 
 
 	public function __construct($config, $reserved)
@@ -57,6 +66,9 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		}
 		if (!isset($config[self::VO_SHORTNAME])) {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::VO_SHORTNAME."'.");
+		}
+		if (!isset($config[self::CHECK_GROUP_MEMBERSHIP_ATTR])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::CHECK_GROUP_MEMBERSHIP_ATTR."'.");
 		}
 		if (!isset($config[self::CALLBACK_PARAM_NAME])) {
 			$config[self::CALLBACK_PARAM_NAME] = 'targetnew';
@@ -77,8 +89,10 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$this->callbackParamName = (string) $config[self::CALLBACK_PARAM_NAME];
 		$this->interface = (string) $config[self::INTERFACE_PROPNAME];
 		$this->sourceIdPEntityIDAttr = $config[self::SOURCE_IDP_ENTITY_ID_ATTR];
+		$this->checkGroupMembershipAttr = $config[self::CHECK_GROUP_MEMBERSHIP_ATTR];
 		$this->forceRegistrationToGroups = $config[self::FORCE_REGISTRATION_TO_GROUPS];
 		$this->adapter = sspmod_perun_Adapter::getInstance($this->interface);
+		$this->rpcAdapter = sspmod_perun_Adapter::getInstance(sspmod_perun_Adapter::RPC);
 	}
 
 
@@ -139,7 +153,14 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 
 		$groups = $this->adapter->getUsersGroupsOnFacility($spEntityId,$user->getId());
 
-		if (empty($groups)) {
+		try {
+			$facilities = $this->rpcAdapter->getFacilitiesByEntityId($spEntityId);
+			$this->checkGroupMembership = $this->rpcAdapter->getFacilityAttribute($facilities[0], $this->checkGroupMembershipAttr);
+		} catch (Exception $ex) {
+			SimpleSAML\Logger::warning("perun:PerunIdentity - Problem during get attribute " . $this->checkGroupMembershipAttr . " from Perun");
+		}
+
+		if ($this->checkGroupMembership === true && empty($groups)) {
 			SimpleSAML\Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');
                         $this->unauthorized($request);
 		}
