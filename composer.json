@@ -2,6 +2,7 @@
     "name": "cesnet/simplesamlphp-module-perun",
     "description": "Module which allows SSP to communicate with Perun IAM https://perun.cesnet.cz",
     "type": "simplesamlphp-module",
+    "version": "1.0.0-rc",
     "require": {
         "simplesamlphp/composer-module-installer": "~1.0",
         "cesnet/simplesamlphp-module-perunauthorize": "~1.0"
