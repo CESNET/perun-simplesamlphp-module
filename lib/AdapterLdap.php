@@ -100,7 +100,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 	}
 
 
-	public function getSpGroups($spEntityId, $vo)
+	public function getSpGroups($spEntityId)
 	{
 		$resources = $this->connector->searchForEntities($this->ldapBase,
 			"(&(objectClass=perunResource)(entityID=$spEntityId))",
@@ -109,15 +109,17 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 		$groups = array();
 		foreach ($resources as $resource) {
-			foreach ($resource['assignedGroupId'] as $groupId) {
-				$group = $this->connector->searchForEntity("perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
-					"(objectClass=perunGroup)",
-					array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
-				);
-				array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'], $group['perunUniqueGroupName'][0], $group['description'][0]));
+			if (isset($resource['assignedGroupId'])) {
+				foreach ($resource['assignedGroupId'] as $groupId) {
+					$group = $this->connector->searchForEntity("perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
+						"(objectClass=perunGroup)",
+						array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
+					);
+					array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'], $group['perunUniqueGroupName'][0], $group['description'][0]));
+				}
 			}
-		}
 
+		}
 		$groups = $this->removeDuplicateEntities($groups);
 
 		return $groups;

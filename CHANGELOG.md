@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - Connectors methods are not static for now.
 - Added constructors to Adapters, which allows specified config file for each connections.
 - New properties voId and uniqueName in Group model
+- Function getSpGroup require only one param($spEntityId)
  
  ## [v1.0.0]
 

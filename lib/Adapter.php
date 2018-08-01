@@ -71,11 +71,10 @@ abstract class sspmod_perun_Adapter
 
 	/**
 	 * @param string $spEntityId entity id of the sp
-	 * @param sspmod_perun_model_Vo $vo
 	 * @return sspmod_perun_model_Group[] from vo which are assigned to all facilities with spEntityId.
 	 * registering to those groups should should allow access to the service
 	 */
-	public abstract function getSpGroups($spEntityId, $vo);
+	public abstract function getSpGroups($spEntityId);
 
 	/**
 	 * @param sspmod_perun_model_User $user
