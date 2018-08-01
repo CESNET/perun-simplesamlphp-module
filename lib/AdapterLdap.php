@@ -151,6 +151,19 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		return new sspmod_perun_model_Vo($vo['perunVoId'][0], $vo['description'][0], $vo['o'][0]);
 	}
 
+	public function getVoById($id)
+	{
+		$vo = sspmod_perun_LdapConnector::searchForEntity($this->ldapBase,
+			"(&(objectClass=perunVo)(perunVoId=$id))",
+			array("o", "description")
+		);
+		if (is_null($vo)) {
+			throw new SimpleSAML_Error_Exception("Vo with id: $id does not exists in Perun LDAP.");
+		}
+
+		return new sspmod_perun_model_Vo($id, $vo['description'][0], $vo['o'][0]);
+	}
+
 
 	public function getUserAttributes($user, $attrNames)
 	{

@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
  - Added page with configurable table of SPs on Proxy
  - Added new model Member
  - Added new model Resource
+ - New methods for getting data from Perun LDAP and Perun RPC
  
 [Changed]
 - Connectors methods are not static for now.

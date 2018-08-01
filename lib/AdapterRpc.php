@@ -176,6 +176,14 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		return new sspmod_perun_model_Vo($vo['id'], $vo['name'], $vo['shortName']);
 	}
 
+	public function getVoById($id)
+	{
+		$vo = $this->connector->get('vosManager', 'getVoById', array(
+			'id' => $id,
+		));
+
+		return new sspmod_perun_model_Vo($vo['id'], $vo['name'], $vo['shortName']);
+	}
 
 	public function getUserAttributes($user, $attrNames)
 	{
@@ -298,6 +306,40 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId));
 		}
 		return $facilities;
+	}
+
+	/**
+	 * Returns member by User and Vo
+	 * @param sspmod_perun_model_User $user
+	 * @param sspmod_perun_model_Vo $vo
+	 * @return sspmod_perun_model_Member
+	 */
+	public function getMemberByUser($user, $vo) {
+		$member = sspmod_perun_RpcConnector::get('membersManager', 'getMemberByUser', array(
+			'user' => $user->getId(),
+			'vo' => $vo->getId(),
+		));
+		if (is_null($member)) {
+			throw new SimpleSAML_Error_Exception("Member for User with name " . $user->getName() . " and Vo with shortName " .
+			$vo->getShortName() . "does not exist in Perun!");
+		}
+		return new sspmod_perun_model_Member($member['id'], $member['voId'], $member['status']);
+	}
+
+	/**
+	 * Returns true if group has registration form, false otherwise
+	 * @param sspmod_perun_model_Group $group
+	 * @return bool
+	 */
+	public function hasRegistrationForm($group) {
+		try {
+			sspmod_perun_RpcConnector::get( 'registrarManager', 'getApplicationForm', array(
+				'group' => $group->getId(),
+			));
+			return true;
+		} catch (Exception $exception) {
+			return false;
+		}
 	}
 
 	public function searchFacilitiesByAttributeValue($attribute)

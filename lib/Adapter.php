@@ -56,6 +56,13 @@ abstract class sspmod_perun_Adapter
 	public abstract function getVoByShortName($voShortName);
 
 	/**
+	 * @param integer $id
+	 * @return sspmod_perun_model_Vo
+	 * @throws SimpleSAML_Error_Exception if does not exists
+	 */
+	public abstract function getVoById($id);
+
+	/**
 	 * @param sspmod_perun_model_User $user perun user
 	 * @param sspmod_perun_model_Vo $vo vo we are working with.
 	 * @return sspmod_perun_model_Group[] groups from vo which member is. Including VO members group.
