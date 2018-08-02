@@ -4,10 +4,9 @@
  * Class sspmod_perun_Auth_Process_PerunIdentity
  *
  * This module connects to Perun and search for user by userExtSourceLogin. If the user does not exists in Perun
- * or he is not in group assigned to service provider it redirects him to configurable url (registerUrl property).
- * It adds callback query parameter (name of parameter is configurable by callbackParamName property)
- * where user can be redirected after successfull registration of his identity and try process again.
- * Also it adds 'vo' and 'group' query parameter to let registrar know where user should be registered.
+ * or he is not in group assigned to service provider it redirects him to registration configurable by Perun.
+ * It adds callback query parameter where user can be redirected after successfull registration of his identity
+ * and try process again. Also it adds 'vo' and 'group' query parameter to let registrar know where user should be registered.
  *
  * If user exists it fills 'perun' to request structure containing 'userId' and 'groups' fields.
  * User is not allowed to pass this filter until he registers and is in proper group and 'perun' structure is filled properly.
@@ -25,24 +24,52 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 {
 	const UIDS_ATTR = 'uidsAttr';
 	const VO_SHORTNAME = 'voShortName';
+	const REGISTER_URL_BASE = 'registerUrlBase';
 	const REGISTER_URL = 'registerUrl';
-	const CALLBACK_PARAM_NAME = 'callbackParamName';
+	const TARGET_NEW = 'targetnew';
+	const TARGET_EXISTING = 'targetexisting';
+	const TARGET_EXTENDED = 'targetextended';
 	const INTERFACE_PROPNAME = 'interface';
 	const SOURCE_IDP_ENTITY_ID_ATTR = 'sourceIdPEntityIDAttr';
 	const FORCE_REGISTRATION_TO_GROUPS = 'forceRegistrationToGroups';
+	const CHECK_GROUP_MEMBERSHIP = 'checkGroupMembership';
+	const ALLOW_REGISTRATION_TO_GROUPS = 'allowRegistrationToGroups';
+	const PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR = 'facilityCheckGroupMembershipAttr';
+	const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'facilityVoShortNamesAttr';
+	const PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR= 'facilityDynamicRegistrationAttr';
+	const PERUN_FACILITY_REGISTER_URL_ATTR = 'facilityRegisterUrlAttr';
+	const PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS = 'facilityAllowRegistrationToGroups';
+
 
 	private $uidsAttr;
-	private $registerUrl;
+	private $registerUrlBase;
+	private $registerUrl = null;
+	private $defaultRegisterUrl;
 	private $voShortName;
-	private $callbackParamName;
+	private $facilityVoShortNames = array();
+	private $spEntityId;
 	private $interface;
+	private $checkGroupMembership = false;
+	private $forceRegistrationToGroups = false;
+	private $allowRegistrationToGroups;
+	private $dynamicRegistration;
 	private $sourceIdPEntityIDAttr;
-	private $forceRegistrationToGroups;
+	private $facilityCheckGroupMembershipAttr;
+	private $facilityDynamicRegistrationAttr;
+	private $facilityVoShortNamesAttr;
+	private $facilityRegisterUrlAttr;
+	private $facilityAllowRegistrationToGroupsAttr;
 
 	/**
 	 * @var sspmod_perun_Adapter
 	 */
 	private $adapter;
+
+
+	/**
+	 * @var sspmod_perun_AdapterRpc
+	 */
+	private $rpcAdapter;
 
 
 	public function __construct($config, $reserved)
@@ -52,14 +79,29 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		if (!isset($config[self::UIDS_ATTR])) {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::UIDS_ATTR."'.");
 		}
+		if (!isset($config[self::REGISTER_URL_BASE])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::REGISTER_URL_BASE."'.");
+		}
 		if (!isset($config[self::REGISTER_URL])) {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::REGISTER_URL."'.");
 		}
 		if (!isset($config[self::VO_SHORTNAME])) {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::VO_SHORTNAME."'.");
 		}
-		if (!isset($config[self::CALLBACK_PARAM_NAME])) {
-			$config[self::CALLBACK_PARAM_NAME] = 'targetnew';
+		if (!isset($config[self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR."'.");
+		}
+		if (!isset($config[self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR])) {
+		throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR."'.");
+		}
+		if (!isset($config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR."'.");
+		}
+		if (!isset($config[self::PERUN_FACILITY_REGISTER_URL_ATTR])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::PERUN_FACILITY_REGISTER_URL_ATTR."'.");
+		}
+		if (!isset($config[self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS])) {
+			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: missing mandatory config option '".self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS."'.");
 		}
 		if (!isset($config[self::INTERFACE_PROPNAME])) {
 			$config[self::INTERFACE_PROPNAME] = sspmod_perun_Adapter::RPC;
@@ -72,13 +114,19 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
                 }
 
 		$this->uidsAttr = $config[self::UIDS_ATTR];
-		$this->registerUrl = (string) $config[self::REGISTER_URL];
-		$this->voShortName = (string) $config[self::VO_SHORTNAME];
-		$this->callbackParamName = (string) $config[self::CALLBACK_PARAM_NAME];
+		$this->registerUrlBase = (string) $config[self::REGISTER_URL_BASE];
+		$this->defaultRegisterUrl = (string) $config[self::REGISTER_URL];
+		$this->voShortName =  $config[self::VO_SHORTNAME];
 		$this->interface = (string) $config[self::INTERFACE_PROPNAME];
 		$this->sourceIdPEntityIDAttr = $config[self::SOURCE_IDP_ENTITY_ID_ATTR];
 		$this->forceRegistrationToGroups = $config[self::FORCE_REGISTRATION_TO_GROUPS];
+		$this->facilityCheckGroupMembershipAttr = (string) $config[self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR];
+		$this->facilityDynamicRegistrationAttr = (string) $config[self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR];
+		$this->facilityVoShortNamesAttr = (string) $config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
+		$this->facilityRegisterUrlAttr = (string) $config[self::PERUN_FACILITY_REGISTER_URL_ATTR];
+		$this->facilityAllowRegistrationToGroupsAttr = (string) $config[self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS];
 		$this->adapter = sspmod_perun_Adapter::getInstance($this->interface);
+		$this->rpcAdapter = new sspmod_perun_AdapterRpc();
 	}
 
 
@@ -107,7 +155,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		}
 
 		if (isset($request['SPMetadata']['entityid'])) {
-			$spEntityId = $request['SPMetadata']['entityid'];
+			$this->spEntityId = $request['SPMetadata']['entityid'];
 		} else {
 			throw new SimpleSAML_Error_Exception("perun:PerunIdentity: Cannot find entityID of remote SP. " .
 				"hint: Do you have this filter in IdP context?");
@@ -117,31 +165,29 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		if (isset($request['SPMetadata'][self::REGISTER_URL])) {
 			$this->registerUrl = $request['SPMetadata'][self::REGISTER_URL];
 		}
-		
-		# SP can have its own associated voShortName
-		if (isset($request['SPMetadata'][self::VO_SHORTNAME])) {
-			$this->voShortName = $request['SPMetadata'][self::VO_SHORTNAME];
-		}
+
+		$this->getSPAttributes($this->spEntityId);
 
 		$user = $this->adapter->getPerunUser($idpEntityId, $uids);
 
-		if ($user === null) {
-			SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
+		$this->checkMemberStateDefaultVo($request, $user, $uids);
 
-			$vo = $this->adapter->getVoByShortName($this->voShortName);
+		$groups = $this->adapter->getUsersGroupsOnFacility($this->spEntityId,$user->getId());
 
-			$spGroups = $this->adapter->getSpGroups($spEntityId, $vo);
+		if ($this->checkGroupMembership && (is_null($groups) || empty($groups))) {
+			if ($this->allowRegistrationToGroups) {
+				$vosForRegistration = $this->getVosForRegistration($user);
 
-			SimpleSAML\Logger::debug("SP GROUPs - ".var_export($spGroups, true));
+				if (empty($vosForRegistration)) {
+					SimpleSAML\Logger::warning('Perun user with name: '. $user->getName() .' is not valid member of any assigned VO for SP with entityId: (' . $this->spEntityId . ') and there are no VO for registration.');
+					$this->unauthorized($request);
+				}
+				$this->register($request, $vosForRegistration);
 
-			$this->register($request, $this->registerUrl, $this->callbackParamName, $vo, $spGroups, $this->interface);
-		}
-
-		$groups = $this->adapter->getUsersGroupsOnFacility($spEntityId,$user->getId());
-
-		if (empty($groups)) {
-			SimpleSAML\Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $spEntityId . ')');
-                        $this->unauthorized($request);
+			} else {
+				SimpleSAML\Logger::warning('Perun user with identity/ies: '. implode(',', $uids) .' is not member of any assigned group for resource (' . $this->spEntityId . ') and registration to groups is disabled.');
+				$this->unauthorized($request);
+			}
 		}
 
 		SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids) .' has been found and SP has sufficient rights to get info about him. '.
@@ -156,89 +202,100 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 
 	}
 
-
 	/**
-	 * Redirects user to register (or consolidate unknown identity) on external page (e.g. registrar).
-	 * If has more options to which group he can register offers him a list before redirection.
-	 *
-	 * @param string $request
-	 * @param string $registerUrl url to external page where user can register
-	 * @param string $callbackParamName name of query parameter where would be stored url where external page can send user back to try authenticates again
-	 * @param sspmod_perun_model_Vo $vo
-	 * @param sspmod_perun_model_Group[] $groups
-	 * @param string $interface which interface should be used for connecting to Perun
+	 * Method for register user to Perun
+	 * @param $request
+	 * @param $vosForRegistration
+	 * @param string $registerUrL
+	 * @param bool $dynamicRegistration
 	 */
-	protected function register($request, $registerUrl, $callbackParamName, $vo, $groups, $interface) {
+	public function register($request, $vosForRegistration, $registerUrL = null, $dynamicRegistration = null) {
+		if (is_null($registerUrL)) {
+			$registerUrL = $this->registerUrl;
+		}
+
+		if (is_null($dynamicRegistration)) {
+			$dynamicRegistration = $this->dynamicRegistration;
+		}
 
 		$request['config'] = array(
 			self::UIDS_ATTR => $this->uidsAttr,
-			self::VO_SHORTNAME => $this->voShortName,
-			self::REGISTER_URL => $this->registerUrl,
-			self::CALLBACK_PARAM_NAME => $this->callbackParamName,
+			self::REGISTER_URL => $registerUrL,
+			self::REGISTER_URL_BASE => $this->registerUrlBase,
 			self::INTERFACE_PROPNAME => $this->interface,
 			self::SOURCE_IDP_ENTITY_ID_ATTR => $this->sourceIdPEntityIDAttr,
+			self::VO_SHORTNAME => $this->voShortName,
+			self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS => $this->facilityAllowRegistrationToGroupsAttr,
+			self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR => $this->facilityCheckGroupMembershipAttr,
+			self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR => $this->facilityDynamicRegistrationAttr,
+			self::PERUN_FACILITY_REGISTER_URL_ATTR => $this->facilityRegisterUrlAttr,
+			self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR => $this->facilityVoShortNamesAttr,
 		);
 
 		$stateId  = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
 		$callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
-		if ($this->containsMembersGroup($groups) || $this->forceRegistrationToGroups === false) {
-			$this->registerDirectly($registerUrl, $callbackParamName, $callback, $vo);
-		}
-		if (sizeof($groups) === 1) {
-			$this->registerDirectly($registerUrl, $callbackParamName, $callback, $vo, $groups[0]);
+		if ($dynamicRegistration) {
+			$this->registerChooseVoAndGroup($callback, $vosForRegistration, $request);
 		} else {
-			$this->registerChooseGroup($registerUrl, $callbackParamName, $callback, $vo, $groups, $interface);
+			$this->registerDirectly($request, $callback, $registerUrL);
 		}
-
 	}
 
 	/**
-	 * @param string $registerUrl
-	 * @param string $callbackParamName
+	 * Redirect user to registerUrL
+	 * @param $request
 	 * @param string $callback
-	 * @param sspmod_perun_model_Vo $vo
+	 * @param string $registerUrL
+	 * @param sspmod_perun_model_Vo|null $vo
 	 * @param sspmod_perun_model_Group|null $group
 	 */
-	protected function registerDirectly($registerUrl, $callbackParamName, $callback, $vo, $group = null) {
+	protected function registerDirectly($request, $callback, $registerUrL, $vo = null, $group = null) {
 
 		$params = array();
-		$params['vo'] = $vo->getShortName();
-		if (!is_null($group)) {
-			$params['group'] = $group->getName();
+		if (!is_null($vo)) {
+			$params['vo'] = $vo->getShortName();
+			if (!is_null($group)) {
+				$params['group'] = $group->getName();
+			}
 		}
-		$params[$callbackParamName] = $callback;
+		$params[self::TARGET_NEW] = $callback;
+		$params[self::TARGET_EXISTING] = $callback;
+		$params[self::TARGET_EXTENDED] = $callback;
 
-		\SimpleSAML\Utils\HTTP::redirectTrustedURL($registerUrl, $params);
+		$id  = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
+		$url = SimpleSAML\Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
+		\SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id, 'SPMetadata' => $_REQUEST['SPMetadata'], 'registerUrL' => $registerUrL, 'params' => $params));
 
 	}
 
 	/**
-	 * @param string $registerUrl
-	 * @param string $callbackParamName
+	 * Redirect user to page with selection Vo and Group for registration
 	 * @param string $callback
-	 * @param sspmod_perun_model_Vo $vo
-	 * @param sspmod_perun_model_Group[] $groups
-	 * @param string $interface
+	 * @param $vosForRegistration
+	 * @param $request
 	 */
-	protected function registerChooseGroup($registerUrl, $callbackParamName, $callback, $vo, $groups, $interface) {
+	protected function registerChooseVoAndGroup($callback, $vosForRegistration, $request) {
 
-		$chooseGroupUrl = SimpleSAML\Module::getModuleURL('perun/perun_identity_choose_group.php');
+		$vosId = array();
+		$chooseGroupUrl = SimpleSAML\Module::getModuleURL('perun/perun_identity_choose_vo_and_group.php');
 
-		$groupNames = array();
-		foreach ($groups as $group) {
-			array_push($groupNames, $group->getName());
+		$stateId = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
+
+		foreach ($vosForRegistration as $vo) {
+			array_push($vosId, $vo->getId());
 		}
 
 		\SimpleSAML\Utils\HTTP::redirectTrustedURL($chooseGroupUrl, array(
-			self::REGISTER_URL => $registerUrl,
-			self::CALLBACK_PARAM_NAME => $callbackParamName,
-			self::VO_SHORTNAME => $vo->getShortName(),
-			self::INTERFACE_PROPNAME => $interface,
-			'groupNames' => $groupNames,
+			self::REGISTER_URL_BASE => $this->registerUrlBase,
+			'spEntityId' => $this->spEntityId,
+			'vosIdForRegistration' => $vosId,
+			self::INTERFACE_PROPNAME => $this->interface,
 			'callbackUrl' => $callback,
-		));
-
+			'SPMetadata' => $request['SPMetadata'],
+			'stateId' => $stateId
+			)
+		);
 	}
 
 	/**
@@ -261,18 +318,18 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	}
 
 	/**
-         * When the process logic determines that the user is not
-         * authorized for this service, then forward the user to
-         * an 403 unauthorized page.
-         *
-         * Separated this code into its own method so that child
-         * classes can override it and change the action. Forward
-         * thinking in case a "chained" ACL is needed, more complex
-         * permission logic.
-         *
-         * @param array $request
-         */
-        protected function unauthorized(&$request) {
+     * When the process logic determines that the user is not
+     * authorized for this service, then forward the user to
+     * an 403 unauthorized page.
+     *
+     * Separated this code into its own method so that child
+     * classes can override it and change the action. Forward
+     * thinking in case a "chained" ACL is needed, more complex
+     * permission logic.
+     *
+     * @param array $request
+     */
+	public static function unauthorized($request) {
 		$id = SimpleSAML_Auth_State::saveState($request,
 			'perunauthorize:Perunauthorize');
 		$url = SimpleSAML\Module::getModuleURL(
@@ -289,5 +346,145 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
                     'administrationContact' => $request['SPMetadata']['administrationContact'],
 					'serviceName' => $request['SPMetadata']['name']['en']));
 		}
+	}
+
+	/**
+	 * This functions get attributes for facility
+	 * @param string $spEntityID
+	 */
+	protected function getSPAttributes($spEntityID) {
+		try {
+        	$facilities = $this->rpcAdapter->getFacilitiesByEntityId($spEntityID);
+			if (empty($facilities)) {
+				SimpleSAML\Logger::warning("perun:PerunIdentity: No facility with entityID '" . $spEntityID . "' found.");
+				return;
+			}
+
+	        $checkGroupMembership = $this->rpcAdapter->getFacilityAttribute($facilities[0], $this->facilityCheckGroupMembershipAttr);
+			if (!is_null($checkGroupMembership)) {
+				$this->checkGroupMembership = $checkGroupMembership;
+			}
+
+			$facilityVoShortNames = $this->rpcAdapter->getFacilityAttribute($facilities[0], $this->facilityVoShortNamesAttr);
+	        if (!empty($facilityVoShortNames)) {
+		        $this->facilityVoShortNames = $facilityVoShortNames;
+	        }
+
+	        $dynamicRegistration = $this->rpcAdapter->getFacilityAttribute($facilities[0], $this->facilityDynamicRegistrationAttr);
+	        if (!is_null($dynamicRegistration)) {
+		        $this->dynamicRegistration = $dynamicRegistration;
+	        }
+
+	        $this->registerUrl = $this->rpcAdapter->getFacilityAttribute($facilities[0], $this->facilityRegisterUrlAttr);
+	        if (is_null($this->registerUrl)) {
+	        	$this->registerUrl = $this->defaultRegisterUrl;
+	        }
+
+	        $allowRegistartionToGroups = $this->rpcAdapter->getFacilityAttribute($facilities[0], $this->facilityAllowRegistrationToGroupsAttr);
+	        if (!is_null($allowRegistartionToGroups)) {
+		        $this->allowRegistrationToGroups = $allowRegistartionToGroups;
+	        }
+        } catch (Exception $ex) {
+        	SimpleSAML\Logger::warning("perun:PerunIdentity: " . $ex);
+		}
+	}
+
+
+	/**
+	 * @param $request
+	 * @param sspmod_perun_model_User $user
+	 * @param $uids
+	 */
+	protected function checkMemberStateDefaultVo($request, $user, $uids) {
+		$member = null;
+		$vo = null;
+		try {
+			$vo = $this->adapter->getVoByShortName($this->voShortName);
+			if (!is_null($user)) {
+				$member = $this->rpcAdapter->getMemberByUser($user, $vo);
+			}
+		} catch (Exception $ex) {
+			SimpleSAML\Logger::warning("perun:PerunIdentity: " . $ex);
+		}
+
+		if (is_null($vo)) {
+			throw new SimpleSAML_Error_Exception('perun:PerunIdentity: Vo with short name ' . $this->voShortName . ' does not exist.');
+		}
+
+		if (is_null($user) ||  is_null($member) || $member->getStatus() === sspmod_perun_model_Member::EXPIRED) {
+			if (is_null($user)) {
+				SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
+			}
+			elseif (is_null($member)) {
+				SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids).' is NOT member in vo with short name ' . $this->voShortName . '(default VO). He is being redirected to register.');
+			}
+			else {
+				SimpleSAML\Logger::info('Member status for perun user with identity/ies: '. implode(',', $uids).' was expired. He is being redirected to register.');
+			}
+			$this->register($request, array($vo), $this->defaultRegisterUrl,false);
+
+		} elseif (!($member->getStatus() === sspmod_perun_model_Member::VALID)) {
+			SimpleSAML\Logger::warning('Member status for perun user with identity/ies: '. implode(',', $uids).' was INVALID/SUSPENDED/DISABLED. ');
+			$this->unauthorized($request);
+		}
+
+	}
+
+
+	/**
+	 * Returns list of sspmod_perun_model_Vo to which the user may register
+	 * @param sspmod_perun_model_User $user
+	 * @return array of sspmod_perun_model_Vo
+	 */
+	protected function getVosForRegistration($user) {
+		$vos = array();
+		$members = array();
+		$vosIdForRegistration = array();
+		$vosForRegistration = array();
+
+		$vos = $this->getVosByFacilityVoShortNames();
+		foreach ($vos as $vo) {
+			SimpleSAML\Logger::debug("Vo:" . print_r($vo, true));
+			try {
+				$member = $this->rpcAdapter->getMemberByUser($user, $vo);
+				SimpleSAML\Logger::debug("Member:" . print_r($member, true));
+				array_push($members, $member);
+			} catch (Exception $exception) {
+				array_push($vosForRegistration, $vo);
+				SimpleSAML\Logger::warning("perun:PerunIdentity: " . $exception);
+			}
+		}
+
+		foreach ($members as $member) {
+			if ($member->getStatus() === sspmod_perun_model_Member::VALID ||$member->getStatus() === sspmod_perun_model_Member::EXPIRED ) {
+				array_push($vosIdForRegistration, $member->getVoId());
+			}
+		}
+
+		foreach ($vos as $vo) {
+			if (in_array($vo->getId(), $vosIdForRegistration)) {
+				array_push($vosForRegistration, $vo);
+			}
+		}
+		SimpleSAML\Logger::debug("VOs for registration:  " . print_r($vosForRegistration, true));
+		return $vosForRegistration;
+	}
+
+	/**
+	 * Returns list of Vos by voShortNames from $this->facilityVoShortNames
+	 * @return array of sspmod_perun_model_Vo
+	 */
+	protected function getVosByFacilityVoShortNames () {
+		$vos = array();
+		foreach ($this->facilityVoShortNames as $voShortName) {
+			try {
+				$vo = $this->adapter->getVoByShortName($voShortName);
+				array_push($vos, $vo);
+			} catch (Exception $ex) {
+				SimpleSAML\Logger::warning("perun:PerunIdentity: " . $ex);
+			}
+		}
+
+		return $vos;
 	}
 }

@@ -123,7 +123,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 		$spGroups = array();
 		foreach ($resources as $resource) {
-			$groups = sspmod_perun_RpcConnector::get('resourcesManager', 'getAssignedGroups', array(
+			$groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
 				'resource' => $resource->getId(),
 			));
 
@@ -306,7 +306,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	 * @return sspmod_perun_model_Member
 	 */
 	public function getMemberByUser($user, $vo) {
-		$member = sspmod_perun_RpcConnector::get('membersManager', 'getMemberByUser', array(
+		$member = $this->connector->get('membersManager', 'getMemberByUser', array(
 			'user' => $user->getId(),
 			'vo' => $vo->getId(),
 		));
@@ -324,7 +324,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	 */
 	public function hasRegistrationForm($group) {
 		try {
-			sspmod_perun_RpcConnector::get( 'registrarManager', 'getApplicationForm', array(
+			$this->connector->get( 'registrarManager', 'getApplicationForm', array(
 				'group' => $group->getId(),
 			));
 			return true;
