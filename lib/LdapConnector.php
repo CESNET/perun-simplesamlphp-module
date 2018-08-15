@@ -7,19 +7,34 @@
  *
  * Example Usage:
  *
- * 	$user = sspmod_perun_LdapConnector::searchForEntity("ou=People,dc=perun,dc=cesnet,dc=cz",
+ *
+ * 	$user = new sspmod_perun_LdapConnector(ldapHostname, $ldapUser, $ldapPassword)->searchForEntity("ou=People,dc=perun,dc=cesnet,dc=cz",
  * 		"(eduPersonPrincipalNames=$uid)",
  * 		array("perunUserId", "displayName", "cn", "preferredMail", "mail")
  * 	);
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_LdapConnector
 {
-	const CONFIG_FILE_NAME = 'module_perun.php';
-	const PROPNAME_HOST = 'ldap.hostname';
-	const PROPNAME_USER = 'ldap.username';
-	const PROPNAME_PASS = 'ldap.password';
+
+	private $hostname;
+	private $user;
+	private $password;
+
+	/**
+	 * sspmod_perun_LdapConnector constructor.
+	 * @param $hostname
+	 * @param $user
+	 * @param $password
+	 */
+	public function __construct($hostname, $user, $password)
+	{
+		$this->hostname = $hostname;
+		$this->user = $user;
+		$this->password = $password;
+	}
 
 	/**
 	 * @param string $base
@@ -28,7 +43,7 @@ class sspmod_perun_LdapConnector
 	 * @return array associative array where key is attribute name and value is array of values, entity or null
 	 * @throws SimpleSAML_Error_Exception if result contains more than one entity
 	 */
-	public static function searchForEntity($base, $filter, $attrNames = null) {
+	public function searchForEntity($base, $filter, $attrNames = null) {
 
 		$entries = self::search($base, $filter, $attrNames);
 
@@ -52,7 +67,7 @@ class sspmod_perun_LdapConnector
 	 * @param array $attrNames attributes to be returned. If null all attrs are returned.
 	 * @return array of entities. Each entity is associative array.
 	 */
-	public static function searchForEntities($base, $filter, $attrNames = null) {
+	public function searchForEntities($base, $filter, $attrNames = null) {
 
 		$entries = self::search($base, $filter, $attrNames);
 
@@ -66,31 +81,21 @@ class sspmod_perun_LdapConnector
 	}
 
 
-	protected static function search($base, $filter, $attributes = null) {
+	protected function search($base, $filter, $attributes = null) {
 
-		$conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
-		$host = $conf->getString(self::PROPNAME_HOST);
-		$user = $conf->getValue(self::PROPNAME_USER, null);
-		$pass = $conf->getValue(self::PROPNAME_PASS, null);
-
-		if (is_null($user)) {
-			$user = null;
-			$pass = null;
-		}
-
-		$conn = ldap_connect($host);
+		$conn = ldap_connect($this->hostname);
 		if ($conn === FALSE) {
-			throw new SimpleSAML_Error_Exception('Unable to connect to the Perun LDAP, '.$host);
+			throw new SimpleSAML_Error_Exception('Unable to connect to the Perun LDAP, '.$this->hostname);
 		}
 
 		ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 
-		if (ldap_bind($conn, $user, $pass) === FALSE) {
-			throw new SimpleSAML_Error_Exception('Unable to connect to the Perun LDAP, '.$host);
+		if (ldap_bind($conn, $this->user, $this->password) === FALSE) {
+			throw new SimpleSAML_Error_Exception('Unable to connect to the Perun LDAP, '.$this->hostname);
 		}
 
 		SimpleSAML\Logger::debug("sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. ".
-			"Ready to perform search query. host: $host, user: $user");
+			"Ready to perform search query. host: $this->hostname, user: $this->user");
 
 		$result = ldap_search($conn, $base, $filter, $attributes);
 

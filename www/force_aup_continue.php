@@ -2,14 +2,15 @@
 
 $id = $_REQUEST['StateId'];
 $state = SimpleSAML_Auth_State::loadState($id, 'perun:forceAup');
-
+$rpcAdapter = new sspmod_perun_AdapterRpc();
+$rpcConnector = $rpcAdapter->getConnector();
 /**
  * @var sspmod_perun_model_User $user
  */
 $user = $state['perun']['user'];
 
 try {
-	$userAupsAttr = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
+	$userAupsAttr = $rpcConnector->get('attributesManager', 'getAttribute', array(
 		'user' => $user->getId(),
 		'attributeName' => $state['perunUserAupAttr'],
 	));
@@ -34,7 +35,7 @@ foreach ($state['newAups'] as $key=>$newAup) {
 $userAupsAttr['value'] = $userAups;
 
 try {
-	sspmod_perun_RpcConnector::post('attributesManager', 'setAttribute', array(
+	$rpcConnector->post('attributesManager', 'setAttribute', array(
 		'user' => $user->getId(),
 		'attribute' => $userAupsAttr,
 	));

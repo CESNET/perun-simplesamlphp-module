@@ -10,6 +10,15 @@ abstract class sspmod_perun_Adapter
 	const LDAP = 'ldap';
 
 	/**
+	 * @var sspmod_perun_RpcConnector | sspmod_perun_LdapConnector
+	 */
+	protected $connector;
+
+	public function getConnector(){
+		return $this->connector;
+	}
+
+	/**
 	 * @param string $interface code of interface. Check constants of this class.
 	 * @return sspmod_perun_Adapter instance of this class. note it is NOT singleton.
 	 * @throws SimpleSAML_Error_Exception thrown if interface does not match any supported interface

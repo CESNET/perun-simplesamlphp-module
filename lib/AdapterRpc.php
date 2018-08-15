@@ -9,15 +9,39 @@
  */
 class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 {
+	const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
+	const RPC_URL  = 'rpc.url';
+	const RPC_USER = 'rpc.username';
+	const RPC_PASSWORD = 'rpc.password';
 
+	private $rpcUrl;
+	private $rpcUser;
+	private $rpcPassword;
 
+	protected $connector;
+
+	public function __construct ($configFileName = null)
+	{
+		if (is_null($configFileName)) {
+			$configFileName = self::DEFAULT_CONFIG_FILE_NAME;
+		}
+
+		$conf = SimpleSAML_Configuration::getConfig($configFileName);
+
+		$this->rpcUrl = $conf->getString(self::RPC_URL);
+		$this->rpcUser = $conf->getString(self::RPC_USER);
+		$this->rpcPassword = $conf->getString(self::RPC_PASSWORD);
+
+		$this->connector = new sspmod_perun_RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword);
+	}
+	
 	public function getPerunUser($idpEntityId, $uids)
 	{
 		$user = null;
 
 		foreach ($uids as $uid) {
 			try {
-				$user = sspmod_perun_RpcConnector::get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
+				$user = $this->connector->get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
 					'extSourceName' => $idpEntityId,
 					'extLogin' => $uid,
 				));
@@ -49,13 +73,13 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	public function getMemberGroups($user, $vo)
 	{
 		try {
-			$member = sspmod_perun_RpcConnector::get('membersManager', 'getMemberByUser', array(
+			$member = $this->connector->get('membersManager', 'getMemberByUser', array(
 				'vo' => $vo->getId(),
 				'user' => $user->getId(),
 			));
 		
 
-			$memberGroups = sspmod_perun_RpcConnector::get('groupsManager', 'getAllMemberGroups', array(
+			$memberGroups = $this->connector->get('groupsManager', 'getAllMemberGroups', array(
 				'member' => $member['id'],
 			));
 		} catch (sspmod_perun_Exception $e) {
@@ -73,7 +97,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getSpGroups($spEntityId, $vo)
 	{
-		$resources = sspmod_perun_RpcConnector::get('resourcesManager', 'getResources', array(
+		$resources = $this->connector->get('resourcesManager', 'getResources', array(
 			'vo' => $vo->getId(),
 		));
 
@@ -81,7 +105,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		$spResources = array();
 		foreach ($resources as $resource) {
 			if (!array_key_exists($resource['facilityId'], $spFacilityIds)) {
-				$attribute = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
+				$attribute = $this->connector->get('attributesManager', 'getAttribute', array(
 					'facility' => $resource['facilityId'],
 					'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
 				));
@@ -98,7 +122,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 		$spGroups = array();
 		foreach ($spResources as $spResource) {
-			$groups = sspmod_perun_RpcConnector::get('resourcesManager', 'getAssignedGroups', array(
+			$groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
 				'resource' => $spResource['id'],
 			));
 			$convertedGroups = array();
@@ -116,7 +140,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getGroupByName($vo, $name)
 	{
-		$group = sspmod_perun_RpcConnector::get('groupsManager', 'getGroupByName', array(
+		$group = $this->connector->get('groupsManager', 'getGroupByName', array(
 			'vo' => $vo->getId(),
 			'name' => $name,
 		));
@@ -127,7 +151,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getVoByShortName($voShortName)
 	{
-		$vo = sspmod_perun_RpcConnector::get('vosManager', 'getVoByShortName', array(
+		$vo = $this->connector->get('vosManager', 'getVoByShortName', array(
 			'shortName' => $voShortName,
 		));
 
@@ -137,7 +161,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getUserAttributes($user, $attrNames)
 	{
-		$perunAttrs = sspmod_perun_RpcConnector::get('attributesManager', 'getAttributes', array(
+		$perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
 			'user' => $user->getId(),
 			'attrNames' => $attrNames,
 		));
@@ -155,7 +179,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getEntitylessAttribute($attrName)
 	{
-		$perunAttrs = sspmod_perun_RpcConnector::get('attributesManager', 'getEntitylessAttributes', array(
+		$perunAttrs = $this->connector->get('attributesManager', 'getEntitylessAttributes', array(
 			'attrName' => $attrName,
 		));
 
@@ -170,7 +194,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getVoAttributes($vo, $attrNames)
 	{
-		$perunAttrs = sspmod_perun_RpcConnector::get('attributesManager', 'getAttributes', array(
+		$perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
 			'vo' => $vo->getId(),
 			'attrNames' => $attrNames,
 		));
@@ -188,7 +212,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getFacilityAttribute($facility, $attrName)
 	{
-		$perunAttr = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
+		$perunAttr = $this->connector->get('attributesManager', 'getAttribute', array(
 			'facility' => $facility->getId(),
 			'attributeName' => $attrName,
 		));
@@ -197,22 +221,22 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	}
 
 
-	public  function getUsersGroupsOnFacility($spEntityId, $userId)
+	public function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
-		$facilities = sspmod_perun_RpcConnector::get('facilitiesManager', 'getFacilitiesByAttribute', array(
+		$facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
 			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
 			'attributeValue' => $spEntityId,
 		));
 
 		$allowedResources = array();
 		foreach ($facilities as $facility) {
-			$resources = sspmod_perun_RpcConnector::get('facilitiesManager', 'getAssignedResources', array(
+			$resources = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
 				'facility' => $facility['id'],
 			));
 			$allowedResources = array_merge($allowedResources, $resources);
 		}
 
-		$members = sspmod_perun_RpcConnector::get('membersManager', 'getMembersByUser', array(
+		$members = $this->connector->get('membersManager', 'getMembersByUser', array(
 			'user' => $userId,
 		));
 
@@ -226,7 +250,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		$allGroups = array();
 		foreach ($allowedResources as $resource) {
 			foreach ($validMembers as $member) {
-				$groups = sspmod_perun_RpcConnector::get('resourcesManager', 'getAssignedGroups', array(
+				$groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
 					'resource' => $resource['id'],
 					'member' => $member['id'],
 				));
@@ -242,7 +266,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 	public function getFacilitiesByEntityId($spEntityId)
 	{
-		$perunAttrs = sspmod_perun_RpcConnector::get('facilitiesManager', 'getFacilitiesByAttribute', array(
+		$perunAttrs = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
 			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
 			'attributeValue' => $spEntityId,
 		));
@@ -252,5 +276,4 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		}
 		return $facilities;
 	}
-
 }
