@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Added]
+ - Added badges to README
  
  ## [v1.0.0]
 
