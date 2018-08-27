@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
  [Added]
  - Added badges to README
  - Added new property to Facility model: description
+ - Added page with configurable table of SPs on Proxy
  
 [Changed]
 - Connectors methods are not static for now.

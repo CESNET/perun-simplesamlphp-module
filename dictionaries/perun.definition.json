@@ -62,5 +62,9 @@
   "go_back": {
     "en": "Go back to ",
     "cs": "Vraťte se zpět na "
+  },
+  "listOfSps_header": {
+    "en": "List of Service providers",
+    "cs": "Seznam služeb"
   }
 }

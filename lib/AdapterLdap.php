@@ -187,6 +187,17 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		// TODO: Implement getFacilityAttribute() method.
 	}
 
+	public function searchFacilitiesByAttributeValue($attribute)
+	{
+		throw new BadMethodCallException("NotImplementedException");
+		// TODO: Implement searchFacilitiesByAttributeValue() method.
+	}
+
+	public function getFacilityAttributes($facility, $attrNames)
+	{
+		throw new BadMethodCallException("NotImplementedException");
+		// TODO: Implement getFacilityAttributes() method.
+	}
 
 	public function getUsersGroupsOnFacility($spEntityId, $userId)
 	{

@@ -34,7 +34,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 		$this->connector = new sspmod_perun_RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword);
 	}
-	
+
 	public function getPerunUser($idpEntityId, $uids)
 	{
 		$user = null;
@@ -275,5 +275,35 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId));
 		}
 		return $facilities;
+	}
+
+	public function searchFacilitiesByAttributeValue($attribute)
+	{
+		$perunAttrs = $this->connector->post('searcher', 'getFacilities', array(
+			'attributesWithSearchingValues' => $attribute,
+		));
+		$facilities = array();
+		foreach($perunAttrs as $perunAttr) {
+			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'],null));
+		}
+		return $facilities;
+	}
+
+	public function getFacilityAttributes($facility, $attrNames) {
+		$perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+			'facility' => $facility->getId(),
+			'attrNames' => $attrNames,
+		));
+		$attributes = array();
+		foreach($perunAttrs as $perunAttr) {
+			array_push($attributes, array(
+				'id' => $perunAttr['id'],
+				'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
+				'displayName' => $perunAttr['displayName'],
+				'type' => $perunAttr['type'],
+				'value' => $perunAttr['value']
+			));
+		}
+		return $attributes;
 	}
 }
