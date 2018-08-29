@@ -2,8 +2,6 @@
 
 /**
  * Provides interface to call Perun RPC.
- * Configuration file 'module_perun.php' should be placed in default config folder of SimpleSAMLphp.
- * Example of file is in config-template folder.
  * Note that Perun RPC should be considered as unreliable
  * and authentication process should continue without connection to Perun. e.g. use LDAP instead.
  *
@@ -20,30 +18,38 @@
  * }
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_RpcConnector
 {
-	const CONFIG_FILE_NAME = 'module_perun.php';
-	const PROPNAME_URL  = 'rpc.url';
-	const PROPNAME_USER = 'rpc.username';
-	const PROPNAME_PASS = 'rpc.password';
+	private $rpcUrl;
+	private $user;
+	private $password;
+
+	/**
+	 * sspmod_perun_RpcConnector constructor.
+	 * @param $rpcUrl
+	 * @param $user
+	 * @param $password
+	 */
+	public function __construct($rpcUrl, $user, $password)
+	{
+		$this->rpcUrl = $rpcUrl;
+		$this->user = $user;
+		$this->password = $password;
+	}
 
 
-	public static function get($manager, $method, $params = array()) {
+	public function get($manager, $method, $params = array()) {
 		$paramsQuery = http_build_query($params);
 		// replace 'paramList[0]=val0' to just 'paramList[]=val0' because perun rpc cannot consume such lists.
 		$paramsQuery = preg_replace('/\%5B\d+\%5D/', '%5B%5D', $paramsQuery);
 
-		$conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
-		$rpc_url = $conf->getString(self::PROPNAME_URL);
-		$user = $conf->getString(self::PROPNAME_USER);
-		$pass = $conf->getString(self::PROPNAME_PASS);
-
 		$ch = curl_init();
 
-		$uri = $rpc_url .'json/'.  $manager .'/'. $method;
+		$uri = $this->rpcUrl .'json/'.  $manager .'/'. $method;
 		curl_setopt($ch, CURLOPT_URL, $uri .'?'. $paramsQuery);
-		curl_setopt($ch, CURLOPT_USERPWD, $user . ":" . $pass);
+		curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->password);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 		$json = curl_exec($ch);
@@ -64,19 +70,14 @@ class sspmod_perun_RpcConnector
 	}
 
 
-	public static function post($manager, $method, $params = array()) {
+	public function post($manager, $method, $params = array()) {
 		$paramsJson = json_encode($params);
-
-		$conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
-		$rpc_url = $conf->getString(self::PROPNAME_URL);
-		$user = $conf->getString(self::PROPNAME_USER);
-		$pass = $conf->getString(self::PROPNAME_PASS);
 
 		$ch = curl_init();
 
-		$uri = $rpc_url .'json/'.  $manager .'/'. $method;
+		$uri = $this->rpcUrl .'json/'.  $manager .'/'. $method;
 		curl_setopt($ch, CURLOPT_URL, $uri);
-		curl_setopt($ch, CURLOPT_USERPWD, $user . ":" . $pass);
+		curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->password);
 		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $paramsJson);
 		curl_setopt($ch, CURLOPT_HTTPHEADER,

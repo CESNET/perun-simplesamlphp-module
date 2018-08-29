@@ -3,21 +3,46 @@
 /**
  * Class sspmod_perun_AdapterLdap
  *
+ * Configuration file should be placed in default config folder of SimpleSAMLphp.
+ * Example of file is in config-template folder.
+ *
  * Perun adapter which uses Perun LDAP interface
+ * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Michal Prochazka <michalp@ics.muni.cz>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 {
-
-	private $ldapBase;
-
-	const CONFIG_FILE_NAME = 'module_perun.php';
+	const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
+	const LDAP_HOSTNAME = 'ldap.hostname';
+	const LDAP_USER = 'ldap.username';
+	const LDAP_PASSWORD = 'ldap.password';
 	const LDAP_BASE  = 'ldap.base';
 
-	public function __construct ()
+	private $ldapHostname;
+	private $ldapUser;
+	private $ldapPassword;
+	private $ldapBase;
+
+	protected $connector;
+
+	public function __construct ($configFileName = null)
 	{
-		$conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+		if (is_null($configFileName)) {
+			$configFileName = self::DEFAULT_CONFIG_FILE_NAME;
+		}
+
+		$conf = SimpleSAML_Configuration::getConfig($configFileName);
+
+		$this->ldapHostname = $conf->getString(self::LDAP_HOSTNAME);
+		$this->ldapUser = $conf->getString(self::LDAP_USER);
+		$this->ldapPassword = $conf->getString(self::LDAP_PASSWORD);
 		$this->ldapBase = $conf->getString(self::LDAP_BASE);
+
+
+		$this->connector = new sspmod_perun_LdapConnector($this->ldapHostname, $this->ldapUser, $this->ldapPassword);
 	}
+
 	public function getPerunUser($idpEntityId, $uids)
 	{
 		# Build a LDAP query, we are searching for the user who has at least one of the uid
@@ -30,7 +55,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 			return null;
 		}
 
-		$user = sspmod_perun_LdapConnector::searchForEntity("ou=People," . $this->ldapBase,
+		$user = $this->connector->searchForEntity("ou=People," . $this->ldapBase,
 			"(|$query)",
 			array("perunUserId", "displayName", "cn", "givenName", "sn", "preferredMail", "mail")
 		);
@@ -52,7 +77,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 	public function getMemberGroups($user, $vo)
 	{
 		$userId = $user->getId();
-		$userWithMembership = sspmod_perun_LdapConnector::searchForEntity("perunUserId=$userId,ou=People," . $this->ldapBase,
+		$userWithMembership = $this->connector->searchForEntity("perunUserId=$userId,ou=People," . $this->ldapBase,
 			"(objectClass=perunUser)",
 			array("perunUserId", "memberOf")
 		);
@@ -64,7 +89,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 				continue;
 			}
 
-			$group = sspmod_perun_LdapConnector::searchForEntity($groupDn,
+			$group = $this->connector->searchForEntity($groupDn,
 				"(objectClass=perunGroup)",
 				array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 			);
@@ -77,7 +102,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 	public function getSpGroups($spEntityId, $vo)
 	{
-		$resources = sspmod_perun_LdapConnector::searchForEntities($this->ldapBase,
+		$resources = $this->connector->searchForEntities($this->ldapBase,
 			"(&(objectClass=perunResource)(entityID=$spEntityId))",
 			array("perunResourceId", "assignedGroupId", "perunVoId")
 		);
@@ -85,7 +110,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		$groups = array();
 		foreach ($resources as $resource) {
 			foreach ($resource['assignedGroupId'] as $groupId) {
-				$group = sspmod_perun_LdapConnector::searchForEntity("perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
+				$group = $this->connector->searchForEntity("perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
 					"(objectClass=perunGroup)",
 					array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 				);
@@ -102,7 +127,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 	public function getGroupByName($vo, $name)
 	{
 		$voId = $vo->getId();
-		$group = sspmod_perun_LdapConnector::searchForEntity("perunVoId=$voId," . $this->ldapBase,
+		$group = $this->connector->searchForEntity("perunVoId=$voId," . $this->ldapBase,
 			"(&(objectClass=perunGroup)(perunUniqueGroupName=$name))",
 			array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 		);
@@ -116,7 +141,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 	public function getVoByShortName($voShortName)
 	{
-		$vo = sspmod_perun_LdapConnector::searchForEntity($this->ldapBase,
+		$vo = $this->connector->searchForEntity($this->ldapBase,
 			"(&(objectClass=perunVo)(o=$voShortName))",
 			array("perunVoId", "o", "description")
 		);
@@ -131,7 +156,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 	public function getUserAttributes($user, $attrNames)
 	{
 		$userId = $user->getId();
-		$attributes = sspmod_perun_LdapConnector::searchForEntity("perunUserId=$userId,ou=People," . $this->ldapBase,
+		$attributes = $this->connector->searchForEntity("perunUserId=$userId,ou=People," . $this->ldapBase,
 			"(objectClass=perunUser)",
 			$attrNames
 		);
@@ -165,7 +190,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 	public function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
-		$resources = sspmod_perun_LdapConnector::searchForEntities($this->ldapBase,
+		$resources = $this->connector->searchForEntities($this->ldapBase,
 			"(&(objectClass=perunResource)(entityID=$spEntityId))",
 			array("perunResourceId")
 		);
@@ -181,7 +206,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		$resourcesString .= ")";
 
 		$resultGroups = array();
-		$groups = sspmod_perun_LdapConnector::searchForEntities($this->ldapBase,
+		$groups = $this->connector->searchForEntities($this->ldapBase,
 			"(&(uniqueMember=perunUserId=".$userId.", ou=People," . $this->ldapBase. ")".$resourcesString.")",
 			array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 		);
