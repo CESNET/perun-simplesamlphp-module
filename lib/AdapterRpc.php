@@ -248,7 +248,7 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		));
 		$facilities = array();
 		foreach ($perunAttrs as $perunAttr) {
-			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $spEntityId));
+			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId));
 		}
 		return $facilities;
 	}
