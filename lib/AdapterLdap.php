@@ -100,7 +100,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 	}
 
 
-	public function getSpGroups($spEntityId, $vo)
+	public function getSpGroups($spEntityId)
 	{
 		$resources = $this->connector->searchForEntities($this->ldapBase,
 			"(&(objectClass=perunResource)(entityID=$spEntityId))",
@@ -109,15 +109,17 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 		$groups = array();
 		foreach ($resources as $resource) {
-			foreach ($resource['assignedGroupId'] as $groupId) {
-				$group = $this->connector->searchForEntity("perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
-					"(objectClass=perunGroup)",
-					array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
-				);
-				array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'], $group['perunUniqueGroupName'][0], $group['description'][0]));
+			if (isset($resource['assignedGroupId'])) {
+				foreach ($resource['assignedGroupId'] as $groupId) {
+					$group = $this->connector->searchForEntity("perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
+						"(objectClass=perunGroup)",
+						array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
+					);
+					array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'], $group['perunUniqueGroupName'][0], $group['description'][0]));
+				}
 			}
-		}
 
+		}
 		$groups = $this->removeDuplicateEntities($groups);
 
 		return $groups;
@@ -149,6 +151,19 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		}
 
 		return new sspmod_perun_model_Vo($vo['perunVoId'][0], $vo['description'][0], $vo['o'][0]);
+	}
+
+	public function getVoById($id)
+	{
+		$vo = sspmod_perun_LdapConnector::searchForEntity($this->ldapBase,
+			"(&(objectClass=perunVo)(perunVoId=$id))",
+			array("o", "description")
+		);
+		if (is_null($vo)) {
+			throw new SimpleSAML_Error_Exception("Vo with id: $id does not exists in Perun LDAP.");
+		}
+
+		return new sspmod_perun_model_Vo($id, $vo['description'][0], $vo['o'][0]);
 	}
 
 

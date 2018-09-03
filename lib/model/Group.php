@@ -2,6 +2,7 @@
 
 /**
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
+ * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class sspmod_perun_model_Group implements sspmod_perun_model_HasId
 {

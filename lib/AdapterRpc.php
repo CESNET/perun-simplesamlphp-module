@@ -104,46 +104,37 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 	}
 
 
-	public function getSpGroups($spEntityId, $vo)
+	public function getSpGroups($spEntityId)
 	{
-		$resources = $this->connector->get('resourcesManager', 'getResources', array(
-			'vo' => $vo->getId(),
+		$perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+			'attributeValue' => $spEntityId,
+		))[0];
+		$facility = new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId);
+
+		$perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
+			'facility' => $facility->getId(),
 		));
 
-		$spFacilityIds = array();
-		$spResources = array();
-		foreach ($resources as $resource) {
-			if (!array_key_exists($resource['facilityId'], $spFacilityIds)) {
-				$attribute = $this->connector->get('attributesManager', 'getAttribute', array(
-					'facility' => $resource['facilityId'],
-					'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-				));
-				if ($attribute['value'] === $spEntityId) {
-					$spFacilityIds[$resource['facilityId']] = true;
-				} else {
-					$spFacilityIds[$resource['facilityId']] = false;
-				}
-			}
-			if ($spFacilityIds[$resource['facilityId']]) {
-				array_push($spResources, $resource);
-			}
+		$resources = array();
+		foreach ($perunAttrs as $perunAttr) {
+			array_push($resources, new sspmod_perun_model_Resource($perunAttr['id'], $perunAttr['voId'], $perunAttr['facilityId'], $perunAttr['name']));
 		}
 
 		$spGroups = array();
-		foreach ($spResources as $spResource) {
+		foreach ($resources as $resource) {
 			$groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
-				'resource' => $spResource['id'],
+				'resource' => $resource->getId(),
 			));
-			$convertedGroups = array();
+
 			foreach ($groups as $group) {
 				$attr = $this->connector->get('attributesManager', 'getAttribute', array(
 					'group' => $group['id'],
 					'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
 				));
 				$uniqueName = $attr['value'] . ":" . $group['name'];
-				array_push($convertedGroups, new sspmod_perun_model_Group($group['id'], $group['voId'], $group['name'], $uniqueName, $group['description']));
+				array_push($spGroups, new sspmod_perun_model_Group($group['id'],$group['voId'], $group['name'], $uniqueName, $group['description']));
 			}
-			$spGroups = array_merge($spGroups, $convertedGroups);
 		}
 
 		$spGroups = $this->removeDuplicateEntities($spGroups);
@@ -176,6 +167,14 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		return new sspmod_perun_model_Vo($vo['id'], $vo['name'], $vo['shortName']);
 	}
 
+	public function getVoById($id)
+	{
+		$vo = $this->connector->get('vosManager', 'getVoById', array(
+			'id' => $id,
+		));
+
+		return new sspmod_perun_model_Vo($vo['id'], $vo['name'], $vo['shortName']);
+	}
 
 	public function getUserAttributes($user, $attrNames)
 	{
@@ -298,6 +297,40 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId));
 		}
 		return $facilities;
+	}
+
+	/**
+	 * Returns member by User and Vo
+	 * @param sspmod_perun_model_User $user
+	 * @param sspmod_perun_model_Vo $vo
+	 * @return sspmod_perun_model_Member
+	 */
+	public function getMemberByUser($user, $vo) {
+		$member = $this->connector->get('membersManager', 'getMemberByUser', array(
+			'user' => $user->getId(),
+			'vo' => $vo->getId(),
+		));
+		if (is_null($member)) {
+			throw new SimpleSAML_Error_Exception("Member for User with name " . $user->getName() . " and Vo with shortName " .
+			$vo->getShortName() . "does not exist in Perun!");
+		}
+		return new sspmod_perun_model_Member($member['id'], $member['voId'], $member['status']);
+	}
+
+	/**
+	 * Returns true if group has registration form, false otherwise
+	 * @param sspmod_perun_model_Group $group
+	 * @return bool
+	 */
+	public function hasRegistrationForm($group) {
+		try {
+			$this->connector->get( 'registrarManager', 'getApplicationForm', array(
+				'group' => $group->getId(),
+			));
+			return true;
+		} catch (Exception $exception) {
+			return false;
+		}
 	}
 
 	public function searchFacilitiesByAttributeValue($attribute)
