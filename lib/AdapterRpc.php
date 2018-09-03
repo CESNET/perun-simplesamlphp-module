@@ -88,7 +88,16 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 
 		$convertedGroups = array();
 		foreach ($memberGroups as $group) {
-			array_push($convertedGroups, new sspmod_perun_model_Group($group['id'], $group['name'], $group['description']));
+			try {
+				$attr = $this->connector->get('attributesManager', 'getAttribute', array(
+					'group' => $group['id'],
+					'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+				));
+				$uniqueName = $attr['value'] . ":" . $group['name'];
+				array_push($convertedGroups, new sspmod_perun_model_Group($group['id'], $group['voId'], $group['name'], $uniqueName, $group['description']));
+			} catch (sspmod_perun_Exception $e) {
+				continue;
+			}
 		}
 
 		return $convertedGroups;
@@ -127,7 +136,12 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 			));
 			$convertedGroups = array();
 			foreach ($groups as $group) {
-				array_push($convertedGroups, new sspmod_perun_model_Group($group['id'], $group['name'], $group['description']));
+				$attr = $this->connector->get('attributesManager', 'getAttribute', array(
+					'group' => $group['id'],
+					'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+				));
+				$uniqueName = $attr['value'] . ":" . $group['name'];
+				array_push($convertedGroups, new sspmod_perun_model_Group($group['id'], $group['voId'], $group['name'], $uniqueName, $group['description']));
 			}
 			$spGroups = array_merge($spGroups, $convertedGroups);
 		}
@@ -144,8 +158,12 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 			'vo' => $vo->getId(),
 			'name' => $name,
 		));
-
-		return new sspmod_perun_model_Group($group['id'], $group['name'], $group['description']);
+		$attr = $this->connector->get('attributesManager', 'getAttribute', array(
+			'group' => $group['id'],
+			'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+		));
+		$uniqueName = $attr['value'] . ":" . $group['name'];
+		return new sspmod_perun_model_Group($group['id'], $group['voId'], $group['name'], $uniqueName, $group['description']);
 	}
 
 
@@ -255,7 +273,12 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 					'member' => $member['id'],
 				));
 				foreach ($groups as $group) {
-					array_push($allGroups, new sspmod_perun_model_Group($group['id'], $group['name'], $group['description']));
+					$attr = $this->connector->get('attributesManager', 'getAttribute', array(
+						'group' => $group['id'],
+						'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+					));
+					$uniqueName = $attr['value'] . ":" . $group['name'];
+					array_push($allGroups, new sspmod_perun_model_Group($group['id'], $group['voId'],  $group['name'], $uniqueName, $group['description']));
 				}
 			}
 		}

@@ -93,7 +93,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 				"(objectClass=perunGroup)",
 				array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 			);
-			array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
+			array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
 		}
 
 		return $groups;
@@ -114,7 +114,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 					"(objectClass=perunGroup)",
 					array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
 				);
-				array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
+				array_push($groups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'], $group['perunUniqueGroupName'][0], $group['description'][0]));
 			}
 		}
 
@@ -134,8 +134,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		if (is_null($group)) {
 			throw new SimpleSAML_Error_Exception("Group with name: $name in VO: ".$vo->getName()." does not exists in Perun LDAP.");
 		}
-		$groupName = substr($group['perunUniqueGroupName'][0], strlen($vo->getShortName().':'));
-		return new sspmod_perun_model_Group($group['perunGroupId'][0], $groupName, $group['description'][0]);
+		return new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'][0], $group['perunUniqueGroupName'][0], $group['description'][0]);
 	}
 
 
@@ -223,8 +222,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		);
 
 		foreach ($groups as $group) {
-			array_push($resultGroups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
-
+			array_push($resultGroups, new sspmod_perun_model_Group($group['perunGroupId'][0], $group['perunVoId'][0], $group['cn'][0], $group['perunUniqueGroupName'][0], $group['description'][0]));
 		}
 		$resultGroups = $this->removeDuplicateEntities($resultGroups);
 		SimpleSAML\Logger::debug("Groups - ".var_export($resultGroups, true));
