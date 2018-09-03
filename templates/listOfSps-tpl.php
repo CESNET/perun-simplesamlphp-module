@@ -86,7 +86,8 @@ if (!empty($facilitiesWithAttributes)) {
 					'controlType': 'StringFilter',
 					'containerId': 'stringFilter',
 					'options': {
-						'filterColumnLabel': 'Name'
+					    'matchType': 'any',
+						'filterColumnLabel': 'Name',
 					}
 				});
 
