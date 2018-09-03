@@ -26,7 +26,7 @@ if (!empty($attrNames)) {
 				$columns .= 'number';
 			} else if (strpos($facilityAttributes[$attrName]['type'], 'Boolean')) {
 				$columns .= 'boolean';
-			} else if (strpos($facilityAttributes[$attrName]['type'], 'String') || strpos($facilityAttributes[$attrName]['type'], 'Array') || strpos($facilityAttributes[$attrName]['type'], 'Map')) {
+			} else if (strpos($facilityAttributes[$attrName]['type'], 'String') || strpos($facilityAttributes[$attrName]['type'], 'Array')) {
 				$columns .= 'string';
 			}
 			$columns .= '"},';
@@ -45,8 +45,7 @@ foreach ($facilitiesWithAttributes as $facilityWithAttributes) {
 	$rows .= '{v: "' . $facilityWithAttributes['facility']->getDescription() . '"}, ';
 	foreach ($attrNames as $attrName) {
 		if (typeIsSupported($facilityWithAttributes['facilityAttributes'][$attrName]['type'])) {
-			if ((strpos($facilityWithAttributes['facilityAttributes'][$attrName]['type'], 'Array') ||
-				strpos($facilityWithAttributes['facilityAttributes'][$attrName]['type'], 'Map'))) {
+			if ((strpos($facilityWithAttributes['facilityAttributes'][$attrName]['type'], 'Array'))) {
 				$rows .= '{v: "';
 				foreach ($facilityWithAttributes['facilityAttributes'][$attrName]['value'] as $value) {
 					$rows .= $value . '; ';
@@ -122,6 +121,5 @@ function typeIsSupported($type) {
 	return strpos($type, 'Integer') ||
 		strpos($type, 'Boolean') ||
 		strpos($type, 'String') ||
-		strpos($type, 'Array') ||
-		strpos($type, 'Map');
+		strpos($type, 'Array');
 }
