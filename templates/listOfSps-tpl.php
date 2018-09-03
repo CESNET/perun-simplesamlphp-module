@@ -6,6 +6,8 @@
  */
 
 $this->data['header'] = '';
+$this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' . SimpleSAML\Module::getModuleUrl('perun/res/css/listOfSps.css')  . '" />';
+
 $this->includeAtTemplateBase('includes/header.php');
 
 $attrNames = $this->data['attrNames'];
@@ -82,7 +84,7 @@ if (!empty($facilitiesWithAttributes)) {
 
 				var control = new google.visualization.ControlWrapper({
 					'controlType': 'StringFilter',
-					'containerId': 'control_div',
+					'containerId': 'stringFilter',
 					'options': {
 						'filterColumnLabel': 'Name'
 					}
@@ -90,7 +92,7 @@ if (!empty($facilitiesWithAttributes)) {
 
 				var chart  = new google.visualization.ChartWrapper({
 					'chartType': 'Table',
-					'containerId': 'chart_div',
+					'containerId': 'table',
 				});
 
 				var data = new google.visualization.DataTable({
@@ -105,9 +107,9 @@ if (!empty($facilitiesWithAttributes)) {
 	</head>
 	<body>
 		<h2><?php echo $this->t('{perun:perun:listOfSps_header}'); ?></h2>
-		<div id="dashboard_div" style="border: 1px solid #ccc">
-			<div id="control_div" style="padding-left: 2em; min-width: 250px; margin-bottom: 20px"></div>
-			<div id="chart_div"></div>
+		<div id="listOfSps">
+			<div id="stringFilter"></div>
+			<div id="table"></div>
 		</div>
 	</body>
 	</html>
