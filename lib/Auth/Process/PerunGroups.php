@@ -77,9 +77,9 @@ class sspmod_perun_Auth_Process_PerunGroups extends SimpleSAML_Auth_ProcessingFi
 					throw new SimpleSAML_Error_Exception("perun:PerunGroups: missing mandatory configuration options 'groupNameAuthority' or 'groupNamePrefix'.");
 				}
 
-				$groupName = $this->groupNamePrefix . rawurlencode($group->getName()) .  '#' . $this->groupNameAuthority;
+				$groupName = $this->groupNamePrefix . rawurlencode($group->getUniqueName()) .  '#' . $this->groupNameAuthority;
 			} else {
-				$groupName = $this->mapGroupName($request, $group->getName());
+				$groupName = $this->mapGroupName($request, $group->getUniqueName());
 			}
 			array_push($request['Attributes'][$this->attrName], $groupName);
 		}
