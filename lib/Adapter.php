@@ -112,6 +112,18 @@ abstract class sspmod_perun_Adapter
 	 */
 	public abstract function getUsersGroupsOnFacility($spEntityId, $userId);
 
+	/**
+	 * @param <String, String> map $attribute
+	 * @return array of sspmod_perun_model_Facility
+	 */
+	public abstract function searchFacilitiesByAttributeValue($attribute);
+
+	/**
+	 * @param sspmod_perun_model_Facility $facility
+	 * @param $attrNames array string $attrNames
+	 * @return array of attributes
+	 */
+	public abstract function getFacilityAttributes($facility, $attrNames);
 
 	/**
 	 * @param sspmod_perun_model_HasId[] $entities
