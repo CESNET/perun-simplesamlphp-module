@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
  - Added new model Member
  - Added new model Resource
  - New methods for getting data from Perun LDAP and Perun RPC
+ - Added function for generating metadata for SimpleSAMLphp Proxy AAI from Perun
  
  [Changed]
  - Connectors methods are not static for now.
