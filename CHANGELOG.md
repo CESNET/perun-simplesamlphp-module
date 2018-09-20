@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
  
  [Fixed]
  - Fixed the problem with access to non-secured LDAP
+ - Fixed the bad call of function 'searchForEntity(...)' in function getVoById() in AdapterLdap.php  
  
  ## [v1.0.0]
 

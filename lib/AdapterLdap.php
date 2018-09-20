@@ -155,7 +155,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 	public function getVoById($id)
 	{
-		$vo = sspmod_perun_LdapConnector::searchForEntity($this->ldapBase,
+		$vo = $this->connector->searchForEntity($this->ldapBase,
 			"(&(objectClass=perunVo)(perunVoId=$id))",
 			array("o", "description")
 		);
