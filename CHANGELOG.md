@@ -18,6 +18,10 @@ All notable changes to this project will be documented in this file.
  - Function unauthorize in PerunIdentity is now public
  - Changed the login and registration process
  
+ [Fixed]
+ - Fixed the problem with access to non-secured LDAP
+ - Fixed the bad call of function 'searchForEntity(...)' in function getVoById() in AdapterLdap.php  
+ 
  ## [v1.0.0]
 
  [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master

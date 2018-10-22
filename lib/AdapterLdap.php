@@ -35,8 +35,8 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		$conf = SimpleSAML_Configuration::getConfig($configFileName);
 
 		$this->ldapHostname = $conf->getString(self::LDAP_HOSTNAME);
-		$this->ldapUser = $conf->getString(self::LDAP_USER);
-		$this->ldapPassword = $conf->getString(self::LDAP_PASSWORD);
+		$this->ldapUser = $conf->getString(self::LDAP_USER, null);
+		$this->ldapPassword = $conf->getString(self::LDAP_PASSWORD, null);
 		$this->ldapBase = $conf->getString(self::LDAP_BASE);
 
 
@@ -155,7 +155,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
 	public function getVoById($id)
 	{
-		$vo = sspmod_perun_LdapConnector::searchForEntity($this->ldapBase,
+		$vo = $this->connector->searchForEntity($this->ldapBase,
 			"(&(objectClass=perunVo)(perunVoId=$id))",
 			array("o", "description")
 		);
