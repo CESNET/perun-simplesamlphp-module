@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ 
+ ## [v2.0.0]
  [Added]
  - Added badges to README
  - Added page with configurable table of SPs on Proxy
@@ -25,4 +27,5 @@ All notable changes to this project will be documented in this file.
  ## [v1.0.0]
 
  [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+ [v2.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.0.0
  [v1.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v1.0.0
