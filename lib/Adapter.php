@@ -132,6 +132,31 @@ abstract class sspmod_perun_Adapter
 	public abstract function getFacilityAttributes($facility, $attrNames);
 
 	/**
+	 * @param $extSourceName string name of ext source
+	 * @param $extSourceLogin string login
+	 * @return array user ext source
+	 */
+	public abstract function getUserExtSource($extSourceName, $extSourceLogin);
+
+	/**
+	 * @param $userExtSource array ext source
+	 */
+	public abstract function updateUserExtSourceLastAccess($userExtSource);
+
+	/**
+	 * @param $userExtSourceId int userExtSourceId
+	 * @param $attributes array attributes
+	 * @return array attributes
+	 */
+	public abstract function getUserExtSourceAttributes($userExtSourceId, $attributes);
+
+	/**
+	 * @param $userExtSourceId int userExtSourceId
+	 * @param $attributes array attributes
+	 */
+	public abstract function setUserExtSourceAttributes($userExtSourceId, $attributes);
+
+	/**
 	 * @param sspmod_perun_model_HasId[] $entities
 	 * @return sspmod_perun_model_HasId[] without duplicates
 	 */

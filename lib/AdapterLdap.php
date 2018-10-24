@@ -213,6 +213,26 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		// TODO: Implement getFacilityAttributes() method.
 	}
 
+	public function getUserExtSource($extSourceName, $extSourceLogin)
+	{
+		// TODO: Implement getUserExtSource() method.
+	}
+
+	public function updateUserExtSourceLastAccess($userExtSource)
+	{
+		// TODO: Implement updateUserExtSourceLastAccess() method.
+	}
+
+	public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
+	{
+		// TODO: Implement getAttributes() method.
+	}
+
+	public function setUserExtSourceAttributes($userExtSourceId, $attributes)
+	{
+		// TODO: Implement setAttributes() method.
+	}
+
 	public function getUsersGroupsOnFacility($spEntityId, $userId)
 	{
 		$resources = $this->connector->searchForEntities($this->ldapBase,

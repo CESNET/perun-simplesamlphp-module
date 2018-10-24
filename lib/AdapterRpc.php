@@ -362,4 +362,33 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 		}
 		return $attributes;
 	}
+
+	public function getUserExtSource($extSourceName, $extSourceLogin) {
+		return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', array(
+			"extSourceName" => $extSourceName,
+			"extSourceLogin" => $extSourceLogin
+		));
+	}
+
+	public function updateUserExtSourceLastAccess($userExtSource) {
+		$this->connector->post( 'usersManager', 'updateUserExtSourceLastAccess', array(
+			"userExtSource" => $userExtSource
+		));
+	}
+
+	public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
+	{
+		return $this->connector->get('attributesManager', 'getAttributes', array(
+			"userExtSource" => $userExtSourceId,
+			"attrNames" => $attrNames
+		));
+	}
+
+	public function setUserExtSourceAttributes($userExtSourceId, $attributes)
+	{
+		$this->connector->post('attributesManager', 'setAttributes', array(
+			"userExtSource" => $userExtSourceId,
+			"attributes" => $attributes
+		));
+	}
 }
