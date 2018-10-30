@@ -265,7 +265,13 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 
 		$id  = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
 		$url = SimpleSAML\Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
-		\SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id, 'SPMetadata' => $_REQUEST['SPMetadata'], 'registerUrL' => $registerUrL, 'params' => $params));
+		\SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array(
+			'StateId' => $id,
+			'SPMetadata' => $request['SPMetadata'],
+			'registerUrL' => $registerUrL,
+			'params' => $params
+			)
+		);
 
 	}
 

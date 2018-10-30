@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
  [Changed]
  - Changed design of ListOfSps
  
+ [Fixed]
+ - Fixed resend SPMetadata from request to unauthorized-access-go-to-registration page
+ 
  ## [v2.0.0]
  [Added]
  - Added badges to README
