@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
  
  [Fixed]
  - Fixed resend SPMetadata from request to unauthorized-access-go-to-registration page
+ - Fixed url encoding in PerunGroups
  
  ## [v2.0.0]
  [Added]
