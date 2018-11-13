@@ -1,0 +1,44 @@
+{
+  "statistics": {
+    "en": "Statistics"
+  },
+  "production_services": {
+    "en": "Production services"
+  },
+  "test_services": {
+    "en": "Test services"
+  },
+  "all": {
+    "en": "All"
+  },
+  "saml": {
+    "en": "SAML"
+  },
+  "oidc": {
+    "en": "OIDC"
+  },
+  "name": {
+    "en": "Name"
+  },
+  "description": {
+    "en": "Description"
+  },
+  "authenticate_protocol": {
+    "en": "Authenticate protocol"
+  },
+  "services": {
+    "en": "Services"
+  },
+  "saml_production": {
+    "en": "SAML Production"
+  },
+  "saml_test": {
+    "en": "SAML Test"
+  },
+  "oidc_production": {
+    "en": "OIDC Production"
+  },
+  "oidc_test": {
+    "en": "OIDC Test"
+  }
+}
