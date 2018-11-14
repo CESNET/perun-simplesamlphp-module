@@ -8,7 +8,9 @@
  */
 
 
-$this->data['header'] = $this->t('{perun:perun:choose-vo-and-group-tpl_header}');
+$this->data['header'] = "";
+$this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' . SimpleSAML\Module::getModuleUrl('perun/res/css/perun_identity_go_to_registration.css')  . '" />';
+
 $spMetadata = $this->data['SPMetadata'];
 $serviceName = '';
 $informationURL = '';
@@ -27,20 +29,22 @@ if(isset($_POST['continueToRegistration'])) {
 
 $this->includeAtTemplateBase('includes/header.php');
 
+$header = $this->t('{perun:perun:go-to-registration_header1}');
+if (!empty($serviceName) && !empty($informationURL)) {
+	$header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
+} elseif (!empty($serviceName)) {
+    $header .=  $serviceName;
+}
+$header .= $this->t('{perun:perun:go-to-registration_header2}');
 
-echo '<p>' . $this->t('{perun:perun:choose-vo-and-group-tpl_text}') . '<a href="' . $informationURL . '">' .$serviceName . '</a> </p>';
-echo '<p>' . $this->t('{perun:perun:choose-vo-and-group-tpl_message}') . '</p>'
+echo '<div id="head">';
+echo '<h1>' . $header . '</h1>';
+echo '</div>';
 ?>
-
-
-
-
     <form method="post">
         </hr>
         </br>
-        <h4> <?php echo $this->t('{perun:perun:unauthorized-access_redirect_to_registration}')?> </h4>
-
-            <input type="submit" name="continueToRegistration" value="<?php echo $this->t('{perun:perun:continue}')?>"  class="btn btn-lg btn-primary btn-block">
+            <input type="submit" name="continueToRegistration" value="<?php echo $this->t('{perun:perun:go-to-registration_continue}')?>"  class="btn btn-lg btn-primary btn-block">
         <div class="form-group">
 		</div>
 	</form>

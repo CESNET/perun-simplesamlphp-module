@@ -7,7 +7,8 @@ All notable changes to this project will be documented in this file.
  
  [Changed]
  - Changed design of ListOfSps
- 
+ - Changed the texts and visual form of pages: perun_identity_choose_vo_and_group.php and unauthorized_access_go_to_registration.php
+
  [Fixed]
  - Fixed resend SPMetadata from request to unauthorized-access-go-to-registration page
  - Fixed url encoding in PerunGroups

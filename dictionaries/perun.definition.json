@@ -1,15 +1,15 @@
 {
-  "choose-vo-and-group-tpl_header": {
-    "en": "Access forbidden",
-    "cs": "Přístup odepřen"
+  "choose-vo-and-group-tpl_header-part1": {
+    "en": "Access to the service ",
+    "cs": "Přístup ke službě "
   },
-  "choose-vo-and-group-tpl_text": {
-    "en": "You don't meet the prerequisites for accessing the service: ",
-    "cs": "Nesplňujete prerekvizity pro přístup ke službě: "
+  "choose-vo-and-group-tpl_header-part2": {
+    "en": " has been forbidden",
+    "cs": " byl zamítnut"
   },
   "choose-vo-and-group-tpl_message": {
     "en": "To access the service it is necessary to have a valid membership in one of the following groups. Please proceed with selection of organization and group for registration.",
-    "cs": "Pro získání přístupu k dané službě je nutné se zaregistrovat do jedné z následujících skupin. Pokračujte výběrem příslušné organizace a skupiny."
+    "cs": "Pro získání přístupu k dané službě je nutné být členem jedné z následujících skupin. Pokračujte výběrem příslušné organizace a skupiny."
   },
   "choose-vo-and-group-tpl_select-vo": {
 	"en": "Select virtual organization for registration: ",
@@ -20,8 +20,20 @@
     "cs": "Vyberte skupinu pro registraci: "
   },
   "choose-vo-and-group-tpl_continue": {
-    "en": "Continue",
-    "cs": "Pokračovat"
+    "en": "Continue to the registration page for selected group",
+    "cs": "Pokračovat na registrační stránku do vybrané skupiny"
+  },
+  "go-to-registration_header1" : {
+    "en": "Your activity is necessary to access the ",
+    "cs": "Pro přístup ke službě "
+  },
+  "go-to-registration_header2" : {
+    "en": " service",
+    "cs": " je vyžadována Vaše aktivita"
+  },
+  "go-to-registration_continue" : {
+    "en": "Continue to a page with additional information",
+    "cs": "Pokračovat na stránku s doplňujícími informacemi"
   },
   "disco-tpl_previous-selection": {
 	"en": "your previous selection",

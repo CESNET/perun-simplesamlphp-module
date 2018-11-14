@@ -11,7 +11,6 @@
 
 $this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' . SimpleSAML\Module::getModuleUrl('perun/res/css/perun_identity_choose_vo_and_group.css')  . '" />';
 
-$this->data['header'] = $this->t('{perun:perun:choose-vo-and-group-tpl_header}');
 $vos = $this->data['vos'];
 $groups = $this->data['groups'];
 $registerUrlBase = $this->data['registerUrlBase'];
@@ -27,6 +26,8 @@ if ($spMetadata['name']['en']) {
 if ($spMetadata['InformationURL']['en']) {
 	$informationURL = $spMetadata['InformationURL']['en'];
 }
+
+$this->data['header'] = "";
 
 $this->includeAtTemplateBase('includes/header.php');
 
@@ -48,8 +49,20 @@ if (isset($_POST['selectedGroup'])) {
 	\SimpleSAML\Utils\HTTP::redirectTrustedURL($registerUrlBase, $params);
 }
 
-echo '<p>' . $this->t('{perun:perun:choose-vo-and-group-tpl_text}') . '<a href="' . $informationURL . '">' .$serviceName . '</a> </p>';
-echo '<p>' . $this->t('{perun:perun:choose-vo-and-group-tpl_message}') . '</p>'
+$header = $this->t('{perun:perun:choose-vo-and-group-tpl_header-part1}');
+if (!empty($serviceName) && !empty($informationURL)) {
+	$header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
+} elseif (!empty($serviceName)) {
+	$header .=  $serviceName;
+}
+$header .= $this->t('{perun:perun:choose-vo-and-group-tpl_header-part2}');
+
+echo '<div id="head">';
+echo '<h1>' . $header. '</h1>';
+echo '</div>';
+
+echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_message}'). '</div>';
+
 ?>
 
     <div class="list-group">
