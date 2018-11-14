@@ -39,6 +39,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	const PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR= 'facilityDynamicRegistrationAttr';
 	const PERUN_FACILITY_REGISTER_URL_ATTR = 'facilityRegisterUrlAttr';
 	const PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS = 'facilityAllowRegistrationToGroups';
+	const LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION = 'listOfSpsWithoutInfoAboutRedirection';
 
 
 	private $uidsAttr;
@@ -47,6 +48,7 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	private $defaultRegisterUrl;
 	private $voShortName;
 	private $facilityVoShortNames = array();
+	private $listOfSpsWithoutInfoAboutRedirection = array();
 	private $spEntityId;
 	private $interface;
 	private $checkGroupMembership = false;
@@ -112,7 +114,9 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		if (!isset($config[self::FORCE_REGISTRATION_TO_GROUPS])) {
                         $config[self::FORCE_REGISTRATION_TO_GROUPS] = false;
                 }
-
+		if (isset($config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION]) && is_array($config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION])) {
+			$this->listOfSpsWithoutInfoAboutRedirection = $config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION];
+		}
 		$this->uidsAttr = $config[self::UIDS_ATTR];
 		$this->registerUrlBase = (string) $config[self::REGISTER_URL_BASE];
 		$this->defaultRegisterUrl = (string) $config[self::REGISTER_URL];
@@ -264,6 +268,11 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 		$params[self::TARGET_EXTENDED] = $callback;
 
 		$id  = SimpleSAML_Auth_State::saveState($request, 'perun:PerunIdentity');
+
+		if (in_array($this->spEntityId, $this->listOfSpsWithoutInfoAboutRedirection)) {
+			\SimpleSAML\Utils\HTTP::redirectTrustedURL($registerUrL, $params);
+		}
+
 		$url = SimpleSAML\Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
 		\SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array(
 			'StateId' => $id,

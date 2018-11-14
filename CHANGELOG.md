@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Added]
+ - Added new atribute in PerunIdentity process filter with list of Services identifier's for which we don't want to show page with information, that the user will be redirected to other page 
+ 
  [Changed]
  - Changed design of ListOfSps
  
