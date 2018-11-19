@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Changed]
+ - Changed design of ListOfSps
  
  ## [v2.0.0]
  [Added]

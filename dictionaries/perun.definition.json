@@ -82,9 +82,5 @@
   "unauthorized-access_redirect_to_registration": {
     "en": "Now you will be redirected to registration to Perun system.",
     "cs": "Nyní budete přesměrování na registraci do systému Perun."
-  },
-  "listOfSps_header": {
-    "en": "List of Service providers",
-    "cs": "Seznam služeb"
   }
 }

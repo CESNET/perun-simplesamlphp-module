@@ -1,12 +1,69 @@
-#content {
-    max-width: 75%;
-}
-
-#listOfSps{
+#listOfSps {
     margin: 0 auto;
     padding: 10px;
 }
 
-#stringFilter {
-    padding-bottom: 20px;
+#myChart {
+    max-height: 200px;
+    max-width: 470px;
+    margin: auto;
+}
+
+.table-stats th {
+    text-align: center;
+}
+
+.customLink, a:link, a:visited, a:hover {
+    color: black;
+    text-decoration: underline;
+    border: none;
+}
+
+.customLink:hover {
+    text-decoration: underline;
+}
+
+.boolean, .array, .map, .center {
+    text-align: center;
+}
+
+h3 {
+    padding-top: 50px;
+}
+
+@media screen and (max-width:767px) {
+    #content, #languagebar {
+        max-width: 95% !important;
+    }
+
+    td {
+        max-width: 150px;
+        word-wrap: break-word;
+    }
+
+    .table-responsive > .table > tbody > tr > td, .table-responsive > .table > tbody > tr > th, .table-responsive > .table > tfoot > tr > td, .table-responsive > .table > tfoot > tr > th, .table-responsive > .table > thead > tr > td, .table-responsive > .table > thead > tr > th{
+        white-space: unset !important;
+    }
+}
+
+@media screen and (min-width:767px) and (max-width:1080px) {
+    #content, #languagebar {
+        max-width: 90% !important;
+    }
+
+    td {
+        max-width: 200px;
+        word-wrap: break-word;
+    }
+}
+
+@media screen and (min-width:1080px) {
+    #content, #languagebar {
+        max-width: 85% !important;
+    }
+
+    td {
+        max-width: 300px;
+        word-wrap: break-word;
+    }
 }
