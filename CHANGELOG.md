@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ 
+ ## [v2.1.0]
  [Added]
  - Added new atribute in PerunIdentity process filter with list of Services identifier's for which we don't want to show page with information, that the user will be redirected to other page 
  
@@ -38,5 +40,6 @@ All notable changes to this project will be documented in this file.
  ## [v1.0.0]
 
  [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+ [v2.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.1.0
  [v2.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.0.0
  [v1.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v1.0.0

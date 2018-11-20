@@ -2,7 +2,7 @@
     "name": "cesnet/simplesamlphp-module-perun",
     "description": "Module which allows SSP to communicate with Perun IAM https://perun.cesnet.cz",
     "type": "simplesamlphp-module",
-    "version": "2.1.0-dev",
+    "version": "2.1.0",
     "keywords": ["Perun", "perun", "simplesamlphp"],
     "license": "BSD-2-Clause",
     "authors": [
