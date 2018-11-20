@@ -201,7 +201,7 @@ function sortByName($a, $b) {
             ],
             datasets: [{
                 label: '',
-                data: [<?php echo $samlProduction . ', ' . $statistics['samlTestServicesCount'] . ', ' . $oidcProduction . ', ' . $statistics['oidcTestServicesCount']?>],
+                data: [<?php echo $samlProductionCount . ', ' . $statistics['samlTestServicesCount'] . ', ' . $oidcProductionCount . ', ' . $statistics['oidcTestServicesCount']?>],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',
@@ -222,8 +222,7 @@ function sortByName($a, $b) {
                 yAxes: [{
                     ticks: {
                         beginAtZero: true,
-                        callback: function (value) { if (Number.isInteger(value)) { return value; } },
-                        stepSize: 1
+                        callback: function (value) { if (Number.isInteger(value)) { return value; } }
                     }
                 }]
             },

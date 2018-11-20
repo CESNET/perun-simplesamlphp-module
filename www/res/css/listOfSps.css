@@ -9,6 +9,10 @@
     margin: auto;
 }
 
+#wrap {
+    max-width: 100%;
+}
+
 .table-stats th {
     text-align: center;
 }
@@ -29,6 +33,10 @@
 
 h3 {
     padding-top: 50px;
+}
+
+#content, #languagebar {
+    margin: auto;
 }
 
 @media screen and (max-width:767px) {
