@@ -2,8 +2,16 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Added]
+ - Added new atribute in PerunIdentity process filter with list of Services identifier's for which we don't want to show page with information, that the user will be redirected to other page 
+ 
  [Changed]
  - Changed design of ListOfSps
+ - Changed the texts and visual form of pages: perun_identity_choose_vo_and_group.php and unauthorized_access_go_to_registration.php
+
+ [Fixed]
+ - Fixed resend SPMetadata from request to unauthorized-access-go-to-registration page
+ - Fixed url encoding in PerunGroups
  
  ## [v2.0.0]
  [Added]
