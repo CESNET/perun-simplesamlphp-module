@@ -18,3 +18,8 @@
 select {
     margin-bottom: 20px;
 }
+
+
+#cont-btn {
+    color: white !important;
+}
