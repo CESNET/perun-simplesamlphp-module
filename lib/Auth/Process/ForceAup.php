@@ -103,23 +103,26 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
 
 			$requiredAups = array();
 			$voShortNames = array();
-			foreach ($facilities as $facility) {
-				$facilityAups = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityReqAupsAttr);
+			
+			if ($this->is_iterable($facilities)) {
+				foreach ($facilities as $facility) {
+					$facilityAups = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityReqAupsAttr);
 
-				if (!is_null($facilityAups)) {
-					foreach ($facilityAups as $facilityAup) {
-						array_push($requiredAups, $facilityAup);
+					if (!is_null($facilityAups)) {
+						foreach ($facilityAups as $facilityAup) {
+							array_push($requiredAups, $facilityAup);
+						}
+					}
+
+					$facilityVoShortNames = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityVoShortNames);
+
+					if (!is_null($facilityVoShortNames)) {
+						foreach ($facilityVoShortNames as $facilityVoShortName) {
+							array_push($voShortNames, $facilityVoShortName);
+						}
 					}
 				}
-
-				$facilityVoShortNames = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityVoShortNames);
-
-				if (!is_null($facilityVoShortNames)) {
-					foreach ($facilityVoShortNames as $facilityVoShortName) {
-						array_push($voShortNames, $facilityVoShortName);
-					}
-				}
-			}
+            }
 
 			if (empty($requiredAups) && empty($voShortNames)) {
 				SimpleSAML\Logger::debug('Perun.ForceAup - No required Aups for facility with EntityId: ' . $request['SPMetadata']['entityid'] );
@@ -231,6 +234,20 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
 
 		return $voAups;
 	}
+
+    /**
+     * @param $var
+     * @return bool
+     */
+    public function is_iterable($var) {
+        return $var !== null
+            && (is_array($var)
+                || is_object($var)
+                || $var instanceof Traversable
+                || $var instanceof Iterator
+                || $var instanceof IteratorAggregate
+            );
+    }
 
 
 }
