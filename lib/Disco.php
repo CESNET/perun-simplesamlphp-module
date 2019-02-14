@@ -32,24 +32,35 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 		} else {
 			$returnURL = \SimpleSAML\Utils\HTTP::checkURLAllowed($_GET['return']);
 		}
-		parse_str(parse_url($returnURL)['query'], $query);
-		$id = explode(":", $query['AuthID'])[0];
-		$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
 
-		if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
-			$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
-			$this->removeAuthContextClassRefWithPrefix($state);
+		if (isset($returnURL['query'])) {
+			parse_str(parse_url($returnURL)['query'], $query);
+
+			if (isset($query['AuthID'])) {
+				$id = explode(":", $query['AuthID'])[0];
+				$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
+
+				if (! is_null($state)) {
+					if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
+						$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
+						$this->removeAuthContextClassRefWithPrefix($state);
+					}
+
+					$id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
+
+					$e = explode("=", $returnURL)[0];
+					$newReturnURL = $e . "=" . urlencode($id);
+					$_GET['return'] = $newReturnURL;
+				}
+			}
 		}
-
-		$id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
-
-		$e = explode("=", $returnURL)[0];
-		$newReturnURL = $e . "=" . urlencode($id);
-		$_GET['return'] = $newReturnURL;
 
 		parent::__construct($metadataSets, $instance);
 
-		$this->originalsp = $state['SPMetadata'];
+		if (isset($state) && isset($state['SPMetadata'])) {
+			$this->originalsp = $state['SPMetadata'];
+		}
+
 		$this->service = sspmod_perun_IdpListsService::getInstance();
 		$this->whitelist = $this->service->getWhitelistEntityIds();
 		$this->greylist = $this->service->getGreylistEntityIds();
