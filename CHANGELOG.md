@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL
  
+ [Fixed]
+ - Fixed the problem where LDAP calls RPC method in PerunIdentity filter
+ 
  ## [v2.1.0]
  [Added]
  - Added new atribute in PerunIdentity process filter with list of Services identifier's for which we don't want to show page with information, that the user will be redirected to other page 

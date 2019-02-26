@@ -157,6 +157,13 @@ abstract class sspmod_perun_Adapter
 	public abstract function setUserExtSourceAttributes($userExtSourceId, $attributes);
 
 	/**
+	 * @param sspmod_perun_model_User $user user
+	 * @param sspmod_perun_model_Vo $vo vo
+	 * @return string status, null if member does not exist
+	 */
+	public abstract function getMemberStatusByUserAndVo($user, $vo);
+
+	/**
 	 * @param sspmod_perun_model_HasId[] $entities
 	 * @return sspmod_perun_model_HasId[] without duplicates
 	 */
