@@ -12,9 +12,8 @@ $statistics = $this->data['statistics'];
 $attributesToShow = $this->data['attributesToShow'];
 $samlServices = $this->data['samlServices'];
 $oidcServices = $this->data['oidcServices'];
+$allServices = $this->data['allServices'];
 
-$allServices = array_merge($samlServices, $oidcServices);
-usort($allServices, 'sortByName');
 
 $productionServicesCount = $statistics['samlServicesCount'] - $statistics['samlTestServicesCount'] + $statistics['oidcServicesCount'] - $statistics['oidcTestServicesCount'];
 $testServicesCount = $statistics['samlTestServicesCount'] + $statistics['oidcTestServicesCount'];
@@ -180,9 +179,6 @@ function getClass($attribute) {
 	}
 }
 
-function sortByName($a, $b) {
-	return strcmp(strtolower($a['facility']->getName()), strtolower($b['facility']->getName()));
-}
 ?>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>

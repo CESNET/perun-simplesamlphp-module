@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Added]
+ - List of services is displayed as JSON if parameter 'output=json' is set in URL
  
  ## [v2.1.0]
  [Added]

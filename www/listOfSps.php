@@ -118,9 +118,50 @@ foreach ($attrNames as $attrName) {
 	}
 }
 
-$t = new SimpleSAML_XHTML_Template($config, 'perun:listOfSps-tpl.php');
-$t->data['statistics'] = $statistics;
-$t->data['attributesToShow'] = $attributesToShow;
-$t->data['samlServices'] = $samlServices;
-$t->data['oidcServices'] = $oidcServices;
-$t->show();
+$allServices = array_merge($samlServices, $oidcServices);
+usort($allServices, 'sortByName');
+
+if (isset($_GET['output']) && $_GET['output'] === 'json') {
+	$json = array();
+	$json['services'] = array();
+
+	$json['statistics']['samlProductionServicesCount'] = $statistics['samlServicesCount'] - $statistics['samlTestServicesCount'];
+	$json['statistics']['samlTestServicesCount'] = $statistics['samlTestServicesCount'];
+	$json['statistics']['oidcProductionServicesCount'] = $statistics['oidcServicesCount'] - $statistics['oidcTestServicesCount'];
+	$json['statistics']['oidcTestServicesCount'] = $statistics['oidcTestServicesCount'];
+	foreach ($allServices as $service) {
+		$a = array();
+		$a['name'] = $service['facility']->getName();
+
+		if(array_key_exists($service["facility"]->getID(), $samlServices)) {
+			$a['authenticationProtocol'] = "SAML";
+		} else {
+			$a['authenticationProtocol'] = "OIDC";
+		}
+
+		$a['description'] = $service['facility']->getDescription();
+
+		foreach ($attributesToShow as $attr) {
+			$parsedName = explode(":", $service['facilityAttributes'][$attr]['name']);
+			$key = end($parsedName);
+			$a[$key] = $service['facilityAttributes'][$attr]['value'];
+		}
+		array_push($json['services'], $a);
+	}
+
+	header('Content-type: application/json');
+	echo json_encode($json);
+} else {
+	$t = new SimpleSAML_XHTML_Template($config, 'perun:listOfSps-tpl.php');
+	$t->data['statistics'] = $statistics;
+	$t->data['attributesToShow'] = $attributesToShow;
+	$t->data['samlServices'] = $samlServices;
+	$t->data['oidcServices'] = $oidcServices;
+	$t->data['allServices'] = $allServices;
+	$t->show();
+
+}
+
+function sortByName($a, $b) {
+	return strcmp(strtolower($a['facility']->getName()), strtolower($b['facility']->getName()));
+}
