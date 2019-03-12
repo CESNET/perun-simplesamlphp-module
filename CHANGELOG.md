@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
  [Added]
  - Added file phpcs.xml
  
+ [Changed]
+ - Changed code standard to PSR-2
+ 
  ## [v2.2.0]
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL

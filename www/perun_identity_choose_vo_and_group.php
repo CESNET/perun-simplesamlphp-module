@@ -20,38 +20,42 @@ $vosForRegistration = array();
 $groupsForRegistration = array();
 
 foreach ($spGroups as $group) {
-	if (in_array($group->getVoId(), $vosIdForRegistration)) {
-		if ($group->getName() == "members" || $rpcAdapter->hasRegistrationForm($group)) {
-			$vo = $adapter->getVoById($group->getVoId());
-			if (!isset($vosForRegistration[$vo->getShortName()])) {
-				$vosForRegistration[$vo->getShortName()] = $vo;
-			}
-			array_push($groupsForRegistration, $group);
-		}
-	}
+    if (in_array($group->getVoId(), $vosIdForRegistration)) {
+        if ($group->getName() == "members" || $rpcAdapter->hasRegistrationForm($group)) {
+            $vo = $adapter->getVoById($group->getVoId());
+            if (!isset($vosForRegistration[$vo->getShortName()])) {
+                $vosForRegistration[$vo->getShortName()] = $vo;
+            }
+            array_push($groupsForRegistration, $group);
+        }
+    }
 }
 
 if (empty($groupsForRegistration)) {
-	sspmod_perun_Auth_Process_PerunIdentity::unauthorized($_REQUEST);
-
+    sspmod_perun_Auth_Process_PerunIdentity::unauthorized($_REQUEST);
 } elseif (count($groupsForRegistration) == 1) {
-	$params = array();
-	$vo = explode(':', $groupsForRegistration[0]->getUniqueName(),2)[0];
-	$group = $groupsForRegistration[0]->getName();
-	$callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+    $params = array();
+    $vo = explode(':', $groupsForRegistration[0]->getUniqueName(), 2)[0];
+    $group = $groupsForRegistration[0]->getName();
+    $callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
-	$params['vo'] = $vo;
+    $params['vo'] = $vo;
 
-	if ($group !== "members") {
-		$params['group'] = $group;
-	}
+    if ($group !== "members") {
+        $params['group'] = $group;
+    }
 
-	$params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_NEW] = $callback;
-	$params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXISTING] = $callback;
-	$params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXTENDED] = $callback;
+    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_NEW] = $callback;
+    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXISTING] = $callback;
+    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXTENDED] = $callback;
 
-	$url = SimpleSAML\Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
-	\SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $stateId, 'SPMetadata' => $_REQUEST['SPMetadata'], 'registerUrL' => $registerUrlBase , 'params' => $params));
+    $url = SimpleSAML\Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
+    \SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array(
+        'StateId' => $stateId,
+        'SPMetadata' => $_REQUEST['SPMetadata'],
+        'registerUrL' => $registerUrlBase,
+        'params' => $params
+    ));
 }
 
 $config = SimpleSAML_Configuration::getInstance();

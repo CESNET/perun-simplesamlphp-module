@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Class sspmod_perun_Auth_Process_IdPAttribute
  *
@@ -8,51 +9,53 @@
  */
 class sspmod_perun_Auth_Process_IdPAttribute extends SimpleSAML_Auth_ProcessingFilter
 {
-	private $attrMap;
+    private $attrMap;
 
-	public function __construct($config, $reserved)
-	{
-		parent::__construct($config, $reserved);
+    public function __construct($config, $reserved)
+    {
+        parent::__construct($config, $reserved);
 
-		assert('is_array($config)');
+        assert('is_array($config)');
 
-		if (!isset($config['attrMap'])) {
-			throw new SimpleSAML_Error_Exception("perun:IdPAttribute: missing mandatory configuration option 'attrMap'.");
-		}
+        if (!isset($config['attrMap'])) {
+            throw new SimpleSAML_Error_Exception(
+                "perun:IdPAttribute: missing mandatory configuration option 'attrMap'."
+            );
+        }
 
-		$this->attrMap = (array) $config['attrMap'];
-	}
-	public function process(&$request)
-	{
-		assert('is_array($request)');
+        $this->attrMap = (array)$config['attrMap'];
+    }
 
-		$metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
-		$sourceIdpMeta = $metadataHandler->getMetaData( $request['saml:sp:IdP'], 'saml20-idp-remote');
+    public function process(&$request)
+    {
+        assert('is_array($request)');
 
-		foreach ($this->attrMap as $attributeKey => $attributeValue) {
-			$attributeNames = preg_split('/:/', $attributeKey);
-			$key = array_shift($attributeNames);
+        $metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+        $sourceIdpMeta = $metadataHandler->getMetaData($request['saml:sp:IdP'], 'saml20-idp-remote');
 
-			if (!isset($sourceIdpMeta[$key])) {
-				continue;
-			}
-			$value = $sourceIdpMeta[$key];
+        foreach ($this->attrMap as $attributeKey => $attributeValue) {
+            $attributeNames = preg_split('/:/', $attributeKey);
+            $key = array_shift($attributeNames);
 
-			foreach ($attributeNames as $attributeName) {
-				if (!isset($value[$attributeName])){
-					continue;
-				}
-				$value = $value[$attributeName];
-			}
+            if (!isset($sourceIdpMeta[$key])) {
+                continue;
+            }
+            $value = $sourceIdpMeta[$key];
 
-			if (!is_array($value)) {
-				$value = array($value);
-			}
+            foreach ($attributeNames as $attributeName) {
+                if (!isset($value[$attributeName])) {
+                    continue;
+                }
+                $value = $value[$attributeName];
+            }
 
-			if (!empty($value)) {
-				$request['Attributes'][$attributeValue] = $value;
-			}
-		}
+            if (!is_array($value)) {
+                $value = array($value);
+            }
 
-	}
+            if (!empty($value)) {
+                $request['Attributes'][$attributeValue] = $value;
+            }
+        }
+    }
 }

@@ -5,9 +5,8 @@
  */
 interface sspmod_perun_model_HasId
 {
-	/**
-	 * @return int id of entity
-	 */
-	public function getId();
-
+    /**
+     * @return int id of entity
+     */
+    public function getId();
 }

@@ -14,47 +14,48 @@
 
 class sspmod_perun_Auth_Process_StringifyTargetedID extends SimpleSAML_Auth_ProcessingFilter
 {
-	private $uidAttr;
-	private $targetAttr;
+    private $uidAttr;
+    private $targetAttr;
 
-	public function __construct($config, $reserved)
-	{
-		parent::__construct($config, $reserved);
+    public function __construct($config, $reserved)
+    {
+        parent::__construct($config, $reserved);
 
-		assert('is_array($config)');
+        assert('is_array($config)');
 
-		if (!isset($config['uidAttr'])) {
-			throw new SimpleSAML_Error_Exception("perun:ProcessTargetedID: missing mandatory configuration option 'uidAttr'.");
-		}
-		if (!isset($config['targetAttr'])) {
-			$config['targetAttr'] = $config['uidAttr'];
-		}
+        if (!isset($config['uidAttr'])) {
+            throw new SimpleSAML_Error_Exception(
+                "perun:ProcessTargetedID: missing mandatory configuration option 'uidAttr'."
+            );
+        }
+        if (!isset($config['targetAttr'])) {
+            $config['targetAttr'] = $config['uidAttr'];
+        }
 
-		$this->uidAttr = (string) $config['uidAttr'];
-		$this->targetAttr = (string) $config['targetAttr'];
-	}
+        $this->uidAttr = (string)$config['uidAttr'];
+        $this->targetAttr = (string)$config['targetAttr'];
+    }
 
-	public function process(&$request)
-	{
-		assert('is_array($request)');
+    public function process(&$request)
+    {
+        assert('is_array($request)');
 
-		if (!empty($request['Attributes'][$this->uidAttr]))
-		{
-			$stringified = $this->stringify($request['Attributes'][$this->uidAttr][0]);
-			$request['Attributes'][$this->targetAttr] = array($stringified);
-		}
+        if (!empty($request['Attributes'][$this->uidAttr])) {
+            $stringified = $this->stringify($request['Attributes'][$this->uidAttr][0]);
+            $request['Attributes'][$this->targetAttr] = array($stringified);
+        }
+    }
 
-	}
-
-	/**
-	 * Convert NameID value into the text representation.
-	 */
-	private function stringify($attributeValue) {
-		if (is_object($attributeValue) && get_class($attributeValue) == "SAML2\XML\saml\NameID") {
-            return $attributeValue->NameQualifier . '!' . $attributeValue->SPNameQualifier . '!' . $attributeValue->value;
-		} else {
-			return $attributeValue;
-		}
-	}
-
+    /**
+     * Convert NameID value into the text representation.
+     */
+    private function stringify($attributeValue)
+    {
+        if (is_object($attributeValue) && get_class($attributeValue) == "SAML2\XML\saml\NameID") {
+            return $attributeValue->NameQualifier . '!' . $attributeValue->SPNameQualifier . '!'
+                . $attributeValue->value;
+        } else {
+            return $attributeValue;
+        }
+    }
 }

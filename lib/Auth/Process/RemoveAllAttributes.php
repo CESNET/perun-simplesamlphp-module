@@ -11,36 +11,35 @@
 class sspmod_perun_Auth_Process_RemoveAllAttributes extends SimpleSAML_Auth_ProcessingFilter
 {
 
-	const FILTER_ATTRIBUTE_LIST = "filterAttributeList";
+    const FILTER_ATTRIBUTE_LIST = "filterAttributeList";
 
-	private $filterAttributeList = array();
+    private $filterAttributeList = array();
 
-	public function __construct($config, $reserved)
-	{
-		parent::__construct($config, $reserved);
+    public function __construct($config, $reserved)
+    {
+        parent::__construct($config, $reserved);
 
-		if (isset($config[self::FILTER_ATTRIBUTE_LIST])) {
-			$this->filterAttributeList = $config[self::FILTER_ATTRIBUTE_LIST];
-		}
-	}
+        if (isset($config[self::FILTER_ATTRIBUTE_LIST])) {
+            $this->filterAttributeList = $config[self::FILTER_ATTRIBUTE_LIST];
+        }
+    }
 
-	public function process(&$request)
-	{
-		assert('is_array($request)');
+    public function process(&$request)
+    {
+        assert('is_array($request)');
 
-		$attributes = array();
+        $attributes = array();
 
-		foreach ($request['Attributes'] as $attributeKey => $attributeValue) {
-			if (in_array($attributeKey, $this->filterAttributeList)) {
-				$attributes[$attributeKey] = $attributeValue;
-			}
-		}
+        foreach ($request['Attributes'] as $attributeKey => $attributeValue) {
+            if (in_array($attributeKey, $this->filterAttributeList)) {
+                $attributes[$attributeKey] = $attributeValue;
+            }
+        }
 
-		$request['Attributes'] = array();
+        $request['Attributes'] = array();
 
-		foreach ($attributes as $attributeKey => $attributeValue) {
-			$request['Attributes'][$attributeKey] = $attributeValue;
-		}
-	}
-
+        foreach ($attributes as $attributeKey => $attributeValue) {
+            $request['Attributes'][$attributeKey] = $attributeValue;
+        }
+    }
 }

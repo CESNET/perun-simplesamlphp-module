@@ -13,4 +13,3 @@ $perunIdentity = new sspmod_perun_Auth_Process_PerunIdentity($state['config'], n
 $perunIdentity->process($state);
 
 SimpleSAML_Auth_ProcessingChain::resumeProcessing($state);
-

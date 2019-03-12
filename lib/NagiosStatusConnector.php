@@ -70,7 +70,7 @@ class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
             $serviceStatuses = $jsonResponse['status']['service_status'];
         }
 
-        foreach ($serviceStatuses as $serviceStatus){
+        foreach ($serviceStatuses as $serviceStatus) {
             $status = array();
             $status['name'] = $serviceStatus['service_display_name'];
             $status['status'] = $serviceStatus['status'];
@@ -78,7 +78,5 @@ class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
         }
 
         return $result;
-
     }
-
 }

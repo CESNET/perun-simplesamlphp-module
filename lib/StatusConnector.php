@@ -29,14 +29,17 @@ abstract class sspmod_perun_StatusConnector
      * @return sspmod_perun_StatusConnector instance
      * @throws SimpleSAML_Error_Exception thrown if interface does not match any supported interface
      */
-    public static function getInstance() {
+    public static function getInstance()
+    {
         $configuration = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
         $statusType = $configuration->getString(self::STATUS_TYPE, "NAGIOS");
         if ($statusType === self::NAGIOS) {
             return new sspmod_perun_NagiosStatusConnector();
         } else {
-            throw new SimpleSAML_Error_Exception("Unknown StatusConnector type in option '" . self::STATUS_TYPE . "'. Only " .
-                                                 self::NAGIOS . " type available now!");
+            throw new SimpleSAML_Error_Exception(
+                "Unknown StatusConnector type in option '" . self::STATUS_TYPE . "'. Only " .
+                self::NAGIOS . " type available now!"
+            );
         }
     }
 
@@ -51,6 +54,5 @@ abstract class sspmod_perun_StatusConnector
      *
      * @return array
      */
-    public abstract function getStatus();
-
+    abstract public function getStatus();
 }
