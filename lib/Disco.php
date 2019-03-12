@@ -33,25 +33,23 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 			$returnURL = \SimpleSAML\Utils\HTTP::checkURLAllowed($_GET['return']);
 		}
 
-		if (isset($returnURL['query'])) {
-			parse_str(parse_url($returnURL)['query'], $query);
+		parse_str(parse_url($returnURL)['query'], $query);
 
-			if (isset($query['AuthID'])) {
-				$id = explode(":", $query['AuthID'])[0];
-				$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
+		if (isset($query['AuthID'])) {
+			$id = explode(":", $query['AuthID'])[0];
+			$state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
 
-				if (! is_null($state)) {
-					if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
-						$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
-						$this->removeAuthContextClassRefWithPrefix($state);
-					}
-
-					$id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
-
-					$e = explode("=", $returnURL)[0];
-					$newReturnURL = $e . "=" . urlencode($id);
-					$_GET['return'] = $newReturnURL;
+			if (! is_null($state)) {
+				if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
+					$this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
+					$this->removeAuthContextClassRefWithPrefix($state);
 				}
+
+				$id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
+
+				$e = explode("=", $returnURL)[0];
+				$newReturnURL = $e . "=" . urlencode($id);
+				$_GET['return'] = $newReturnURL;
 			}
 		}
 
