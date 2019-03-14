@@ -1,9 +1,11 @@
 <?php
 
+namespace SimpleSAML\Module\perun\model;
+
 /**
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_model_Resource implements sspmod_perun_model_HasId
+class Resource implements HasId
 {
     private $id;
     private $voId;
@@ -11,7 +13,7 @@ class sspmod_perun_model_Resource implements sspmod_perun_model_HasId
     private $name;
 
     /**
-     * sspmod_perun_model_Resource constructor.
+     * Resource constructor.
      * @param $id
      * @param $voId
      * @param $facilityId

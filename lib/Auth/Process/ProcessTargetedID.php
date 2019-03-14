@@ -1,5 +1,10 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+
 /**
  * Filter checks whether UID attribute contains @ which means there is a scope.
  * If not then it gets UID, compute hash and construct new eduPersonPrincipalName
@@ -10,7 +15,7 @@
  * Date: 21. 11. 2016
  */
 
-class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_ProcessingFilter
+class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 {
     private $uidsAttr;
     private $prefix;
@@ -22,12 +27,12 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
         assert('is_array($config)');
 
         if (!isset($config['uidsAttr'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ProcessTargetedID: missing mandatory configuration option 'uidsAttr'."
             );
         }
         if (!isset($config['prefix'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ProcessTargetedID: missing mandatory configuration option 'prefix'."
             );
         }
@@ -64,7 +69,7 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
         if (isset($request['Attributes']['schacHomeOrganization'][0])) {
             $scope = $request['Attributes']['schacHomeOrganization'][0];
         } else {
-            throw new SimpleSAML_Error_Exception("perun:ProcessTargetedID: " .
+            throw new Exception("perun:ProcessTargetedID: " .
                 "missing mandatory attribute 'schacHomeOrganization' in request.");
         }
 
@@ -74,7 +79,7 @@ class sspmod_perun_Auth_Process_ProcessTargetedID extends SimpleSAML_Auth_Proces
         # Construct new eppn
         $newEduPersonPrincipalName = $this->prefix . '_' . $hash . '@' . $scope;
 
-        SimpleSAML\Logger::info("perun.ProcessTargetedID: Converting eduPersonTargetedID '" . $uid . "' " .
+        Logger::info("perun.ProcessTargetedID: Converting eduPersonTargetedID '" . $uid . "' " .
             "to the new ID '" . $newEduPersonPrincipalName . "'");
 
         # Set attributes back to the response

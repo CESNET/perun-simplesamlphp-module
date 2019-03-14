@@ -1,5 +1,7 @@
 <?php
 
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+
 /**
  * List all services from the saml20-sp-remote metadata which have enabled consent.
  * Internal services do not have consent enabled.
@@ -13,7 +15,7 @@
  * TODO: Use standardized format (JSON)
  */
 
-$metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+$metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $spsMetadata = $metadataHandler->getList('saml20-sp-remote');
 
 header('Content-Type: text/plain');

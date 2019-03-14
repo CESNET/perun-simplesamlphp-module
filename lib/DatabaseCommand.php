@@ -1,5 +1,8 @@
 <?php
-include("DatabaseConnector.php");
+
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Logger;
 
 /**
  * Class for working with Database
@@ -11,7 +14,6 @@ class DatabaseCommand
 
     const WHITELIST = "whiteList";
     const GREYLIST = "greyList";
-
     /**
      * Function returns array of all IdPs in whitelist/greylist
      * @param string $tableName 'whitelist' or 'greylist'
@@ -29,10 +31,8 @@ class DatabaseCommand
 
         if ($tableName == self::WHITELIST) {
             $table = $whiteListTableName;
-        } else {
-            if ($tableName == self::GREYLIST) {
-                $table = $greyListTableName;
-            }
+        } elseif ($tableName == self::GREYLIST) {
+            $table = $greyListTableName;
         }
 
         $stmt = $conn->prepare("SELECT * FROM " . $table);
@@ -40,7 +40,7 @@ class DatabaseCommand
         if ($stmt) {
             $ex = $stmt->execute();
             if ($ex === false) {
-                SimpleSAML\Logger::error("Error during select all from " . $table);
+                Logger::error("Error during select all from " . $table);
             }
 
             $stmt->bind_result($timestamp, $entityId, $reason);
@@ -54,7 +54,7 @@ class DatabaseCommand
 
             $stmt->close();
         } else {
-            SimpleSAML\Logger::error("Error during preparing statement");
+            Logger::error("Error during preparing statement");
         }
 
         $conn->close();
@@ -78,10 +78,8 @@ class DatabaseCommand
 
         if ($tableName == self::WHITELIST) {
             $table = $whiteListTableName;
-        } else {
-            if ($tableName == self::GREYLIST) {
-                $table = $greyListTableName;
-            }
+        } elseif ($tableName == self::GREYLIST) {
+            $table = $greyListTableName;
         }
 
         $stmt = $conn->prepare("SELECT * FROM " . $table);
@@ -89,7 +87,7 @@ class DatabaseCommand
         if ($stmt) {
             $ex = $stmt->execute();
             if ($ex === false) {
-                SimpleSAML\Logger::error("Error during select all entityIds from " . $table);
+                Logger::error("Error during select all entityIds from " . $table);
             }
 
             $stmt->bind_result($timestamp, $entityId, $reason);
@@ -99,13 +97,12 @@ class DatabaseCommand
 
             $stmt->close();
         } else {
-            SimpleSAML\Logger::error("Error during preparing statement");
+            Logger::error("Error during preparing statement");
         }
 
         $conn->close();
         return $listOfIdPs;
     }
-
 
     /**
      * Function inserts the line into table with $tableName
@@ -124,10 +121,8 @@ class DatabaseCommand
 
         if ($tableName == self::WHITELIST) {
             $table = $whiteListTableName;
-        } else {
-            if ($tableName == self::GREYLIST) {
-                $table = $greyListTableName;
-            }
+        } elseif ($tableName == self::GREYLIST) {
+            $table = $greyListTableName;
         }
 
         $stmt = $conn->prepare("INSERT INTO " . $table . " (entityId, reason) VALUES (?, ?)");
@@ -136,13 +131,13 @@ class DatabaseCommand
             $stmt->bind_param("ss", $entityId, $reason);
             $ex = $stmt->execute();
             if ($ex === false) {
-                SimpleSAML\Logger::error("Error during inserting entityId " . $entityId . " into " . $table);
+                Logger::error("Error during inserting entityId " . $entityId . " into " . $table);
             }
 
-            SimpleSAML\Logger::debug("EntityId " . $entityId . " was inserted into " . $table);
+            Logger::debug("EntityId " . $entityId . " was inserted into " . $table);
             $stmt->close();
         } else {
-            SimpleSAML\Logger::error("Error during preparing statement");
+            Logger::error("Error during preparing statement");
         }
 
         $conn->close();
@@ -164,10 +159,8 @@ class DatabaseCommand
 
         if ($tableName == self::WHITELIST) {
             $table = $whiteListTableName;
-        } else {
-            if ($tableName == self::GREYLIST) {
-                $table = $greyListTableName;
-            }
+        } elseif ($tableName == self::GREYLIST) {
+            $table = $greyListTableName;
         }
 
         $stmt = $conn->prepare("DELETE FROM " . $table . " WHERE entityId=?");
@@ -176,13 +169,13 @@ class DatabaseCommand
             $stmt->bind_param("s", $entityId);
             $ex = $stmt->execute();
             if ($ex === false) {
-                SimpleSAML\Logger::error("Error during deleting entityId " . $entityId . " from " . $table);
+                Logger::error("Error during deleting entityId " . $entityId . " from " . $table);
             }
 
-            SimpleSAML\Logger::debug("EntityId " . $entityId . " was deleted from " . $table);
+            Logger::debug("EntityId " . $entityId . " was deleted from " . $table);
             $stmt->close();
         } else {
-            SimpleSAML\Logger::error("Error during preparing statement");
+            Logger::error("Error during preparing statement");
         }
 
         $conn->close();

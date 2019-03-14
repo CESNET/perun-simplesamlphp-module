@@ -1,9 +1,11 @@
 <?php
 
+namespace SimpleSAML\Module\perun\model;
+
 /**
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_model_Member implements sspmod_perun_model_HasId
+class Member implements HasId
 {
     const VALID = 'VALID';
     const INVALID = 'INVALID';
@@ -16,7 +18,7 @@ class sspmod_perun_model_Member implements sspmod_perun_model_HasId
     private $status;
 
     /**
-     * sspmod_perun_model_Member constructor.
+     * Member constructor.
      * @param $id
      * @param $voId
      * @param $status

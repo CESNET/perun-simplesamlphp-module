@@ -1,5 +1,9 @@
 <?php
 
+use SimpleSAML\Configuration;
+use SimpleSAML\XHTML\EMail;
+use SimpleSAML\Utils\HTTP;
+
 /**
  * endpoint which report (send email) given idp defined by idpEntityId param.
  * Also consumes other parameters such as 'isOk'
@@ -17,24 +21,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo 'ERROR request has to be POST';
     die;
 }
+
 if (!isset($_POST['idpEntityId'])) {
     http_response_code(400);
     echo 'ERROR parametr "idpEntityId" is missing';
     die;
 }
+
 if (!isset($_POST['isOk'])) {
     http_response_code(400);
     echo 'ERROR parametr "isOk" is missing';
     die;
 }
+
 if (!isset($_POST['redirectUri'])) {
     http_response_code(400);
     echo 'ERROR parametr "redirectUri" is missing';
     die;
 }
 
-
-$config = SimpleSAML_Configuration::getInstance();
+$config = Configuration::getInstance();
 
 $message = <<<EOD
 
@@ -57,7 +63,7 @@ EOD;
 
 $toAddress = $config->getString('technicalcontact_email', 'N/A');
 if ($toAddress !== 'N/A') {
-    $email = new SimpleSAML_XHTML_EMail($toAddress, 'Report: ' . $_POST['title'], $_POST['from']);
+    $email = new EMail($toAddress, 'Report: ' . $_POST['title'], $_POST['from']);
     $email->setBody($message);
     $email->send();
 }
@@ -67,4 +73,4 @@ echo '<h1>' . $this->t('{perun:perun:unsupported_redirection}') . '</h1>';
 echo $this->t('{perun:perun:go_back}') . "<a href='{$_POST['redirectUri']}'>{$_POST['redirectUri']}</a>";
 
 // redirect the user back
-\SimpleSAML\Utils\HTTP::redirectTrustedURL($_POST['redirectUri'], array('mailSended' => true));
+HTTP::redirectTrustedURL($_POST['redirectUri'], array('mailSended' => true));

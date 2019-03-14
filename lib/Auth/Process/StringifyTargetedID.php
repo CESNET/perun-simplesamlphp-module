@@ -1,5 +1,9 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Error\Exception;
+
 /**
  * Filter checks whether UID attribute is object of type DOMNodeList.
  * If yes, then it supposes it is derived form XML
@@ -12,7 +16,7 @@
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
-class sspmod_perun_Auth_Process_StringifyTargetedID extends SimpleSAML_Auth_ProcessingFilter
+class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 {
     private $uidAttr;
     private $targetAttr;
@@ -24,7 +28,7 @@ class sspmod_perun_Auth_Process_StringifyTargetedID extends SimpleSAML_Auth_Proc
         assert('is_array($config)');
 
         if (!isset($config['uidAttr'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ProcessTargetedID: missing mandatory configuration option 'uidAttr'."
             );
         }

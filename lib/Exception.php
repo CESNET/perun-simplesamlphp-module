@@ -1,5 +1,7 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
 /**
  * Wrapper of Perun exception returned from RPC.
  *
@@ -7,7 +9,7 @@
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class sspmod_perun_Exception extends SimpleSAML_Error_Exception
+class Exception extends \SimpleSAML\Error\Exception
 {
     private $id;
     private $name;

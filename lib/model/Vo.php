@@ -1,16 +1,18 @@
 <?php
 
+namespace SimpleSAML\Module\perun\model;
+
 /**
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class sspmod_perun_model_Vo implements sspmod_perun_model_HasId
+class Vo implements HasId
 {
     private $id;
     private $name;
     private $shortName;
 
     /**
-     * sspmod_perun_model_Vo constructor.
+     * Vo constructor.
      * @param int $id
      * @param string $name
      * @param string $shortName

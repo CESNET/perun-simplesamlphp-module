@@ -1,12 +1,14 @@
 <?php
 
+namespace SimpleSAML\Module\perun\model;
+
 /**
  * Created by PhpStorm.
  * User: pavel
  * Date: 9.4.18
  * Time: 9:43
  */
-class sspmod_perun_model_Facility implements sspmod_perun_model_HasId
+class Facility implements HasId
 {
     private $id;
     private $name;
@@ -14,11 +16,11 @@ class sspmod_perun_model_Facility implements sspmod_perun_model_HasId
     private $entityId;
 
     /**
-     * sspmod_perun_model_Vo constructor.
+     * Facility constructor.
      * @param int $id
      * @param string $name
      * @param string $description
-     * @param string $shortName
+     * @param string $entityId
      */
     public function __construct($id, $name, $description, $entityId)
     {

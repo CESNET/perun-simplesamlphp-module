@@ -1,5 +1,11 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\Exception as PerunException;
+use SimpleSAML\Logger;
+
 /**
  * Provides interface to call Perun RPC.
  * Note that Perun RPC should be considered as unreliable
@@ -8,19 +14,19 @@
  * Example Usage:
  *
  * try {
- *        $attribute = sspmod_perun_RpcConnector::get('attributesManager', 'getAttribute', array(
+ *        $attribute = RpcConnector::get('attributesManager', 'getAttribute', array(
  *            'user' => $userId,
  *            'attributeName' => $attrName,
  *        ));
  *        ...
- * } catch (Perun_Exception $pe) {
+ * } catch (PerunException $pe) {
  *        ...
  * }
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_RpcConnector
+class RpcConnector
 {
     private $rpcUrl;
     private $user;
@@ -39,7 +45,6 @@ class sspmod_perun_RpcConnector
         $this->password = $password;
     }
 
-
     public function get($manager, $method, $params = array())
     {
         $paramsQuery = http_build_query($params);
@@ -56,12 +61,12 @@ class sspmod_perun_RpcConnector
         $json = curl_exec($ch);
         curl_close($ch);
 
-        SimpleSAML\Logger::debug("perun.RPC: GET call $uri with params: " . $paramsQuery . ", response: " . $json);
+        Logger::debug("perun.RPC: GET call $uri with params: " . $paramsQuery . ", response: " . $json);
 
         $result = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "Cant't decode response from Perun. Call: $uri, Params: $paramsQuery, Response: $json"
             );
         }
@@ -71,7 +76,6 @@ class sspmod_perun_RpcConnector
 
         return $result;
     }
-
 
     public function post($manager, $method, $params = array())
     {
@@ -94,13 +98,13 @@ class sspmod_perun_RpcConnector
         $json = curl_exec($ch);
         curl_close($ch);
 
-        SimpleSAML\Logger::debug("perun.RPC: POST call $uri with params: " . $paramsJson . ", response: " . $json);
+        Logger::debug("perun.RPC: POST call $uri with params: " . $paramsJson . ", response: " . $json);
 
         $result = json_decode($json, true);
 
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "Cant't decode response from Perun. Call: $uri, Params: $paramsJson, Response: $json"
             );
         }
@@ -111,9 +115,8 @@ class sspmod_perun_RpcConnector
         return $result;
     }
 
-
     private static function error($id, $name, $message, $uri, $params)
     {
-        throw new sspmod_perun_Exception($id, $name, $message . "\ncall: $uri, params: " . var_export($params, true));
+        throw new PerunException($id, $name, $message . "\ncall: $uri, params: " . var_export($params, true));
     }
 }

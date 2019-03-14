@@ -1,13 +1,18 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+
 /**
- * Class sspmod_perun_Auth_Process_IdPAttribute
+ * Class IdPAttribute
  *
  * This class for each line in $attrMAp search the $key in IdP Metadata and save it to $request['Attributes'][$value]
  *
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_Auth_Process_IdPAttribute extends SimpleSAML_Auth_ProcessingFilter
+class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
 {
     private $attrMap;
 
@@ -18,7 +23,7 @@ class sspmod_perun_Auth_Process_IdPAttribute extends SimpleSAML_Auth_ProcessingF
         assert('is_array($config)');
 
         if (!isset($config['attrMap'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:IdPAttribute: missing mandatory configuration option 'attrMap'."
             );
         }
@@ -30,7 +35,7 @@ class sspmod_perun_Auth_Process_IdPAttribute extends SimpleSAML_Auth_ProcessingF
     {
         assert('is_array($request)');
 
-        $metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+        $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
         $sourceIdpMeta = $metadataHandler->getMetaData($request['saml:sp:IdP'], 'saml20-idp-remote');
 
         foreach ($this->attrMap as $attributeKey => $attributeValue) {

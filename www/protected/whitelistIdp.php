@@ -1,5 +1,9 @@
 <?php
 
+use SimpleSAML\Module\perun\IdpListsService;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+use SimpleSAML\Error\Exception;
+
 /**
  * endpoint which whitelist given idp defined by entityID param.
  * Optionally consumes and saves reason param.
@@ -15,20 +19,20 @@
 if (!isset($_REQUEST['entityId'])) {
     sendError("parametr 'entityId' is missing", 400);
 }
+
 $entityid = $_REQUEST['entityId'];
 $reason = (isset($_REQUEST['reason']) ? $_REQUEST['reason'] : null);
 
-$metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+$metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $idpsMatadata = $metadataHandler->getList('saml20-idp-remote');
 
 if (!array_key_exists($entityid, $idpsMatadata)) {
     sendError("unknown IdP with entityId '$entityid'. Metadata not found.", 400);
 }
 
-
 try {
     //FIXME: Not thread safe!!!
-    $service = sspmod_perun_IdpListsService::getInstance();
+    $service = IdpListsService::getInstance();
 
     if ($service->isWhitelisted($entityid)) {
         if (!$service->isGreylisted($entityid)) {
@@ -48,10 +52,9 @@ try {
         'result' => 'ADDED',
         'msg' => "IdP '$entityid' was added to whitelist."
     ));
-} catch (SimpleSAML_Error_Exception $e) {
+} catch (Exception $e) {
     sendError($e->getMessage());
 }
-
 
 function sendError($msg, $code = 500)
 {

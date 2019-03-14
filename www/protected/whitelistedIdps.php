@@ -1,5 +1,8 @@
 <?php
 
+use SimpleSAML\Module\perun\IdpListsService;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+
 /**
  * List all whitelisted IdPs.
  *
@@ -13,10 +16,10 @@
  * TODO: Use standardized format (JSON)
  */
 
-$metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+$metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $idpsMetadata = $metadataHandler->getList('saml20-idp-remote');
 
-$service = sspmod_perun_IdpListsService::getInstance();
+$service = IdpListsService::getInstance();
 
 header('Content-Type: text/plain');
 
@@ -35,7 +38,6 @@ foreach ($idps as $idp) {
 
     print "\n";
 }
-
 
 function getEntityName($metadata)
 {

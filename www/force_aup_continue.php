@@ -1,11 +1,16 @@
 <?php
 
+use \SimpleSAML\Module\perun\AdapterRpc;
+use SimpleSAML\Auth\State;
+use SimpleSAML\Auth\ProcessingChain;
+use SimpleSAML\Logger;
+
 $id = $_REQUEST['StateId'];
-$state = SimpleSAML_Auth_State::loadState($id, 'perun:forceAup');
-$rpcAdapter = new sspmod_perun_AdapterRpc();
+$state = State::loadState($id, 'perun:forceAup');
+$rpcAdapter = new AdapterRpc();
 $rpcConnector = $rpcAdapter->getConnector();
 /**
- * @var sspmod_perun_model_User $user
+ * @var \SimpleSAML\Module\perun\model\User $user
  */
 $user = $state['perun']['user'];
 
@@ -15,8 +20,8 @@ try {
         'attributeName' => $state['perunUserAupAttr'],
     ));
     $userAups = $userAupsAttr['value'];
-} catch (Exception $exception) {
-    SimpleSAML\Logger::error('Perun.ForceAup - Error during get userAupsAttr from Perun');
+} catch (\Exception $exception) {
+    Logger::error('Perun.ForceAup - Error during get userAupsAttr from Perun');
 }
 
 foreach ($state['newAups'] as $key => $newAup) {
@@ -39,9 +44,9 @@ try {
         'attribute' => $userAupsAttr,
     ));
 
-    SimpleSAML\Logger::info('Perun.ForceAup - User accepted usage policy');
-} catch (Exception $exception) {
-    SimpleSAML\Logger::error('Perun.ForceAup - Error during post data to Perun');
+    Logger::info('Perun.ForceAup - User accepted usage policy');
+} catch (\Exception $exception) {
+    Logger::error('Perun.ForceAup - Error during post data to Perun');
 }
 
-SimpleSAML_Auth_ProcessingChain::resumeProcessing($state);
+ProcessingChain::resumeProcessing($state);

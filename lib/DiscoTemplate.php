@@ -1,5 +1,8 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Configuration;
 
 /**
  * This class extends basic SimpleSAML template class. It provides some utils functions used in templates
@@ -9,21 +12,20 @@
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
+class DiscoTemplate extends \SimpleSAML\XHTML\Template
 {
 
     /**
      * sspmod_perun_DiscoTemplate constructor.
-     * @param SimpleSAML_Configuration $configuration of SimpleSAMLphp
+     * @param Configuration $configuration of SimpleSAMLphp
      */
-    public function __construct(SimpleSAML_Configuration $configuration)
+    public function __construct(Configuration $configuration)
     {
         parent::__construct($configuration, 'perun:disco-tpl.php', 'disco');
 
         // Translate title in header
         $this->data['header'] = $this->t(isset($this->data['header']) ? $this->data['header'] : 'selectidp');
     }
-
 
     /**
      * @return array metadata of preferred IdP if exists or null if not
@@ -36,7 +38,6 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
         return null;
     }
 
-
     /**
      * @param string $tag desired tag. If not provided 'misc' is used for all untagged idps.
      * @return array list of idp metadatas from declared tag or untagged (misc) idps are returned.
@@ -45,7 +46,6 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
     {
         return $this->data['idplist'][$tag];
     }
-
 
     /**
      * @return array structure of idp metadatas divided by tags.
@@ -71,7 +71,6 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
         return $this->data['idplist'];
     }
 
-
     /**
      * @return array list of all idp metadatas ignoring tagging
      */
@@ -83,7 +82,6 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
         }
         return $allIdps;
     }
-
 
     /**
      * @return bool true if SP has property 'disco.doNotFilterIdps' set to true in its metadata. False otherwise.
@@ -103,14 +101,13 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
             $this->data['originalsp']['disco.addInstitutionApp'] === true);
     }
 
-
     /**
      * @param string $idpEntityId
      * @return string url where user should be redirected when he choose idp
      */
     public function getContinueUrl($idpEntityId)
     {
-        return sspmod_perun_Disco::buildContinueUrl(
+        return Disco::buildContinueUrl(
             $this->data['entityID'],
             $this->data['return'],
             $this->data['returnIDParam'],
@@ -123,7 +120,7 @@ class sspmod_perun_DiscoTemplate extends SimpleSAML_XHTML_Template
      */
     public function getContinueUrlWithoutIdPEntityId()
     {
-        return sspmod_perun_Disco::buildContinueUrlWithoutIdPEntityId(
+        return Disco::buildContinueUrlWithoutIdPEntityId(
             $this->data['entityID'],
             $this->data['return'],
             $this->data['returnIDParam']

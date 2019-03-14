@@ -1,7 +1,17 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun\model\User;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\Vo;
+use SimpleSAML\Module\perun\model\Member;
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+
 /**
- * Class sspmod_perun_AdapterLdap
+ * Class AdapterLdap
  *
  * Configuration file should be placed in default config folder of SimpleSAMLphp.
  * Example of file is in config-template folder.
@@ -11,7 +21,7 @@
  * @author Michal Prochazka <michalp@ics.muni.cz>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
+class AdapterLdap extends Adapter
 {
     const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
     const LDAP_HOSTNAME = 'ldap.hostname';
@@ -32,7 +42,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
-        $conf = SimpleSAML_Configuration::getConfig($configFileName);
+        $conf = Configuration::getConfig($configFileName);
 
         $this->ldapHostname = $conf->getString(self::LDAP_HOSTNAME);
         $this->ldapUser = $conf->getString(self::LDAP_USER, null);
@@ -40,7 +50,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
         $this->ldapBase = $conf->getString(self::LDAP_BASE);
 
 
-        $this->connector = new sspmod_perun_LdapConnector($this->ldapHostname, $this->ldapUser, $this->ldapPassword);
+        $this->connector = new LdapConnector($this->ldapHostname, $this->ldapUser, $this->ldapPassword);
     }
 
     public function getPerunUser($idpEntityId, $uids)
@@ -66,16 +76,13 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
         if (isset($user['displayName'][0])) {
             $name = $user['displayName'][0];
+        } elseif (isset($user['cn'][0])) {
+            $name = $user['cn'][0];
         } else {
-            if (isset($user['cn'][0])) {
-                $name = $user['cn'][0];
-            } else {
-                $name = null;
-            }
+            $name = null;
         }
-        return new sspmod_perun_model_User($user['perunUserId'][0], $name);
+        return new User($user['perunUserId'][0], $name);
     }
-
 
     public function getMemberGroups($user, $vo)
     {
@@ -100,7 +107,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             );
             array_push(
                 $groups,
-                new sspmod_perun_model_Group(
+                new Group(
                     $group['perunGroupId'][0],
                     $group['perunVoId'][0],
                     $group['cn'][0],
@@ -112,7 +119,6 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 
         return $groups;
     }
-
 
     public function getSpGroups($spEntityId)
     {
@@ -133,7 +139,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
                     );
                     array_push(
                         $groups,
-                        new sspmod_perun_model_Group(
+                        new Group(
                             $group['perunGroupId'][0],
                             $group['perunVoId'][0],
                             $group['cn'],
@@ -149,7 +155,6 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
         return $groups;
     }
 
-
     public function getGroupByName($vo, $name)
     {
         $voId = $vo->getId();
@@ -159,11 +164,11 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
         );
         if (is_null($group)) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "Group with name: $name in VO: " . $vo->getName() . " does not exists in Perun LDAP."
             );
         }
-        return new sspmod_perun_model_Group(
+        return new Group(
             $group['perunGroupId'][0],
             $group['perunVoId'][0],
             $group['cn'][0],
@@ -171,7 +176,6 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             $group['description'][0]
         );
     }
-
 
     public function getVoByShortName($voShortName)
     {
@@ -181,10 +185,10 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             array("perunVoId", "o", "description")
         );
         if (is_null($vo)) {
-            throw new SimpleSAML_Error_Exception("Vo with name: $vo does not exists in Perun LDAP.");
+            throw new Exception("Vo with name: $vo does not exists in Perun LDAP.");
         }
 
-        return new sspmod_perun_model_Vo($vo['perunVoId'][0], $vo['description'][0], $vo['o'][0]);
+        return new Vo($vo['perunVoId'][0], $vo['description'][0], $vo['o'][0]);
     }
 
     public function getVoById($id)
@@ -195,12 +199,11 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             array("o", "description")
         );
         if (is_null($vo)) {
-            throw new SimpleSAML_Error_Exception("Vo with id: $id does not exists in Perun LDAP.");
+            throw new Exception("Vo with id: $id does not exists in Perun LDAP.");
         }
 
-        return new sspmod_perun_model_Vo($id, $vo['description'][0], $vo['o'][0]);
+        return new Vo($id, $vo['description'][0], $vo['o'][0]);
     }
-
 
     public function getUserAttributes($user, $attrNames)
     {
@@ -276,10 +279,10 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             "(&(objectClass=perunResource)(entityID=$spEntityId))",
             array("perunResourceId")
         );
-        SimpleSAML\Logger::debug("Resources - " . var_export($resources, true));
+        Logger::debug("Resources - " . var_export($resources, true));
 
         if (is_null($resources)) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "Service with spEntityId: " . $spEntityId . " hasn't assigned any resource."
             );
         }
@@ -299,7 +302,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
         foreach ($groups as $group) {
             array_push(
                 $resultGroups,
-                new sspmod_perun_model_Group(
+                new Group(
                     $group['perunGroupId'][0],
                     $group['perunVoId'][0],
                     $group['cn'][0],
@@ -309,7 +312,7 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
             );
         }
         $resultGroups = $this->removeDuplicateEntities($resultGroups);
-        SimpleSAML\Logger::debug("Groups - " . var_export($resultGroups, true));
+        Logger::debug("Groups - " . var_export($resultGroups, true));
         return $resultGroups;
     }
 
@@ -323,9 +326,9 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
         );
 
         if (empty($groupId)) {
-            return sspmod_perun_model_Member::INVALID;
+            return Member::INVALID;
         } else {
-            return sspmod_perun_model_Member::VALID;
+            return Member::VALID;
         }
     }
 }

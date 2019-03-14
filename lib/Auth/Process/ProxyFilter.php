@@ -1,5 +1,10 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+
 /**
  * Class sspmod_perun_Auth_Process_ProxyFilter
  *
@@ -20,7 +25,7 @@
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class sspmod_perun_Auth_Process_ProxyFilter extends SimpleSAML_Auth_ProcessingFilter
+class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 {
 
     private $config;
@@ -28,23 +33,22 @@ class sspmod_perun_Auth_Process_ProxyFilter extends SimpleSAML_Auth_ProcessingFi
     private $filterSPs;
     private $reserved;
 
-
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
 
         if (!isset($config['config'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ProxyFilter: missing mandatory configuration option 'config'"
             );
         }
         if (!isset($config['config']['class'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ProxyFilter: missing mandatory configuration option config['class']"
             );
         }
         if (!isset($config['filterSPs'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ProxyFilter: missing mandatory configuration option 'filterSPs'."
             );
         }
@@ -56,7 +60,6 @@ class sspmod_perun_Auth_Process_ProxyFilter extends SimpleSAML_Auth_ProcessingFi
         $this->reserved = (array)$reserved;
     }
 
-
     public function process(&$request)
     {
         assert('is_array($request)');
@@ -64,7 +67,9 @@ class sspmod_perun_Auth_Process_ProxyFilter extends SimpleSAML_Auth_ProcessingFi
         foreach ($this->filterSPs as $sp) {
             $currentSp = $request['Destination']['entityid'];
             if ($sp == $currentSp) {
-                SimpleSAML\Logger::info("perun.ProxyFilter: Filtering out filter $this->nestedClass for SP $currentSp");
+                Logger::info(
+                    "perun.ProxyFilter: Filtering out filter $this->nestedClass for SP $currentSp"
+                );
 
                 return;
             }

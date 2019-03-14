@@ -1,21 +1,30 @@
 <?php
+
+use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
+use SimpleSAML\Module\perun\AdapterRpc;
+use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module;
+use SimpleSAML\Configuration;
+use SimpleSAML\XHTML\Template;
+use SimpleSAML\Utils\HTTP;
+
 /**
  * This page let user select one group and redirect him to a url where he can register to group.
  *
  * It prepares model data for Template.
  *
- * See sspmod_perun_Auth_Process_PerunIdentity for mor information.
+ * See PerunIdentity for mor information.
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
-$adapter = sspmod_perun_Adapter::getInstance($_REQUEST[sspmod_perun_Auth_Process_PerunIdentity::INTERFACE_PROPNAME]);
-$rpcAdapter = new sspmod_perun_AdapterRpc();
+$adapter = Adapter::getInstance($_REQUEST[PerunIdentity::INTERFACE_PROPNAME]);
+$rpcAdapter = new AdapterRpc();
 $spEntityId = $_REQUEST['spEntityId'];
 $vosIdForRegistration = $_REQUEST['vosIdForRegistration'];
 $stateId = $_REQUEST['stateId'];
 $spGroups = $adapter->getSpGroups($spEntityId);
-$registerUrlBase = $_REQUEST[sspmod_perun_Auth_Process_PerunIdentity::REGISTER_URL_BASE];
+$registerUrlBase = $_REQUEST[PerunIdentity::REGISTER_URL_BASE];
 $vosForRegistration = array();
 $groupsForRegistration = array();
 
@@ -32,12 +41,12 @@ foreach ($spGroups as $group) {
 }
 
 if (empty($groupsForRegistration)) {
-    sspmod_perun_Auth_Process_PerunIdentity::unauthorized($_REQUEST);
+    PerunIdentity::unauthorized($_REQUEST);
 } elseif (count($groupsForRegistration) == 1) {
     $params = array();
     $vo = explode(':', $groupsForRegistration[0]->getUniqueName(), 2)[0];
     $group = $groupsForRegistration[0]->getName();
-    $callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
     $params['vo'] = $vo;
 
@@ -45,12 +54,12 @@ if (empty($groupsForRegistration)) {
         $params['group'] = $group;
     }
 
-    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_NEW] = $callback;
-    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXISTING] = $callback;
-    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXTENDED] = $callback;
+    $params[PerunIdentity::TARGET_NEW] = $callback;
+    $params[PerunIdentity::TARGET_EXISTING] = $callback;
+    $params[PerunIdentity::TARGET_EXTENDED] = $callback;
 
-    $url = SimpleSAML\Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
-    \SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array(
+    $url = Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
+    HTTP::redirectTrustedURL($url, array(
         'StateId' => $stateId,
         'SPMetadata' => $_REQUEST['SPMetadata'],
         'registerUrL' => $registerUrlBase,
@@ -58,9 +67,9 @@ if (empty($groupsForRegistration)) {
     ));
 }
 
-$config = SimpleSAML_Configuration::getInstance();
+$config = Configuration::getInstance();
 
-$t = new SimpleSAML_XHTML_Template($config, 'perun:choose-vo-and-group-tpl.php');
+$t = new Template($config, 'perun:choose-vo-and-group-tpl.php');
 $t->data['registerUrlBase'] = $registerUrlBase;
 $t->data['callbackUrl'] = $_REQUEST['callbackUrl'];
 $t->data['vos'] = $vosForRegistration;

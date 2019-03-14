@@ -1,5 +1,12 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Utils\HTTP;
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Auth\State;
+use SimpleSAML\Configuration;
+use SimpleSAML\Logger;
 
 /**
  * This class implements a IdP discovery service.
@@ -13,7 +20,7 @@
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
+class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
     const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
@@ -28,16 +35,16 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
     public function __construct(array $metadataSets, $instance)
     {
         if (!array_key_exists('return', $_GET)) {
-            throw new Exception('Missing parameter: return');
+            throw new \Exception('Missing parameter: return');
         } else {
-            $returnURL = \SimpleSAML\Utils\HTTP::checkURLAllowed($_GET['return']);
+            $returnURL = HTTP::checkURLAllowed($_GET['return']);
         }
 
         parse_str(parse_url($returnURL)['query'], $query);
 
         if (isset($query['AuthID'])) {
             $id = explode(":", $query['AuthID'])[0];
-            $state = SimpleSAML_Auth_State::loadState($id, 'saml:sp:sso', true);
+            $state = State::loadState($id, 'saml:sp:sso', true);
 
             if (!is_null($state)) {
                 if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
@@ -45,7 +52,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
                     $this->removeAuthContextClassRefWithPrefix($state);
                 }
 
-                $id = SimpleSAML_Auth_State::saveState($state, 'saml:sp:sso');
+                $id = State::saveState($state, 'saml:sp:sso');
 
                 $e = explode("=", $returnURL)[0];
                 $newReturnURL = $e . "=" . urlencode($id);
@@ -59,11 +66,10 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
             $this->originalsp = $state['SPMetadata'];
         }
 
-        $this->service = sspmod_perun_IdpListsService::getInstance();
+        $this->service = IdpListsService::getInstance();
         $this->whitelist = $this->service->getWhitelistEntityIds();
         $this->greylist = $this->service->getGreylistEntityIds();
     }
-
 
     /**
      * Handles a request to this discovery service. It is enry point of Discovery service.
@@ -77,29 +83,31 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
 
         // no choice possible. Show discovery service page
         $idpList = $this->getIdPList();
-        if (isset($this->originalsp['disco.addInstitutionApp']) &&
-            $this->originalsp['disco.addInstitutionApp'] === true
+        if (isset($this->originalsp['disco.addInstitutionApp'])
+            && $this->originalsp['disco.addInstitutionApp'] === true
         ) {
             $idpList = $this->filterAddInstitutionList($idpList);
         } else {
             $idpList = $this->filterList($idpList);
         }
         $preferredIdP = $this->getRecommendedIdP();
-        $preferredIdP = array_key_exists($preferredIdP, $idpList) ? $preferredIdP : null;
+        $preferredIdP = array_key_exists($preferredIdP, $idpList)
+            ? $preferredIdP : null;
 
         if (sizeof($idpList) === 1) {
             $idp = array_keys($idpList)[0];
-            $url = sspmod_perun_Disco::buildContinueUrl(
+            $url = Disco::buildContinueUrl(
                 $this->spEntityId,
                 $this->returnURL,
                 $this->returnIdParam,
                 $idp
             );
-            SimpleSAML\Logger::info('perun.Disco: Only one Idp left. Redirecting automatically. IdP: ' . $idp);
-            SimpleSAML\Utils\HTTP::redirectTrustedURL($url);
+            Logger::info('perun.Disco: Only one Idp left. Redirecting automatically. IdP: '
+                . $idp);
+            HTTP::redirectTrustedURL($url);
         }
 
-        $t = new sspmod_perun_DiscoTemplate($this->config);
+        $t = new DiscoTemplate($this->config);
         $t->data['originalsp'] = $this->originalsp;
         $t->data['idplist'] = $this->idplistStructured($idpList);
         $t->data['preferredidp'] = $preferredIdP;
@@ -110,20 +118,22 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         $t->show();
     }
 
-
     /**
      * Filter a list of entities according to any filters defined in the parent class, plus
      *
      * @param array $list A map of entities to filter.
      * @return array The list in $list after filtering entities.
-     * @throws SimpleSAML_Error_Exception if all IdPs are filtered out and no one left.
+     * @throws Exception if all IdPs are filtered out and no one left.
      */
     protected function filterList($list)
     {
-        $conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $disableWhitelisting = $conf->getBoolean(self::PROPNAME_DISABLE_WHITELISTING, false);
+        $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
+        $disableWhitelisting
+            = $conf->getBoolean(self::PROPNAME_DISABLE_WHITELISTING, false);
 
-        if (!isset($this->originalsp['disco.doNotFilterIdps']) || !$this->originalsp['disco.doNotFilterIdps']) {
+        if (!isset($this->originalsp['disco.doNotFilterIdps'])
+            || !$this->originalsp['disco.doNotFilterIdps']
+        ) {
             $list = parent::filterList($list);
             $list = $this->scoping($list);
             if (!$disableWhitelisting) {
@@ -134,7 +144,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         }
 
         if (empty($list)) {
-            throw new SimpleSAML_Error_Exception('All IdPs has been filtered out. And no one left.');
+            throw new Exception('All IdPs has been filtered out. And no one left.');
         }
 
         return $list;
@@ -145,7 +155,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
      *
      * @param array $list A map of entities to filter.
      * @return array The list in $list after filtering entities.
-     * @throws SimpleSAML_Error_Exception if all IdPs are filtered out and no one left.
+     * @throws Exception if all IdPs are filtered out and no one left.
      */
     protected function filterAddInstitutionList($list)
     {
@@ -156,7 +166,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         }
 
         if (empty($list)) {
-            throw new SimpleSAML_Error_Exception('All IdPs has been filtered out. And no one left.');
+            throw new Exception('All IdPs has been filtered out. And no one left.');
         }
 
         return $list;
@@ -182,7 +192,6 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         return $list;
     }
 
-
     protected function whitelisting($list)
     {
         foreach ($list as $entityId => $idp) {
@@ -192,11 +201,14 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
                 $unset = false;
             }
             if (isset($idp['EntityAttributes']['http://macedir.org/entity-category-support'])) {
-                $entityCategorySupport = $idp['EntityAttributes']['http://macedir.org/entity-category-support'];
-                if (in_array("http://refeds.org/category/research-and-scholarship", $entityCategorySupport)) {
+                $entityCategorySupport
+                    = $idp['EntityAttributes']['http://macedir.org/entity-category-support'];
+                if (in_array("http://refeds.org/category/research-and-scholarship", $entityCategorySupport)
+                ) {
                     $unset = false;
                 }
-                if (in_array("http://www.geant.net/uri/dataprotection-code-of-conduct/v1", $entityCategorySupport)) {
+                if (in_array("http://www.geant.net/uri/dataprotection-code-of-conduct/v1", $entityCategorySupport)
+                ) {
                     $unset = false;
                 }
             }
@@ -207,7 +219,6 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
                 $unset = false;
             }
 
-
             if ($unset === true) {
                 unset($list[$entityId]);
             }
@@ -217,7 +228,6 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         //);
         return $list;
     }
-
 
     protected function greylisting($list)
     {
@@ -233,11 +243,12 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         return $list;
     }
 
-
     protected function greylistingPerSP($list, $sp)
     {
         foreach ($list as $entityId => $idp) {
-            if (isset($sp['greylist']) && in_array($entityId, $sp['greylist'])) {
+            if (isset($sp['greylist'])
+                && in_array($entityId, $sp['greylist'])
+            ) {
                 unset($list[$entityId]);
             }
         }
@@ -248,7 +259,6 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
         return $list;
     }
 
-
     /**
      * @param $entityID
      * @param $return
@@ -256,8 +266,12 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
      * @param $idpEntityId
      * @return string url where user should be redirected when he choose idp
      */
-    public static function buildContinueUrl($entityID, $return, $returnIDParam, $idpEntityId)
-    {
+    public static function buildContinueUrl(
+        $entityID,
+        $return,
+        $returnIDParam,
+        $idpEntityId
+    ) {
         $url = '?' .
             'entityID=' . urlencode($entityID) . '&' .
             'return=' . urlencode($return) . '&' .
@@ -273,8 +287,11 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
      * @param $returnIDParam
      * @return string url where user should be redirected when he choose idp
      */
-    public static function buildContinueUrlWithoutIdPEntityId($entityID, $return, $returnIDParam)
-    {
+    public static function buildContinueUrlWithoutIdPEntityId(
+        $entityID,
+        $return,
+        $returnIDParam
+    ) {
         $url = '?' .
             'entityID=' . urlencode($entityID) . '&' .
             'return=' . urlencode($return) . '&' .
@@ -289,7 +306,7 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
      */
     public function removeAuthContextClassRefWithPrefix(&$state)
     {
-        $conf = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+        $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $prefix = $conf->getString(self::PROPNAME_PREFIX, null);
 
         if (is_null($prefix)) {
@@ -303,7 +320,8 @@ class sspmod_perun_Disco extends sspmod_discopower_PowerIdPDisco
             }
         }
         if (!empty($array)) {
-            $state['saml:RequestedAuthnContext']['AuthnContextClassRef'] = $array;
+            $state['saml:RequestedAuthnContext']['AuthnContextClassRef']
+                = $array;
         }
     }
 }

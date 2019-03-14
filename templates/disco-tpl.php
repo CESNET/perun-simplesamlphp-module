@@ -1,14 +1,15 @@
 <?php
 
+use SimpleSAML\Module\perun\DiscoTemplate;
+
 /**
  * This is simple example of template for perun Discovery service
  *
  * Allow type hinting in IDE
- * @var sspmod_perun_DiscoTemplate $this
+ * @var DiscoTemplate $this
  */
 
 $this->includeAtTemplateBase('includes/header.php');
-
 
 if (!empty($this->getPreferredIdp())) {
     echo '<h4>' . $this->t('{perun:perun:disco-tpl_previous-selection}') . '</h4>' .
@@ -18,9 +19,7 @@ if (!empty($this->getPreferredIdp())) {
         '<p style="text-align: center"> - ' . $this->t('{perun:perun:disco-tpl_or}') . ' - </p>';
 }
 
-
 echo '<h4>' . $this->t('{perun:perun:disco-tpl_institutional-account}') . '</h4>';
-
 
 foreach ($this->getTaggedIdps() as $tag => $idplist) {
     echo $tag;
@@ -31,11 +30,9 @@ foreach ($this->getTaggedIdps() as $tag => $idplist) {
     echo '</div>';
 }
 
-
 $this->includeAtTemplateBase('includes/footer.php');
 
-
-function buildEntry(sspmod_perun_DiscoTemplate $t, $idp, $favourite = false)
+function buildEntry(DiscoTemplate $t, $idp, $favourite = false)
 {
 
     $extra = ($favourite ? 'favourite' : '');

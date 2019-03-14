@@ -1,11 +1,17 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Auth\State;
+use SimpleSAML\Module;
+use SimpleSAML\Utils\HTTP;
+
 /**
  * Class sspmod_perun_Auth_Process_WarningTestSP
  *
  * Warns user that he/she is accessing to the testing SP
  */
-class sspmod_perun_Auth_Process_WarningTestSP extends SimpleSAML_Auth_ProcessingFilter
+class WarningTestSP extends \SimpleSAML\Auth\ProcessingFilter
 {
 
     public function __construct($config, $reserved)
@@ -16,9 +22,9 @@ class sspmod_perun_Auth_Process_WarningTestSP extends SimpleSAML_Auth_Processing
     public function process(&$request)
     {
         if (isset($request["SPMetadata"]["test.sp"]) && $request["SPMetadata"]["test.sp"] === true) {
-            $id = SimpleSAML_Auth_State::saveState($request, 'perun:warningTestSP');
-            $url = SimpleSAML\Module::getModuleURL('perun/warning_test_sp_page.php');
-            \SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id));
+            $id = State::saveState($request, 'perun:warningTestSP');
+            $url = Module::getModuleURL('perun/warning_test_sp_page.php');
+            HTTP::redirectTrustedURL($url, array('StateId' => $id));
         }
     }
 }

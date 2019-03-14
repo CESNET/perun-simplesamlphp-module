@@ -1,10 +1,12 @@
 <?php
 
+namespace SimpleSAML\Module\perun\model;
+
 /**
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_model_Group implements sspmod_perun_model_HasId
+class Group implements HasId
 {
     private $id;
     private $voId;
@@ -13,7 +15,7 @@ class sspmod_perun_model_Group implements sspmod_perun_model_HasId
     private $description;
 
     /**
-     * sspmod_perun_model_Group constructor.
+     * Group constructor.
      * @param $id
      * @param $voId
      * @param $name
@@ -29,7 +31,6 @@ class sspmod_perun_model_Group implements sspmod_perun_model_HasId
         $this->description = $description;
     }
 
-
     public function getId()
     {
         return $this->id;
@@ -42,7 +43,6 @@ class sspmod_perun_model_Group implements sspmod_perun_model_HasId
     {
         return $this->voId;
     }
-
 
     /**
      * @return string
@@ -59,7 +59,6 @@ class sspmod_perun_model_Group implements sspmod_perun_model_HasId
     {
         return $this->uniqueName;
     }
-
 
     /**
      * @return string

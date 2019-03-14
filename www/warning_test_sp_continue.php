@@ -1,6 +1,9 @@
 <?php
 
-$id = $_REQUEST['StateId'];
-$state = SimpleSAML_Auth_State::loadState($id, 'perun:warningTestSP');
+use SimpleSAML\Auth\State;
+use SimpleSAML\Auth\ProcessingChain;
 
-SimpleSAML_Auth_ProcessingChain::resumeProcessing($state);
+$id = $_REQUEST['StateId'];
+$state = State::loadState($id, 'perun:warningTestSP');
+
+ProcessingChain::resumeProcessing($state);

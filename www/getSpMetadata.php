@@ -1,5 +1,8 @@
 <?php
 
+use SimpleSAML\Module\perun\AdapterRpc;
+use SimpleSAML\Configuration;
+
 const CONFIG_FILE_NAME = 'module_perun_getMetadata.php';
 
 const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
@@ -16,7 +19,7 @@ const TYPE_STRING = 'java.lang.String';
 const TYPE_ARRAY = 'java.util.ArrayList';
 const TYPE_MAP = 'java.util.LinkedHashMap';
 
-$conf = SimpleSAML_Configuration::getConfig(CONFIG_FILE_NAME);
+$conf = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $proxyIdentifier = $conf->getString(PROXY_IDENTIFIER);
 assert(is_null($proxyIdentifier) || empty($proxyIdentifier));
@@ -32,8 +35,7 @@ assert(is_null($perunProxyEntityIDAttr) || empty($perunProxyEntityIDAttr) ||
 $absoluteFileName = $conf->getString(ABSOLUTE_FILE_NAME);
 assert(is_null($absoluteFileName) || empty($absoluteFileName));
 
-
-$rpcAdapter = new sspmod_perun_AdapterRpc();
+$rpcAdapter = new AdapterRpc();
 
 // Get list of all attribute names
 $attrNames = array();

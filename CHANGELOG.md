@@ -7,6 +7,40 @@ All notable changes to this project will be documented in this file.
  
  [Changed]
  - Changed code standard to PSR-2
+ - Module uses namespaces
+ - Changed name of the classes below:
+    - sspmod_perun_Auth_Process_ForceAup to SimpleSAML\Module\perun\Auth\Process\ForceAup
+    - sspmod_perun_Auth_Process_IdPAttribute to SimpleSAML\Module\perun\Auth\Process\IdpAttribute
+    - sspmod_perun_Auth_Process_PerunAttributes to SimpleSAML\Module\perun\Auth\Process\PerunAttributes
+    - sspmod_perun_Auth_Process_PerunGroups to SimpleSAML\Module\perun\Auth\Process\PerunGroups
+    - sspmod_perun_Auth_Process_PerunIdentity to SimpleSAML\Module\perun\Auth\Process\PerunIdentity
+    - sspmod_perun_Auth_Process_ProcessTargetedID to SimpleSAML\Module\perun\Auth\Process\ProcessTargetedID
+    - sspmod_perun_Auth_Process_ProxyFilter to SimpleSAML\Module\perun\Auth\Process\ProxyFilter
+    - sspmod_perun_Auth_Process_RemoveAllAttributes to SimpleSAML\Module\perun\Auth\Process\RemoveAllAttributes
+    - sspmod_perun_Auth_Process_RetainIdPEntityID to SimpleSAML\Module\perun\Auth\Process\RetainIdPEntityID
+    - sspmod_perun_Auth_Process_StringifyTargetedID to SimpleSAML\Module\perun\Auth\Process\StringifyTargetedID
+    - sspmod_perun_Auth_Process_UpdateUserExtSource to SimpleSAML\Module\perun\Auth\Process\UpdateUserExtSource
+    - sspmod_perun_Auth_Process_WarningTestSP to SimpleSAML\Module\perun\Auth\Process\WarningTestSP
+    - sspmod_perun_model_Facility to SimpleSAML\Module\perun\model\Facility
+    - sspmod_perun_model_Group to SimpleSAML\Module\perun\model\Group
+    - sspmod_perun_model_HasId to SimpleSAML\Module\perun\model\HasId
+    - sspmod_perun_model_Member to SimpleSAML\Module\perun\model\Member
+    - sspmod_perun_model_Resource to SimpleSAML\Module\perun\model\Resource
+    - sspmod_perun_model_User to SimpleSAML\Module\perun\model\User
+    - sspmod_perun_model_Vo to SimpleSAML\Module\perun\model\Vo
+    - sspmod_perun_Adapter to SimpleSAML\Module\perun\Adapter
+    - sspmod_perun_AdapterLdap to SimpleSAML\Module\perun\AdapterLdap
+    - sspmod_perun_AdapterRpc to SimpleSAML\Module\perun\AdapterRpc
+    - DatabaseCommand to SimpleSAML\Module\perun\DatabaseCommand
+    - DatabaseConnector to SimpleSAML\Module\perun\DatabaseConnector
+    - sspmod_perun_Disco to SimpleSAML\Module\perun\Disco
+    - sspmod_perun_DiscoTemplate to SimpleSAML\Module\perun\DiscoTemplate
+    - sspmod_perun_Exception to SimpleSAML\Module\perun\Exception
+    - sspmod_perun_IdpListsService to SimpleSAML\Module\perun\IdpListsService
+    - sspmod_perun_IdpListsServiceCsv to SimpleSAML\Module\perun\IdpListsServiceCsv
+    - sspmod_perun_IdpListsServiceDB to SimpleSAML\Module\perun\IdpListsServiceDB
+    - sspmod_perun_LdapConnector to SimpleSAML\Module\perun\LdapConnector
+    - sspmod_perun_RpcConnector to SimpleSAML\Module\perun\RpcConnector
  
  ## [v2.2.0]
  [Added]

@@ -1,5 +1,10 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Logger;
+use SimpleSAML\Error\Exception;
+
 /**
  * Provides interface to get info from Perun Ldap.
  * Configuration file 'module_perun.php' should be placed in default config folder of SimpleSAMLphp.
@@ -8,7 +13,7 @@
  * Example Usage:
  *
  *
- *    $user = new sspmod_perun_LdapConnector(ldapHostname, $ldapUser, $ldapPassword)->searchForEntity(
+ *    $user = new LdapConnector(ldapHostname, $ldapUser, $ldapPassword)->searchForEntity(
  *        "ou=People,
  *        dc=perun,
  *        dc=cesnet,
@@ -20,7 +25,7 @@
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_LdapConnector
+class LdapConnector
 {
 
     private $hostname;
@@ -28,7 +33,7 @@ class sspmod_perun_LdapConnector
     private $password;
 
     /**
-     * sspmod_perun_LdapConnector constructor.
+     * LdapConnector constructor.
      * @param $hostname
      * @param $user
      * @param $password
@@ -45,7 +50,7 @@ class sspmod_perun_LdapConnector
      * @param string $filter
      * @param array|null $attrNames attributes to be returned. If null all attrs are returned.
      * @return array associative array where key is attribute name and value is array of values, entity or null
-     * @throws SimpleSAML_Error_Exception if result contains more than one entity
+     * @throws Exception if result contains more than one entity
      */
     public function searchForEntity($base, $filter, $attrNames = null)
     {
@@ -53,7 +58,7 @@ class sspmod_perun_LdapConnector
         $entries = self::search($base, $filter, $attrNames);
 
         if (empty($entries)) {
-            SimpleSAML\Logger::debug(
+            Logger::debug(
                 "sspmod_perun_LdapConnector.searchForEntity - No entity found. Returning 'null'. " .
                 "query base: $base, filter: $filter"
             );
@@ -61,7 +66,7 @@ class sspmod_perun_LdapConnector
         }
 
         if (sizeof($entries) > 1) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "sspmod_perun_LdapConnector.searchForEntity - More than one entity found. " .
                 "query base: $base, filter: $filter. " .
                 "Hint: Use method searchForEntities if you expect array of entities."
@@ -83,7 +88,7 @@ class sspmod_perun_LdapConnector
         $entries = self::search($base, $filter, $attrNames);
 
         if (empty($entries)) {
-            SimpleSAML\Logger::debug(
+            Logger::debug(
                 "sspmod_perun_LdapConnector.searchForEntity - No entities found. Returning empty array. " .
                 "query base: $base, filter: $filter"
             );
@@ -99,16 +104,16 @@ class sspmod_perun_LdapConnector
 
         $conn = ldap_connect($this->hostname);
         if ($conn === false) {
-            throw new SimpleSAML_Error_Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
+            throw new Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
         }
 
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 
         if (ldap_bind($conn, $this->user, $this->password) === false) {
-            throw new SimpleSAML_Error_Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
+            throw new Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
         }
 
-        SimpleSAML\Logger::debug("sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. " .
+        Logger::debug("sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. " .
             "Ready to perform search query. host: $this->hostname, user: $this->user");
 
         $result = ldap_search($conn, $base, $filter, $attributes);
@@ -122,7 +127,7 @@ class sspmod_perun_LdapConnector
 
         ldap_close($conn);
 
-        SimpleSAML\Logger::debug("sspmod_perun_LdapConnector.search - search query proceeded. " .
+        Logger::debug("sspmod_perun_LdapConnector.search - search query proceeded. " .
             "query base: $base, filter: $filter, response: " . var_export($entries, true));
 
         return $entries;

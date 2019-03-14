@@ -1,7 +1,17 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\model;
+use SimpleSAML\Logger;
+use SimpleSAML\Auth\State;
+use SimpleSAML\Module;
+use SimpleSAML\Utils\HTTP;
+
 /**
- * Class sspmod_perun_Auth_Process_ForceAup
+ * Class ForceAup
  *
  * This filter check if user has attribute 'perunForceAttr' in perun set if so, it forces user to accept
  * usage policy specify in 'aupUrl' and unset 'perunForceAttr' and move the value to 'perunAupAttr'.
@@ -15,7 +25,7 @@
  *
  * It relies on PerunIdentity filter. Configure it before this filter properly.
  */
-class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilter
+class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
 {
 
     const UID_ATTR = 'uidAttr';
@@ -26,7 +36,6 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
     const PERUN_FACILITY_REQ_AUPS_ATTR = 'perunFacilityReqAupsAttr';
     const PERUN_FACILITY_VO_SHORT_NAMES = 'facilityVoShortNames';
 
-
     private $uidAttr;
     private $perunAupsAttr;
     private $perunUserAupAttr;
@@ -36,7 +45,7 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
     private $interface;
 
     /**
-     * @var sspmod_perun_Adapter
+     * @var Adapter
      */
     private $adapter;
 
@@ -45,39 +54,38 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
         parent::__construct($config, $reserved);
 
         if (!isset($config[self::UID_ATTR])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: missing mandatory configuration option '" . self::UID_ATTR . "'."
             );
         }
         if (!isset($config[self::PERUN_AUPS_ATTR])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_AUPS_ATTR . "'."
             );
         }
         if (!isset($config[self::PERUN_USER_AUP_ATTR])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_USER_AUP_ATTR . "'."
             );
         }
         if (!isset($config[self::PERUN_VO_AUP_ATTR])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_VO_AUP_ATTR . "'."
             );
         }
         if (!isset($config[self::PERUN_FACILITY_REQ_AUPS_ATTR])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_FACILITY_REQ_AUPS_ATTR . "'."
             );
         }
         if (!isset($config[self::PERUN_FACILITY_VO_SHORT_NAMES])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_FACILITY_REQ_AUPS_ATTR . "'."
             );
         }
         if (!isset($config[self::INTERFACE_PROPNAME])) {
-            $config[self::INTERFACE_PROPNAME] = sspmod_perun_Adapter::RPC;
+            $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
         }
-
 
         $this->uidAttr = (string)$config[self::UID_ATTR];
         $this->perunAupsAttr = (string)$config[self::PERUN_AUPS_ATTR];
@@ -86,7 +94,7 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
         $this->perunFacilityReqAupsAttr = (string)$config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
         $this->perunFacilityVoShortNames = (string)$config[self::PERUN_FACILITY_VO_SHORT_NAMES];
         $this->interface = (string)$config[self::INTERFACE_PROPNAME];
-        $this->adapter = sspmod_perun_Adapter::getInstance($this->interface);
+        $this->adapter = Adapter::getInstance($this->interface);
     }
 
     /**
@@ -98,11 +106,11 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
 
         if (isset($request['perun']['user'])) {
             /** allow IDE hint whisperer
-             * @var sspmod_perun_model_User $user
+             * @var model\User $user
              */
             $user = $request['perun']['user'];
         } else {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:ForceAup: " .
                 "missing mandatory field 'perun.user' in request." .
                 "Hint: Did you configured PerunIdentity filter before this filter?"
@@ -136,7 +144,7 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
             }
 
             if (empty($requiredAups) && empty($voShortNames)) {
-                SimpleSAML\Logger::debug(
+                Logger::debug(
                     'Perun.ForceAup - No required Aups for facility with EntityId: ' .
                     $request['SPMetadata']['entityid']
                 );
@@ -192,20 +200,20 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
                     $newAups[$voShortName] = $latest_aup;
                 }
             }
-        } catch (Exception $ex) {
-            SimpleSAML\Logger::warning("perun:ForceAup - " . $ex->getMessage());
+        } catch (\Exception $ex) {
+            Logger::warning("perun:ForceAup - " . $ex->getMessage());
             $newAups = array();
         }
 
-        SimpleSAML\Logger::debug("perun:ForceAup - NewAups: " . print_r($newAups, true));
+        Logger::debug("perun:ForceAup - NewAups: " . print_r($newAups, true));
 
         if (!empty($newAups)) {
             $request[self::UID_ATTR] = $this->uidAttr;
             $request[self::PERUN_USER_AUP_ATTR] = $this->perunUserAupAttr;
             $request['newAups'] = $newAups;
-            $id = SimpleSAML_Auth_State::saveState($request, 'perun:forceAup');
-            $url = SimpleSAML\Module::getModuleURL('perun/force_aup_page.php');
-            \SimpleSAML\Utils\HTTP::redirectTrustedURL($url, array('StateId' => $id));
+            $id = State::saveState($request, 'perun:forceAup');
+            $url = Module::getModuleURL('perun/force_aup_page.php');
+            HTTP::redirectTrustedURL($url, array('StateId' => $id));
         }
     }
 
@@ -217,7 +225,7 @@ class sspmod_perun_Auth_Process_ForceAup extends SimpleSAML_Auth_ProcessingFilte
     {
         $latest_aup = $aups[0];
         foreach ($aups as $aup) {
-            if (new DateTime($latest_aup->date) < new DateTime($aup->date)) {
+            if (new \DateTime($latest_aup->date) < new \DateTime($aup->date)) {
                 $latest_aup = $aup;
             }
         }

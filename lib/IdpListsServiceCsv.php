@@ -1,13 +1,18 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Utils\Config;
+use SimpleSAML\Error\Exception;
+
 /**
- * Implementation of sspmod_perun_IdpListsService using in simple csv files.
+ * Implementation of IdpListsService using in simple csv files.
  * first column is timestamp, second entityid and third reason
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_IdpListsServiceCsv extends sspmod_perun_IdpListsService
+class IdpListsServiceCsv extends IdpListsService
 {
     private $whitelistFile;
     private $greylistFile;
@@ -17,7 +22,7 @@ class sspmod_perun_IdpListsServiceCsv extends sspmod_perun_IdpListsService
      */
     public function __construct()
     {
-        $dir = SimpleSAML\Utils\Config::getConfigDir();
+        $dir = Config::getConfigDir();
         $this->whitelistFile = $dir . DIRECTORY_SEPARATOR . 'idplists' . DIRECTORY_SEPARATOR . 'whitelist.csv';
         $this->greylistFile = $dir . DIRECTORY_SEPARATOR . 'idplists' . DIRECTORY_SEPARATOR . 'greylist.csv';
     }
@@ -61,13 +66,13 @@ class sspmod_perun_IdpListsServiceCsv extends sspmod_perun_IdpListsService
                 flock($gf, LOCK_UN);
                 flock($wf, LOCK_UN);
             } else {
-                throw new SimpleSAML_Error_Exception(
+                throw new Exception(
                     "IdpListsServiceCsv - unable to get file lock. Hint: " .
                     "Try to create folder config/idplists and add write rights."
                 );
             }
         } else {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "IdpListsServiceCsv - unable to get file lock. Hint: " .
                 "Try to create folder config/idplists and add write rights."
             );
@@ -122,17 +127,15 @@ class sspmod_perun_IdpListsServiceCsv extends sspmod_perun_IdpListsService
                     if (!in_array($idp, $resultList)) {
                         array_push($resultList, $idp);
                     }
-                } else {
-                    if (!in_array($idp['entityid'], $resultList)) {
-                        array_push($resultList, $idp['entityid']);
-                    }
+                } elseif (!in_array($idp['entityid'], $resultList)) {
+                    array_push($resultList, $idp['entityid']);
                 }
             }
 
             fflush($f);
             flock($f, LOCK_UN);
         } else {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "IdpListsServiceCsv - unable to get file lock. Hint: " .
                 "Try to create folder config/idplists and add write rights."
             );

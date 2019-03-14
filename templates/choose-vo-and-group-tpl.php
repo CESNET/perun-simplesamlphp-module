@@ -1,16 +1,23 @@
 <?php
 
+use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
+use SimpleSAML\Module;
+use SimpleSAML\Utils\HTTP;
+use SimpleSAML\XHTML\Template;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\Vo;
+
 /**
  * This is simple example of template where user can choose where they want to register to access the requested service
  *
  * Allow type hinting in IDE
- * @var SimpleSAML_XHTML_Template $this
- * @var sspmod_perun_model_Group[] $groups ;
- * @var sspmod_perun_model_Vo $vo
+ * @var Template $this
+ * @var Group[] $groups ;
+ * @var Vo $vo
  */
 
 $this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
-    SimpleSAML\Module::getModuleUrl('perun/res/css/perun_identity_choose_vo_and_group.css') . '" />';
+    Module::getModuleUrl('perun/res/css/perun_identity_choose_vo_and_group.css') . '" />';
 
 $vos = $this->data['vos'];
 $groups = $this->data['groups'];
@@ -36,7 +43,7 @@ if (isset($_POST['selectedGroup'])) {
     $params = array();
     $vo = explode(':', $_POST['selectedGroup'], 2)[0];
     $group = explode(':', $_POST['selectedGroup'], 2)[1];
-    $callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
     $params['vo'] = $vo;
 
@@ -44,10 +51,10 @@ if (isset($_POST['selectedGroup'])) {
         $params['group'] = $group;
     }
 
-    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_NEW] = $callback;
-    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXISTING] = $callback;
-    $params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXTENDED] = $callback;
-    \SimpleSAML\Utils\HTTP::redirectTrustedURL($registerUrlBase, $params);
+    $params[PerunIdentity::TARGET_NEW] = $callback;
+    $params[PerunIdentity::TARGET_EXISTING] = $callback;
+    $params[PerunIdentity::TARGET_EXTENDED] = $callback;
+    HTTP::redirectTrustedURL($registerUrlBase, $params);
 }
 
 $header = $this->t('{perun:perun:choose-vo-and-group-tpl_header-part1}');
@@ -126,5 +133,7 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
     </script>
 
 <?php
+
 $this->includeAtTemplateBase('includes/footer.php');
+
 ?>

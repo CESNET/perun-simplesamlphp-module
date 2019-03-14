@@ -1,5 +1,10 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Configuration;
+use SimpleSAML\Error\Exception;
+
 /**
  * This interface provides abstraction of manipulation with lists of IdPs
  * saved and managed by Proxy IdP. e.g. Whitelist or greylist.
@@ -14,7 +19,7 @@
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-abstract class sspmod_perun_IdpListsService
+abstract class IdpListsService
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
     const PROPNAME_IDP_LIST_SERVICE_TYPE = 'idpListServiceType';
@@ -25,22 +30,20 @@ abstract class sspmod_perun_IdpListsService
     /**
      * Function returns the instance of sspmod_perun_IdPListsService by configuration
      * Default is CSV
-     * @return sspmod_perun_IdpListsServiceCsv|sspmod_perun_IdpListsServiceDB
+     * @return IdpListsServiceCsv|IdpListsServiceDB
      */
     public static function getInstance()
     {
-        $configuration = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+        $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $idpListServiceType = $configuration->getString(self::PROPNAME_IDP_LIST_SERVICE_TYPE, self::CSV);
         if ($idpListServiceType === self::CSV) {
-            return new sspmod_perun_IdpListsServiceCsv();
+            return new IdpListsServiceCsv();
+        } elseif ($idpListServiceType === self::DB) {
+            return new IdpListsServiceDB();
         } else {
-            if ($idpListServiceType === self::DB) {
-                return new sspmod_perun_IdpListsServiceDB();
-            } else {
-                throw new SimpleSAML_Error_Exception(
-                    'Unknown idpListService type. Hint: try ' . self::CSV . ' or ' . self::DB
-                );
-            }
+            throw new Exception(
+                'Unknown idpListService type. Hint: try ' . self::CSV . ' or ' . self::DB
+            );
         }
     }
 
@@ -79,7 +82,6 @@ abstract class sspmod_perun_IdpListsService
      * @return bool true if greylist contains given entityID, false otherwise.
      */
     abstract public function isGreylisted($entityID);
-
 
     /**
      * Function check if this entity is already whitelisted. If not, it will be added into

@@ -1,4 +1,7 @@
 <?php
+
+use SimpleSAML\Module;
+
 /**
  * This is a simple example of template with table of SPs
  *
@@ -6,7 +9,7 @@
  */
 $this->data['header'] = '';
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
-    SimpleSAML\Module::getModuleUrl('perun/res/css/listOfSps.css') . '" />';
+    Module::getModuleUrl('perun/res/css/listOfSps.css') . '" />';
 $this->includeAtTemplateBase('includes/header.php');
 
 $statistics = $this->data['statistics'];
@@ -201,7 +204,8 @@ function getClass($attribute)
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: [<?php echo
+            labels: [
+                <?php echo
                 '"' . $this->t('{perun:listOfSps:saml_production}') . '"' . ", " .
                 '"' . $this->t('{perun:listOfSps:saml_test}') . '"' . ", " .
                 '"' . $this->t('{perun:listOfSps:oidc_production}') . '"' . ", " .
@@ -210,8 +214,12 @@ function getClass($attribute)
             ],
             datasets: [{
                 label: '',
-                data: [<?php echo $samlProductionCount . ', ' . $statistics['samlTestServicesCount'] .
-                    ', ' . $oidcProductionCount . ', ' . $statistics['oidcTestServicesCount']?>],
+                data: [
+                    <?php echo
+                    $samlProductionCount . ', ' . $statistics['samlTestServicesCount'] .
+                    ', ' . $oidcProductionCount . ', ' . $statistics['oidcTestServicesCount']
+                    ?>
+                ],
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                     'rgba(54, 162, 235, 0.2)',

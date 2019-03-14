@@ -1,5 +1,11 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+
 /**
  * Class sspmod_perun_Auth_Process_UpdateUserExtSource
  *
@@ -7,7 +13,7 @@
  *
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
-class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_ProcessingFilter
+class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 {
     private $attrMap;
     private $attrsToConversion;
@@ -21,7 +27,7 @@ class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_Proc
         assert('is_array($config)');
 
         if (!isset($config['attrMap'])) {
-            throw new SimpleSAML_Error_Exception(
+            throw new Exception(
                 "perun:UpdateUserExtSource: missing mandatory configuration option 'attrMap'."
             );
         }
@@ -33,7 +39,7 @@ class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_Proc
         }
 
         $this->attrMap = (array)$config['attrMap'];
-        $this->adapter = sspmod_perun_Adapter::getInstance(sspmod_perun_Adapter::RPC);
+        $this->adapter = Adapter::getInstance(Adapter::RPC);
     }
 
     public function process(&$request)
@@ -45,7 +51,7 @@ class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_Proc
                 $request['Attributes']['sourceIdPEppn'][0]
             );
             if (is_null($userExtSource)) {
-                throw new SimpleSAML_Error_Exception(
+                throw new Exception(
                     "sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource " .
                     $request['Attributes']['sourceIdPEntityID'][0] . " and Login " .
                     $request['Attributes']['sourceIdPEppn'][0]
@@ -55,7 +61,7 @@ class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_Proc
             $attributes = $this->adapter->getUserExtSourceAttributes($userExtSource['id'], array_keys($this->attrMap));
 
             if (is_null($attributes)) {
-                throw new SimpleSAML_Error_Exception(
+                throw new Exception(
                     "sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful."
                 );
             }
@@ -82,7 +88,7 @@ class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_Proc
                 } elseif (strpos($attribute['type'], 'Array') || strpos($attribute['type'], 'Map')) {
                     $valueFromIdP = $attr;
                 } else {
-                    throw new SimpleSAML_Error_Exception(
+                    throw new Exception(
                         "sspmod_perun_Auth_Process_UpdateUserExtSource: unsupported type of attribute."
                     );
                 }
@@ -96,8 +102,8 @@ class sspmod_perun_Auth_Process_UpdateUserExtSource extends SimpleSAML_Auth_Proc
                 $this->adapter->setUserExtSourceAttributes($userExtSource['id'], $attributesToUpdate);
             }
             $this->adapter->updateUserExtSourceLastAccess($userExtSource['id']);
-        } catch (Exception $ex) {
-            SimpleSAML\Logger::warning(
+        } catch (\Exception $ex) {
+            Logger::warning(
                 "sspmod_perun_Auth_Process_UpdateUserExtSource: update was not successful: " .
                 $ex->getMessage() . " Skip to next filter."
             );
