@@ -51,7 +51,7 @@ class sspmod_perun_Auth_Process_PerunAttributes extends SimpleSAML_Auth_Processi
 		} else {
 			throw new SimpleSAML_Error_Exception("perun:PerunAttributes: " .
 					"missing mandatory field 'perun.user' in request." .
-					"Hint: Did you configured PerunIdentity filter before this filter?"
+					"Hint: Have you configured PerunIdentity filter before this filter?"
 			);
 		}
 
@@ -77,7 +77,7 @@ class sspmod_perun_Auth_Process_PerunAttributes extends SimpleSAML_Auth_Processi
 			}
 
 			SimpleSAML\Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
-					"Value ".implode(",", $value)." is being setted to ssp attribute $sspAttr");
+					"Value ".implode(",", $value)." is being set to ssp attribute $sspAttr");
 
 			$request['Attributes'][$sspAttr] = $value;
 		}
