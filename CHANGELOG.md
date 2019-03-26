@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL
 
+ [Changed]
+ - Updated composer.json dependencies
+
  [Fixed]
  - Fixed the problem where LDAP calls RPC method in PerunIdentity filter
  - Fixed assignation of one Perun attribute to multiple SP attributes
