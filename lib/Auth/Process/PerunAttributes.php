@@ -63,6 +63,7 @@ class sspmod_perun_Auth_Process_PerunAttributes extends SimpleSAML_Auth_Processi
 
 			$sspAttr = $this->attrMap[$attrName];
 
+			// convert $attrValue into array
 			if (is_null($attrValue)) {
 				$value = array();
 			} else if (is_string($attrValue)) {
@@ -76,10 +77,24 @@ class sspmod_perun_Auth_Process_PerunAttributes extends SimpleSAML_Auth_Processi
 				"Attribute name: $attrName, Supported types: null, string, array, associative array.");
 			}
 
-			SimpleSAML\Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
-					"Value ".implode(",", $value)." is being set to ssp attribute $sspAttr");
+			// convert $sspAttr into array
+			if (is_string($sspAttr)) {
+				$attrArray = array($sspAttr);
+			} else if (is_array($sspAttr)) {
+				$attrArray = $sspAttr;
+			} else {
+				throw new SimpleSAML_Error_Exception("sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ".
+						"Attribute \$attrName, Supported types: string, array.");
+			}
 
-			$request['Attributes'][$sspAttr] = $value;
+			SimpleSAML\Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
+					"Value " . implode(",", $value) . " is being set to ssp attribute " . implode(",", $attrArray));
+
+			// write $value to all SP attributes
+			foreach ($attrArray as $attribute) {
+				$request['Attributes'][$attribute] = $value;
+			}
+
 		}
 
 	}
