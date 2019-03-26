@@ -4,6 +4,8 @@ All notable changes to this project will be documented in this file.
  ## [Unreleased]
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL
+ - Page showing status of selected components
+    - This page is also available in JSON format if parameter 'output=json' is set in URL
 
  [Changed]
  - Updated composer.json dependencies

@@ -51,4 +51,59 @@ $config = array(
 	 */
 	'disco.removeAuthnContextClassRefPrefix' => 'urn:cesnet:proxyidp:',
 
+    /**
+     *****************************************
+     * Part of configuration for status page *
+     *****************************************
+     */
+
+    /**
+     * Specify the used interface to get the status data
+     * Only NAGIOS type is now allowed
+     */
+    'status.type' => 'NAGIOS',
+
+    /**
+     * Specify the url for get status information
+     */
+    'status.nagios.url' => '',
+
+    /**
+     * Specify the path to the certicate
+     */
+    'status.nagios.certificate_path' => '',
+
+    /**
+     * Specify the CA dir path
+     */
+    'status.nagios.ca_path' => '/etc/ssl/certs',
+
+    /**
+     * Specify the password for private key
+     *
+     * OPTIONAL
+     */
+    'status.nagios.certificate_password' => '',
+
+    /**
+     * Specify, if the peer verification is enabled,
+     *
+     * OPTIONAL
+     * Default: false
+     */
+    'status.nagios.peer_verification' => false,
+
+    /**
+     * Specify the list of services, which will be shown
+     *
+     * OPTIONAL
+     * Default: show all received services
+     */
+    'status.shown_services'=> array(
+        'serviceIdentifier' => array(
+            'name' => 'serviceName',
+            'description' => 'serviceDescription'
+        ),
+    ),
+
 );

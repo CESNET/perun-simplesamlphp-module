@@ -1,0 +1,36 @@
+#header h1 {
+    font-size: 38px;
+    padding-bottom: 50px;
+}
+
+.service {
+    width: 80%;
+    margin-left: 0;
+}
+
+.service h3, h5{
+    border-bottom: none;
+}
+
+.status {
+    float: right;
+}
+
+.row {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.services {
+    margin-bottom: 75px;
+}
+
+.legend p {
+    margin: 0 0 0 0;
+    text-align: center;
+}
+
+
+#footer {
+    margin-top: -20px;
+}
