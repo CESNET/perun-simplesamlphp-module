@@ -1,0 +1,30 @@
+{
+  "add_institution": {
+    "en": "Add your institution",
+    "cs": "Přidat vaši instituci"
+  },
+  "find_institution_contact": {
+    "en": "Still can't find your institution? Contact us at",
+    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
+  },
+  "find_institution_extended": {
+    "en": "Can't find your institution? Select it in extended list and help us",
+    "cs": "Nemůžete nalézt vaši instituci? Vyberte ji z rozšířeného seznamu institucí a pomožte nám"
+  },
+  "institutional_account": {
+    "en": "your institutional account",
+    "cs": "váš univerzitní účet"
+  },
+  "previous_selection": {
+      "en": "your previous selection",
+      "cs": "vaše předchozí volba"
+  },
+  "type_name_institution": {
+    "en": "Type the name of your institution",
+    "cs": "Zadejte název instituce"
+  },
+  "warning": {
+    "en": "Warning!",
+    "cs": "Varování!"
+  }
+}
