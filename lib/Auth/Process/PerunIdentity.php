@@ -411,34 +411,40 @@ class sspmod_perun_Auth_Process_PerunIdentity extends SimpleSAML_Auth_Processing
 	 * @param $uids
 	 */
 	protected function checkMemberStateDefaultVo($request, $user, $uids) {
-		$member = null;
-		$vo = null;
+		$status = null;
 		try {
 			$vo = $this->adapter->getVoByShortName($this->voShortName);
 			if (!is_null($user)) {
-				$member = $this->rpcAdapter->getMemberByUser($user, $vo);
+				$status = $this->adapter->getMemberStatusByUserAndVo($user, $vo);
 			}
 		} catch (Exception $ex) {
-			SimpleSAML\Logger::warning("perun:PerunIdentity: " . $ex);
+			throw new SimpleSAML_Error_Exception('perun:PerunIdentity: ' . $ex);
 		}
 
 		if (is_null($vo)) {
 			throw new SimpleSAML_Error_Exception('perun:PerunIdentity: Vo with short name ' . $this->voShortName . ' does not exist.');
 		}
 
-		if (is_null($user) ||  is_null($member) || $member->getStatus() === sspmod_perun_model_Member::EXPIRED) {
+		if ($this->adapter instanceof sspmod_perun_AdapterLdap && $status === sspmod_perun_model_Member::INVALID) {
+			try {
+				$status = $this->rpcAdapter->getMemberStatusByUserAndVo($user, $vo);
+			} catch (Exception $ex) {
+				SimpleSAML\Logger::info('Member status for perun user with identity/ies: ' . implode(',', $uids) . ' was not VALID and it is not possible to get more info (RPC is not working)');
+				$this->unauthorized($request);
+			}
+		}
+
+		if (is_null($user) || is_null($status) || $status === sspmod_perun_model_Member::EXPIRED) {
 			if (is_null($user)) {
 				SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids).' has NOT been found. He is being redirected to register.');
-			}
-			elseif (is_null($member)) {
+			} elseif (is_null($status)) {
 				SimpleSAML\Logger::info('Perun user with identity/ies: '. implode(',', $uids).' is NOT member in vo with short name ' . $this->voShortName . '(default VO). He is being redirected to register.');
-			}
-			else {
+			} else {
 				SimpleSAML\Logger::info('Member status for perun user with identity/ies: '. implode(',', $uids).' was expired. He is being redirected to register.');
 			}
 			$this->register($request, array($vo), $this->defaultRegisterUrl,false);
 
-		} elseif (!($member->getStatus() === sspmod_perun_model_Member::VALID)) {
+		} elseif (!($status === sspmod_perun_model_Member::VALID)) {
 			SimpleSAML\Logger::warning('Member status for perun user with identity/ies: '. implode(',', $uids).' was INVALID/SUSPENDED/DISABLED. ');
 			$this->unauthorized($request);
 		}

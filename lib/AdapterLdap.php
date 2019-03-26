@@ -264,5 +264,19 @@ class sspmod_perun_AdapterLdap extends sspmod_perun_Adapter
 		return $resultGroups;
 	}
 
+	public function getMemberStatusByUserAndVo($user, $vo)
+	{
+		$groupId = $this->connector->searchForEntity($this->ldapBase,
+			"(&(objectClass=perunGroup)(cn=members)(perunVoId=" . $vo->getId() . ")(uniqueMember=perunUserId=" . $user->getId() . ",ou=People,dc=perun,dc=cesnet,dc=cz))",
+			array("perunGroupid")
+		);
+
+		if (empty($groupId)) {
+			return sspmod_perun_model_Member::INVALID;
+		} else {
+			return sspmod_perun_model_Member::VALID;
+		}
+	}
+
 
 }

@@ -391,4 +391,15 @@ class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
 			"attributes" => $attributes
 		));
 	}
+
+	public function getMemberStatusByUserAndVo($user, $vo)
+	{
+		try {
+			$member = $this->getMemberByUser($user, $vo);
+		} catch (Exception $ex) {
+			return null;
+		}
+		return $member->getStatus();
+	}
+
 }
