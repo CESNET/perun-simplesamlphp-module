@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ 
+ ## [v2.2.0]
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL
  - Page showing status of selected components
@@ -51,6 +53,7 @@ All notable changes to this project will be documented in this file.
  ## [v1.0.0]
 
  [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+ [v2.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.2.0
  [v2.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.1.0
  [v2.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.0.0
  [v1.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v1.0.0
