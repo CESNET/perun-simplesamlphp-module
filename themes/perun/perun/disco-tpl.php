@@ -23,7 +23,7 @@ $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" hr
     Module::getModuleUrl('perun/res/css/disco.css') . '" />';
 
 $this->data['head'] .= '<script type="text/javascript" src="' .
-    Module::getModuleUrl('discopower/assets/js/jquery.livesearch.js') . '"></script>';
+    Module::getModuleUrl('perun/res/js/jquery.livesearch.js') . '"></script>';
 
 $this->data['head'] .= '<script type="text/javascript" src="' .
     Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>';
