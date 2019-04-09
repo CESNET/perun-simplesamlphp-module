@@ -20,9 +20,9 @@
         }
     ],
     "require": {
-        "simplesamlphp/simplesamlphp": "~1.16",
+        "simplesamlphp/simplesamlphp": "~1.17",
         "simplesamlphp/composer-module-installer": "~1.0",
-        "cesnet/simplesamlphp-module-perunauthorize": "~1.0",
+        "cesnet/simplesamlphp-module-perunauthorize": "~2.0",
         "ext-curl": "*",
         "ext-json": "*"
     }
