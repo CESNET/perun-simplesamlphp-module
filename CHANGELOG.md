@@ -45,6 +45,7 @@ All notable changes to this project will be documented in this file.
  - Added disco-tpl template file
  - Method getUsersGroupsOnFacility in AdapterRpc was optimized
  - Searching of institutions on WAYF is accent-insensitive
+ - Changed config file for listOfSps
  
  [Fixed]
  - Fixed the bug generating Array to string conversion Exception in PerunAttributes, 

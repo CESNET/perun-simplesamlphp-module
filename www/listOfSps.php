@@ -5,17 +5,17 @@ use SimpleSAML\Configuration;
 use SimpleSAML\XHTML\Template;
 use SimpleSAML\Error\Exception;
 
-const CONFIG_FILE_NAME = 'module_perun_listOfSps.php';
-const PROXY_IDENTIFIER = 'proxyIdentifier';
-const ATTRIBUTES_DEFINITIONS = 'attributesDefinitions';
-const SHOW_OIDC_SERVICES = 'showOIDCServices';
+const CONFIG_FILE_NAME = 'module_perun.php';
+const PROXY_IDENTIFIER = 'listOfSps.proxyIdentifier';
+const ATTRIBUTES_DEFINITIONS = 'listOfSps.attributesDefinitions';
+const SHOW_OIDC_SERVICES = 'listOfSps.showOIDCServices';
 
-const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
-const PERUN_LOGIN_URL_ATTR_NAME = 'loginURLAttr';
-const PERUN_TEST_SP_ATTR_NAME = 'isTestSpAttr';
-const PERUN_SHOW_ON_SERVICE_LIST_ATTR_NAME = 'showOnServiceListAttr';
-const PERUN_SAML2_ENTITY_ID_ATTR_NAME = 'SAML2EntityIdAttr';
-const PERUN_OIDC_CLIENT_ID_ATTR_NAME = 'OIDCClientIdAttr';
+const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'listOfSps.perunProxyIdentifierAttr';
+const PERUN_LOGIN_URL_ATTR_NAME = 'listOfSps.loginURLAttr';
+const PERUN_TEST_SP_ATTR_NAME = 'listOfSps.isTestSpAttr';
+const PERUN_SHOW_ON_SERVICE_LIST_ATTR_NAME = 'listOfSps.showOnServiceListAttr';
+const PERUN_SAML2_ENTITY_ID_ATTR_NAME = 'listOfSps.SAML2EntityIdAttr';
+const PERUN_OIDC_CLIENT_ID_ATTR_NAME = 'listOfSps.OIDCClientIdAttr';
 
 $config = Configuration::getInstance();
 $conf = Configuration::getConfig(CONFIG_FILE_NAME);
