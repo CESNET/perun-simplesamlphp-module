@@ -98,7 +98,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
             Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
                 "Value " . implode(",", $value) .
-                " is being setted to ssp attribute $sspAttr");
+                " is being setted to ssp attributes " . implode(",", $attrArray));
 
 
             // write $value to all SP attributes

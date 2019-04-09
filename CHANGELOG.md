@@ -42,6 +42,10 @@ All notable changes to this project will be documented in this file.
     - sspmod_perun_LdapConnector to SimpleSAML\Module\perun\LdapConnector
     - sspmod_perun_RpcConnector to SimpleSAML\Module\perun\RpcConnector
  
+ [Fixed]
+ - Fixed the bug generating Array to string conversion Exception in PerunAttributes, 
+ when storing one Perun attribute to more SAML attribute 
+ 
  ## [v2.2.0]
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL
