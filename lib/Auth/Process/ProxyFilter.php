@@ -76,7 +76,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
         }
 
         list($module, $simpleClass) = explode(":", $this->nestedClass);
-        $className = 'sspmod_' . $module . '_Auth_Process_' . $simpleClass;
+        $className = '\SimpleSAML\Module\\' . $module . '\Auth\Process\\' . $simpleClass;
         $authFilter = new $className($this->config, $this->reserved);
         $authFilter->process($request);
     }
