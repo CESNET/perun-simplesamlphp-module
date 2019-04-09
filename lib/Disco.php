@@ -27,6 +27,11 @@ class Disco extends PowerIdPDisco
     const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
     const PROPNAME_PREFIX = "disco.removeAuthnContextClassRefPrefix";
 
+    const WARNING_IS_ON = 'disco.warning.isOn';
+    const WARNING_USER_CAN_CONTINUE = 'disco.warning.userCanContinue';
+    const WARNING_TITLE = 'disco.warning.title';
+    const WARNING_TEXT = 'disco.warning.text';
+
     private $originalsp;
     private $whitelist;
     private $greylist;
@@ -76,6 +81,12 @@ class Disco extends PowerIdPDisco
      */
     public function handleRequest()
     {
+        $config = null;
+        $warningIsOn = false;
+        $warningUserCanContinue = null;
+        $warningTitle = null;
+        $warningText = null;
+
         // test if user has selected an idp or idp can be deremine automatically somehow.
         $this->start();
 
@@ -105,6 +116,42 @@ class Disco extends PowerIdPDisco
             HTTP::redirectTrustedURL($url);
         }
 
+        try {
+            $config = Configuration::getConfig(self::CONFIG_FILE_NAME);
+        } catch (\Exception $ex) {
+            Logger::warning("perun:Disco.php: missing or invalid module_perun.php config file");
+        }
+
+        if (!is_null($config)) {
+            try {
+                $warningIsOn = $config->getBoolean(self::WARNING_IS_ON);
+            } catch (\Exception $ex) {
+                Logger::warning("perun:disco-tpl: missing or invalid isOn parameter in config-warning file");
+                $warningIsOn = false;
+            }
+        }
+
+        if ($warningIsOn) {
+            try {
+                $warningUserCanContinue = $config->getBoolean(self::WARNING_USER_CAN_CONTINUE);
+            } catch (\Exception $ex) {
+                Logger::warning(
+                    "perun:disco-tpl: missing or invalid userCanContinue parameter in config-warning file"
+                );
+                $warningUserCanContinue = true;
+            }
+            try {
+                $warningTitle = $config->getString(self::WARNING_TITLE);
+                $warningText = $config->getString(self::WARNING_TEXT);
+                if (empty($warningTitle) || empty($warningText)) {
+                    throw new Exception();
+                }
+            } catch (Exception $ex) {
+                Logger::warning("perun:disco-tpl: missing or invalid title or text in config-warning file");
+                $warningIsOn = false;
+            }
+        }
+
         $t = new DiscoTemplate($this->config);
         $t->data['originalsp'] = $this->originalsp;
         $t->data['idplist'] = $this->idplistStructured($idpList);
@@ -113,6 +160,10 @@ class Disco extends PowerIdPDisco
         $t->data['return'] = $this->returnURL;
         $t->data['returnIDParam'] = $this->returnIdParam;
         $t->data['AuthnContextClassRef'] = $this->authnContextClassRef;
+        $t->data['warningIsOn'] = $warningIsOn;
+        $t->data['warningUserCanContinue'] = $warningUserCanContinue;
+        $t->data['warningTitle'] = $warningTitle;
+        $t->data['warningText'] = $warningText;
         $t->show();
     }
 

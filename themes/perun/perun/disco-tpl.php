@@ -30,86 +30,45 @@ $this->data['head'] .= '<script type="text/javascript" src="' .
 
 $this->data['head'] .= searchScript();
 
-const WARNING_CONFIG_FILE_NAME = 'config-warning.php';
-const WARNING_IS_ON = 'isOn';
-const WARNING_USER_CAN_CONTINUE = 'userCanContinue';
-const WARNING_TITLE = 'title';
-const WARNING_TEXT = 'text';
+const CONFIG_FILE_NAME = 'module_perun.php';
 
-const PERUN_CONFIG_FILE_NAME = 'module_perun.php';
 const ADD_INSTITUTION_URL = 'disco.addInstitution.URL';
 const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
 
 const URN_CESNET_PROXYIDP_IDPENTITYID = "urn:cesnet:proxyidp:idpentityid:";
 
+$warningIsOn = $this->data['warningIsOn'];
+$warningUserCanContinue = $this->data['warningUserCanContinue'];
+$warningTitle = $this->data['warningTitle'];
+$warningText = $this->data['warningText'];
+
 $authContextClassRef = null;
 $idpEntityId = null;
 
-$warningIsOn = false;
-$warningUserCanContinue = null;
-$warningTitle = null;
-$warningText = null;
-$configWarning = null;
+$config = null;
 
-$configPerun = null;
 $addInstitutionUrl = '';
 $addInstitutionEmail = '';
 
 try {
-    $configWarning = Configuration::getConfig(WARNING_CONFIG_FILE_NAME);
+    $config = Configuration::getConfig(CONFIG_FILE_NAME);
 } catch (\Exception $ex) {
-    Logger::warning("perun:disco-tpl: missing or invalid config-warning file");
+    Logger::warning("perun:disco-tpl: missing or invalid module_perun.php config file");
 }
 
-try {
-    $configPerun = Configuration::getConfig(PERUN_CONFIG_FILE_NAME);
-} catch (\Exception $ex) {
-    Logger::warning("perun:disco-tpl: invalid module_perun.php file");
-}
-
-if (!is_null($configPerun)) {
+if (!is_null($config)) {
     try {
-        $addInstitutionUrl = $configPerun->getString(ADD_INSTITUTION_URL);
+        $addInstitutionUrl = $config->getString(ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
         Logger::warning("perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file");
     }
 }
 
-if (!is_null($configPerun)) {
+if (!is_null($config)) {
     try {
-        $addInstitutionEmail = $configPerun->getString(ADD_INSTITUTION_EMAIL);
+        $addInstitutionEmail = $config->getString(ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
         Logger::warning("perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file");
-    }
-}
-
-if ($configWarning != null) {
-    try {
-        $warningIsOn = $configWarning->getBoolean(WARNING_IS_ON);
-    } catch (\Exception $ex) {
-        Logger::warning("perun:disco-tpl: missing or invalid isOn parameter in config-warning file");
-        $warningIsOn = false;
-    }
-}
-
-if ($warningIsOn) {
-    try {
-        $warningUserCanContinue = $configWarning->getBoolean(WARNING_USER_CAN_CONTINUE);
-    } catch (\Exception $ex) {
-        Logger::warning(
-            "perun:disco-tpl: missing or invalid userCanContinue parameter in config-warning file"
-        );
-        $warningUserCanContinue = true;
-    }
-    try {
-        $warningTitle = $configWarning->getString(WARNING_TITLE);
-        $warningText = $configWarning->getString(WARNING_TEXT);
-        if (empty($warningTitle) || empty($warningText)) {
-            throw new Exception();
-        }
-    } catch (Exception $ex) {
-        Logger::warning("perun:disco-tpl: missing or invalid title or text in config-warning file");
-        $warningIsOn = false;
     }
 }
 
