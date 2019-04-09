@@ -106,4 +106,58 @@ $config = array(
         ),
     ),
 
+    /**
+     ****************************************
+     * Part of configuration for listOfSps  *
+     ****************************************
+     */
+
+    /**
+     * Specify the unique identifier of proxy
+     */
+    'listOfSps.proxyIdentifier' => '',
+
+    /**
+     * If true, page shows list of SAML2 and OIDC services. If false page shows only SAML2 services
+     */
+    'listOfSps.showOIDCServices' => true / false,
+
+    /**
+     * Specify attribute name for facility attribute proxy identifiers
+     */
+    'listOfSps.perunProxyIdentifierAttr' => '',
+
+    /**
+     * Specify attribute name for facility attribute with loginUrL for service
+     */
+    'listOfSps.loginURLAttr' => '',
+
+    /**
+     * Specify attribute name for facility attribute with information, if service is in test environment
+     */
+    'listOfSps.isTestSpAttr' => '',
+
+    /**
+     * Specify attribute name for facility attribute with information, if facility may be shown on service list or not
+     */
+    'listOfSps.showOnServiceListAttr' => '',
+
+    /**
+     * Specify attribute name for facility attribute with service EntityId
+     */
+    'listOfSps.SAML2EntityIdAttr' => '',
+
+    /**
+     * Specify attribute name for facility attribute with service OIDC ClientId
+     */
+    'listOfSps.OIDCClientIdAttr' => '',
+
+    /**
+     * Specify list of facility attributes, which will be shown
+     */
+    'listOfSps.attributesDefinitions' => array(
+        ''
+    ),
+
+
 );

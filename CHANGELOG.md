@@ -51,6 +51,10 @@ All notable changes to this project will be documented in this file.
  - Fixed the bug generating Array to string conversion Exception in PerunAttributes, 
  when storing one Perun attribute to more SAML attribute 
  
+ [Removed]
+ - Removed template config file module_perun_listOfSps.php 
+ (Configuration of listOfSps.php page is moved to module_perun.php)
+ 
  ## [v2.2.0]
  [Added]
  - List of services is displayed as JSON if parameter 'output=json' is set in URL
