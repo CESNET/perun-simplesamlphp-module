@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
  ## [Unreleased]
  [Added]
  - Added file phpcs.xml
+ - Added basic versions of template files
  
  [Changed]
  - Changed code standard to PSR-2

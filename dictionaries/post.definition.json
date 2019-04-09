@@ -1,0 +1,10 @@
+{
+  "browser_not_support_javascript": {
+    "en": "Since your browser does not support JavaScript, you must press the button below once to proceed.",
+    "cs": "Vzhledem k tomu, že váš prohlížeč nepodporuje JavaScript, pokračujte stisknutím tlačítka níže."
+  },
+  "note": {
+    "en": "Note:",
+    "cs": "Poznámka"
+  }
+}
