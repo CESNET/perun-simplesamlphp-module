@@ -1,10 +1,13 @@
 <?php
 
+use SimpleSAML\Auth\State;
+use SimpleSAML\Configuration;
+use SimpleSAML\XHTML\Template;
+
 $id = $_REQUEST['StateId'];
-$state = SimpleSAML_Auth_State::loadState($id, 'perun:warningTestSP');
+$state = State::loadState($id, 'perun:warningTestSP');
 
-$config = SimpleSAML_Configuration::getInstance();
+$config = Configuration::getInstance();
 
-$t = new SimpleSAML_XHTML_Template($config, 'perun:warning-test-sp-tpl.php');
+$t = new Template($config, 'perun:warning-test-sp-tpl.php');
 $t->show();
-

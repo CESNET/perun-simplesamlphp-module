@@ -1,10 +1,14 @@
 <?php
 
+use SimpleSAML\Auth\State;
+use SimpleSAML\Configuration;
+use SimpleSAML\XHTML\Template;
+
 $id = $_REQUEST['StateId'];
-$state = SimpleSAML_Auth_State::loadState($id, 'perun:forceAup');
+$state = State::loadState($id, 'perun:forceAup');
 
-$config = SimpleSAML_Configuration::getInstance();
+$config = Configuration::getInstance();
 
-$t = new SimpleSAML_XHTML_Template($config, 'perun:force-aup-tpl.php');
+$t = new Template($config, 'perun:force-aup-tpl.php');
 $t->data['newAups'] = $state['newAups'];
 $t->show();

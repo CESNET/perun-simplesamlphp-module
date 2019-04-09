@@ -1,5 +1,17 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun\model\User;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\Facility;
+use SimpleSAML\Module\perun\model\Vo;
+use SimpleSAML\Module\perun\model\Resource;
+use SimpleSAML\Module\perun\model\Member;
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\Exception as PerunException;
+
 /**
  * Class sspmod_perun_AdapterRpc
  *
@@ -7,399 +19,469 @@
  * @author Michal Prochazka <michalp@ics.muni.cz>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_AdapterRpc extends sspmod_perun_Adapter
+class AdapterRpc extends Adapter
 {
-	const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
-	const RPC_URL  = 'rpc.url';
-	const RPC_USER = 'rpc.username';
-	const RPC_PASSWORD = 'rpc.password';
+    const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
+    const RPC_URL = 'rpc.url';
+    const RPC_USER = 'rpc.username';
+    const RPC_PASSWORD = 'rpc.password';
 
-	private $rpcUrl;
-	private $rpcUser;
-	private $rpcPassword;
+    private $rpcUrl;
+    private $rpcUser;
+    private $rpcPassword;
 
-	protected $connector;
+    protected $connector;
 
-	public function __construct ($configFileName = null)
-	{
-		if (is_null($configFileName)) {
-			$configFileName = self::DEFAULT_CONFIG_FILE_NAME;
-		}
+    public function __construct($configFileName = null)
+    {
+        if (is_null($configFileName)) {
+            $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
+        }
 
-		$conf = SimpleSAML_Configuration::getConfig($configFileName);
+        $conf = Configuration::getConfig($configFileName);
 
-		$this->rpcUrl = $conf->getString(self::RPC_URL);
-		$this->rpcUser = $conf->getString(self::RPC_USER);
-		$this->rpcPassword = $conf->getString(self::RPC_PASSWORD);
+        $this->rpcUrl = $conf->getString(self::RPC_URL);
+        $this->rpcUser = $conf->getString(self::RPC_USER);
+        $this->rpcPassword = $conf->getString(self::RPC_PASSWORD);
 
-		$this->connector = new sspmod_perun_RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword);
-	}
+        $this->connector = new RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword);
+    }
 
-	public function getPerunUser($idpEntityId, $uids)
-	{
-		$user = null;
+    public function getPerunUser($idpEntityId, $uids)
+    {
+        $user = null;
 
-		foreach ($uids as $uid) {
-			try {
-				$user = $this->connector->get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
-					'extSourceName' => $idpEntityId,
-					'extLogin' => $uid,
-				));
+        foreach ($uids as $uid) {
+            try {
+                $user = $this->connector->get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
+                    'extSourceName' => $idpEntityId,
+                    'extLogin' => $uid,
+                ));
 
-				$name = '';
-				if (!empty($user['titleBefore'])) $name .= $user['titleBefore'].' ';
-				if (!empty($user['titleBefore'])) $name .= $user['firstName'].' ';
-				if (!empty($user['titleBefore'])) $name .= $user['middleName'].' ';
-				if (!empty($user['titleBefore'])) $name .= $user['lastName'];
-				if (!empty($user['titleBefore'])) $name .= ' '.$user['titleAfter'];
-
-				return new sspmod_perun_model_User($user['id'], $name);
-			} catch (sspmod_perun_Exception $e) {
-				if ($e->getName() === 'UserExtSourceNotExistsException') {
-					continue;
-				} else if ($e->getName() === 'ExtSourceNotExistsException') {
-					// Because use of original/source entityID as extSourceName
-					continue;
-				} else {
-					throw $e;
-				}
-			}
-		}
-
-		return $user;
-	}
-
-
-	public function getMemberGroups($user, $vo)
-	{
-		try {
-			$member = $this->connector->get('membersManager', 'getMemberByUser', array(
-				'vo' => $vo->getId(),
-				'user' => $user->getId(),
-			));
-		
-
-			$memberGroups = $this->connector->get('groupsManager', 'getAllMemberGroups', array(
-				'member' => $member['id'],
-			));
-		} catch (sspmod_perun_Exception $e) {
-                        return array();
+                $name = '';
+                if (!empty($user['titleBefore'])) {
+                    $name .= $user['titleBefore'] . ' ';
+                }
+                if (!empty($user['titleBefore'])) {
+                    $name .= $user['firstName'] . ' ';
+                }
+                if (!empty($user['titleBefore'])) {
+                    $name .= $user['middleName'] . ' ';
+                }
+                if (!empty($user['titleBefore'])) {
+                    $name .= $user['lastName'];
+                }
+                if (!empty($user['titleBefore'])) {
+                    $name .= ' ' . $user['titleAfter'];
                 }
 
-		$convertedGroups = array();
-		foreach ($memberGroups as $group) {
-			try {
-				$attr = $this->connector->get('attributesManager', 'getAttribute', array(
-					'group' => $group['id'],
-					'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-				));
-				$uniqueName = $attr['value'] . ":" . $group['name'];
-				array_push($convertedGroups, new sspmod_perun_model_Group($group['id'], $group['voId'], $group['name'], $uniqueName, $group['description']));
-			} catch (sspmod_perun_Exception $e) {
-				continue;
-			}
-		}
+                return new User($user['id'], $name);
+            } catch (PerunException $e) {
+                if ($e->getName() === 'UserExtSourceNotExistsException') {
+                    continue;
+                } elseif ($e->getName() === 'ExtSourceNotExistsException') {
+                    // Because use of original/source entityID as extSourceName
+                    continue;
+                } else {
+                    throw $e;
+                }
+            }
+        }
 
-		return $convertedGroups;
-	}
+        return $user;
+    }
 
-
-	public function getSpGroups($spEntityId)
-	{
-		$perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
-			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-			'attributeValue' => $spEntityId,
-		))[0];
-		$facility = new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId);
-
-		$perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
-			'facility' => $facility->getId(),
-		));
-
-		$resources = array();
-		foreach ($perunAttrs as $perunAttr) {
-			array_push($resources, new sspmod_perun_model_Resource($perunAttr['id'], $perunAttr['voId'], $perunAttr['facilityId'], $perunAttr['name']));
-		}
-
-		$spGroups = array();
-		foreach ($resources as $resource) {
-			$groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
-				'resource' => $resource->getId(),
-			));
-
-			foreach ($groups as $group) {
-				$attr = $this->connector->get('attributesManager', 'getAttribute', array(
-					'group' => $group['id'],
-					'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-				));
-				$uniqueName = $attr['value'] . ":" . $group['name'];
-				array_push($spGroups, new sspmod_perun_model_Group($group['id'],$group['voId'], $group['name'], $uniqueName, $group['description']));
-			}
-		}
-
-		$spGroups = $this->removeDuplicateEntities($spGroups);
-
-		return $spGroups;
-	}
+    public function getMemberGroups($user, $vo)
+    {
+        try {
+            $member = $this->connector->get('membersManager', 'getMemberByUser', array(
+                'vo' => $vo->getId(),
+                'user' => $user->getId(),
+            ));
 
 
-	public function getGroupByName($vo, $name)
-	{
-		$group = $this->connector->get('groupsManager', 'getGroupByName', array(
-			'vo' => $vo->getId(),
-			'name' => $name,
-		));
-		$attr = $this->connector->get('attributesManager', 'getAttribute', array(
-			'group' => $group['id'],
-			'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-		));
-		$uniqueName = $attr['value'] . ":" . $group['name'];
-		return new sspmod_perun_model_Group($group['id'], $group['voId'], $group['name'], $uniqueName, $group['description']);
-	}
+            $memberGroups = $this->connector->get('groupsManager', 'getAllMemberGroups', array(
+                'member' => $member['id'],
+            ));
+        } catch (PerunException $e) {
+            return array();
+        }
 
+        $convertedGroups = array();
+        foreach ($memberGroups as $group) {
+            try {
+                $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+                    'group' => $group['id'],
+                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+                ));
+                $uniqueName = $attr['value'] . ":" . $group['name'];
+                array_push(
+                    $convertedGroups,
+                    new Group(
+                        $group['id'],
+                        $group['voId'],
+                        $group['name'],
+                        $uniqueName,
+                        $group['description']
+                    )
+                );
+            } catch (PerunException $e) {
+                continue;
+            }
+        }
 
-	public function getVoByShortName($voShortName)
-	{
-		$vo = $this->connector->get('vosManager', 'getVoByShortName', array(
-			'shortName' => $voShortName,
-		));
+        return $convertedGroups;
+    }
 
-		return new sspmod_perun_model_Vo($vo['id'], $vo['name'], $vo['shortName']);
-	}
+    public function getSpGroups($spEntityId)
+    {
+        $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+            'attributeValue' => $spEntityId,
+        ))[0];
+        $facility = new Facility(
+            $perunAttr['id'],
+            $perunAttr['name'],
+            $perunAttr['description'],
+            $spEntityId
+        );
 
-	public function getVoById($id)
-	{
-		$vo = $this->connector->get('vosManager', 'getVoById', array(
-			'id' => $id,
-		));
+        $perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
+            'facility' => $facility->getId(),
+        ));
 
-		return new sspmod_perun_model_Vo($vo['id'], $vo['name'], $vo['shortName']);
-	}
+        $resources = array();
+        foreach ($perunAttrs as $perunAttr) {
+            array_push(
+                $resources,
+                new Resource(
+                    $perunAttr['id'],
+                    $perunAttr['voId'],
+                    $perunAttr['facilityId'],
+                    $perunAttr['name']
+                )
+            );
+        }
 
-	public function getUserAttributes($user, $attrNames)
-	{
-		$perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
-			'user' => $user->getId(),
-			'attrNames' => $attrNames,
-		));
+        $spGroups = array();
+        foreach ($resources as $resource) {
+            $groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
+                'resource' => $resource->getId(),
+            ));
 
-		$attributes = array();
-		foreach ($perunAttrs as $perunAttr) {
+            foreach ($groups as $group) {
+                $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+                    'group' => $group['id'],
+                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+                ));
+                $uniqueName = $attr['value'] . ":" . $group['name'];
+                array_push(
+                    $spGroups,
+                    new Group(
+                        $group['id'],
+                        $group['voId'],
+                        $group['name'],
+                        $uniqueName,
+                        $group['description']
+                    )
+                );
+            }
+        }
 
-			$perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
+        $spGroups = $this->removeDuplicateEntities($spGroups);
 
-			$attributes[$perunAttrName] = $perunAttr['value'];
-		}
+        return $spGroups;
+    }
 
-		return $attributes;
-	}
+    public function getGroupByName($vo, $name)
+    {
+        $group = $this->connector->get('groupsManager', 'getGroupByName', array(
+            'vo' => $vo->getId(),
+            'name' => $name,
+        ));
+        $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+            'group' => $group['id'],
+            'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+        ));
+        $uniqueName = $attr['value'] . ":" . $group['name'];
+        return new Group(
+            $group['id'],
+            $group['voId'],
+            $group['name'],
+            $uniqueName,
+            $group['description']
+        );
+    }
 
-	public function getEntitylessAttribute($attrName)
-	{
-		$perunAttrs = $this->connector->get('attributesManager', 'getEntitylessAttributes', array(
-			'attrName' => $attrName,
-		));
+    public function getVoByShortName($voShortName)
+    {
+        $vo = $this->connector->get('vosManager', 'getVoByShortName', array(
+            'shortName' => $voShortName,
+        ));
 
-		$attributes = array();
-		foreach ($perunAttrs as $perunAttr) {
-			$attributes[key($perunAttr['value'])] = $perunAttr['value'][key($perunAttr['value'])];
-		}
+        return new Vo($vo['id'], $vo['name'], $vo['shortName']);
+    }
 
-		return $attributes;
+    public function getVoById($id)
+    {
+        $vo = $this->connector->get('vosManager', 'getVoById', array(
+            'id' => $id,
+        ));
 
-	}
+        return new Vo($vo['id'], $vo['name'], $vo['shortName']);
+    }
 
-	public function getVoAttributes($vo, $attrNames)
-	{
-		$perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
-			'vo' => $vo->getId(),
-			'attrNames' => $attrNames,
-		));
+    public function getUserAttributes($user, $attrNames)
+    {
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+            'user' => $user->getId(),
+            'attrNames' => $attrNames,
+        ));
 
-		$attributes = array();
-		foreach ($perunAttrs as $perunAttr) {
+        $attributes = array();
+        foreach ($perunAttrs as $perunAttr) {
+            $perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
 
-			$perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
+            $attributes[$perunAttrName] = $perunAttr['value'];
+        }
 
-			$attributes[$perunAttrName] = $perunAttr['value'];
-		}
+        return $attributes;
+    }
 
-		return $attributes;
-	}
+    public function getEntitylessAttribute($attrName)
+    {
+        $perunAttrs = $this->connector->get('attributesManager', 'getEntitylessAttributes', array(
+            'attrName' => $attrName,
+        ));
 
-	public function getFacilityAttribute($facility, $attrName)
-	{
-		$perunAttr = $this->connector->get('attributesManager', 'getAttribute', array(
-			'facility' => $facility->getId(),
-			'attributeName' => $attrName,
-		));
+        $attributes = array();
+        foreach ($perunAttrs as $perunAttr) {
+            $attributes[key($perunAttr['value'])] = $perunAttr['value'][key($perunAttr['value'])];
+        }
 
-		return $perunAttr['value'];
-	}
+        return $attributes;
+    }
 
+    public function getVoAttributes($vo, $attrNames)
+    {
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+            'vo' => $vo->getId(),
+            'attrNames' => $attrNames,
+        ));
 
-	public function getUsersGroupsOnFacility($spEntityId, $userId)
-	{
-		$facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
-			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-			'attributeValue' => $spEntityId,
-		));
+        $attributes = array();
+        foreach ($perunAttrs as $perunAttr) {
+            $perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
 
-		$allowedResources = array();
-		foreach ($facilities as $facility) {
-			$resources = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
-				'facility' => $facility['id'],
-			));
-			$allowedResources = array_merge($allowedResources, $resources);
-		}
+            $attributes[$perunAttrName] = $perunAttr['value'];
+        }
 
-		$members = $this->connector->get('membersManager', 'getMembersByUser', array(
-			'user' => $userId,
-		));
+        return $attributes;
+    }
 
-		$validMembers = array();
-		foreach ($members as $member) {
-			if ($member['status'] === 'VALID') {
-				array_push($validMembers, $member);
-			}
-		}
+    public function getFacilityAttribute($facility, $attrName)
+    {
+        $perunAttr = $this->connector->get('attributesManager', 'getAttribute', array(
+            'facility' => $facility->getId(),
+            'attributeName' => $attrName,
+        ));
 
-		$allGroups = array();
-		foreach ($allowedResources as $resource) {
-			foreach ($validMembers as $member) {
-				$groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
-					'resource' => $resource['id'],
-					'member' => $member['id'],
-				));
-				foreach ($groups as $group) {
-					$attr = $this->connector->get('attributesManager', 'getAttribute', array(
-						'group' => $group['id'],
-						'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-					));
-					$uniqueName = $attr['value'] . ":" . $group['name'];
-					array_push($allGroups, new sspmod_perun_model_Group($group['id'], $group['voId'],  $group['name'], $uniqueName, $group['description']));
-				}
-			}
-		}
+        return $perunAttr['value'];
+    }
 
-		$allGroups = $this->removeDuplicateEntities($allGroups);
-		return $allGroups;
-	}
+    public function getUsersGroupsOnFacility($spEntityId, $userId)
+    {
+        $facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+            'attributeValue' => $spEntityId,
+        ));
 
-	public function getFacilitiesByEntityId($spEntityId)
-	{
-		$perunAttrs = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
-			'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-			'attributeValue' => $spEntityId,
-		));
-		$facilities = array();
-		foreach ($perunAttrs as $perunAttr) {
-			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], $spEntityId));
-		}
-		return $facilities;
-	}
+        $allowedResources = array();
+        foreach ($facilities as $facility) {
+            $resources = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
+                'facility' => $facility['id'],
+            ));
+            $allowedResources = array_merge($allowedResources, $resources);
+        }
 
-	/**
-	 * Returns member by User and Vo
-	 * @param sspmod_perun_model_User $user
-	 * @param sspmod_perun_model_Vo $vo
-	 * @return sspmod_perun_model_Member
-	 */
-	public function getMemberByUser($user, $vo) {
-		$member = $this->connector->get('membersManager', 'getMemberByUser', array(
-			'user' => $user->getId(),
-			'vo' => $vo->getId(),
-		));
-		if (is_null($member)) {
-			throw new SimpleSAML_Error_Exception("Member for User with name " . $user->getName() . " and Vo with shortName " .
-			$vo->getShortName() . "does not exist in Perun!");
-		}
-		return new sspmod_perun_model_Member($member['id'], $member['voId'], $member['status']);
-	}
+        $members = $this->connector->get('membersManager', 'getMembersByUser', array(
+            'user' => $userId,
+        ));
 
-	/**
-	 * Returns true if group has registration form, false otherwise
-	 * @param sspmod_perun_model_Group $group
-	 * @return bool
-	 */
-	public function hasRegistrationForm($group) {
-		try {
-			$this->connector->get( 'registrarManager', 'getApplicationForm', array(
-				'group' => $group->getId(),
-			));
-			return true;
-		} catch (Exception $exception) {
-			return false;
-		}
-	}
+        $validMembers = array();
+        foreach ($members as $member) {
+            if ($member['status'] === 'VALID') {
+                array_push($validMembers, $member);
+            }
+        }
 
-	public function searchFacilitiesByAttributeValue($attribute)
-	{
-		$perunAttrs = $this->connector->post('searcher', 'getFacilities', array(
-			'attributesWithSearchingValues' => $attribute,
-		));
-		$facilities = array();
-		foreach($perunAttrs as $perunAttr) {
-			array_push($facilities, new sspmod_perun_model_Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'],null));
-		}
-		return $facilities;
-	}
+        $allGroups = array();
+        foreach ($allowedResources as $resource) {
+            foreach ($validMembers as $member) {
+                $groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
+                    'resource' => $resource['id'],
+                    'member' => $member['id'],
+                ));
+                foreach ($groups as $group) {
+                    $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+                        'group' => $group['id'],
+                        'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+                    ));
+                    $uniqueName = $attr['value'] . ":" . $group['name'];
+                    array_push(
+                        $allGroups,
+                        new Group(
+                            $group['id'],
+                            $group['voId'],
+                            $group['name'],
+                            $uniqueName,
+                            $group['description']
+                        )
+                    );
+                }
+            }
+        }
 
-	public function getFacilityAttributes($facility, $attrNames) {
-		$perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
-			'facility' => $facility->getId(),
-			'attrNames' => $attrNames,
-		));
-		$attributes = array();
-		foreach($perunAttrs as $perunAttr) {
-			array_push($attributes, array(
-				'id' => $perunAttr['id'],
-				'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
-				'displayName' => $perunAttr['displayName'],
-				'type' => $perunAttr['type'],
-				'value' => $perunAttr['value']
-			));
-		}
-		return $attributes;
-	}
+        $allGroups = $this->removeDuplicateEntities($allGroups);
+        return $allGroups;
+    }
 
-	public function getUserExtSource($extSourceName, $extSourceLogin) {
-		return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', array(
-			"extSourceName" => $extSourceName,
-			"extSourceLogin" => $extSourceLogin
-		));
-	}
+    public function getFacilitiesByEntityId($spEntityId)
+    {
+        $perunAttrs = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+            'attributeValue' => $spEntityId,
+        ));
+        $facilities = array();
+        foreach ($perunAttrs as $perunAttr) {
+            array_push(
+                $facilities,
+                new Facility(
+                    $perunAttr['id'],
+                    $perunAttr['name'],
+                    $perunAttr['description'],
+                    $spEntityId
+                )
+            );
+        }
+        return $facilities;
+    }
 
-	public function updateUserExtSourceLastAccess($userExtSource) {
-		$this->connector->post( 'usersManager', 'updateUserExtSourceLastAccess', array(
-			"userExtSource" => $userExtSource
-		));
-	}
+    /**
+     * Returns member by User and Vo
+     * @param User $user
+     * @param Vo $vo
+     * @return Member
+     */
+    public function getMemberByUser($user, $vo)
+    {
+        $member = $this->connector->get('membersManager', 'getMemberByUser', array(
+            'user' => $user->getId(),
+            'vo' => $vo->getId(),
+        ));
+        if (is_null($member)) {
+            throw new Exception(
+                "Member for User with name " . $user->getName() . " and Vo with shortName " .
+                $vo->getShortName() . "does not exist in Perun!"
+            );
+        }
+        return new Member($member['id'], $member['voId'], $member['status']);
+    }
 
-	public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
-	{
-		return $this->connector->get('attributesManager', 'getAttributes', array(
-			"userExtSource" => $userExtSourceId,
-			"attrNames" => $attrNames
-		));
-	}
+    /**
+     * Returns true if group has registration form, false otherwise
+     * @param Group $group
+     * @return bool
+     */
+    public function hasRegistrationForm($group)
+    {
+        try {
+            $this->connector->get('registrarManager', 'getApplicationForm', array(
+                'group' => $group->getId(),
+            ));
+            return true;
+        } catch (\Exception $exception) {
+            return false;
+        }
+    }
 
-	public function setUserExtSourceAttributes($userExtSourceId, $attributes)
-	{
-		$this->connector->post('attributesManager', 'setAttributes', array(
-			"userExtSource" => $userExtSourceId,
-			"attributes" => $attributes
-		));
-	}
+    public function searchFacilitiesByAttributeValue($attribute)
+    {
+        $perunAttrs = $this->connector->post('searcher', 'getFacilities', array(
+            'attributesWithSearchingValues' => $attribute,
+        ));
+        $facilities = array();
+        foreach ($perunAttrs as $perunAttr) {
+            array_push(
+                $facilities,
+                new Facility(
+                    $perunAttr['id'],
+                    $perunAttr['name'],
+                    $perunAttr['description'],
+                    null
+                )
+            );
+        }
+        return $facilities;
+    }
 
-	public function getMemberStatusByUserAndVo($user, $vo)
-	{
-		try {
-			$member = $this->getMemberByUser($user, $vo);
-		} catch (Exception $ex) {
-			return null;
-		}
-		return $member->getStatus();
-	}
+    public function getFacilityAttributes($facility, $attrNames)
+    {
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+            'facility' => $facility->getId(),
+            'attrNames' => $attrNames,
+        ));
+        $attributes = array();
+        foreach ($perunAttrs as $perunAttr) {
+            array_push($attributes, array(
+                'id' => $perunAttr['id'],
+                'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
+                'displayName' => $perunAttr['displayName'],
+                'type' => $perunAttr['type'],
+                'value' => $perunAttr['value']
+            ));
+        }
+        return $attributes;
+    }
 
+    public function getUserExtSource($extSourceName, $extSourceLogin)
+    {
+        return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', array(
+            "extSourceName" => $extSourceName,
+            "extSourceLogin" => $extSourceLogin
+        ));
+    }
+
+    public function updateUserExtSourceLastAccess($userExtSource)
+    {
+        $this->connector->post('usersManager', 'updateUserExtSourceLastAccess', array(
+            "userExtSource" => $userExtSource
+        ));
+    }
+
+    public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
+    {
+        return $this->connector->get('attributesManager', 'getAttributes', array(
+            "userExtSource" => $userExtSourceId,
+            "attrNames" => $attrNames
+        ));
+    }
+
+    public function setUserExtSourceAttributes($userExtSourceId, $attributes)
+    {
+        $this->connector->post('attributesManager', 'setAttributes', array(
+            "userExtSource" => $userExtSourceId,
+            "attributes" => $attributes
+        ));
+    }
+
+    public function getMemberStatusByUserAndVo($user, $vo)
+    {
+        try {
+            $member = $this->getMemberByUser($user, $vo);
+        } catch (Exception $ex) {
+            return null;
+        }
+        return $member->getStatus();
+    }
 }

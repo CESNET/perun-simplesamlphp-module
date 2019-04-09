@@ -1,15 +1,23 @@
 <?php
 
+use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
+use SimpleSAML\Module;
+use SimpleSAML\Utils\HTTP;
+use SimpleSAML\XHTML\Template;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\Vo;
+
 /**
  * This is simple example of template where user can choose where they want to register to access the requested service
  *
  * Allow type hinting in IDE
- * @var SimpleSAML_XHTML_Template $this
- * @var sspmod_perun_model_Group[] $groups;
- * @var sspmod_perun_model_Vo $vo
+ * @var Template $this
+ * @var Group[] $groups ;
+ * @var Vo $vo
  */
 
-$this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' . SimpleSAML\Module::getModuleUrl('perun/res/css/perun_identity_choose_vo_and_group.css')  . '" />';
+$this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
+    Module::getModuleUrl('perun/res/css/perun_identity_choose_vo_and_group.css') . '" />';
 
 $vos = $this->data['vos'];
 $groups = $this->data['groups'];
@@ -20,11 +28,11 @@ $serviceName = '';
 $informationURL = '';
 
 if ($spMetadata['name']['en']) {
-	$serviceName = $spMetadata['name']['en'];
+    $serviceName = $spMetadata['name']['en'];
 }
 
 if ($spMetadata['InformationURL']['en']) {
-	$informationURL = $spMetadata['InformationURL']['en'];
+    $informationURL = $spMetadata['InformationURL']['en'];
 }
 
 $this->data['header'] = "";
@@ -32,61 +40,65 @@ $this->data['header'] = "";
 $this->includeAtTemplateBase('includes/header.php');
 
 if (isset($_POST['selectedGroup'])) {
-	$params = array();
-	$vo = explode(':', $_POST['selectedGroup'],2)[0];
-    $group = explode(':', $_POST['selectedGroup'],2)[1];
-	$callback = SimpleSAML\Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+    $params = array();
+    $vo = explode(':', $_POST['selectedGroup'], 2)[0];
+    $group = explode(':', $_POST['selectedGroup'], 2)[1];
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
 
-	$params['vo'] = $vo;
+    $params['vo'] = $vo;
 
-	if ($group !== "members") {
-		$params['group'] = $group;
-	}
+    if ($group !== "members") {
+        $params['group'] = $group;
+    }
 
-	$params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_NEW] = $callback;
-	$params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXISTING] = $callback;
-	$params[sspmod_perun_Auth_Process_PerunIdentity::TARGET_EXTENDED] = $callback;
-	\SimpleSAML\Utils\HTTP::redirectTrustedURL($registerUrlBase, $params);
+    $params[PerunIdentity::TARGET_NEW] = $callback;
+    $params[PerunIdentity::TARGET_EXISTING] = $callback;
+    $params[PerunIdentity::TARGET_EXTENDED] = $callback;
+    HTTP::redirectTrustedURL($registerUrlBase, $params);
 }
 
 $header = $this->t('{perun:perun:choose-vo-and-group-tpl_header-part1}');
 if (!empty($serviceName) && !empty($informationURL)) {
-	$header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
+    $header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
 } elseif (!empty($serviceName)) {
-	$header .=  $serviceName;
+    $header .= $serviceName;
 }
 $header .= $this->t('{perun:perun:choose-vo-and-group-tpl_header-part2}');
 
 echo '<div id="head">';
-echo '<h1>' . $header. '</h1>';
+echo '<h1>' . $header . '</h1>';
 echo '</div>';
 
-echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_message}'). '</div>';
+echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_message}') . '</div>';
 
 ?>
 
     <div class="list-group">
 
         <form action="" method="post">
-            <h4> <?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_select-vo}');  ?> </h4>
+            <h4> <?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_select-vo}'); ?> </h4>
             <select id="selectVo" class="form-control" name="selectedVo" onchange="filter()" required>
-            <?php
-            foreach ($vos as $key => $vo) {
-                echo '<option  value="' . $key .'" >' . $vo->getName() . '</option>';
-            }
-            ?>
-            </select>
-
-            <h4 class="selectGroup" style="display: none"><?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_select-group}');  ?></h4>
-            <select  class="selectGroup form-control" name="selectedGroup" class="form-control" style="display: none" required>
                 <?php
-                foreach ($groups as $group) {
-                    echo '<option class="groupOption" value="' . $group->getUniqueName() .'" >' . $group->getDescription() . '</option>';
+                foreach ($vos as $key => $vo) {
+                    echo '<option  value="' . $key . '" >' . $vo->getName() . '</option>';
                 }
                 ?>
             </select>
 
-            <input type="submit" value="<?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_continue}');  ?>" class="btn btn-lg btn-primary btn-block">
+            <h4 class="selectGroup"
+                style="display: none"><?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_select-group}'); ?></h4>
+            <select class="selectGroup form-control" name="selectedGroup" class="form-control" style="display: none"
+                    required>
+                <?php
+                foreach ($groups as $group) {
+                    echo '<option class="groupOption" value="' . $group->getUniqueName() . '" >' .
+                        $group->getDescription() . '</option>';
+                }
+                ?>
+            </select>
+
+            <input type="submit" value="<?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_continue}'); ?>"
+                   class="btn btn-lg btn-primary btn-block">
         </form>
     </div>
 
@@ -100,7 +112,7 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
                 showGroups();
                 $(".groupOption").each(function () {
                     var value = $(this).val();
-                    if (value.startsWith(vo,0)) {
+                    if (value.startsWith(vo, 0)) {
                         $(this).show();
                     } else {
                         $(this).hide();
@@ -121,5 +133,7 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
     </script>
 
 <?php
+
 $this->includeAtTemplateBase('includes/footer.php');
+
 ?>

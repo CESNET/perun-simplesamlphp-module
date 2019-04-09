@@ -1,5 +1,9 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Configuration;
+use SimpleSAML\Error\Exception;
 
 /**
  * Abstract class sspmod_perun_StatusConnector
@@ -7,7 +11,7 @@
  *
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-abstract class sspmod_perun_StatusConnector
+abstract class StatusConnector
 {
 
     const NAGIOS = 'NAGIOS';
@@ -22,21 +26,24 @@ abstract class sspmod_perun_StatusConnector
      */
     public function __construct()
     {
-        $this->configuration = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+        $this->configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
     }
 
     /**
-     * @return sspmod_perun_StatusConnector instance
-     * @throws SimpleSAML_Error_Exception thrown if interface does not match any supported interface
+     * @return StatusConnector instance
+     * @throws Exception thrown if interface does not match any supported interface
      */
-    public static function getInstance() {
-        $configuration = SimpleSAML_Configuration::getConfig(self::CONFIG_FILE_NAME);
+    public static function getInstance()
+    {
+        $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $statusType = $configuration->getString(self::STATUS_TYPE, "NAGIOS");
         if ($statusType === self::NAGIOS) {
-            return new sspmod_perun_NagiosStatusConnector();
+            return new NagiosStatusConnector();
         } else {
-            throw new SimpleSAML_Error_Exception("Unknown StatusConnector type in option '" . self::STATUS_TYPE . "'. Only " .
-                                                 self::NAGIOS . " type available now!");
+            throw new Exception(
+                "Unknown StatusConnector type in option '" . self::STATUS_TYPE . "'. Only " .
+                self::NAGIOS . " type available now!"
+            );
         }
     }
 
@@ -51,6 +58,5 @@ abstract class sspmod_perun_StatusConnector
      *
      * @return array
      */
-    public abstract function getStatus();
-
+    abstract public function getStatus();
 }

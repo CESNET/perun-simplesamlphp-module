@@ -1,5 +1,10 @@
 <?php
 
+namespace SimpleSAML\Module\perun\Auth\Process;
+
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+
 /**
  * Class sspmod_perun_Auth_Process_RetainIdPEntityID
  *
@@ -9,41 +14,38 @@
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class sspmod_perun_Auth_Process_RetainIdPEntityID extends SimpleSAML_Auth_ProcessingFilter
+class RetainIdPEntityID extends \SimpleSAML\Auth\ProcessingFilter
 {
-	const DEFAULT_ATTR_NAME = 'sourceIdPEntityID';
+    const DEFAULT_ATTR_NAME = 'sourceIdPEntityID';
 
-	private $attrName;
+    private $attrName;
 
-	public function __construct($config, $reserved)
-	{
-		parent::__construct($config, $reserved);
+    public function __construct($config, $reserved)
+    {
+        parent::__construct($config, $reserved);
 
-		# Target attribute can be set in config, if not, the the default is used
-		if (isset($config['attrName'])) {
-			$this->attrName = $config['attrName'];
-		} else {
-			$this->attrName = self::DEFAULT_ATTR_NAME;
-		}
+        # Target attribute can be set in config, if not, the the default is used
+        if (isset($config['attrName'])) {
+            $this->attrName = $config['attrName'];
+        } else {
+            $this->attrName = self::DEFAULT_ATTR_NAME;
+        }
+    }
 
-	}
+    public function process(&$request)
+    {
+        assert('is_array($request)');
 
+        if (isset($request['Source']['entityid'])) {
+            $entityId = $request['Source']['entityid'];
+        } else {
+            throw new Exception("perun:RetainIdPEntityID: Cannot find entityID of remote IDP. " .
+                "hint: Do you have this filter in SP context?");
+        }
 
-	public function process(&$request)
-	{
-		assert('is_array($request)');
-
-		if (isset($request['Source']['entityid'])) {
-			$entityId = $request['Source']['entityid'];
-		} else {
-			throw new SimpleSAML_Error_Exception("perun:RetainIdPEntityID: Cannot find entityID of remote IDP. " .
-				"hint: Do you have this filter in SP context?");
-		}
-
-		$request['Attributes'][$this->attrName] = array($entityId);
-		SimpleSAML\Logger::debug("perun:RetainIdPEntityID: entityID '$entityId' was extracted to attribute ".$this->attrName);
-	}
-
-
+        $request['Attributes'][$this->attrName] = array($entityId);
+        Logger::debug(
+            "perun:RetainIdPEntityID: entityID '$entityId' was extracted to attribute " . $this->attrName
+        );
+    }
 }
-

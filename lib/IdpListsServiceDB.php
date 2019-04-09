@@ -1,57 +1,54 @@
 <?php
+
+namespace SimpleSAML\Module\perun;
+
 include 'DatabaseCommand.php';
 
 /**
- * Implementation of sspmod_perun_IdpListsService using DB
+ * Implementation of IdpListsService using DB
  *
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_IdpListsServiceDB extends sspmod_perun_IdpListsService
+class IdpListsServiceDB extends IdpListsService
 {
 
+    public function getWhitelist()
+    {
+        return DatabaseCommand::getAllIdps(DatabaseCommand::WHITELIST);
+    }
 
-	function getWhitelist()
-	{
-		return DatabaseCommand::getAllIdps(DatabaseCommand::WHITELIST);
-	}
+    public function getGreylist()
+    {
+        return DatabaseCommand::getAllIdps(DatabaseCommand::GREYLIST);
+    }
 
-	function getGreylist()
-	{
-		return DatabaseCommand::getAllIdps(DatabaseCommand::GREYLIST);
-	}
+    public function getWhitelistEntityIds()
+    {
+        return DatabaseCommand::getAllEntityIds(DatabaseCommand::WHITELIST);
+    }
 
+    public function getGreylistEntityIds()
+    {
+        return DatabaseCommand::getAllEntityIds(DatabaseCommand::GREYLIST);
+    }
 
-	function getWhitelistEntityIds()
-	{
-		return DatabaseCommand::getAllEntityIds(DatabaseCommand::WHITELIST);
-	}
+    public function isWhitelisted($entityID)
+    {
+        return in_array($entityID, $this->getWhitelistEntityIds());
+    }
 
+    public function isGreylisted($entityID)
+    {
+        return in_array($entityID, $this->getGreylistEntityIds());
+    }
 
-	function getGreylistEntityIds()
-	{
-		return DatabaseCommand::getAllEntityIds(DatabaseCommand::GREYLIST);
-	}
-
-
-	function isWhitelisted($entityID)
-	{
-		return in_array($entityID, $this->getWhitelistEntityIds());
-	}
-
-
-	function isGreylisted($entityID)
-	{
-		return in_array($entityID, $this->getGreylistEntityIds());
-	}
-
-
-	function whitelistIdp($entityID, $reason = null)
-	{
-		if (!$this->isWhitelisted($entityID)) {
-			DatabaseCommand::insertTolist(DatabaseCommand::WHITELIST, $entityID, $reason);
-			if ($this->isGreylisted($entityID)) {
-				DatabaseCommand::deleteFromList(DatabaseCommand::GREYLIST, $entityID);
-			}
-		}
-	}
+    public function whitelistIdp($entityID, $reason = null)
+    {
+        if (!$this->isWhitelisted($entityID)) {
+            DatabaseCommand::insertTolist(DatabaseCommand::WHITELIST, $entityID, $reason);
+            if ($this->isGreylisted($entityID)) {
+                DatabaseCommand::deleteFromList(DatabaseCommand::GREYLIST, $entityID);
+            }
+        }
+    }
 }

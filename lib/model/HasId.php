@@ -1,13 +1,14 @@
 <?php
 
+namespace SimpleSAML\Module\perun\model;
+
 /**
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-interface sspmod_perun_model_HasId
+interface HasId
 {
-	/**
-	 * @return int id of entity
-	 */
-	public function getId();
-
+    /**
+     * @return int id of entity
+     */
+    public function getId();
 }

@@ -1,11 +1,15 @@
 <?php
 
+namespace SimpleSAML\Module\perun;
+
+use SimpleSAML\Logger;
+
 /**
  * Class sspmod_perun_NagiosStatusConnector
  *
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
+class NagiosStatusConnector extends StatusConnector
 {
     const NAGIOS_URL = "status.nagios.url";
     const NAGIOS_CERT_PATH = "status.nagios.certificate_path";
@@ -33,11 +37,11 @@ class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
         $this->peerVerification = $this->configuration->getBoolean(self::NAGIOS_PEER_VERIFY, false);
 
         if (empty($this->url)) {
-            throw new Exception("Required option '" . self::NAGIOS_URL . "' is empty!");
+            throw new \Exception("Required option '" . self::NAGIOS_URL . "' is empty!");
         } elseif (empty($this->certPath)) {
-            throw new Exception("Required option '" . self::NAGIOS_CERT_PATH . "' is empty!");
+            throw new \Exception("Required option '" . self::NAGIOS_CERT_PATH . "' is empty!");
         } elseif (empty($this->caPath)) {
-            throw new Exception("Required option '" . self::NAGIOS_CA_PATH . "' is empty!");
+            throw new \Exception("Required option '" . self::NAGIOS_CA_PATH . "' is empty!");
         }
     }
 
@@ -59,7 +63,7 @@ class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
         $response = curl_exec($ch);
 
         if ($response === false) {
-            \SimpleSAML\Logger::error(curl_error($ch));
+            Logger::error(curl_error($ch));
         }
 
         curl_close($ch);
@@ -70,7 +74,7 @@ class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
             $serviceStatuses = $jsonResponse['status']['service_status'];
         }
 
-        foreach ($serviceStatuses as $serviceStatus){
+        foreach ($serviceStatuses as $serviceStatus) {
             $status = array();
             $status['name'] = $serviceStatus['service_display_name'];
             $status['status'] = $serviceStatus['status'];
@@ -78,7 +82,5 @@ class sspmod_perun_NagiosStatusConnector extends sspmod_perun_StatusConnector
         }
 
         return $result;
-
     }
-
 }
