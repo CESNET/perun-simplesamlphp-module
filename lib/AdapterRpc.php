@@ -289,6 +289,7 @@ class AdapterRpc extends Adapter
         return $perunAttr['value'];
     }
 
+
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
         $facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
@@ -296,54 +297,37 @@ class AdapterRpc extends Adapter
             'attributeValue' => $spEntityId,
         ));
 
-        $allowedResources = array();
+        $groups = array();
+
         foreach ($facilities as $facility) {
-            $resources = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
-                'facility' => $facility['id'],
-            ));
-            $allowedResources = array_merge($allowedResources, $resources);
-        }
+            $usersGroupsOnFacility = $this->connector->get(
+                'usersManager',
+                'getRichGroupsWhereUserIsActive',
+                array(
+                    'facility' => $facility['id'],
+                    'user' => $userId,
+                    'attrNames' => array('urn:perun:group:attribute-def:virt:voShortName')
+                )
+            );
 
-        $members = $this->connector->get('membersManager', 'getMembersByUser', array(
-            'user' => $userId,
-        ));
+            foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
+                if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
+                    $usersGroupOnFacility['attributes'][0]['friendlyName'] == 'voShortName') {
+                    $uniqueName = $usersGroupOnFacility['attributes'][0]['value'] . ":" . $usersGroupOnFacility['name'];
 
-        $validMembers = array();
-        foreach ($members as $member) {
-            if ($member['status'] === 'VALID') {
-                array_push($validMembers, $member);
-            }
-        }
-
-        $allGroups = array();
-        foreach ($allowedResources as $resource) {
-            foreach ($validMembers as $member) {
-                $groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
-                    'resource' => $resource['id'],
-                    'member' => $member['id'],
-                ));
-                foreach ($groups as $group) {
-                    $attr = $this->connector->get('attributesManager', 'getAttribute', array(
-                        'group' => $group['id'],
-                        'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+                    array_push($groups, new Group(
+                        $usersGroupOnFacility['id'],
+                        $usersGroupOnFacility['voId'],
+                        $usersGroupOnFacility['name'],
+                        $uniqueName,
+                        $usersGroupOnFacility['description']
                     ));
-                    $uniqueName = $attr['value'] . ":" . $group['name'];
-                    array_push(
-                        $allGroups,
-                        new Group(
-                            $group['id'],
-                            $group['voId'],
-                            $group['name'],
-                            $uniqueName,
-                            $group['description']
-                        )
-                    );
                 }
             }
         }
+        $groups = $this->removeDuplicateEntities($groups);
 
-        $allGroups = $this->removeDuplicateEntities($allGroups);
-        return $allGroups;
+        return $groups;
     }
 
     public function getFacilitiesByEntityId($spEntityId)

@@ -43,6 +43,7 @@ All notable changes to this project will be documented in this file.
     - sspmod_perun_LdapConnector to SimpleSAML\Module\perun\LdapConnector
     - sspmod_perun_RpcConnector to SimpleSAML\Module\perun\RpcConnector
  - Added disco-tpl template file
+ - Method getUsersGroupsOnFacility in AdapterRpc was optimized
  
  [Fixed]
  - Fixed the bug generating Array to string conversion Exception in PerunAttributes, 
