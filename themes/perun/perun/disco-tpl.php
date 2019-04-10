@@ -251,8 +251,9 @@ function searchScript()
 function showEntry($t, $metadata, $favourite = false)
 {
 
-    if (isset($metadata['tags']) && in_array('social', $metadata['tags'])) {
-        return showEntrySocial($t, $metadata);
+    if (isset($metadata['tags']) &&
+        (in_array('social', $metadata['tags']) || in_array('preferred', $metadata['tags']))) {
+        return showTaggedEntry($t, $metadata);
     }
 
     $extra = ($favourite ? ' favourite' : '');
@@ -273,7 +274,7 @@ function showEntry($t, $metadata, $favourite = false)
  * @param array $metadata
  * @return string html
  */
-function showEntrySocial($t, $metadata)
+function showTaggedEntry($t, $metadata)
 {
 
     $bck = 'white';
@@ -281,7 +282,7 @@ function showEntrySocial($t, $metadata)
         $bck = $metadata['color'];
     }
 
-    $html = '<a class="btn btn-block social" href="' . $t->getContinueUrl($metadata['entityid']) .
+    $html = '<a class="btn btn-block tagged" href="' . $t->getContinueUrl($metadata['entityid']) .
         '" style="background: ' . $bck . '">';
 
     $html .= '<img src="' . $metadata['icon'] . '">';
