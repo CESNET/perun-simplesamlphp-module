@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Fixed]
+ - Fixed showing entry on wayf with tag 'preferred'
  
  ## [v3.0.0]
  [Added]

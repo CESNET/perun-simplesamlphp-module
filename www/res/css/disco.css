@@ -23,14 +23,14 @@ a.metaentryrow .idp-logo {
     padding: 3px;
 }
 
-a.social {
+a.tagged {
     padding: 10px;
     text-align: left;
     color: white;
     border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-a.social img {
+a.tagged img {
     display: inline-block;
     height: 40px;
     max-height: 40px;
@@ -41,14 +41,14 @@ a.social img {
     border-right: 1px solid rgba(0, 0, 0, 0.2);
 }
 
-a.social:hover, a.social:focus {
+a.tagged:hover, a.tagged:focus {
     color: white;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.3);
     box-shadow: 0px 0px 10px 30px rgba(0, 0, 0, 0.1) inset;
 }
 
-a.social:hover img {
+a.tagged:hover img {
     border-right: 1px solid rgba(0, 0, 0, 0.3);
 }
 
