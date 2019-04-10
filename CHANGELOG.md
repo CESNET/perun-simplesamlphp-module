@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ 
+ ## [v3.0.1]
  [Fixed]
  - Fixed showing entry on wayf with tag 'preferred'
  
@@ -109,6 +111,7 @@ All notable changes to this project will be documented in this file.
  ## [v1.0.0]
 
  [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+ [v3.0.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.1
  [v3.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.0
  [v2.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.2.0
  [v2.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v2.1.0
