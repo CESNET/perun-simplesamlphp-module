@@ -56,7 +56,7 @@ try {
     Logger::warning("perun:disco-tpl: missing or invalid module_perun.php config file");
 }
 
-if (!is_null($config)) {
+if ($config !== null) {
     try {
         $addInstitutionUrl = $config->getString(ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
@@ -64,7 +64,7 @@ if (!is_null($config)) {
     }
 }
 
-if (!is_null($config)) {
+if ($config !== null) {
     try {
         $addInstitutionEmail = $config->getString(ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
