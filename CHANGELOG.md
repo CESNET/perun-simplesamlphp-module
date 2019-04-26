@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Fixed]
+ - Fixed error in case of call method getIdps() with unused tag 
  
  ## [v3.0.1]
  [Fixed]

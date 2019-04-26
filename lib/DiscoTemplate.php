@@ -44,7 +44,11 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
      */
     public function getIdps($tag = 'misc')
     {
-        return $this->data['idplist'][$tag];
+        if (isset($this->data['idplist'][$tag])) {
+            return $this->data['idplist'][$tag];
+        } else {
+            return array();
+        }
     }
 
     /**
