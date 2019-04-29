@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ [Fixed]
+ - Use ldap base from variable in AdapterLdap::getMemberStatusByUserAndVo() instead of static string
  
  ## [v3.0.2]
  [Fixed]

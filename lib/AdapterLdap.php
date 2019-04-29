@@ -321,7 +321,7 @@ class AdapterLdap extends Adapter
         $groupId = $this->connector->searchForEntity(
             $this->ldapBase,
             "(&(objectClass=perunGroup)(cn=members)(perunVoId=" . $vo->getId() .
-            ")(uniqueMember=perunUserId=" . $user->getId() . ",ou=People,dc=perun,dc=cesnet,dc=cz))",
+            ")(uniqueMember=perunUserId=" . $user->getId() . ", ou=People," . $this->ldapBase . "))",
             array("perunGroupid")
         );
 
