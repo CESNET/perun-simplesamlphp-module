@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
  ## [Unreleased]
+ 
+ ## [v3.0.3]
  [Fixed]
  - Use ldap base from variable in AdapterLdap::getMemberStatusByUserAndVo() instead of static string
  
@@ -117,6 +119,7 @@ All notable changes to this project will be documented in this file.
  ## [v1.0.0]
 
  [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+ [v3.0.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.3
  [v3.0.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.2
  [v3.0.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.1
  [v3.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.0
