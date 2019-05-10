@@ -26,7 +26,7 @@ class DatabaseCommand
         $whiteListTableName = $databaseConnector->getWhiteListTableName();
         $greyListTableName = $databaseConnector->getGreyListTableName();
         $table = null;
-        $listOfIdPs = array();
+        $listOfIdPs = [];
         assert($conn != null);
 
         if ($tableName == self::WHITELIST) {
@@ -45,7 +45,7 @@ class DatabaseCommand
 
             $stmt->bind_result($timestamp, $entityId, $reason);
             while ($stmt->fetch()) {
-                $idp = array();
+                $idp = [];
                 $idp['timestamp'] = $timestamp;
                 $idp['entityid'] = $entityId;
                 $idp['reason'] = $reason;
@@ -73,7 +73,7 @@ class DatabaseCommand
         $whiteListTableName = $databaseConnector->getWhiteListTableName();
         $greyListTableName = $databaseConnector->getGreyListTableName();
         $table = null;
-        $listOfIdPs = array();
+        $listOfIdPs = [];
         assert($conn != null);
 
         if ($tableName == self::WHITELIST) {

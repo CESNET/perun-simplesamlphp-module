@@ -55,7 +55,7 @@ class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
             }
 
             if (!is_array($value)) {
-                $value = array($value);
+                $value = [$value];
             }
 
             if (!empty($value)) {

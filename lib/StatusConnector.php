@@ -49,12 +49,12 @@ abstract class StatusConnector
 
     /**
      * Returns list of components with statuses in this format:
-     * array(
-     *      array(
+     * [
+     *      [
      *          'name' => 'Component name',
      *          'status' => 'Component status'
-     *      ),
-     * ),
+     *      ],
+     * ],
      *
      * @return array
      */

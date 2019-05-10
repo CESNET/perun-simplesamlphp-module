@@ -43,7 +43,7 @@ class RetainIdPEntityID extends \SimpleSAML\Auth\ProcessingFilter
                 "hint: Do you have this filter in SP context?");
         }
 
-        $request['Attributes'][$this->attrName] = array($entityId);
+        $request['Attributes'][$this->attrName] = [$entityId];
         Logger::debug(
             "perun:RetainIdPEntityID: entityID '$entityId' was extracted to attribute " . $this->attrName
         );

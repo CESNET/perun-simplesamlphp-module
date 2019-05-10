@@ -12,7 +12,6 @@ use SimpleSAML\Logger;
  * This filter updates userExtSource attributes when he logs in.
  *
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
- * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 {
@@ -36,7 +35,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
         if (isset($config['arrayToStringConversion'])) {
             $this->attrsToConversion = (array)$config['arrayToStringConversion'];
         } else {
-            $this->attrsToConversion = array();
+            $this->attrsToConversion = [];
         }
 
         $this->attrMap = (array)$config['attrMap'];
@@ -67,14 +66,14 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
                 );
             }
 
-            $attributesToUpdate = array();
+            $attributesToUpdate = [];
             foreach ($attributes as $attribute) {
                 $attrName = self::UES_ATTR_NMS . $attribute['friendlyName'];
                 if (isset($this->attrMap[$attrName]) && isset($request['Attributes'][$this->attrMap[$attrName]])) {
                     $attr = $request['Attributes'][$this->attrMap[$attrName]];
 
                     if (in_array(self::UES_ATTR_NMS . $attribute['friendlyName'], $this->attrsToConversion)) {
-                        $arrayAsString = array('');
+                        $arrayAsString = [''];
                         foreach ($attr as $value) {
                             $arrayAsString[0] .= $value . ';';
                         }

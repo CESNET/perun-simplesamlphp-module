@@ -69,9 +69,9 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
             // convert $attrValue into array
             if (is_null($attrValue)) {
-                $value = array();
+                $value = [];
             } elseif (is_string($attrValue) || is_numeric($attrValue)) {
-                $value = array($attrValue);
+                $value = [$attrValue];
             } elseif ($this->hasStringKeys($attrValue)) {
                 $value = $attrValue;
             } elseif (is_array($attrValue)) {
@@ -86,7 +86,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
             // convert $sspAttr into array
             if (is_string($sspAttr)) {
-                $attrArray = array($sspAttr);
+                $attrArray = [$sspAttr];
             } elseif (is_array($sspAttr)) {
                 $attrArray = $sspAttr;
             } else {

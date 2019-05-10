@@ -53,10 +53,10 @@ class AdapterRpc extends Adapter
 
         foreach ($uids as $uid) {
             try {
-                $user = $this->connector->get('usersManager', 'getUserByExtSourceNameAndExtLogin', array(
+                $user = $this->connector->get('usersManager', 'getUserByExtSourceNameAndExtLogin', [
                     'extSourceName' => $idpEntityId,
                     'extLogin' => $uid,
-                ));
+                ]);
 
                 $name = '';
                 if (!empty($user['titleBefore'])) {
@@ -94,26 +94,26 @@ class AdapterRpc extends Adapter
     public function getMemberGroups($user, $vo)
     {
         try {
-            $member = $this->connector->get('membersManager', 'getMemberByUser', array(
+            $member = $this->connector->get('membersManager', 'getMemberByUser', [
                 'vo' => $vo->getId(),
                 'user' => $user->getId(),
-            ));
+            ]);
 
 
-            $memberGroups = $this->connector->get('groupsManager', 'getAllMemberGroups', array(
+            $memberGroups = $this->connector->get('groupsManager', 'getAllMemberGroups', [
                 'member' => $member['id'],
-            ));
+            ]);
         } catch (PerunException $e) {
-            return array();
+            return [];
         }
 
-        $convertedGroups = array();
+        $convertedGroups = [];
         foreach ($memberGroups as $group) {
             try {
-                $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+                $attr = $this->connector->get('attributesManager', 'getAttribute', [
                     'group' => $group['id'],
                     'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-                ));
+                ]);
                 $uniqueName = $attr['value'] . ":" . $group['name'];
                 array_push(
                     $convertedGroups,
@@ -135,10 +135,10 @@ class AdapterRpc extends Adapter
 
     public function getSpGroups($spEntityId)
     {
-        $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+        $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
             'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
             'attributeValue' => $spEntityId,
-        ))[0];
+        ])[0];
         $facility = new Facility(
             $perunAttr['id'],
             $perunAttr['name'],
@@ -146,11 +146,11 @@ class AdapterRpc extends Adapter
             $spEntityId
         );
 
-        $perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', array(
+        $perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', [
             'facility' => $facility->getId(),
-        ));
+        ]);
 
-        $resources = array();
+        $resources = [];
         foreach ($perunAttrs as $perunAttr) {
             array_push(
                 $resources,
@@ -163,17 +163,17 @@ class AdapterRpc extends Adapter
             );
         }
 
-        $spGroups = array();
+        $spGroups = [];
         foreach ($resources as $resource) {
-            $groups = $this->connector->get('resourcesManager', 'getAssignedGroups', array(
+            $groups = $this->connector->get('resourcesManager', 'getAssignedGroups', [
                 'resource' => $resource->getId(),
-            ));
+            ]);
 
             foreach ($groups as $group) {
-                $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+                $attr = $this->connector->get('attributesManager', 'getAttribute', [
                     'group' => $group['id'],
                     'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-                ));
+                ]);
                 $uniqueName = $attr['value'] . ":" . $group['name'];
                 array_push(
                     $spGroups,
@@ -195,14 +195,14 @@ class AdapterRpc extends Adapter
 
     public function getGroupByName($vo, $name)
     {
-        $group = $this->connector->get('groupsManager', 'getGroupByName', array(
+        $group = $this->connector->get('groupsManager', 'getGroupByName', [
             'vo' => $vo->getId(),
             'name' => $name,
-        ));
-        $attr = $this->connector->get('attributesManager', 'getAttribute', array(
+        ]);
+        $attr = $this->connector->get('attributesManager', 'getAttribute', [
             'group' => $group['id'],
             'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
-        ));
+        ]);
         $uniqueName = $attr['value'] . ":" . $group['name'];
         return new Group(
             $group['id'],
@@ -215,30 +215,30 @@ class AdapterRpc extends Adapter
 
     public function getVoByShortName($voShortName)
     {
-        $vo = $this->connector->get('vosManager', 'getVoByShortName', array(
+        $vo = $this->connector->get('vosManager', 'getVoByShortName', [
             'shortName' => $voShortName,
-        ));
+        ]);
 
         return new Vo($vo['id'], $vo['name'], $vo['shortName']);
     }
 
     public function getVoById($id)
     {
-        $vo = $this->connector->get('vosManager', 'getVoById', array(
+        $vo = $this->connector->get('vosManager', 'getVoById', [
             'id' => $id,
-        ));
+        ]);
 
         return new Vo($vo['id'], $vo['name'], $vo['shortName']);
     }
 
     public function getUserAttributes($user, $attrNames)
     {
-        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'user' => $user->getId(),
             'attrNames' => $attrNames,
-        ));
+        ]);
 
-        $attributes = array();
+        $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
             $perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
 
@@ -250,11 +250,11 @@ class AdapterRpc extends Adapter
 
     public function getEntitylessAttribute($attrName)
     {
-        $perunAttrs = $this->connector->get('attributesManager', 'getEntitylessAttributes', array(
+        $perunAttrs = $this->connector->get('attributesManager', 'getEntitylessAttributes', [
             'attrName' => $attrName,
-        ));
+        ]);
 
-        $attributes = array();
+        $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
             $attributes[key($perunAttr['value'])] = $perunAttr['value'][key($perunAttr['value'])];
         }
@@ -264,12 +264,12 @@ class AdapterRpc extends Adapter
 
     public function getVoAttributes($vo, $attrNames)
     {
-        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'vo' => $vo->getId(),
             'attrNames' => $attrNames,
-        ));
+        ]);
 
-        $attributes = array();
+        $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
             $perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
 
@@ -281,10 +281,10 @@ class AdapterRpc extends Adapter
 
     public function getFacilityAttribute($facility, $attrName)
     {
-        $perunAttr = $this->connector->get('attributesManager', 'getAttribute', array(
+        $perunAttr = $this->connector->get('attributesManager', 'getAttribute', [
             'facility' => $facility->getId(),
             'attributeName' => $attrName,
-        ));
+        ]);
 
         return $perunAttr['value'];
     }
@@ -292,22 +292,22 @@ class AdapterRpc extends Adapter
 
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
-        $facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+        $facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
             'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
             'attributeValue' => $spEntityId,
-        ));
+        ]);
 
-        $groups = array();
+        $groups = [];
 
         foreach ($facilities as $facility) {
             $usersGroupsOnFacility = $this->connector->get(
                 'usersManager',
                 'getRichGroupsWhereUserIsActive',
-                array(
+                [
                     'facility' => $facility['id'],
                     'user' => $userId,
-                    'attrNames' => array('urn:perun:group:attribute-def:virt:voShortName')
-                )
+                    'attrNames' => ['urn:perun:group:attribute-def:virt:voShortName']
+                ]
             );
 
             foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
@@ -332,11 +332,11 @@ class AdapterRpc extends Adapter
 
     public function getFacilitiesByEntityId($spEntityId)
     {
-        $perunAttrs = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', array(
+        $perunAttrs = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
             'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
             'attributeValue' => $spEntityId,
-        ));
-        $facilities = array();
+        ]);
+        $facilities = [];
         foreach ($perunAttrs as $perunAttr) {
             array_push(
                 $facilities,
@@ -359,10 +359,10 @@ class AdapterRpc extends Adapter
      */
     public function getMemberByUser($user, $vo)
     {
-        $member = $this->connector->get('membersManager', 'getMemberByUser', array(
+        $member = $this->connector->get('membersManager', 'getMemberByUser', [
             'user' => $user->getId(),
             'vo' => $vo->getId(),
-        ));
+        ]);
         if (is_null($member)) {
             throw new Exception(
                 "Member for User with name " . $user->getName() . " and Vo with shortName " .
@@ -380,9 +380,9 @@ class AdapterRpc extends Adapter
     public function hasRegistrationForm($group)
     {
         try {
-            $this->connector->get('registrarManager', 'getApplicationForm', array(
+            $this->connector->get('registrarManager', 'getApplicationForm', [
                 'group' => $group->getId(),
-            ));
+            ]);
             return true;
         } catch (\Exception $exception) {
             return false;
@@ -391,10 +391,10 @@ class AdapterRpc extends Adapter
 
     public function searchFacilitiesByAttributeValue($attribute)
     {
-        $perunAttrs = $this->connector->post('searcher', 'getFacilities', array(
+        $perunAttrs = $this->connector->post('searcher', 'getFacilities', [
             'attributesWithSearchingValues' => $attribute,
-        ));
-        $facilities = array();
+        ]);
+        $facilities = [];
         foreach ($perunAttrs as $perunAttr) {
             array_push(
                 $facilities,
@@ -411,52 +411,52 @@ class AdapterRpc extends Adapter
 
     public function getFacilityAttributes($facility, $attrNames)
     {
-        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', array(
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'facility' => $facility->getId(),
             'attrNames' => $attrNames,
-        ));
-        $attributes = array();
+        ]);
+        $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
-            array_push($attributes, array(
+            array_push($attributes, [
                 'id' => $perunAttr['id'],
                 'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
                 'displayName' => $perunAttr['displayName'],
                 'type' => $perunAttr['type'],
                 'value' => $perunAttr['value']
-            ));
+            ]);
         }
         return $attributes;
     }
 
     public function getUserExtSource($extSourceName, $extSourceLogin)
     {
-        return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', array(
+        return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', [
             "extSourceName" => $extSourceName,
             "extSourceLogin" => $extSourceLogin
-        ));
+        ]);
     }
 
     public function updateUserExtSourceLastAccess($userExtSource)
     {
-        $this->connector->post('usersManager', 'updateUserExtSourceLastAccess', array(
+        $this->connector->post('usersManager', 'updateUserExtSourceLastAccess', [
             "userExtSource" => $userExtSource
-        ));
+        ]);
     }
 
     public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
     {
-        return $this->connector->get('attributesManager', 'getAttributes', array(
+        return $this->connector->get('attributesManager', 'getAttributes', [
             "userExtSource" => $userExtSourceId,
             "attrNames" => $attrNames
-        ));
+        ]);
     }
 
     public function setUserExtSourceAttributes($userExtSourceId, $attributes)
     {
-        $this->connector->post('attributesManager', 'setAttributes', array(
+        $this->connector->post('attributesManager', 'setAttributes', [
             "userExtSource" => $userExtSourceId,
             "attributes" => $attributes
-        ));
+        ]);
     }
 
     public function getMemberStatusByUserAndVo($user, $vo)

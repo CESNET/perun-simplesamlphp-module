@@ -30,10 +30,10 @@
         assert('array_key_exists("RelayStateName", $this->data)');
         assert('array_key_exists("RelayState", $this->data)');
 
-        $post = array(
+        $post = [
             'SAMLResponse' => $this->data['response'],
             $this->data['RelayStateName'] => $this->data['RelayState'],
-        );
+        ];
     }
 
     /**

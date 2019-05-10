@@ -4,7 +4,7 @@ use \SimpleSAML\Module\perun\Disco;
 use SimpleSAML\Error\Error;
 
 try {
-    $discoHandler = new Disco(array('saml20-idp-remote'), 'poweridpdisco');
+    $discoHandler = new Disco(['saml20-idp-remote'], 'poweridpdisco');
 } catch (\Exception $exception) {
     // An error here should be caused by invalid query parameters
     throw new Error('DISCOPARAMS', $exception);

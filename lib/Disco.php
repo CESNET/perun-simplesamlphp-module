@@ -30,7 +30,7 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
     private $whitelist;
     private $greylist;
     private $service;
-    private $authnContextClassRef = array();
+    private $authnContextClassRef = [];
 
     public function __construct(array $metadataSets, $instance)
     {
@@ -313,7 +313,7 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
             return;
         }
         unset($state['saml:RequestedAuthnContext']['AuthnContextClassRef']);
-        $array = array();
+        $array = [];
         foreach ($this->authnContextClassRef as $value) {
             if (!(substr($value, 0, strlen($prefix)) === $prefix)) {
                 array_push($array, $value);

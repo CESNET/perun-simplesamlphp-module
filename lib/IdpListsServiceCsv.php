@@ -43,10 +43,10 @@ class IdpListsServiceCsv extends IdpListsService
         if (flock($wf, LOCK_EX)) {
             $gf = fopen($this->greylistFile, 'c+');
             if (flock($gf, LOCK_EX)) {
-                $idp = array(date('Y-m-d H:i:s'), $entityID, $reason);
+                $idp = [date('Y-m-d H:i:s'), $entityID, $reason];
                 fputcsv($wf, $idp);
 
-                $greylist = array();
+                $greylist = [];
                 while (($idp = $this->arrayToIdp(fgetcsv($gf))) !== false) {
                     if ($idp['entityid'] !== $entityID) {
                         $greylist[] = $idp;
@@ -114,7 +114,7 @@ class IdpListsServiceCsv extends IdpListsService
             $list = $this->greylistFile;
         }
 
-        $resultList = array();
+        $resultList = [];
 
         if (!file_exists($list)) {
             return $resultList;
@@ -150,7 +150,7 @@ class IdpListsServiceCsv extends IdpListsService
             return false;
         }
 
-        $idp = array();
+        $idp = [];
         $idp['timestamp'] = $csv[0];
         $idp['entityid'] = $csv[1];
         $idp['reason'] = $csv[2];

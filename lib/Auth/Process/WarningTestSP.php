@@ -24,7 +24,7 @@ class WarningTestSP extends \SimpleSAML\Auth\ProcessingFilter
         if (isset($request["SPMetadata"]["test.sp"]) && $request["SPMetadata"]["test.sp"] === true) {
             $id = State::saveState($request, 'perun:warningTestSP');
             $url = Module::getModuleURL('perun/warning_test_sp_page.php');
-            HTTP::redirectTrustedURL($url, array('StateId' => $id));
+            HTTP::redirectTrustedURL($url, ['StateId' => $id]);
         }
     }
 }

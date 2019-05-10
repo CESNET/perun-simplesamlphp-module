@@ -19,7 +19,7 @@ use SimpleSAML\Error\Exception;
  *        dc=cesnet,
  *        dc=cz",
  *        "(eduPersonPrincipalNames=$uid)",
- *        array("perunUserId", "displayName", "cn", "preferredMail", "mail")
+ *        ["perunUserId", "displayName", "cn", "preferredMail", "mail"]
  *    );
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
@@ -120,7 +120,7 @@ class LdapConnector
 
         // no such entity
         if (ldap_errno($conn) === 2) {
-            return array();
+            return [];
         }
 
         $entries = self::getSimplifiedEntries($conn, $result);
@@ -141,11 +141,11 @@ class LdapConnector
     private static function getSimplifiedEntries($conn, $resultId)
     {
 
-        $entries = array();
+        $entries = [];
 
         $entryId = ldap_first_entry($conn, $resultId);
         while ($entryId) {
-            $entry = array();
+            $entry = [];
 
             $attrName = ldap_first_attribute($conn, $entryId);
             while ($attrName) {

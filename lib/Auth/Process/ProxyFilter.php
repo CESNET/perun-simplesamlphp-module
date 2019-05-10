@@ -14,14 +14,14 @@ use SimpleSAML\Logger;
  *
  * example usage:
  *
- * 10 => array(
+ * 10 => [
  *        'class' => 'perun:ProxyFilter',
- *        'filterSPs' => array('disableSpEntityId01', 'disableSpEntityId02'),
- *        'config' => array(
+ *        'filterSPs' => ['disableSpEntityId01', 'disableSpEntityId02'],
+ *        'config' => [
  *            'class' => 'perun:NestedFilter',
  *            ...
- *        ),
- * )
+ *        ],
+ * ]
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */

@@ -14,7 +14,7 @@ use SimpleSAML\Module\perun\DiscoTemplate;
  * @var DiscoTemplate $this
  */
 
-$this->data['jquery'] = array('core' => true, 'ui' => true, 'css' => true);
+$this->data['jquery'] = ['core' => true, 'ui' => true, 'css' => true];
 
 $this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('discopower/assets/css/disco.css') . '" />';

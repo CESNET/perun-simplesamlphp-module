@@ -3,7 +3,7 @@
  * Configuration for the DiscoPower module.
  */
 
-$config = array(
+$config = [
 
     // Which tab should be set as default. 0 is the first tab
     'defaulttab' => 0,
@@ -12,11 +12,11 @@ $config = array(
      * List a set of tags (Tabs) that should be listed in a specific order.
      * All other available tabs will be listed after the ones specified below.
      */
-    'taborder' => array('social, misc'),
+    'taborder' => ['social, misc'],
     /*
      * the 'tab' parameter allows you to limit the tabs to a specific list. (excluding unlisted tags)
      *
-     * 'tabs' => array('norway', 'finland'),
+     * 'tabs' => ['norway', 'finland'],
      */
 
     /*
@@ -42,4 +42,4 @@ $config = array(
      */
     'cdc.lifetime' => null,
 
-);
+];

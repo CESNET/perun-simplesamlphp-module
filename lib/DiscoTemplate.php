@@ -47,7 +47,7 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
         if (isset($this->data['idplist'][$tag])) {
             return $this->data['idplist'][$tag];
         } else {
-            return array();
+            return [];
         }
     }
 
@@ -55,17 +55,17 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
      * @return array structure of idp metadatas divided by tags.
      * example structure:
      *
-     * array(
-     *        'social' => array(
-     *            array( ...metadata1... ),
-     *            array( ...metadata2... ),
-     *        )
+     * [
+     *        'social' => [
+     *            [ ...metadata1... ],
+     *            [ ...metadata2... ],
+     *        ]
      *        // misc represents untagged idps
-     *        'misc' => array(
-     *            array( ...metadata2... ),
-     *            array( ...metadata3... ),
-     *        )
-     * )
+     *        'misc' => [
+     *            [ ...metadata2... ],
+     *            [ ...metadata3... ],
+     *        ]
+     * ]
      *
      * note: one idp can be placed in more tags
      *
@@ -80,7 +80,7 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
      */
     public function getAllIdps()
     {
-        $allIdps = array();
+        $allIdps = [];
         foreach ($this->data['idplist'] as $tag => $idplist) {
             $allIdps = array_merge($idplist, $allIdps);
         }

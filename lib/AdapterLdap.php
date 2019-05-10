@@ -68,7 +68,7 @@ class AdapterLdap extends Adapter
         $user = $this->connector->searchForEntity(
             "ou=People," . $this->ldapBase,
             "(|$query)",
-            array("perunUserId", "displayName", "cn", "givenName", "sn", "preferredMail", "mail")
+            ["perunUserId", "displayName", "cn", "givenName", "sn", "preferredMail", "mail"]
         );
         if (is_null($user)) {
             return $user;
@@ -90,10 +90,10 @@ class AdapterLdap extends Adapter
         $userWithMembership = $this->connector->searchForEntity(
             "perunUserId=$userId,ou=People," . $this->ldapBase,
             "(objectClass=perunUser)",
-            array("perunUserId", "memberOf")
+            ["perunUserId", "memberOf"]
         );
 
-        $groups = array();
+        $groups = [];
         foreach ($userWithMembership['memberOf'] as $groupDn) {
             $voId = explode('=', explode(',', $groupDn)[1], 2)[1];
             if ($voId != $vo->getId()) {
@@ -103,7 +103,7 @@ class AdapterLdap extends Adapter
             $group = $this->connector->searchForEntity(
                 $groupDn,
                 "(objectClass=perunGroup)",
-                array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
+                ["perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description"]
             );
             array_push(
                 $groups,
@@ -125,17 +125,17 @@ class AdapterLdap extends Adapter
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
             "(&(objectClass=perunResource)(entityID=$spEntityId))",
-            array("perunResourceId", "assignedGroupId", "perunVoId")
+            ["perunResourceId", "assignedGroupId", "perunVoId"]
         );
 
-        $groups = array();
+        $groups = [];
         foreach ($resources as $resource) {
             if (isset($resource['assignedGroupId'])) {
                 foreach ($resource['assignedGroupId'] as $groupId) {
                     $group = $this->connector->searchForEntity(
                         "perunGroupId=$groupId,perunVoId=" . $resource['perunVoId'][0] . "," . $this->ldapBase,
                         "(objectClass=perunGroup)",
-                        array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
+                        ["perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description"]
                     );
                     array_push(
                         $groups,
@@ -161,7 +161,7 @@ class AdapterLdap extends Adapter
         $group = $this->connector->searchForEntity(
             "perunVoId=$voId," . $this->ldapBase,
             "(&(objectClass=perunGroup)(perunUniqueGroupName=$name))",
-            array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
+            ["perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description"]
         );
         if (is_null($group)) {
             throw new Exception(
@@ -182,7 +182,7 @@ class AdapterLdap extends Adapter
         $vo = $this->connector->searchForEntity(
             $this->ldapBase,
             "(&(objectClass=perunVo)(o=$voShortName))",
-            array("perunVoId", "o", "description")
+            ["perunVoId", "o", "description"]
         );
         if (is_null($vo)) {
             throw new Exception("Vo with name: $vo does not exists in Perun LDAP.");
@@ -196,7 +196,7 @@ class AdapterLdap extends Adapter
         $vo = $this->connector->searchForEntity(
             $this->ldapBase,
             "(&(objectClass=perunVo)(perunVoId=$id))",
-            array("o", "description")
+            ["o", "description"]
         );
         if (is_null($vo)) {
             throw new Exception("Vo with id: $id does not exists in Perun LDAP.");
@@ -277,7 +277,7 @@ class AdapterLdap extends Adapter
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
             "(&(objectClass=perunResource)(entityID=$spEntityId))",
-            array("perunResourceId")
+            ["perunResourceId"]
         );
         Logger::debug("Resources - " . var_export($resources, true));
 
@@ -292,11 +292,11 @@ class AdapterLdap extends Adapter
         }
         $resourcesString .= ")";
 
-        $resultGroups = array();
+        $resultGroups = [];
         $groups = $this->connector->searchForEntities(
             $this->ldapBase,
             "(&(uniqueMember=perunUserId=" . $userId . ", ou=People," . $this->ldapBase . ")" . $resourcesString . ")",
-            array("perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description")
+            ["perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description"]
         );
 
         foreach ($groups as $group) {
@@ -322,7 +322,7 @@ class AdapterLdap extends Adapter
             $this->ldapBase,
             "(&(objectClass=perunGroup)(cn=members)(perunVoId=" . $vo->getId() .
             ")(uniqueMember=perunUserId=" . $user->getId() . ", ou=People," . $this->ldapBase . "))",
-            array("perunGroupid")
+            ["perunGroupid"]
         );
 
         if ($groupId === null || empty($groupId)) {

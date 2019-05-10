@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added filter JoinGroupsAndEduPersonEntitlement
 
+#### Changed
+- Using of short array syntax (from array() to [])
+
 #### Fixed
 - Fixed the problem that IDP filter on WAYF didn't work correctly
 
