@@ -213,12 +213,12 @@ if (!$warningIsOn || $warningUserCanContinue) {
 
     echo '<div class="no-idp-found alert alert-info">';
     if ($this->isAddInstitutionApp()) {
-        echo $this->t('{perun:disco:find_institution_contact}') .
+        echo $this->t('{perun:disco:find_institution_contact}') . ' ' .
             '<a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
             $addInstitutionEmail .
             '</a>';
     } else {
-        echo $this->t('{perun:disco:find_institution_extended}') .
+        echo $this->t('{perun:disco:find_institution_extended}') . ' ' .
             '<a class="btn btn-primary" href="' . $addInstitutionUrl . '">' .
             $this->t('{perun:disco:add_institution}') .
             '</a>';
