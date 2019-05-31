@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.0.4]
 #### Fixed
 - Added missing space before 'addInstitutionButton' or link
 - Added missing import
@@ -125,6 +127,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.0.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.4
 [v3.0.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.3
 [v3.0.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.2
 [v3.0.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.1
