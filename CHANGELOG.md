@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Added missing space before 'addInstitutionButton' or link
 - Added missing import
 - Fixed the style of changelog
+- Fixed the checks in method getMemberStatusByUserAndVo() in AdapterLDAP
 
 ## [v3.0.3]
 #### Fixed
