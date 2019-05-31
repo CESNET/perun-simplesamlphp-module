@@ -3,6 +3,7 @@
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\AdapterLdap;
 use SimpleSAML\Module\perun\AdapterRpc;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Module;

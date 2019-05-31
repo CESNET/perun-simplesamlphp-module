@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
  ## [Unreleased]
  [Fixed]
  - Added missing space before 'addInstitutionButton' or link
+ - Added missing import
  
  ## [v3.0.3]
  [Fixed]
