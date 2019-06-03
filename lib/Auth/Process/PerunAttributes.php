@@ -70,7 +70,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             // convert $attrValue into array
             if (is_null($attrValue)) {
                 $value = array();
-            } elseif (is_string($attrValue)) {
+            } elseif (is_string($attrValue) || is_numeric($attrValue)) {
                 $value = array($attrValue);
             } elseif ($this->hasStringKeys($attrValue)) {
                 $value = $attrValue;
@@ -80,7 +80,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
                 throw new Exception(
                     "sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. "
                     .
-                    "Attribute name: $attrName, Supported types: null, string, array, associative array."
+                    "Attribute name: $attrName, Supported types: null, string, numeric, array, associative array."
                 );
             }
 

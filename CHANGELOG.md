@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- PerunAttribute process filter - Added support for numeric attributes
 
 ## [v3.0.4]
 #### Fixed
