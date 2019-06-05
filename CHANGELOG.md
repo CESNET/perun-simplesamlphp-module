@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Added checks into UpdateUserExtSource process filter to prevent undefined index or undefined offset errors 
 
 ## [v3.1.0]
 #### Added
