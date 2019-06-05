@@ -12,6 +12,7 @@ use SimpleSAML\Logger;
  * This filter updates userExtSource attributes when he logs in.
  *
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
+ * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 {
@@ -68,34 +69,38 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 
             $attributesToUpdate = array();
             foreach ($attributes as $attribute) {
-                $attr = $request['Attributes'][$this->attrMap[self::UES_ATTR_NMS . $attribute['friendlyName']]];
+                $attrName = self::UES_ATTR_NMS . $attribute['friendlyName'];
+                if (isset($this->attrMap[$attrName]) && isset($request['Attributes'][$this->attrMap[$attrName]])) {
+                    $attr = $request['Attributes'][$this->attrMap[$attrName]];
 
-                if (in_array(self::UES_ATTR_NMS . $attribute['friendlyName'], $this->attrsToConversion)) {
-                    $arrayAsString = array();
-                    foreach ($attr as $value) {
-                        $arrayAsString[0] .= $value . ';';
+                    if (in_array(self::UES_ATTR_NMS . $attribute['friendlyName'], $this->attrsToConversion)) {
+                        $arrayAsString = array('');
+                        foreach ($attr as $value) {
+                            $arrayAsString[0] .= $value . ';';
+                        }
+                        if (!empty($arrayAsString[0])) {
+                            $arrayAsString[0] = substr($arrayAsString[0], 0, -1);
+                        }
+                        $attr = $arrayAsString;
                     }
-                    if (!empty($arrayAsString[0])) {
-                        $arrayAsString[0] = substr($arrayAsString[0], 0, -1);
+
+                    if (strpos($attribute['type'], 'String') ||
+                        strpos($attribute['type'], 'Integer') ||
+                        strpos($attribute['type'], 'Boolean')) {
+                        $valueFromIdP = $attr[0];
+                    } elseif (strpos($attribute['type'], 'Array') || strpos($attribute['type'], 'Map')) {
+                        $valueFromIdP = $attr;
+                    } else {
+                        throw new Exception(
+                            'sspmod_perun_Auth_Process_UpdateUserExtSource: unsupported type of attribute.'
+                        );
                     }
-                    $attr = $arrayAsString;
+                    if ($valueFromIdP !== $attribute['value']) {
+                        $attribute['value'] = $valueFromIdP;
+                        array_push($attributesToUpdate, $attribute);
+                    }
                 }
 
-                if (strpos($attribute['type'], 'String') ||
-                    strpos($attribute['type'], 'Integer') ||
-                    strpos($attribute['type'], 'Boolean')) {
-                    $valueFromIdP = $attr[0];
-                } elseif (strpos($attribute['type'], 'Array') || strpos($attribute['type'], 'Map')) {
-                    $valueFromIdP = $attr;
-                } else {
-                    throw new Exception(
-                        "sspmod_perun_Auth_Process_UpdateUserExtSource: unsupported type of attribute."
-                    );
-                }
-                if ($valueFromIdP != $attribute['value']) {
-                    $attribute['value'] = $valueFromIdP;
-                    array_push($attributesToUpdate, $attribute);
-                }
             }
 
             if (!empty($attributesToUpdate)) {
