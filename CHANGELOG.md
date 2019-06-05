@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.1.1]
 #### Fixed
 - Added checks into UpdateUserExtSource process filter to prevent undefined index or undefined offset errors 
 
@@ -133,6 +135,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.1
 [v3.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.0
 [v3.0.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.4
 [v3.0.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.0.3
