@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 
 #### Fixed
 - Fixed the problem that IDP filter on WAYF didn't work correctly
+- Fixed bad error message when the process of bind user to LDAP failed
 
 ## [v3.1.1]
 #### Fixed

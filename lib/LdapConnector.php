@@ -110,7 +110,7 @@ class LdapConnector
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 
         if (ldap_bind($conn, $this->user, $this->password) === false) {
-            throw new Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
+            throw new Exception('Unable to bind user to the Perun LDAP, ' . $this->hostname);
         }
 
         Logger::debug("sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. " .
