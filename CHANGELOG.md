@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- Added filter JoinGroupsAndEduPersonEntitlement
+
 #### Fixed
 - Fixed the problem that IDP filter on WAYF didn't work correctly
 
