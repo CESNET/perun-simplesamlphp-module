@@ -16,7 +16,7 @@ jQuery.fn.liveUpdate = function (list) {
 
     function filter()
     {
-        var term = jQuery.trim(jQuery(this).val().toLowerCase()), scores = [];
+        var term = jQuery.trim(jQuery(this).val().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "")), scores = [];
 
         if (!term) {
             rows.show();
