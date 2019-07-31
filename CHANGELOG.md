@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed the problem that IDP filter on WAYF didn't work correctly
 
 ## [v3.1.1]
 #### Fixed
