@@ -37,10 +37,10 @@ try {
     if ($service->isWhitelisted($entityid)) {
         if (!$service->isGreylisted($entityid)) {
             header('Content-Type: application/json');
-            echo json_encode(array(
+            echo json_encode([
                 'result' => 'ALREADY_THERE',
                 'msg' => "IdP '$entityid' is already whitelisted."
-            ));
+            ]);
             exit;
         }
     }
@@ -48,10 +48,10 @@ try {
     $service->whitelistIdp($entityid, $reason);
 
     header('Content-Type: application/json');
-    echo json_encode(array(
+    echo json_encode([
         'result' => 'ADDED',
         'msg' => "IdP '$entityid' was added to whitelist."
-    ));
+    ]);
 } catch (Exception $e) {
     sendError($e->getMessage());
 }
@@ -60,9 +60,9 @@ function sendError($msg, $code = 500)
 {
     http_response_code($code);
     header('Content-Type: application/json');
-    echo json_encode(array(
+    echo json_encode([
         'result' => 'ERROR',
         'msg' => $msg
-    ));
+    ]);
     exit;
 }

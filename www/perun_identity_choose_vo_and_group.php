@@ -25,8 +25,8 @@ $vosIdForRegistration = $_REQUEST['vosIdForRegistration'];
 $stateId = $_REQUEST['stateId'];
 $spGroups = $adapter->getSpGroups($spEntityId);
 $registerUrlBase = $_REQUEST[PerunIdentity::REGISTER_URL_BASE];
-$vosForRegistration = array();
-$groupsForRegistration = array();
+$vosForRegistration = [];
+$groupsForRegistration = [];
 
 foreach ($spGroups as $group) {
     if (in_array($group->getVoId(), $vosIdForRegistration)) {
@@ -43,10 +43,10 @@ foreach ($spGroups as $group) {
 if (empty($groupsForRegistration)) {
     PerunIdentity::unauthorized($_REQUEST);
 } elseif (count($groupsForRegistration) == 1) {
-    $params = array();
+    $params = [];
     $vo = explode(':', $groupsForRegistration[0]->getUniqueName(), 2)[0];
     $group = $groupsForRegistration[0]->getName();
-    $callback = Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', ['stateId' => $stateId]);
 
     $params['vo'] = $vo;
 
@@ -59,12 +59,12 @@ if (empty($groupsForRegistration)) {
     $params[PerunIdentity::TARGET_EXTENDED] = $callback;
 
     $url = Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
-    HTTP::redirectTrustedURL($url, array(
+    HTTP::redirectTrustedURL($url, [
         'StateId' => $stateId,
         'SPMetadata' => $_REQUEST['SPMetadata'],
         'registerUrL' => $registerUrlBase,
         'params' => $params
-    ));
+    ]);
 }
 
 $config = Configuration::getInstance();

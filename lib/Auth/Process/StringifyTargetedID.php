@@ -46,7 +46,7 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!empty($request['Attributes'][$this->uidAttr])) {
             $stringified = $this->stringify($request['Attributes'][$this->uidAttr][0]);
-            $request['Attributes'][$this->targetAttr] = array($stringified);
+            $request['Attributes'][$this->targetAttr] = [$stringified];
         }
     }
 

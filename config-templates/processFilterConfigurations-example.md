@@ -2,12 +2,12 @@
 
 Example how to configure PerunIdentity module:
 ```php
-24 => array(
+24 => [
         'class' => 'perun:ProxyFilter',
         'filterSPs' => $perunEntityIds,
-        'config' => array(
+        'config' => [
                 'class' => 'perun:PerunIdentity',
-                'uidsAttr' => array('eduPersonUniqueId', 'eduPersonPrincipalName', 'eduPersonTargetedIDString', 'nameid', 'uid'),
+                'uidsAttr' => ['eduPersonUniqueId', 'eduPersonPrincipalName', 'eduPersonTargetedIDString', 'nameid', 'uid'],
                 'voShortName' => 'einfra',
                 'registerUrlBase' => 'https://perun.cesnet.cz/allfed/registrar',
                 'registerUrl' => 'https://login.cesnet.cz/register',
@@ -17,8 +17,8 @@ Example how to configure PerunIdentity module:
                 'facilityDynamicRegistrationAttr' => 'urn:perun:facility:attribute-def:def:dynamicRegistration',
                 'facilityRegisterUrlAttr' => 'urn:perun:facility:attribute-def:def:registerUrl',
                 'facilityAllowRegistrationToGroups' => 'urn:perun:facility:attribute-def:def:allowRegistration',
-        ),
-),
+        ],
+],
 ```
 
 
@@ -27,12 +27,12 @@ Example how to configure PerunIdentity module:
 Example how to enable filter IdPAttribute:
 
 ```php
-29 => array(
+29 => [
         'class' => 'perun:IdPAttribute',
-        'attrMap' => array(
+        'attrMap' => [
                 'OrganizationName:en' => 'idp_organizationName',
-        ),
-),
+        ],
+],
 ```
 
 'OrganizationName:en' => 'idp_organizationName' means that the $IdPMetadata['Organization']['en'] will be save into 
@@ -77,10 +77,10 @@ $request['Attributes']['idp_organizationName']
 Example how to enable filter ForceAup:
     
 ```php
-40 => array(
+40 => [
     'class' => 'perun:ProxyFilter',
     'filterSPs' => $perunEntityIds,
-    'config' => array(
+    'config' => [
         'class' => 'perun:ForceAup',
         'uidAttr' => 'uid',
         'interface' => 'rpc',
@@ -89,8 +89,8 @@ Example how to enable filter ForceAup:
         'perunVoAupAttr' => 'urn:perun:vo:attribute-def:def:aup',
         'perunFacilityReqAupsAttr' => 'urn:perun:facility:attribute-def:def:reqAups',
         'facilityVoShortNames' => 'urn:perun:facility:attribute-def:virt:voShortNames'
-    ),
-),   
+    ],
+],   
 ``` 
 
 3.Fill the attributes and set list of required Aups (attr reqAups) and voShortNames (optional) for each facility

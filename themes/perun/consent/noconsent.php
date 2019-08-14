@@ -25,7 +25,7 @@ $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" ' 
 
 $this->includeAtTemplateBase('includes/header.php');
 
-echo '<p>' . $this->t('{consent:consent:noconsent_text}', array('SPNAME' => $dstName)) . '</p>';
+echo '<p>' . $this->t('{consent:consent:noconsent_text}', ['SPNAME' => $dstName]) . '</p>';
 
 if ($this->data['resumeFrom']) {
     echo('<p><a class="btn btn-default" href="' . htmlspecialchars($this->data['resumeFrom']) . '">');
@@ -43,7 +43,7 @@ if ($this->data['aboutService']) {
 
 echo('<p><a class="btn btn-default" href="' . htmlspecialchars($this->data['logoutLink']) . '">');
 echo('<i class="glyphicon glyphicon-ban-circle"></i> ');
-echo($this->t('{consent:consent:abort}', array('SPNAME' => $dstName)));
+echo($this->t('{consent:consent:abort}', ['SPNAME' => $dstName]));
 echo('</a></p>');
 
 $this->includeAtTemplateBase('includes/footer.php');

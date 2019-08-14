@@ -84,6 +84,6 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
         # Set attributes back to the response
         # Set uid and also eduPersonPrincipalName, so all the modules and Perun will be happy
-        $request['Attributes']['uid'] = array($newEduPersonPrincipalName);
+        $request['Attributes']['uid'] = [$newEduPersonPrincipalName];
     }
 }

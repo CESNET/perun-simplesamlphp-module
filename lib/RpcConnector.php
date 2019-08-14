@@ -14,10 +14,10 @@ use SimpleSAML\Logger;
  * Example Usage:
  *
  * try {
- *        $attribute = RpcConnector::get('attributesManager', 'getAttribute', array(
+ *        $attribute = RpcConnector::get('attributesManager', 'getAttribute', [
  *            'user' => $userId,
  *            'attributeName' => $attrName,
- *        ));
+ *        ]);
  *        ...
  * } catch (PerunException $pe) {
  *        ...
@@ -45,7 +45,7 @@ class RpcConnector
         $this->password = $password;
     }
 
-    public function get($manager, $method, $params = array())
+    public function get($manager, $method, $params = [])
     {
         $paramsQuery = http_build_query($params);
         // replace 'paramList[0]=val0' to just 'paramList[]=val0' because perun rpc cannot consume such lists.
@@ -77,7 +77,7 @@ class RpcConnector
         return $result;
     }
 
-    public function post($manager, $method, $params = array())
+    public function post($manager, $method, $params = [])
     {
         $paramsJson = json_encode($params);
 
@@ -91,7 +91,7 @@ class RpcConnector
         curl_setopt(
             $ch,
             CURLOPT_HTTPHEADER,
-            array('Content-Type:application/json', 'Content-Length: ' . strlen($paramsJson))
+            ['Content-Type:application/json', 'Content-Length: ' . strlen($paramsJson)]
         );
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 

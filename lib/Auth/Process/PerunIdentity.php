@@ -63,8 +63,8 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     private $registerUrl = null;
     private $defaultRegisterUrl;
     private $voShortName;
-    private $facilityVoShortNames = array();
-    private $listOfSpsWithoutInfoAboutRedirection = array();
+    private $facilityVoShortNames = [];
+    private $listOfSpsWithoutInfoAboutRedirection = [];
     private $spEntityId;
     private $interface;
     private $checkGroupMembership = false;
@@ -177,7 +177,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         assert('is_array($request)');
 
         # Store all user ids in an array
-        $uids = array();
+        $uids = [];
 
         foreach ($this->uidsAttr as $uidAttr) {
             if (isset($request['Attributes'][$uidAttr][0])) {
@@ -246,7 +246,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         );
 
         if (!isset($request['perun'])) {
-            $request['perun'] = array();
+            $request['perun'] = [];
         }
 
         $request['perun']['user'] = $user;
@@ -270,7 +270,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             $dynamicRegistration = $this->dynamicRegistration;
         }
 
-        $request['config'] = array(
+        $request['config'] = [
             self::UIDS_ATTR => $this->uidsAttr,
             self::REGISTER_URL => $registerUrL,
             self::REGISTER_URL_BASE => $this->registerUrlBase,
@@ -282,10 +282,10 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR => $this->facilityDynamicRegistrationAttr,
             self::PERUN_FACILITY_REGISTER_URL_ATTR => $this->facilityRegisterUrlAttr,
             self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR => $this->facilityVoShortNamesAttr,
-        );
+        ];
 
         $stateId = State::saveState($request, 'perun:PerunIdentity');
-        $callback = Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+        $callback = Module::getModuleURL('perun/perun_identity_callback.php', ['stateId' => $stateId]);
 
         if ($dynamicRegistration) {
             $this->registerChooseVoAndGroup($callback, $vosForRegistration, $request);
@@ -304,7 +304,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     protected function registerDirectly($request, $callback, $registerUrL, $vo = null, $group = null)
     {
-        $params = array();
+        $params = [];
         if (!is_null($vo)) {
             $params['vo'] = $vo->getShortName();
             if (!is_null($group)) {
@@ -324,12 +324,12 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $url = Module::getModuleURL('perun/unauthorized_access_go_to_registration.php');
         HTTP::redirectTrustedURL(
             $url,
-            array(
+            [
                 'StateId' => $id,
                 'SPMetadata' => $request['SPMetadata'],
                 'registerUrL' => $registerUrL,
                 'params' => $params
-            )
+            ]
         );
     }
 
@@ -342,7 +342,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     protected function registerChooseVoAndGroup($callback, $vosForRegistration, $request)
     {
 
-        $vosId = array();
+        $vosId = [];
         $chooseGroupUrl = Module::getModuleURL('perun/perun_identity_choose_vo_and_group.php');
 
         $stateId = State::saveState($request, 'perun:PerunIdentity');
@@ -353,7 +353,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
         HTTP::redirectTrustedURL(
             $chooseGroupUrl,
-            array(
+            [
                 self::REGISTER_URL_BASE => $this->registerUrlBase,
                 'spEntityId' => $this->spEntityId,
                 'vosIdForRegistration' => $vosId,
@@ -361,7 +361,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 'callbackUrl' => $callback,
                 'SPMetadata' => $request['SPMetadata'],
                 'stateId' => $stateId
-            )
+            ]
         );
     }
 
@@ -403,21 +403,21 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         if (isset($request['SPMetadata']['InformationURL']['en'])) {
             HTTP::redirectTrustedURL(
                 $url,
-                array(
+                [
                     'StateId' => $id,
                     'informationURL' => $request['SPMetadata']['InformationURL']['en'],
                     'administrationContact' => $request['SPMetadata']['administrationContact'],
                     'serviceName' => $request['SPMetadata']['name']['en']
-                )
+                ]
             );
         } else {
             HTTP::redirectTrustedURL(
                 $url,
-                array(
+                [
                     'StateId' => $id,
                     'administrationContact' => $request['SPMetadata']['administrationContact'],
                     'serviceName' => $request['SPMetadata']['name']['en']
-                )
+                ]
             );
         }
     }
@@ -534,7 +534,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                     'was expired. He is being redirected to register.'
                 );
             }
-            $this->register($request, array($vo), $this->defaultRegisterUrl, false);
+            $this->register($request, [$vo], $this->defaultRegisterUrl, false);
         } elseif (!($status === Member::VALID)) {
             Logger::warning(
                 'Member status for perun user with identity/ies: ' . implode(',', $uids) . ' ' .
@@ -551,10 +551,10 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     protected function getVosForRegistration($user)
     {
-        $vos = array();
-        $members = array();
-        $vosIdForRegistration = array();
-        $vosForRegistration = array();
+        $vos = [];
+        $members = [];
+        $vosIdForRegistration = [];
+        $vosForRegistration = [];
 
         $vos = $this->getVosByFacilityVoShortNames();
         foreach ($vos as $vo) {
@@ -591,7 +591,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     protected function getVosByFacilityVoShortNames()
     {
-        $vos = array();
+        $vos = [];
         foreach ($this->facilityVoShortNames as $voShortName) {
             try {
                 $vo = $this->adapter->getVoByShortName($voShortName);

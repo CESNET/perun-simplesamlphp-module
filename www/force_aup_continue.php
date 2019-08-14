@@ -15,10 +15,10 @@ $rpcConnector = $rpcAdapter->getConnector();
 $user = $state['perun']['user'];
 
 try {
-    $userAupsAttr = $rpcConnector->get('attributesManager', 'getAttribute', array(
+    $userAupsAttr = $rpcConnector->get('attributesManager', 'getAttribute', [
         'user' => $user->getId(),
         'attributeName' => $state['perunUserAupAttr'],
-    ));
+    ]);
     $userAups = $userAupsAttr['value'];
 } catch (\Exception $exception) {
     Logger::error('Perun.ForceAup - Error during get userAupsAttr from Perun');
@@ -28,7 +28,7 @@ foreach ($state['newAups'] as $key => $newAup) {
     if (!($userAups === null) && array_key_exists($key, $userAups)) {
         $userAupList = json_decode($userAups[$key]);
     } else {
-        $userAupList = array();
+        $userAupList = [];
     }
 
     $newAup->signed_on = date('Y-m-d');
@@ -39,10 +39,10 @@ foreach ($state['newAups'] as $key => $newAup) {
 $userAupsAttr['value'] = $userAups;
 
 try {
-    $rpcConnector->post('attributesManager', 'setAttribute', array(
+    $rpcConnector->post('attributesManager', 'setAttribute', [
         'user' => $user->getId(),
         'attribute' => $userAupsAttr,
-    ));
+    ]);
 
     Logger::info('Perun.ForceAup - User accepted usage policy');
 } catch (\Exception $exception) {

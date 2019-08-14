@@ -38,8 +38,8 @@ assert(is_null($absoluteFileName) || empty($absoluteFileName));
 $rpcAdapter = new AdapterRpc();
 
 // Get list of all attribute names
-$attrNames = array();
-$allAttrNames = array();
+$attrNames = [];
+$allAttrNames = [];
 array_push($allAttrNames, $perunProxyEntityIDAttr);
 foreach ($attributesDefinitions as $key => $value) {
     array_push($attrNames, $key);
@@ -47,22 +47,22 @@ foreach ($attributesDefinitions as $key => $value) {
 }
 
 // Get all facilities with proxyIdentifiers
-$attributeDefinition = array();
+$attributeDefinition = [];
 $attributeDefinition[$perunProxyIdentifierAttr] = $proxyIdentifier;
 $facilities = $rpcAdapter->searchFacilitiesByAttributeValue($attributeDefinition);
 
 // Get facilities with attributes
-$facilitiesWithAttributes = array();
+$facilitiesWithAttributes = [];
 foreach ($facilities as $facility) {
     $attributes = $rpcAdapter->getFacilityAttributes($facility, $allAttrNames);
-    $facilityAttributes = array();
+    $facilityAttributes = [];
     foreach ($attributes as $attribute) {
         $facilityAttributes[$attribute['name']] = $attribute;
     }
-    $facilitiesWithAttributes[$facility->getId()] = array(
+    $facilitiesWithAttributes[$facility->getId()] = [
         'facility' => $facility,
         FACILITY_ATTRIBUTES => $facilityAttributes,
-    );
+    ];
 }
 
 // Generate array with metadata
@@ -73,7 +73,7 @@ foreach ($facilitiesWithAttributes as $facilityWithAttributes) {
         !empty($facilityWithAttributes[FACILITY_ATTRIBUTES][$perunProxyEntityIDAttr]['value'])
     ) {
         $metadataContent .= '$metadata[\'' .
-            $facilityWithAttributes[FACILITY_ATTRIBUTES][$perunProxyEntityIDAttr]['value'] . '\'] = array(' . PHP_EOL;
+            $facilityWithAttributes[FACILITY_ATTRIBUTES][$perunProxyEntityIDAttr]['value'] . '\'] = [' . PHP_EOL;
         foreach ($attributesDefinitions as $perunAttrName => $metadataAttrName) {
             $attribute = $facilityWithAttributes[FACILITY_ATTRIBUTES][$perunAttrName];
             if (($attribute['type'] === TYPE_INTEGER) &&
@@ -91,20 +91,20 @@ foreach ($facilitiesWithAttributes as $facilityWithAttributes) {
                     $metadataContent .= "true," . PHP_EOL;
                 }
             } elseif ($attribute['type'] === TYPE_ARRAY && !is_null($attribute['value'])) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => array(" . PHP_EOL;
+                $metadataContent .= "\t '" . $metadataAttrName . "' => [" . PHP_EOL;
                 foreach ($attribute['value'] as $value) {
                     $metadataContent .= "\t\t'" . $value . "'," . PHP_EOL;
                 }
-                $metadataContent .= "\t)," . PHP_EOL;
+                $metadataContent .= "\t]," . PHP_EOL;
             } elseif ($attribute['type'] === TYPE_MAP && !is_null($attribute['value'])) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => array(" . PHP_EOL;
+                $metadataContent .= "\t '" . $metadataAttrName . "' => [" . PHP_EOL;
                 foreach ($attribute['value'] as $key => $value) {
                     $metadataContent .= "\t\t'" . $key . "' => '" . $value . "'," . PHP_EOL;
                 }
-                $metadataContent .= "\t)," . PHP_EOL;
+                $metadataContent .= "\t]," . PHP_EOL;
             }
         }
-        $metadataContent .= ");" . PHP_EOL . "\n";
+        $metadataContent .= "];" . PHP_EOL . "\n";
     }
     $content .= $metadataContent;
 }

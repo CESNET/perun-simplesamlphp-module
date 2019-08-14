@@ -48,8 +48,8 @@ class NagiosStatusConnector extends StatusConnector
 
     public function getStatus()
     {
-        $result = array();
-        $serviceStatuses = array();
+        $result = [];
+        $serviceStatuses = [];
 
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $this->url);
@@ -75,7 +75,7 @@ class NagiosStatusConnector extends StatusConnector
         }
 
         foreach ($serviceStatuses as $serviceStatus) {
-            $status = array();
+            $status = [];
             $status['name'] = $serviceStatus['service_display_name'];
             $status['status'] = $serviceStatus['status'];
             array_push($result, $status);

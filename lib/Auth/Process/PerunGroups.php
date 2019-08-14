@@ -79,7 +79,7 @@ class PerunGroups extends \SimpleSAML\Auth\ProcessingFilter
             );
         }
 
-        $request['Attributes'][$this->attrName] = array();
+        $request['Attributes'][$this->attrName] = [];
         foreach ($groups as $group) {
             if (isset($request["SPMetadata"]["groupNameAARC"]) || $this->groupNameAARC) {
                 # https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf

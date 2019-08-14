@@ -182,8 +182,8 @@ abstract class Adapter
      */
     protected function removeDuplicateEntities($entities)
     {
-        $removed = array();
-        $ids = array();
+        $removed = [];
+        $ids = [];
         foreach ($entities as $entity) {
             if (!in_array($entity->getId(), $ids)) {
                 array_push($ids, $entity->getId());

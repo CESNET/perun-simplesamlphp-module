@@ -1,6 +1,6 @@
 <?php
 
-$config = array(
+$config = [
     /**
      * Identifier of Proxy
      */
@@ -24,8 +24,8 @@ $config = array(
     /**
      * List of attributes definitions
      */
-    'attributesDefinitions' => array(
+    'attributesDefinitions' => [
         // Name of attribute from perun => key which will be used in generated metadata
         'perunAttrName' => 'metadataName',
-    ),
-);
+    ],
+];

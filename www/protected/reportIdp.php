@@ -73,4 +73,4 @@ echo '<h1>' . $this->t('{perun:perun:unsupported_redirection}') . '</h1>';
 echo $this->t('{perun:perun:go_back}') . "<a href='{$_POST['redirectUri']}'>{$_POST['redirectUri']}</a>";
 
 // redirect the user back
-HTTP::redirectTrustedURL($_POST['redirectUri'], array('mailSended' => true));
+HTTP::redirectTrustedURL($_POST['redirectUri'], ['mailSended' => true]);

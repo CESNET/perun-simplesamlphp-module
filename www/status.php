@@ -10,17 +10,17 @@ const UNKNOWN = "UNKNOWN";
 const CONFIG_FILE_NAME = "module_perun.php";
 const SHOWN_SERVICES = "status.shown_services";
 
-$services = array();
+$services = [];
 
 $config = SimpleSAML_Configuration::getInstance();
 $perunConfig = SimpleSAML_Configuration::getConfig(CONFIG_FILE_NAME);
 
-$shownServicesList = $perunConfig->getArray(SHOWN_SERVICES, array());
+$shownServicesList = $perunConfig->getArray(SHOWN_SERVICES, []);
 
 $statusConnector = sspmod_perun_StatusConnector::getInstance();
 $services = $statusConnector->getStatus();
 
-$shownServices = array();
+$shownServices = [];
 
 
 if (empty($shownServicesList)) {

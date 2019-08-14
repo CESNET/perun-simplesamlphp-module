@@ -70,12 +70,12 @@ $perunShowOnServiceListAttr
     = $conf->getString(PERUN_SHOW_ON_SERVICE_LIST_ATTR_NAME, null);
 
 $rpcAdapter = new AdapterRpc();
-$attributeDefinition = array();
+$attributeDefinition = [];
 $attributeDefinition[$perunProxyIdentifierAttr] = $proxyIdentifier;
 $facilities
     = $rpcAdapter->searchFacilitiesByAttributeValue($attributeDefinition);
 
-$attrNames = array();
+$attrNames = [];
 
 array_push($attrNames, $perunSaml2EntityIdAttr);
 if (!is_null($perunOidcClientIdAttr) && !empty($perunOidcClientIdAttr)) {
@@ -96,26 +96,26 @@ foreach ($attributesDefinitions as $attributeDefinition) {
     array_push($attrNames, $attributeDefinition);
 }
 
-$samlServices = array();
-$oidcServices = array();
+$samlServices = [];
+$oidcServices = [];
 $samlTestServicesCount = 0;
 $oidcTestServicesCount = 0;
 foreach ($facilities as $facility) {
     $attributes = $rpcAdapter->getFacilityAttributes($facility, $attrNames);
 
-    $facilityAttributes = array();
+    $facilityAttributes = [];
     foreach ($attributes as $attribute) {
         $facilityAttributes[$attribute['name']] = $attribute;
     }
     if (!is_null($facilityAttributes[$perunSaml2EntityIdAttr]['value'])
         && !empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])
     ) {
-        $samlServices[$facility->getId()] = array(
+        $samlServices[$facility->getId()] = [
             'facility' => $facility,
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
             'facilityAttributes' => $facilityAttributes
-        );
+        ];
         if ($facilityAttributes[$perunTestSpAttr]['value']) {
             $samlTestServicesCount++;
         }
@@ -125,25 +125,25 @@ foreach ($facilities as $facility) {
         && (!is_null($facilityAttributes[$perunOidcClientIdAttr]['value'])
             && !empty($facilityAttributes[$perunOidcClientIdAttr]['value']))
     ) {
-        $oidcServices[$facility->getId()] = array(
+        $oidcServices[$facility->getId()] = [
             'facility' => $facility,
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
             'facilityAttributes' => $facilityAttributes
-        );
+        ];
         if ($facilityAttributes[$perunTestSpAttr]['value']) {
             $oidcTestServicesCount++;
         }
     }
 }
 
-$statistics = array();
+$statistics = [];
 $statistics['samlServicesCount'] = sizeof($samlServices);
 $statistics['samlTestServicesCount'] = $samlTestServicesCount;
 $statistics['oidcServicesCount'] = sizeof($oidcServices);
 $statistics['oidcTestServicesCount'] = $oidcTestServicesCount;
 
-$attributesToShow = array();
+$attributesToShow = [];
 foreach ($attrNames as $attrName) {
     if ($attrName != $perunLoginURLAttr
         && $attrName != $perunShowOnServiceListAttr
@@ -159,8 +159,8 @@ $allServices = array_merge($samlServices, $oidcServices);
 usort($allServices, 'sortByName');
 
 if (isset($_GET['output']) && $_GET['output'] === 'json') {
-    $json = array();
-    $json['services'] = array();
+    $json = [];
+    $json['services'] = [];
 
     $json['statistics']['samlProductionServicesCount'] = $statistics['samlServicesCount']
         - $statistics['samlTestServicesCount'];
@@ -169,7 +169,7 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
         - $statistics['oidcTestServicesCount'];
     $json['statistics']['oidcTestServicesCount'] = $statistics['oidcTestServicesCount'];
     foreach ($allServices as $service) {
-        $a = array();
+        $a = [];
         $a['name'] = $service['facility']->getName();
 
         if (array_key_exists($service["facility"]->getID(), $samlServices)) {

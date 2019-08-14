@@ -5,7 +5,7 @@
  *
  * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
-$config = array(
+$config = [
 
     /*
      * Fill the serverName
@@ -75,4 +75,4 @@ $config = array(
      */
     'ssl_ca_path' => '/etc/ssl',
 
-);
+];

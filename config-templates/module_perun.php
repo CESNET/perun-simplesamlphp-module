@@ -7,7 +7,7 @@
  * copy command (from SimpleSAML base dir)
  * cp modules/perun/module_perun.php config/
  */
-$config = array(
+$config = [
 
     /**
      * base url to rpc with slash at the end.
@@ -99,12 +99,12 @@ $config = array(
      * OPTIONAL
      * Default: show all received services
      */
-    'status.shown_services'=> array(
-        'serviceIdentifier' => array(
+    'status.shown_services'=> [
+        'serviceIdentifier' => [
             'name' => 'serviceName',
             'description' => 'serviceDescription'
-        ),
-    ),
+        ],
+    ],
 
     /**
      ****************************************
@@ -155,9 +155,9 @@ $config = array(
     /**
      * Specify list of facility attributes, which will be shown
      */
-    'listOfSps.attributesDefinitions' => array(
+    'listOfSps.attributesDefinitions' => [
         ''
-    ),
+    ],
 
 
-);
+];

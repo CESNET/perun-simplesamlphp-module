@@ -40,10 +40,10 @@ $this->data['header'] = "";
 $this->includeAtTemplateBase('includes/header.php');
 
 if (isset($_POST['selectedGroup'])) {
-    $params = array();
+    $params = [];
     $vo = explode(':', $_POST['selectedGroup'], 2)[0];
     $group = explode(':', $_POST['selectedGroup'], 2)[1];
-    $callback = Module::getModuleURL('perun/perun_identity_callback.php', array('stateId' => $stateId));
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', ['stateId' => $stateId]);
 
     $params['vo'] = $vo;
 

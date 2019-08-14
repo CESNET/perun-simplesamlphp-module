@@ -15,7 +15,7 @@ class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
     const FILTER_ATTRIBUTE_LIST = "filterAttributeList";
 
-    private $filterAttributeList = array();
+    private $filterAttributeList = [];
 
     public function __construct($config, $reserved)
     {
@@ -30,7 +30,7 @@ class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
     {
         assert('is_array($request)');
 
-        $attributes = array();
+        $attributes = [];
 
         foreach ($request['Attributes'] as $attributeKey => $attributeValue) {
             if (in_array($attributeKey, $this->filterAttributeList)) {
@@ -38,7 +38,7 @@ class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
             }
         }
 
-        $request['Attributes'] = array();
+        $request['Attributes'] = [];
 
         foreach ($attributes as $attributeKey => $attributeValue) {
             $request['Attributes'][$attributeKey] = $attributeValue;

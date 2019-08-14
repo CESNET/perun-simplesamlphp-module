@@ -70,7 +70,7 @@ $this->includeAtTemplateBase('includes/header.php');
 if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
     echo '</p><p>' . $this->t(
         '{consent:consent:consent_purpose}',
-        array(
+        [
             'SPNAME' => $dstName,
             'SPDESC' => $this->getTranslation(
                 Arrays::arrayize(
@@ -78,7 +78,7 @@ if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
                     'en'
                 )
             ),
-        )
+        ]
     );
 }
 
@@ -91,7 +91,7 @@ if ($this->data['sppp'] !== false) {
 echo '<h3 id="attributeheader">' .
     $this->t(
         '{perun:consent:consent_attributes_header}',
-        array('SPNAME' => $dstName, 'IDPNAME' => $srcName)
+        ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
     ) .
     '</h3>';
 
