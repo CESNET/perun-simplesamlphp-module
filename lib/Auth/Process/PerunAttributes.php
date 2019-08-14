@@ -22,7 +22,10 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 {
     private $attrMap;
     private $interface;
+    private $mode;
 
+    const MODE_FULL = 'FULL';
+    const MODE_PARTIAL = 'PARTIAL';
     /**
      * @var Adapter
      */
@@ -43,8 +46,16 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             $config['interface'] = Adapter::RPC;
         }
 
+        if (!isset($config['mode'])) {
+            $config['mode'] = self::MODE_FULL;
+        }
+
         $this->attrMap = (array)$config['attrMap'];
         $this->interface = (string)$config['interface'];
+        $this->mode = (string)$config['mode'];
+        if (!in_array($this->mode, [self::MODE_FULL, self::MODE_PARTIAL])) {
+            $this->mode = self::MODE_FULL;
+        }
         $this->adapter = Adapter::getInstance($this->interface);
     }
 
@@ -62,7 +73,25 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             );
         }
 
-        $attrs = $this->adapter->getUserAttributes($user, array_keys($this->attrMap));
+        $attributes = [];
+        if ($this->mode === self::MODE_FULL) {
+            $attributes = array_keys($this->attrMap);
+        } else if ($this->mode === self::MODE_PARTIAL) {
+            // Check if attribute has some value
+            foreach ($this->attrMap as $attrName => $attrValue) {
+                if (isset($request['Attributes'][$attrValue])) {
+                    $attr = $request['Attributes'][$attrValue];
+                    if ($attr === null || empty($attr)) {
+                        array_push($attributes, $attrName);
+                    }
+                } else {
+                    array_push($attributes, $attrName);
+                }
+            }
+        }
+
+
+        $attrs = $this->adapter->getUserAttributes($user, $attributes);
 
         foreach ($attrs as $attrName => $attrValue) {
             $sspAttr = $this->attrMap[$attrName];
