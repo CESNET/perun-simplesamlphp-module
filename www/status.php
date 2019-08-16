@@ -53,7 +53,8 @@ $t->show();
  *
  * @return string
  */
-function getBadgeByStatus($status){
+function getBadgeByStatus($status)
+{
     if ($status == OK) {
         return '<span class="status label label-success">OK</span>';
     } elseif ($status == WARNING) {

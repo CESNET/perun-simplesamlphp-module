@@ -99,7 +99,6 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
                         array_push($attributesToUpdate, $attribute);
                     }
                 }
-
             }
 
             if (!empty($attributesToUpdate)) {
