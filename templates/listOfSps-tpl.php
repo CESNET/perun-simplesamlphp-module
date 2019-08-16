@@ -10,7 +10,13 @@ use SimpleSAML\Module;
 $this->data['header'] = '';
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/listOfSps.css') . '" />';
-$this->includeAtTemplateBase('includes/header.php');
+
+$this->data['head'] .= '<meta name="translations" id="translations" content="'.htmlspecialchars(json_encode([
+    'saml_production' => $this->t('{perun:listOfSps:saml_production}'),
+    'saml_test' => $this->t('{perun:listOfSps:saml_test}'),
+    'oidc_production' => $this->t('{perun:listOfSps:oidc_production}'),
+    'oidc_test' => $this->t('{perun:listOfSps:oidc_test}'),
+])).'">';
 
 $statistics = $this->data['statistics'];
 $attributesToShow = $this->data['attributesToShow'];
@@ -24,6 +30,15 @@ $productionServicesCount = $statistics['samlServicesCount'] - $statistics['samlT
 $testServicesCount = $statistics['samlTestServicesCount'] + $statistics['oidcTestServicesCount'];
 $samlProductionCount = $statistics['samlServicesCount'] - $statistics['samlTestServicesCount'];
 $oidcProductionCount = $statistics['oidcServicesCount'] - $statistics['oidcTestServicesCount'];
+
+$this->data['head'] .= '<meta name="data" id="data" content="'.htmlspecialchars(json_encode([
+    'samlProductionCount' => $samlProductionCount,
+    'samlTestServicesCount' => $statistics['samlTestServicesCount'],
+    'oidcProductionCount' => $oidcProductionCount,
+    'oidcTestServicesCount' => $statistics['oidcTestServicesCount'],
+])).'">';
+
+$this->includeAtTemplateBase('includes/header.php');
 ?>
 
 <div class="row">
@@ -199,65 +214,4 @@ function getClass($attribute)
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
 
-<script>
-    var ctx = document.getElementById("myChart").getContext('2d');
-    var myChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: [
-                <?php echo
-                '"' . $this->t('{perun:listOfSps:saml_production}') . '"' . ", " .
-                '"' . $this->t('{perun:listOfSps:saml_test}') . '"' . ", " .
-                '"' . $this->t('{perun:listOfSps:oidc_production}') . '"' . ", " .
-                '"' . $this->t('{perun:listOfSps:oidc_test}') . '"'
-                ?>
-            ],
-            datasets: [{
-                label: '',
-                data: [
-                    <?php echo
-                    $samlProductionCount . ', ' . $statistics['samlTestServicesCount'] .
-                    ', ' . $oidcProductionCount . ', ' . $statistics['oidcTestServicesCount']
-                    ?>
-                ],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true,
-                        callback: function (value) {
-                            if (Number.isInteger(value)) {
-                                return value;
-                            }
-                        }
-                    }
-                }]
-            },
-            legend: {
-                display: false
-            },
-            tooltips: {
-                callbacks: {
-                    label: function (tooltipItem) {
-                        return tooltipItem.yLabel;
-                    }
-                }
-            }
-        }
-    });
-</script>
+<script src="<?php echo htmlspecialchars(\SimpleSAML\Module::getModuleURL('perun/listOfSps.js'));?>"></script>
