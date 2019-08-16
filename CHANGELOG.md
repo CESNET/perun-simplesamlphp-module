@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 
 #### Changed
 - Using of short array syntax (from array() to [])
+- Added modes into PerunAttribute process filter
+    - MODE_FULL - Rewrite all attributes specified in config
+    - MODE_PARTIAL - Rewrite only unset attributes
 
 #### Fixed
 - Fixed the problem that IDP filter on WAYF didn't work correctly
