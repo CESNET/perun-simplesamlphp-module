@@ -29,6 +29,8 @@ use SimpleSAML\Logger;
 class RpcConnector
 {
     const COOKIE_FILE = '/tmp/proxyidp_cookie.txt';
+    const CONNECT_TIMEOUT = 1;
+    const TIMEOUT = 15;
 
     private $rpcUrl;
     private $user;
@@ -61,6 +63,8 @@ class RpcConnector
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEJAR, self::COOKIE_FILE);
         curl_setopt($ch, CURLOPT_COOKIEFILE, self::COOKIE_FILE);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 
         $json = curl_exec($ch);
         curl_close($ch);
@@ -100,6 +104,8 @@ class RpcConnector
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_COOKIEJAR, self::COOKIE_FILE);
         curl_setopt($ch, CURLOPT_COOKIEFILE, self::COOKIE_FILE);
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
+        curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 
         $json = curl_exec($ch);
         curl_close($ch);

@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Changed
 - RpcConnector now stores cookie into file
+- Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
 
 ## [v3.2.0]
 #### Added
