@@ -186,9 +186,6 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
                 }
             }
         }
-        //SimpleSAML\Logger::debug(
-        //'perun.Disco.filterList: Idps after SAML2 Scoping: ' . var_export(array_keys($list), true)
-        //);
         return $list;
     }
 
@@ -223,9 +220,6 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
                 unset($list[$entityId]);
             }
         }
-        //SimpleSAML\Logger::debug(
-        //'perun.Disco.filterList: Idps after Whitelisting: ' . var_export(array_keys($list), true)
-        //);
         return $list;
     }
 
@@ -237,9 +231,6 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
             }
         }
 
-        //SimpleSAML\Logger::debug(
-        //'perun.Disco.filterList: Idps after Greylisting: ' . var_export(array_keys($list), true)
-        //);
         return $list;
     }
 
@@ -253,9 +244,6 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
             }
         }
 
-        //SimpleSAML\Logger::debug(
-        //'perun.Disco.filterList: Idps after Greylisting per SP: ' . var_export(array_keys($list), true)
-        //);
         return $list;
     }
 
