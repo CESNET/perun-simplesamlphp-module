@@ -2,6 +2,21 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- Added endpoint to get filtered list of metadata in format:
+```json
+[
+  {
+    "entityid": "https://entityid1/",
+    "name": {
+      "en": "IdP1",
+      "cs": "IdP1"
+    }
+  },
+  { ... }
+]
+```
+
 #### Changed
 - RpcConnector now stores cookie into file
 - Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
@@ -9,6 +24,7 @@ All notable changes to this project will be documented in this file.
 ## [v3.2.1]
 #### Fixed
 - Fixed bug in redirect to registration in case only one VO and one group is available
+
 
 ## [v3.2.0]
 #### Added
@@ -157,7 +173,6 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
-[v3.2.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.1
 [v3.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.0
 [v3.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.1
 [v3.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.0

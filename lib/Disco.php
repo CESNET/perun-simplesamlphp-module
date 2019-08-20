@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Module\perun;
 
+use SimpleSAML\Module\discopower\PowerIdPDisco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Auth\State;
@@ -20,7 +21,7 @@ use SimpleSAML\Logger;
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
-class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
+class Disco extends PowerIdPDisco
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
     const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
@@ -66,9 +67,6 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
             $this->originalsp = $state['SPMetadata'];
         }
 
-        $this->service = IdpListsService::getInstance();
-        $this->whitelist = $this->service->getWhitelistEntityIds();
-        $this->greylist = $this->service->getGreylistEntityIds();
     }
 
     /**
@@ -135,17 +133,41 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
             || !$this->originalsp['disco.doNotFilterIdps']
         ) {
             $list = parent::filterList($list);
-            $list = $this->scoping($list);
-            if (!$disableWhitelisting) {
-                $list = $this->whitelisting($list);
-            }
-            $list = $this->greylisting($list);
+            self::doFilter($list, $disableWhitelisting, $this->scopedIDPList);
             $list = $this->greylistingPerSP($list, $this->originalsp);
         }
 
         if (empty($list)) {
             throw new Exception('All IdPs has been filtered out. And no one left.');
         }
+
+        return $list;
+    }
+
+    /**
+     * Filter out IdP which:
+     *  1. are not in SAML2 Scoping attribute list (SAML2 feature)
+     *  2. are not whitelisted (if whitelisting is allowed)
+     *  3. are greylisted
+     *
+     * @param array $list A map of entities to filter.
+     * @param bool $disableWhitelisting
+     * @param array $scopedIdPList
+     *
+     * @return array The list in $list after filtering entities.
+     * @throws Exception In case
+     */
+    public static function doFilter($list, $disableWhitelisting = false, $scopedIdPList = [])
+    {
+        $service = IdpListsService::getInstance();
+        $whitelist = $service->getWhitelistEntityIds();
+        $greylist = $service->getGreylistEntityIds();
+
+        $list = self::scoping($list, $scopedIdPList);
+        if (!$disableWhitelisting) {
+            $list = self::whitelisting($list, $whitelist);
+        }
+        $list = self::greylisting($list, $greylist);
 
         return $list;
     }
@@ -159,8 +181,10 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
      */
     protected function filterAddInstitutionList($list)
     {
+        $service = IdpListsService::getInstance();
+        $whitelist = $service->getWhitelistEntityIds();
         foreach ($list as $entityId => $idp) {
-            if (in_array($entityId, $this->whitelist)) {
+            if (in_array($entityId, $whitelist)) {
                 unset($list[$entityId]);
             }
         }
@@ -174,14 +198,17 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
 
     /**
      * Filter out IdP which are not in SAML2 Scoping attribute list (SAML2 feature)
-     * @param $list
-     * @return array of idps
+     *
+     * @param array $list A map of entities to filter.
+     * @param array $scopedIDPList
+     *
+     * @return array The list in $list after filtering entities.
      */
-    protected function scoping($list)
+    protected static function scoping($list, $scopedIDPList)
     {
-        if (!empty($this->scopedIDPList)) {
+        if (!empty($scopedIDPList)) {
             foreach ($list as $entityId => $idp) {
-                if (!in_array($entityId, $this->scopedIDPList)) {
+                if (!in_array($entityId, $scopedIDPList)) {
                     unset($list[$entityId]);
                 }
             }
@@ -189,12 +216,23 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
         return $list;
     }
 
-    protected function whitelisting($list)
+    /**
+     * Filter out IdP which:
+     *  1. are not whitelisted
+     *  2. are not supported research and scholarship
+     *  3. are not supported code of conduct
+     *
+     * @param array $list A map of entities to filter.
+     * @param array $whitelist The list of whitelisted IdPs
+     *
+     * @return array The list in $list after filtering entities.
+     */
+    protected static function whitelisting($list, $whitelist)
     {
         foreach ($list as $entityId => $idp) {
             $unset = true;
 
-            if (in_array($entityId, $this->whitelist)) {
+            if (in_array($entityId, $whitelist)) {
                 $unset = false;
             }
             if (isset($idp['EntityAttributes']['http://macedir.org/entity-category-support'])) {
@@ -223,10 +261,18 @@ class Disco extends \SimpleSAML\Module\discopower\PowerIdPDisco
         return $list;
     }
 
-    protected function greylisting($list)
+    /**
+     * Filter out IdP which are greylisted
+     *
+     * @param array $list A map of entities to filter.
+     * @param array $greylist The list of greylisted IdPs
+     *
+     * @return array The list in $list after filtering entities.
+     */
+    protected static function greylisting($list, $greylist)
     {
         foreach ($list as $entityId => $idp) {
-            if (in_array($entityId, $this->greylist)) {
+            if (in_array($entityId, $greylist)) {
                 unset($list[$entityId]);
             }
         }
