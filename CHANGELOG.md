@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- RpcConnector now stores cookie into file
 
 ## [v3.2.0]
 #### Added
