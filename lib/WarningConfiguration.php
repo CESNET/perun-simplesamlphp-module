@@ -16,19 +16,25 @@ use SimpleSAML\Configuration;
 abstract class WarningConfiguration
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
-    const WARNING_TYPE = 'disco.warning.type';
+    const WARNING_SOURCE = 'disco.warning.source';
 
     const WARNING_FILE = 'disco.warning.file';
     const WARNING_URL = 'disco.warning.url';
+    const WARNING_TYPE = 'disco.warning.type';
     const WARNING_IS_ON = 'disco.warning.isOn';
-    const WARNING_USER_CAN_CONTINUE = 'disco.warning.userCanContinue';
     const WARNING_TITLE = 'disco.warning.title';
     const WARNING_TEXT = 'disco.warning.text';
 
+    const WARNING_TYPE_INFO = 'INFO';
+    const WARNING_TYPE_WARNING = 'WARNING';
+    const WARNING_TYPE_ERROR = 'ERROR';
+
     protected $warningIsOn = false;
-    protected $warningUserCanContinue = true;
+    protected $warningType = '';
     protected $warningTitle = '';
     protected $warningText = '';
+
+    protected $allowedTypes = [self::WARNING_TYPE_INFO, self::WARNING_TYPE_WARNING, self::WARNING_TYPE_ERROR];
 
     /**
      * Function returns the instance of WarningConfiguration
@@ -37,7 +43,7 @@ abstract class WarningConfiguration
     public static function getInstance()
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $source = $configuration->getString(self::WARNING_TYPE);
+        $source = $configuration->getString(self::WARNING_SOURCE);
         if ($source === 'CONFIG') {
             return new WarningConfigurationConfig();
         } elseif ($source === 'FILE') {
@@ -45,9 +51,9 @@ abstract class WarningConfiguration
         } elseif ($source === 'URL') {
             return new WarningConfigurationUrl();
         } else {
-            Logger::warning("perun:WarningConfiguration: missing or invalid disco.warning.type in module_perun.php");
+            Logger::warning("perun:WarningConfiguration: missing or invalid disco.warning.source in module_perun.php");
             throw new Exception(
-                "perun:WarningConfiguration: missing or invalid disco.warning.type in module_perun.php"
+                "perun:WarningConfiguration: missing or invalid disco.warning.source in module_perun.php"
             );
         }
     }

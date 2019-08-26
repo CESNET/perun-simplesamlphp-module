@@ -56,12 +56,17 @@ class WarningConfigurationUrl extends WarningConfiguration
                 );
             }
 
-            if (isset($data[WarningConfiguration::WARNING_USER_CAN_CONTINUE])) {
-                $this->warningUserCanContinue = $data[WarningConfiguration::WARNING_USER_CAN_CONTINUE];
+            if (isset($data[WarningConfiguration::WARNING_TYPE])) {
+                $this->warningType = $data[WarningConfiguration::WARNING_TYPE];
+
+                if (!in_array($this->warningType, $this->allowedTypes)) {
+                    Logger::info('perun:warningConfigurationUrl: warningType has invalid value, value set to INFO');
+                    $this->warningType = 'INFO';
+                }
             } else {
                 Logger::warning(
                     "perun:WarningConfigurationUrl: " .
-                    "missing or invalid warningUserCanContinue parameter in file with warning configuration"
+                    "missing or invalid warningType parameter in file with warning configuration"
                 );
             }
 
@@ -86,7 +91,7 @@ class WarningConfigurationUrl extends WarningConfiguration
 
         return array(
             'warningIsOn' => $this->warningIsOn,
-            'warningUserCanContinue' => $this->warningUserCanContinue,
+            'warningType' => $this->warningType,
             'warningTitle' => $this->warningTitle,
             'warningText' => $this->warningText
         );

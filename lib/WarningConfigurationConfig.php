@@ -28,7 +28,12 @@ class WarningConfigurationConfig extends WarningConfiguration
         }
 
         if ($this->warningIsOn) {
-            $this->warningUserCanContinue = $data->getBoolean(WarningConfiguration::WARNING_USER_CAN_CONTINUE, true);
+            $this->warningType = $data->getString(WarningConfiguration::WARNING_TYPE, 'INFO');
+
+            if (!in_array($this->warningType, $this->allowedTypes)) {
+                Logger::info('perun:warningConfigurationConfig: warningType has invalid value, value set to INFO');
+                $this->warningType = 'INFO';
+            }
 
             try {
                 $this->warningTitle = $data->getString(WarningConfiguration::WARNING_TITLE);
@@ -47,7 +52,7 @@ class WarningConfigurationConfig extends WarningConfiguration
 
         return array(
           'warningIsOn' => $this->warningIsOn,
-          'warningUserCanContinue' => $this->warningUserCanContinue,
+          'warningType' => $this->warningType,
           'warningTitle' => $this->warningTitle,
           'warningText' => $this->warningText
         );

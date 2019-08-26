@@ -37,8 +37,12 @@ const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
 
 const URN_CESNET_PROXYIDP_IDPENTITYID = "urn:cesnet:proxyidp:idpentityid:";
 
+const WARNING_TYPE_INFO = 'INFO';
+const WARNING_TYPE_WARNING = 'WARNING';
+const WARNING_TYPE_ERROR = 'ERROR';
+
 $warningIsOn = $this->data['warningIsOn'];
-$warningUserCanContinue = $this->data['warningUserCanContinue'];
+$warningType = $this->data['warningType'];
 $warningTitle = $this->data['warningTitle'];
 $warningText = $this->data['warningText'];
 
@@ -72,7 +76,7 @@ if ($config !== null) {
     }
 }
 
-if ($warningIsOn && !$warningUserCanContinue) {
+if ($warningIsOn && $warningType === WARNING_TYPE_ERROR) {
     $this->data['header'] = $this->t('{perun:disco:warning}');
 }
 
@@ -102,9 +106,11 @@ if ($this->isAddInstitutionApp()) {
     }
 
     if ($warningIsOn) {
-        if ($warningUserCanContinue) {
+        if ($warningType === WARNING_TYPE_INFO) {
+            echo '<div class="alert alert-info">';
+        } elseif ($warningType === WARNING_TYPE_WARNING) {
             echo '<div class="alert alert-warning">';
-        } else {
+        } elseif ($warningType === WARNING_TYPE_ERROR) {
             echo '<div class="alert alert-danger">';
         }
         echo '<h4> <strong>' . $warningTitle . '</strong> </h4>';
@@ -112,7 +118,7 @@ if ($this->isAddInstitutionApp()) {
         echo '</div>';
     }
 
-    if (!$warningIsOn || $warningUserCanContinue) {
+    if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
         if (!empty($this->getPreferredIdp())) {
             echo '<p class="descriptionp">' . $this->t('{perun:disco:previous_selection}') . '</p>';
             echo '<div class="metalist list-group">';
@@ -151,7 +157,7 @@ if ($this->isAddInstitutionApp()) {
     }
 }
 
-if (!$warningIsOn || $warningUserCanContinue) {
+if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
     echo '<div class="inlinesearch">';
     echo '	<form id="idpselectform" action="?" method="get">
 			<input class="inlinesearchf form-control input-lg" placeholder="' .

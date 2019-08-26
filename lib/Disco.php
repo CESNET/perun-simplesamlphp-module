@@ -109,12 +109,12 @@ class Disco extends PowerIdPDisco
             $warningInstance = WarningConfiguration::getInstance();
             $warningAttributes = $warningInstance->getWarningAttributes();
         } catch (Exception $ex) {
-            $warningAttributes = array(
+            $warningAttributes = [
                 'warningIsOn' => false,
-                'warningUserCanContinue' => true,
+                'warningType' => '',
                 'warningTitle' => '',
                 'warningText' => ''
-            );
+            ];
         }
 
         $t = new DiscoTemplate($this->config);
@@ -126,7 +126,7 @@ class Disco extends PowerIdPDisco
         $t->data['returnIDParam'] = $this->returnIdParam;
         $t->data['AuthnContextClassRef'] = $this->authnContextClassRef;
         $t->data['warningIsOn'] = $warningAttributes['warningIsOn'];
-        $t->data['warningUserCanContinue'] = $warningAttributes['warningUserCanContinue'];
+        $t->data['warningType'] = $warningAttributes['warningType'];
         $t->data['warningTitle'] = $warningAttributes['warningTitle'];
         $t->data['warningText'] = $warningAttributes['warningText'];
         $t->show();
