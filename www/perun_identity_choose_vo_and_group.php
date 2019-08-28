@@ -45,7 +45,7 @@ if (empty($groupsForRegistration)) {
 } elseif (count($groupsForRegistration) == 1) {
     $params = [];
     $vo = explode(':', $groupsForRegistration[0]->getUniqueName(), 2)[0];
-    $group = $groupsForRegistration[0]->getName();
+    $group = $groupsForRegistration[0]->getName()[0];
     $callback = Module::getModuleURL('perun/perun_identity_callback.php', ['stateId' => $stateId]);
 
     $params['vo'] = $vo;

@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 - RpcConnector now stores cookie into file
 - Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
 
+#### Fixed
+- Fixed bug in redirect to registration in case only one VO and one group is available
+
 ## [v3.2.0]
 #### Added
 - Added filter JoinGroupsAndEduPersonEntitlement
