@@ -35,7 +35,7 @@ class AdapterLdap extends Adapter
 
     public function __construct($configFileName = null)
     {
-        if (is_null($configFileName)) {
+        if ($configFileName === null) {
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
@@ -66,7 +66,7 @@ class AdapterLdap extends Adapter
             "(|$query)",
             ["perunUserId", "displayName", "cn", "givenName", "sn", "preferredMail", "mail"]
         );
-        if (is_null($user)) {
+        if ($user === null) {
             return $user;
         }
 
@@ -166,7 +166,7 @@ class AdapterLdap extends Adapter
             "(&(objectClass=perunGroup)(perunUniqueGroupName=$name))",
             ["perunGroupId", "cn", "perunUniqueGroupName", "perunVoId", "description"]
         );
-        if (is_null($group)) {
+        if ($group === null) {
             throw new Exception(
                 "Group with name: $name in VO: " . $vo->getName() . " does not exists in Perun LDAP."
             );
@@ -187,7 +187,8 @@ class AdapterLdap extends Adapter
             "(&(objectClass=perunVo)(o=$voShortName))",
             ["perunVoId", "o", "description"]
         );
-        if (is_null($vo)) {
+
+        if ($vo === null) {
             throw new Exception("Vo with name: $vo does not exists in Perun LDAP.");
         }
 
@@ -201,7 +202,8 @@ class AdapterLdap extends Adapter
             "(&(objectClass=perunVo)(perunVoId=$id))",
             ["o", "description"]
         );
-        if (is_null($vo)) {
+
+        if ($vo === null) {
             throw new Exception("Vo with id: $id does not exists in Perun LDAP.");
         }
 
@@ -291,7 +293,7 @@ class AdapterLdap extends Adapter
         );
         Logger::debug("Resources - " . var_export($resources, true));
 
-        if (is_null($resources)) {
+        if ($resources === null) {
             throw new Exception(
                 "Service with spEntityId: " . $spEntityId . " hasn't assigned any resource."
             );

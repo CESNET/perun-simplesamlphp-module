@@ -34,7 +34,7 @@ class AdapterRpc extends Adapter
 
     public function __construct($configFileName = null)
     {
-        if (is_null($configFileName)) {
+        if ($configFileName === null) {
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
@@ -375,7 +375,7 @@ class AdapterRpc extends Adapter
             'user' => $user->getId(),
             'vo' => $vo->getId(),
         ]);
-        if (is_null($member)) {
+        if ($member === null) {
             throw new Exception(
                 "Member for User with name " . $user->getName() . " and Vo with shortName " .
                 $vo->getShortName() . "does not exist in Perun!"

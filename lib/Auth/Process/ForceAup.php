@@ -125,7 +125,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
             foreach ($facilities as $facility) {
                 $facilityAups = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityReqAupsAttr);
 
-                if (!is_null($facilityAups)) {
+                if ($facilityAups !== null) {
                     foreach ($facilityAups as $facilityAup) {
                         array_push($requiredAups, $facilityAup);
                     }
@@ -136,7 +136,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                     $this->perunFacilityVoShortNames
                 );
 
-                if (!is_null($facilityVoShortNames)) {
+                if ($facilityVoShortNames !== null) {
                     foreach ($facilityVoShortNames as $facilityVoShortName) {
                         array_push($voShortNames, $facilityVoShortName);
                     }
@@ -163,7 +163,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                 [$this->perunUserAupAttr]
             )[$this->perunUserAupAttr];
 
-            if (is_null($userAups)) {
+            if ($userAups === null) {
                 $userAups = [];
             }
 

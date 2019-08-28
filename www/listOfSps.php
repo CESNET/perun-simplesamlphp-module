@@ -21,7 +21,7 @@ $config = Configuration::getInstance();
 $conf = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $proxyIdentifier = $conf->getString(PROXY_IDENTIFIER);
-if (is_null($proxyIdentifier) || empty($proxyIdentifier)) {
+if ($proxyIdentifier === null || empty($proxyIdentifier)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '" . PROXY_IDENTIFIER
         . "'."
@@ -29,7 +29,7 @@ if (is_null($proxyIdentifier) || empty($proxyIdentifier)) {
 }
 
 $perunProxyIdentifierAttr = $conf->getString(PERUN_PROXY_IDENTIFIER_ATTR_NAME);
-if (is_null($perunProxyIdentifierAttr) || empty($perunProxyIdentifierAttr)) {
+if ($perunProxyIdentifierAttr === null || empty($perunProxyIdentifierAttr)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . PERUN_PROXY_IDENTIFIER_ATTR_NAME . "'."
@@ -37,7 +37,7 @@ if (is_null($perunProxyIdentifierAttr) || empty($perunProxyIdentifierAttr)) {
 }
 
 $attributesDefinitions = $conf->getArray(ATTRIBUTES_DEFINITIONS);
-if (is_null($attributesDefinitions) || empty($attributesDefinitions)) {
+if ($attributesDefinitions === null || empty($attributesDefinitions)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . ATTRIBUTES_DEFINITIONS . "'."
@@ -46,7 +46,7 @@ if (is_null($attributesDefinitions) || empty($attributesDefinitions)) {
 
 $showOIDCServices = $conf->getBoolean(SHOW_OIDC_SERVICES, false);
 $perunSaml2EntityIdAttr = $conf->getString(PERUN_SAML2_ENTITY_ID_ATTR_NAME);
-if (is_null($perunSaml2EntityIdAttr) || empty($perunSaml2EntityIdAttr)) {
+if ($perunSaml2EntityIdAttr === null || empty($perunSaml2EntityIdAttr)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . PERUN_SAML2_ENTITY_ID_ATTR_NAME . "'."
@@ -55,7 +55,7 @@ if (is_null($perunSaml2EntityIdAttr) || empty($perunSaml2EntityIdAttr)) {
 
 $perunOidcClientIdAttr = $conf->getString(PERUN_OIDC_CLIENT_ID_ATTR_NAME);
 if ($showOIDCServices
-    && (is_null($perunOidcClientIdAttr)
+    && ($perunOidcClientIdAttr === null
         || empty($perunOidcClientIdAttr))
 ) {
     throw new Exception(
@@ -78,16 +78,16 @@ $facilities
 $attrNames = [];
 
 array_push($attrNames, $perunSaml2EntityIdAttr);
-if (!is_null($perunOidcClientIdAttr) && !empty($perunOidcClientIdAttr)) {
+if ($perunOidcClientIdAttr !== null && !empty($perunOidcClientIdAttr)) {
     array_push($attrNames, $perunOidcClientIdAttr);
 }
-if (!is_null($perunLoginURLAttr) && !empty($perunLoginURLAttr)) {
+if ($perunLoginURLAttr !== null && !empty($perunLoginURLAttr)) {
     array_push($attrNames, $perunLoginURLAttr);
 }
-if (!is_null($perunTestSpAttr) && !empty($perunTestSpAttr)) {
+if ($perunTestSpAttr !== null && !empty($perunTestSpAttr)) {
     array_push($attrNames, $perunTestSpAttr);
 }
-if (!is_null($perunShowOnServiceListAttr)
+if ($perunShowOnServiceListAttr !== null
     && !empty($perunShowOnServiceListAttr)
 ) {
     array_push($attrNames, $perunShowOnServiceListAttr);
@@ -107,7 +107,7 @@ foreach ($facilities as $facility) {
     foreach ($attributes as $attribute) {
         $facilityAttributes[$attribute['name']] = $attribute;
     }
-    if (!is_null($facilityAttributes[$perunSaml2EntityIdAttr]['value'])
+    if ($facilityAttributes[$perunSaml2EntityIdAttr]['value'] !== null
         && !empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])
     ) {
         $samlServices[$facility->getId()] = [
@@ -122,7 +122,7 @@ foreach ($facilities as $facility) {
     }
 
     if ($showOIDCServices
-        && (!is_null($facilityAttributes[$perunOidcClientIdAttr]['value'])
+        && ($facilityAttributes[$perunOidcClientIdAttr]['value'] !== null
             && !empty($facilityAttributes[$perunOidcClientIdAttr]['value']))
     ) {
         $oidcServices[$facility->getId()] = [

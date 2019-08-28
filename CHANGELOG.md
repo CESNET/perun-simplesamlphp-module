@@ -64,6 +64,7 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - RpcConnector now stores cookie into file
 - Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
+- is_null() changed to === null
 - Use new object perunFacility in LDAP to search information about facility
 - Configuration for warning on DS is now in module_perun.php
 

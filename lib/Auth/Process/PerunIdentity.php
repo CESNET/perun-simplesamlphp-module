@@ -216,7 +216,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
         $groups = $this->adapter->getUsersGroupsOnFacility($this->spEntityId, $user->getId());
 
-        if ($this->checkGroupMembership && (is_null($groups) || empty($groups))) {
+        if ($this->checkGroupMembership && ($groups === null || empty($groups))) {
             if ($this->allowRegistrationToGroups) {
                 $vosForRegistration = $this->getVosForRegistration($user);
 
@@ -262,11 +262,11 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     public function register($request, $vosForRegistration, $registerUrL = null, $dynamicRegistration = null)
     {
-        if (is_null($registerUrL)) {
+        if ($registerUrL === null) {
             $registerUrL = $this->registerUrl;
         }
 
-        if (is_null($dynamicRegistration)) {
+        if ($dynamicRegistration === null) {
             $dynamicRegistration = $this->dynamicRegistration;
         }
 
@@ -305,9 +305,9 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     protected function registerDirectly($request, $callback, $registerUrL, $vo = null, $group = null)
     {
         $params = [];
-        if (!is_null($vo)) {
+        if ($vo !== null) {
             $params['vo'] = $vo->getShortName();
-            if (!is_null($group)) {
+            if ($group !== null) {
                 $params['group'] = $group->getName();
             }
         }
@@ -441,7 +441,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 $facilities[0],
                 $this->facilityCheckGroupMembershipAttr
             );
-            if (!is_null($checkGroupMembership)) {
+            if ($checkGroupMembership !== null) {
                 $this->checkGroupMembership = $checkGroupMembership;
             }
 
@@ -457,7 +457,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 $facilities[0],
                 $this->facilityDynamicRegistrationAttr
             );
-            if (!is_null($dynamicRegistration)) {
+            if ($dynamicRegistration !== null) {
                 $this->dynamicRegistration = $dynamicRegistration;
             }
 
@@ -465,7 +465,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 $facilities[0],
                 $this->facilityRegisterUrlAttr
             );
-            if (is_null($this->registerUrl)) {
+            if ($this->registerUrl === null) {
                 $this->registerUrl = $this->defaultRegisterUrl;
             }
 
@@ -473,7 +473,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 $facilities[0],
                 $this->facilityAllowRegistrationToGroupsAttr
             );
-            if (!is_null($allowRegistartionToGroups)) {
+            if ($allowRegistartionToGroups !== null) {
                 $this->allowRegistrationToGroups = $allowRegistartionToGroups;
             }
         } catch (\Exception $ex) {
@@ -491,14 +491,14 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $status = null;
         try {
             $vo = $this->adapter->getVoByShortName($this->voShortName);
-            if (!is_null($user)) {
+            if ($user !== null) {
                 $status = $this->adapter->getMemberStatusByUserAndVo($user, $vo);
             }
         } catch (\Exception $ex) {
             throw new Exception('perun:PerunIdentity: ' . $ex);
         }
 
-        if (is_null($vo)) {
+        if ($vo === null) {
             throw new Exception(
                 'perun:PerunIdentity: Vo with short name ' . $this->voShortName . ' does not exist.'
             );
@@ -516,13 +516,13 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
         }
 
-        if (is_null($user) || is_null($status) || $status === Member::EXPIRED) {
-            if (is_null($user)) {
+        if ($user === null || $status === null || $status === Member::EXPIRED) {
+            if ($user === null) {
                 Logger::info(
                     'Perun user with identity/ies: ' . implode(',', $uids) . ' ' .
                     'has NOT been found. He is being redirected to register.'
                 );
-            } elseif (is_null($status)) {
+            } elseif ($status === null) {
                 Logger::info(
                     'Perun user with identity/ies: ' . implode(',', $uids) . ' ' .
                     'is NOT member in vo with short name ' . $this->voShortName .
