@@ -55,11 +55,11 @@ $t->show();
  */
 function getBadgeByStatus($status)
 {
-    if ($status == OK) {
+    if ($status === OK) {
         return '<span class="status label label-success">OK</span>';
-    } elseif ($status == WARNING) {
+    } elseif ($status === WARNING) {
         return '<span class="status label label-warning">WARNING</span>';
-    } elseif ($status == CRITICAL || $status == UNKNOWN) {
+    } elseif ($status === CRITICAL || $status === UNKNOWN) {
         return '<span class="status label label-danger">CRITICAL</span>';
     }
 }

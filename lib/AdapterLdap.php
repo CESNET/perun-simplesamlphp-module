@@ -92,7 +92,7 @@ class AdapterLdap extends Adapter
         $groups = [];
         foreach ($userWithMembership['memberOf'] as $groupDn) {
             $voId = explode('=', explode(',', $groupDn)[1], 2)[1];
-            if ($voId != $vo->getId()) {
+            if ($voId !== $vo->getId()) {
                 continue;
             }
 

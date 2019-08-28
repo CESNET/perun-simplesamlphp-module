@@ -83,7 +83,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 
         foreach ($this->filterSPs as $sp) {
             $currentSp = $request['Destination']['entityid'];
-            if ($sp == $currentSp) {
+            if ($sp === $currentSp) {
                 Logger::info(
                     sprintf(
                         "perun.ProxyFilter: Filtering out filter %s for SP %s",

@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Slightly modified text displayed on WAYF
 - Updated phpcs ruleset to PSR-12
 - is_null() changed to === null
+- Using identity comparison instead of equality comparison
 
 #### Fixed
 - Fixed wrong dictionary name in post.php
