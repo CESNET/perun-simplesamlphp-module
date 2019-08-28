@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - RpcConnector now stores cookie into file
 - Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
 
+## [v3.2.1]
 #### Fixed
 - Fixed bug in redirect to registration in case only one VO and one group is available
 
@@ -156,6 +157,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.2.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.1
 [v3.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.0
 [v3.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.1
 [v3.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.0
