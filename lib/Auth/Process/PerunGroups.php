@@ -49,8 +49,8 @@ class PerunGroups extends \SimpleSAML\Auth\ProcessingFilter
 
         if ($this->groupNameAARC && (empty($this->groupNameAuthority) || empty($this->groupNamePrefix))) {
             throw new Exception(
-                "perun:PerunGroups: 'groupNameAARC' has been set, 'groupNameAuthority' and 'groupNamePrefix' " .
-                "options must be set as well"
+                'perun:PerunGroups: \'groupNameAARC\' has been set, \'groupNameAuthority\' and \'groupNamePrefix\' ' .
+                'options must be set as well'
             );
         }
 
@@ -58,7 +58,7 @@ class PerunGroups extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config['attrName'])) {
             throw new Exception(
-                "perun:PerunGroups: missing mandatory configuration option 'attrName'."
+                'perun:PerunGroups: missing mandatory configuration option \'attrName\'.'
             );
         }
         $this->attrName = (string)$config['attrName'];
@@ -73,29 +73,29 @@ class PerunGroups extends \SimpleSAML\Auth\ProcessingFilter
             $groups = $request['perun']['groups'];
         } else {
             throw new Exception(
-                "perun:PerunGroups: " .
-                "missing mandatory field 'perun.groups' in request." .
-                "Hint: Did you configured PerunIdentity filter before this filter?"
+                'perun:PerunGroups: ' .
+                'missing mandatory field \'perun.groups\' in request.' .
+                'Hint: Did you configured PerunIdentity filter before this filter?'
             );
         }
 
         $request['Attributes'][$this->attrName] = [];
         foreach ($groups as $group) {
-            if (isset($request["SPMetadata"]["groupNameAARC"]) || $this->groupNameAARC) {
+            if (isset($request['SPMetadata']['groupNameAARC']) || $this->groupNameAARC) {
                 # https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
                 # Group name is URL encoded by RFC 3986 (http://www.ietf.org/rfc/rfc3986.txt)
                 # Example:
                 # urn:geant:einfra.cesnet.cz:perun.cesnet.cz:group:einfra:<groupName>:<subGroupName>#perun.cesnet.cz
                 if (empty($this->groupNameAuthority) || empty($this->groupNamePrefix)) {
                     throw new Exception(
-                        "perun:PerunGroups: missing mandatory configuration options " .
-                        "'groupNameAuthority' or 'groupNamePrefix'."
+                        'perun:PerunGroups: missing mandatory configuration options ' .
+                        '\'groupNameAuthority\' or \'groupNamePrefix\'.'
                     );
                 }
 
                 $groupName = $this->groupNamePrefix . implode(
-                    ":",
-                    array_map("rawurlencode", explode(":", $group->getUniqueName()))
+                    ':',
+                    array_map('rawurlencode', explode(':', $group->getUniqueName()))
                 ) . '#' . $this->groupNameAuthority;
             } else {
                 $groupName = $this->mapGroupName($request, $group->getUniqueName());
@@ -112,23 +112,23 @@ class PerunGroups extends \SimpleSAML\Auth\ProcessingFilter
      */
     protected function mapGroupName($request, $groupName)
     {
-        if (isset($request["SPMetadata"]["groupMapping"]) &&
-            isset($request["SPMetadata"]["groupMapping"][$groupName])) {
+        if (isset($request['SPMetadata']['groupMapping']) &&
+            isset($request['SPMetadata']['groupMapping'][$groupName])) {
             Logger::debug(
-                "Mapping $groupName to " . $request["SPMetadata"]["groupMapping"][$groupName] .
-                " for SP " . $request["SPMetadata"]["entityid"]
+                'Mapping $groupName to ' . $request['SPMetadata']['groupMapping'][$groupName] .
+                ' for SP ' . $request['SPMetadata']['entityid']
             );
-            return $request["SPMetadata"]["groupMapping"][$groupName];
-        } elseif (isset($request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR])) {
+            return $request['SPMetadata']['groupMapping'][$groupName];
+        } elseif (isset($request['SPMetadata'][self::GROUPNAMEPREFIX_ATTR])) {
             Logger::debug(
-                "GroupNamePrefix overridden by a SP " . $request["SPMetadata"]["entityid"] .
-                " to " . $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR]
+                'GroupNamePrefix overridden by a SP ' . $request['SPMetadata']['entityid'] .
+                ' to ' . $request['SPMetadata'][self::GROUPNAMEPREFIX_ATTR]
             );
-            return $request["SPMetadata"][self::GROUPNAMEPREFIX_ATTR] . $groupName;
+            return $request['SPMetadata'][self::GROUPNAMEPREFIX_ATTR] . $groupName;
         } else {
             # No mapping defined, so just put groupNamePrefix in front of the group
             Logger::debug(
-                "No mapping found for group $groupName for SP " . $request["SPMetadata"]["entityid"]
+                'No mapping found for group $groupName for SP ' . $request['SPMetadata']['entityid']
             );
             return $this->groupNamePrefix . $groupName;
         }

@@ -46,7 +46,7 @@ if (isset($_POST['selectedGroup'])) {
 
     $params['vo'] = $vo;
 
-    if ($group !== "members") {
+    if ($group !== 'members') {
         $params['group'] = $group;
     }
 

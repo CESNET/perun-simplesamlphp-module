@@ -55,32 +55,32 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config[self::UID_ATTR])) {
             throw new Exception(
-                "perun:ForceAup: missing mandatory configuration option '" . self::UID_ATTR . "'."
+                'perun:ForceAup: missing mandatory configuration option \'' . self::UID_ATTR . '\'.'
             );
         }
         if (!isset($config[self::PERUN_AUPS_ATTR])) {
             throw new Exception(
-                "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_AUPS_ATTR . "'."
+                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_AUPS_ATTR . '\'.'
             );
         }
         if (!isset($config[self::PERUN_USER_AUP_ATTR])) {
             throw new Exception(
-                "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_USER_AUP_ATTR . "'."
+                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_USER_AUP_ATTR . '\'.'
             );
         }
         if (!isset($config[self::PERUN_VO_AUP_ATTR])) {
             throw new Exception(
-                "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_VO_AUP_ATTR . "'."
+                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
         }
         if (!isset($config[self::PERUN_FACILITY_REQ_AUPS_ATTR])) {
             throw new Exception(
-                "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_FACILITY_REQ_AUPS_ATTR . "'."
+                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_FACILITY_REQ_AUPS_ATTR . '\'.'
             );
         }
         if (!isset($config[self::PERUN_FACILITY_VO_SHORT_NAMES])) {
             throw new Exception(
-                "perun:ForceAup: missing mandatory configuration option '" . self::PERUN_FACILITY_REQ_AUPS_ATTR . "'."
+                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_FACILITY_REQ_AUPS_ATTR . '\'.'
             );
         }
         if (!isset($config[self::INTERFACE_PROPNAME])) {
@@ -111,9 +111,9 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
             $user = $request['perun']['user'];
         } else {
             throw new Exception(
-                "perun:ForceAup: " .
-                "missing mandatory field 'perun.user' in request." .
-                "Hint: Did you configured PerunIdentity filter before this filter?"
+                'perun:ForceAup: ' .
+                'missing mandatory field \'perun.user\' in request.' .
+                'Hint: Did you configured PerunIdentity filter before this filter?'
             );
         }
 
@@ -206,11 +206,11 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                 }
             }
         } catch (\Exception $ex) {
-            Logger::warning("perun:ForceAup - " . $ex->getMessage());
+            Logger::warning('perun:ForceAup - ' . $ex->getMessage());
             $newAups = [];
         }
 
-        Logger::debug("perun:ForceAup - NewAups: " . print_r($newAups, true));
+        Logger::debug('perun:ForceAup - NewAups: ' . print_r($newAups, true));
 
         if (!empty($newAups)) {
             $request[self::UID_ATTR] = $this->uidAttr;

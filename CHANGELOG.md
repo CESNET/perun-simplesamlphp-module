@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 - is_null() changed to === null
 - Using identity comparison instead of equality comparison
 - Removed checks in ifs that var is (not) null before empty(var) function (empty checks that itself)
+- Double quotes changed to single quotes
 
 #### Fixed
 - Fixed wrong dictionary name in post.php

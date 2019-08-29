@@ -28,12 +28,12 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config['uidsAttr'])) {
             throw new Exception(
-                "perun:ProcessTargetedID: missing mandatory configuration option 'uidsAttr'."
+                'perun:ProcessTargetedID: missing mandatory configuration option \'uidsAttr\'.'
             );
         }
         if (!isset($config['prefix'])) {
             throw new Exception(
-                "perun:ProcessTargetedID: missing mandatory configuration option 'prefix'."
+                'perun:ProcessTargetedID: missing mandatory configuration option \'prefix\'.'
             );
         }
 
@@ -69,8 +69,8 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
         if (isset($request['Attributes']['schacHomeOrganization'][0])) {
             $scope = $request['Attributes']['schacHomeOrganization'][0];
         } else {
-            throw new Exception("perun:ProcessTargetedID: " .
-                "missing mandatory attribute 'schacHomeOrganization' in request.");
+            throw new Exception('perun:ProcessTargetedID: ' .
+                'missing mandatory attribute \'schacHomeOrganization\' in request.');
         }
 
         # Generate hash from uid (eduPersonTargetedID)
@@ -79,8 +79,8 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
         # Construct new eppn
         $newEduPersonPrincipalName = $this->prefix . '_' . $hash . '@' . $scope;
 
-        Logger::info("perun.ProcessTargetedID: Converting eduPersonTargetedID '" . $uid . "' " .
-            "to the new ID '" . $newEduPersonPrincipalName . "'");
+        Logger::info('perun.ProcessTargetedID: Converting eduPersonTargetedID \'' . $uid . '\' ' .
+            'to the new ID \'' . $newEduPersonPrincipalName . '\'');
 
         # Set attributes back to the response
         # Set uid and also eduPersonPrincipalName, so all the modules and Perun will be happy

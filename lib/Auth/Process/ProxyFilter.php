@@ -69,7 +69,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
                 if (in_array($value, $request['Attributes'][$attr])) {
                     Logger::info(
                         sprintf(
-                            "perun.ProxyFilter: Filtering out filter %s because %s contains %s",
+                            'perun.ProxyFilter: Filtering out filter %s because %s contains %s',
                             $this->nestedClass,
                             $attr,
                             $value
@@ -86,7 +86,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
             if ($sp === $currentSp) {
                 Logger::info(
                     sprintf(
-                        "perun.ProxyFilter: Filtering out filter %s for SP %s",
+                        'perun.ProxyFilter: Filtering out filter %s for SP %s',
                         $this->nestedClass,
                         $currentSp
                     )

@@ -27,16 +27,16 @@ class JoinGroupsAndEduPersonEntitlement extends \SimpleSAML\Auth\ProcessingFilte
 
         if (!isset($config[self::EDU_PERSON_ENTITLEMENT])) {
             throw new Exception(
-                "perun:JoinGroupsAndEduPersonEntitlement: missing mandatory configuration option " .
-                self::EDU_PERSON_ENTITLEMENT . "."
+                'perun:JoinGroupsAndEduPersonEntitlement: missing mandatory configuration option ' .
+                self::EDU_PERSON_ENTITLEMENT . '.'
             );
         }
         $this->eduPersonEntitlement = $config[self::EDU_PERSON_ENTITLEMENT];
 
         if (!isset($config[self::FORWARDED_EDU_PERSON_ENTITLEMENT])) {
             throw new Exception(
-                "perun:JoinGroupsAndEduPersonEntitlement: missing mandatory configuration option " .
-                self::FORWARDED_EDU_PERSON_ENTITLEMENT . "."
+                'perun:JoinGroupsAndEduPersonEntitlement: missing mandatory configuration option ' .
+                self::FORWARDED_EDU_PERSON_ENTITLEMENT . '.'
             );
         }
         $this->forwardedEduPersonEntitlement = $config[self::FORWARDED_EDU_PERSON_ENTITLEMENT];
@@ -52,9 +52,9 @@ class JoinGroupsAndEduPersonEntitlement extends \SimpleSAML\Auth\ProcessingFilte
             );
         } else {
             throw new Exception(
-                "perun:JoinGroupsAndEduPersonEntitlement: " .
-                "missing at least one of mandatory fields ('Attributes." . $this->eduPersonEntitlement .
-                "' or 'Attributes." . $this->forwardedEduPersonEntitlement . "' in request."
+                'perun:JoinGroupsAndEduPersonEntitlement: ' .
+                'missing at least one of mandatory fields (\'Attributes.' . $this->eduPersonEntitlement .
+                '\' or \'Attributes.' . $this->forwardedEduPersonEntitlement . '\' in request.'
             );
         }
 

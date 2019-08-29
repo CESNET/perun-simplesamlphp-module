@@ -80,31 +80,31 @@ foreach ($facilitiesWithAttributes as $facilityWithAttributes) {
                 is_numeric($attribute['value']) &&
                 $attribute['value'] !== null
             ) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => " . $attribute['value'] . "," . PHP_EOL;
+                $metadataContent .= '\t \'' . $metadataAttrName . '\' => ' . $attribute['value'] . ',' . PHP_EOL;
             } elseif (($attribute['type'] === TYPE_STRING) && $attribute['value'] !== null) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => '" . $attribute['value'] . "'," . PHP_EOL;
+                $metadataContent .= '\t \'' . $metadataAttrName . '\' => \'' . $attribute['value'] . '\',' . PHP_EOL;
             } elseif ($attribute['type'] === TYPE_BOOLEAN) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => ";
+                $metadataContent .= '\t \'' . $metadataAttrName . '\' => ';
                 if ($attribute['value'] === null || $attribute['value'] === 'false') {
-                    $metadataContent .= "false," . PHP_EOL;
+                    $metadataContent .= 'false,' . PHP_EOL;
                 } else {
-                    $metadataContent .= "true," . PHP_EOL;
+                    $metadataContent .= 'true,' . PHP_EOL;
                 }
             } elseif ($attribute['type'] === TYPE_ARRAY && $attribute['value'] !== null) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => [" . PHP_EOL;
+                $metadataContent .= '\t \'' . $metadataAttrName . '\' => [' . PHP_EOL;
                 foreach ($attribute['value'] as $value) {
-                    $metadataContent .= "\t\t'" . $value . "'," . PHP_EOL;
+                    $metadataContent .= '\t\t\'' . $value . '\',' . PHP_EOL;
                 }
-                $metadataContent .= "\t]," . PHP_EOL;
+                $metadataContent .= '\t],' . PHP_EOL;
             } elseif ($attribute['type'] === TYPE_MAP && $attribute['value'] !== null) {
-                $metadataContent .= "\t '" . $metadataAttrName . "' => [" . PHP_EOL;
+                $metadataContent .= '\t \'' . $metadataAttrName . '\' => [' . PHP_EOL;
                 foreach ($attribute['value'] as $key => $value) {
-                    $metadataContent .= "\t\t'" . $key . "' => '" . $value . "'," . PHP_EOL;
+                    $metadataContent .= '\t\t\'' . $key . '\' => \'' . $value . '\',' . PHP_EOL;
                 }
-                $metadataContent .= "\t]," . PHP_EOL;
+                $metadataContent .= '\t],' . PHP_EOL;
             }
         }
-        $metadataContent .= "];" . PHP_EOL . "\n";
+        $metadataContent .= '];' . PHP_EOL . '\n';
     }
     $content .= $metadataContent;
 }

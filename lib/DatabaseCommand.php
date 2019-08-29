@@ -12,8 +12,8 @@ use SimpleSAML\Logger;
 class DatabaseCommand
 {
 
-    const WHITELIST = "whiteList";
-    const GREYLIST = "greyList";
+    const WHITELIST = 'whiteList';
+    const GREYLIST = 'greyList';
     /**
      * Function returns array of all IdPs in whitelist/greylist
      * @param string $tableName 'whitelist' or 'greylist'
@@ -35,12 +35,12 @@ class DatabaseCommand
             $table = $greyListTableName;
         }
 
-        $stmt = $conn->prepare("SELECT * FROM " . $table);
+        $stmt = $conn->prepare('SELECT * FROM ' . $table);
 
         if ($stmt) {
             $ex = $stmt->execute();
             if ($ex === false) {
-                Logger::error("Error during select all from " . $table);
+                Logger::error('Error during select all from ' . $table);
             }
 
             $stmt->bind_result($timestamp, $entityId, $reason);
@@ -54,7 +54,7 @@ class DatabaseCommand
 
             $stmt->close();
         } else {
-            Logger::error("Error during preparing statement");
+            Logger::error('Error during preparing statement');
         }
 
         $conn->close();
@@ -87,7 +87,7 @@ class DatabaseCommand
         if ($stmt) {
             $ex = $stmt->execute();
             if ($ex === false) {
-                Logger::error("Error during select all entityIds from " . $table);
+                Logger::error('Error during select all entityIds from ' . $table);
             }
 
             $stmt->bind_result($timestamp, $entityId, $reason);
@@ -97,7 +97,7 @@ class DatabaseCommand
 
             $stmt->close();
         } else {
-            Logger::error("Error during preparing statement");
+            Logger::error('Error during preparing statement');
         }
 
         $conn->close();
@@ -125,19 +125,19 @@ class DatabaseCommand
             $table = $greyListTableName;
         }
 
-        $stmt = $conn->prepare("INSERT INTO " . $table . " (entityId, reason) VALUES (?, ?)");
+        $stmt = $conn->prepare('INSERT INTO ' . $table . ' (entityId, reason) VALUES (?, ?)');
 
         if ($stmt) {
-            $stmt->bind_param("ss", $entityId, $reason);
+            $stmt->bind_param('ss', $entityId, $reason);
             $ex = $stmt->execute();
             if ($ex === false) {
-                Logger::error("Error during inserting entityId " . $entityId . " into " . $table);
+                Logger::error('Error during inserting entityId ' . $entityId . ' into ' . $table);
             }
 
-            Logger::debug("EntityId " . $entityId . " was inserted into " . $table);
+            Logger::debug('EntityId ' . $entityId . ' was inserted into ' . $table);
             $stmt->close();
         } else {
-            Logger::error("Error during preparing statement");
+            Logger::error('Error during preparing statement');
         }
 
         $conn->close();
@@ -166,16 +166,16 @@ class DatabaseCommand
         $stmt = $conn->prepare("DELETE FROM " . $table . " WHERE entityId=?");
 
         if ($stmt) {
-            $stmt->bind_param("s", $entityId);
+            $stmt->bind_param('s', $entityId);
             $ex = $stmt->execute();
             if ($ex === false) {
-                Logger::error("Error during deleting entityId " . $entityId . " from " . $table);
+                Logger::error('Error during deleting entityId ' . $entityId . ' from ' . $table);
             }
 
-            Logger::debug("EntityId " . $entityId . " was deleted from " . $table);
+            Logger::debug('EntityId ' . $entityId . ' was deleted from ' . $table);
             $stmt->close();
         } else {
-            Logger::error("Error during preparing statement");
+            Logger::error('Error during preparing statement');
         }
 
         $conn->close();

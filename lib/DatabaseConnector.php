@@ -64,7 +64,7 @@ class DatabaseConnector
     {
         $conn = mysqli_init();
         if ($this->encryption === true) {
-            Logger::debug("Getting connection with encryption.");
+            Logger::debug('Getting connection with encryption.');
             mysqli_ssl_set($conn, $this->sslKey, $this->sslCert, $this->sslCA, $this->sslCAPath, null);
             if ($this->port === null) {
                 mysqli_real_connect($conn, $this->serverName, $this->username, $this->password, $this->databaseName);

@@ -11,11 +11,11 @@ use SimpleSAML\Logger;
  */
 class NagiosStatusConnector extends StatusConnector
 {
-    const NAGIOS_URL = "status.nagios.url";
-    const NAGIOS_CERT_PATH = "status.nagios.certificate_path";
-    const NAGIOS_CERT_PASSWORD = "status.nagios.certificate_password";
-    const NAGIOS_CA_PATH = "status.nagios.ca_path";
-    const NAGIOS_PEER_VERIFY = "status.nagios.peer_verification";
+    const NAGIOS_URL = 'status.nagios.url';
+    const NAGIOS_CERT_PATH = 'status.nagios.certificate_path';
+    const NAGIOS_CERT_PASSWORD = 'status.nagios.certificate_password';
+    const NAGIOS_CA_PATH = 'status.nagios.ca_path';
+    const NAGIOS_PEER_VERIFY = 'status.nagios.peer_verification';
 
     private $url;
     private $certPath;
@@ -30,18 +30,18 @@ class NagiosStatusConnector extends StatusConnector
     {
         parent::__construct();
 
-        $this->url = $this->configuration->getString(self::NAGIOS_URL, "");
-        $this->certPath = $this->configuration->getString(self::NAGIOS_CERT_PATH, "");
-        $this->certPassword = $this->configuration->getString(self::NAGIOS_CERT_PASSWORD, "");
-        $this->caPath = $this->configuration->getString(self::NAGIOS_CA_PATH, "");
+        $this->url = $this->configuration->getString(self::NAGIOS_URL, '');
+        $this->certPath = $this->configuration->getString(self::NAGIOS_CERT_PATH, '');
+        $this->certPassword = $this->configuration->getString(self::NAGIOS_CERT_PASSWORD, '');
+        $this->caPath = $this->configuration->getString(self::NAGIOS_CA_PATH, '');
         $this->peerVerification = $this->configuration->getBoolean(self::NAGIOS_PEER_VERIFY, false);
 
         if (empty($this->url)) {
-            throw new \Exception("Required option '" . self::NAGIOS_URL . "' is empty!");
+            throw new \Exception('Required option \'' . self::NAGIOS_URL . '\' is empty!');
         } elseif (empty($this->certPath)) {
-            throw new \Exception("Required option '" . self::NAGIOS_CERT_PATH . "' is empty!");
+            throw new \Exception('Required option \'' . self::NAGIOS_CERT_PATH . '\' is empty!');
         } elseif (empty($this->caPath)) {
-            throw new \Exception("Required option '" . self::NAGIOS_CA_PATH . "' is empty!");
+            throw new \Exception('Required option \'' . self::NAGIOS_CA_PATH . '\' is empty!');
         }
     }
 

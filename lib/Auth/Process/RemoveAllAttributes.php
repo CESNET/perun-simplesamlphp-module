@@ -13,7 +13,7 @@ namespace SimpleSAML\Module\perun\Auth\Process;
 class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
 {
 
-    const FILTER_ATTRIBUTE_LIST = "filterAttributeList";
+    const FILTER_ATTRIBUTE_LIST = 'filterAttributeList';
 
     private $filterAttributeList = [];
 

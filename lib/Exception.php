@@ -23,7 +23,7 @@ class Exception extends \SimpleSAML\Error\Exception
      */
     public function __construct($id, $name, $message)
     {
-        parent::__construct("Perun error: $id - $name - $message");
+        parent::__construct('Perun error: ' . $id . ' - ' . $name . ' - ' . $message);
 
         $this->id = $id;
         $this->name = $name;

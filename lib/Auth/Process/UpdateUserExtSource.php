@@ -28,7 +28,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config['attrMap'])) {
             throw new Exception(
-                "perun:UpdateUserExtSource: missing mandatory configuration option 'attrMap'."
+                'perun:UpdateUserExtSource: missing mandatory configuration option \'attrMap\'.'
             );
         }
 
@@ -52,7 +52,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
             );
             if ($userExtSource === null) {
                 throw new Exception(
-                    "sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource " .
+                    'sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource ' .
                     $request['Attributes']['sourceIdPEntityID'][0] . " and Login " .
                     $request['Attributes']['sourceIdPEppn'][0]
                 );
@@ -62,7 +62,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 
             if ($attributes === null) {
                 throw new Exception(
-                    "sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful."
+                    'sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful.'
                 );
             }
 
@@ -107,8 +107,8 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
             $this->adapter->updateUserExtSourceLastAccess($userExtSource['id']);
         } catch (\Exception $ex) {
             Logger::warning(
-                "sspmod_perun_Auth_Process_UpdateUserExtSource: update was not successful: " .
-                $ex->getMessage() . " Skip to next filter."
+                'sspmod_perun_Auth_Process_UpdateUserExtSource: update was not successful: ' .
+                $ex->getMessage() . ' Skip to next filter.'
             );
         }
     }

@@ -2,13 +2,13 @@
 
 use SimpleSAML\Module\perun\StatusConnector;
 
-const OK = "OK";
-const WARNING = "WARNING";
-const CRITICAL = "CRITICAL";
-const UNKNOWN = "UNKNOWN";
+const OK = 'OK';
+const WARNING = 'WARNING';
+const CRITICAL = 'CRITICAL';
+const UNKNOWN = 'UNKNOWN';
 
-const CONFIG_FILE_NAME = "module_perun.php";
-const SHOWN_SERVICES = "status.shown_services";
+const CONFIG_FILE_NAME = 'module_perun.php';
+const SHOWN_SERVICES = 'status.shown_services';
 
 $services = [];
 

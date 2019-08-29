@@ -37,7 +37,7 @@ const CONFIG_FILE_NAME = 'module_perun.php';
 const ADD_INSTITUTION_URL = 'disco.addInstitution.URL';
 const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
 
-const URN_CESNET_PROXYIDP_IDPENTITYID = "urn:cesnet:proxyidp:idpentityid:";
+const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
 
 const WARNING_TYPE_INFO = 'INFO';
 const WARNING_TYPE_WARNING = 'WARNING';
@@ -59,14 +59,14 @@ $addInstitutionEmail = '';
 try {
     $config = Configuration::getConfig(CONFIG_FILE_NAME);
 } catch (\Exception $ex) {
-    Logger::warning("perun:disco-tpl: missing or invalid module_perun.php config file");
+    Logger::warning('perun:disco-tpl: missing or invalid module_perun.php config file');
 }
 
 if ($config !== null) {
     try {
         $addInstitutionUrl = $config->getString(ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
-        Logger::warning("perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file");
+        Logger::warning('perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file');
     }
 }
 
@@ -74,7 +74,7 @@ if ($config !== null) {
     try {
         $addInstitutionEmail = $config->getString(ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
-        Logger::warning("perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file");
+        Logger::warning('perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file');
     }
 }
 
@@ -99,7 +99,7 @@ if ($this->isAddInstitutionApp()) {
             if (substr($value, 0, strlen(URN_CESNET_PROXYIDP_IDPENTITYID))
                 === URN_CESNET_PROXYIDP_IDPENTITYID) {
                 $idpEntityId = substr($value, strlen(URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
-                Logger::info("Redirecting to " . $idpEntityId);
+                Logger::info('Redirecting to ' . $idpEntityId);
                 $url = $this->getContinueUrl($idpEntityId);
                 HTTP::redirectTrustedURL($url);
                 exit;
