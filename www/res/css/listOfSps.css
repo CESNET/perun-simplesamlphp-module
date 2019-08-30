@@ -75,3 +75,24 @@ h3 {
         word-wrap: break-word;
     }
 }
+
+.row, .col-md-6 {
+    box-sizing: border-box;
+}
+.row {
+    margin-left: -15px;
+    margin-right: -15px;
+}
+.col-md-6 {
+    position: relative;
+    min-height: 1px;
+    padding-left: 15px;
+    padding-right: 15px;
+
+}
+@media (min-width: 992px) {
+    .col-md-6 {
+        width: 50%;
+        float: left;
+    }
+}

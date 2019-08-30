@@ -212,6 +212,6 @@ function getClass($attribute)
 
 ?>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+<script src="<?php echo htmlspecialchars(\SimpleSAML\Module::getModuleURL('chartjs/Chart.bundle.min.js'));?>"></script>
 
 <script src="<?php echo htmlspecialchars(\SimpleSAML\Module::getModuleURL('perun/listOfSps.js'));?>"></script>
