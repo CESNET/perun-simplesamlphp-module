@@ -35,6 +35,7 @@ All notable changes to this project will be documented in this file.
 - Added modes into PerunAttribute process filter
     - MODE_FULL - Rewrite all attributes specified in config
     - MODE_PARTIAL - Rewrite only unset attributes
+- Chart.bundle.js is now loaded from SSP module instead of directly from internet
 
 #### Fixed
 - Fixed the problem that IDP filter on WAYF didn't work correctly
