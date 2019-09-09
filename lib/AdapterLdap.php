@@ -118,9 +118,16 @@ class AdapterLdap extends Adapter
 
     public function getSpGroups($spEntityId)
     {
+        $facility = $this->connector->searchForEntity(
+            $this->ldapBase,
+            "(&(objectClass=perunFacility)(entityID=$spEntityId))",
+            ['perunFacilityId']
+        );
+
+        $id = $facility['perunFacilityId'][0];
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
-            "(&(objectClass=perunResource)(entityID=$spEntityId))",
+            "(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=$id,$this->ldapBase))",
             ["perunResourceId", "assignedGroupId", "perunVoId"]
         );
 
@@ -270,9 +277,16 @@ class AdapterLdap extends Adapter
 
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
+        $facility = $this->connector->searchForEntity(
+            $this->ldapBase,
+            "(&(objectClass=perunFacility)(entityID=$spEntityId))",
+            ['perunFacilityId']
+        );
+
+        $id = $facility['perunFacilityId'][0];
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
-            "(&(objectClass=perunResource)(entityID=$spEntityId))",
+            "(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=$id,$this->ldapBase))",
             ["perunResourceId"]
         );
         Logger::debug("Resources - " . var_export($resources, true));

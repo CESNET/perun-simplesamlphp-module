@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - RpcConnector now stores cookie into file
 - Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
+- Use new object perunFacility in LDAP to search information about facility
 
 ## [v3.2.1]
 #### Fixed
