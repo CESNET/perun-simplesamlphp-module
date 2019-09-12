@@ -29,9 +29,6 @@ class AdapterLdap extends Adapter
     const LDAP_PASSWORD = 'ldap.password';
     const LDAP_BASE = 'ldap.base';
 
-    private $ldapHostname;
-    private $ldapUser;
-    private $ldapPassword;
     private $ldapBase;
 
     protected $connector;
@@ -44,13 +41,12 @@ class AdapterLdap extends Adapter
 
         $conf = Configuration::getConfig($configFileName);
 
-        $this->ldapHostname = $conf->getString(self::LDAP_HOSTNAME);
-        $this->ldapUser = $conf->getString(self::LDAP_USER, null);
-        $this->ldapPassword = $conf->getString(self::LDAP_PASSWORD, null);
+        $ldapHostname = $conf->getString(self::LDAP_HOSTNAME);
+        $ldapUser = $conf->getString(self::LDAP_USER, null);
+        $ldapPassword = $conf->getString(self::LDAP_PASSWORD, null);
         $this->ldapBase = $conf->getString(self::LDAP_BASE);
 
-
-        $this->connector = new LdapConnector($this->ldapHostname, $this->ldapUser, $this->ldapPassword);
+        $this->connector = new LdapConnector($ldapHostname, $ldapUser, $ldapPassword);
     }
 
     public function getPerunUser($idpEntityId, $uids)
@@ -122,9 +118,16 @@ class AdapterLdap extends Adapter
 
     public function getSpGroups($spEntityId)
     {
+        $facility = $this->connector->searchForEntity(
+            $this->ldapBase,
+            "(&(objectClass=perunFacility)(entityID=$spEntityId))",
+            ['perunFacilityId']
+        );
+
+        $id = $facility['perunFacilityId'][0];
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
-            "(&(objectClass=perunResource)(entityID=$spEntityId))",
+            "(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=$id,$this->ldapBase))",
             ["perunResourceId", "assignedGroupId", "perunVoId"]
         );
 
@@ -274,9 +277,16 @@ class AdapterLdap extends Adapter
 
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
+        $facility = $this->connector->searchForEntity(
+            $this->ldapBase,
+            "(&(objectClass=perunFacility)(entityID=$spEntityId))",
+            ['perunFacilityId']
+        );
+
+        $id = $facility['perunFacilityId'][0];
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
-            "(&(objectClass=perunResource)(entityID=$spEntityId))",
+            "(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=$id,$this->ldapBase))",
             ["perunResourceId"]
         );
         Logger::debug("Resources - " . var_export($resources, true));
