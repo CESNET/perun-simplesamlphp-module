@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.3.0]
 #### Added
 - Added endpoint to get filtered list of metadata in format:
 ```json
@@ -177,6 +179,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.3.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.3.0
 [v3.2.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.1
 [v3.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.0
 [v3.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.1.1
