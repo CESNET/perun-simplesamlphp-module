@@ -22,18 +22,18 @@ const TYPE_MAP = 'java.util.LinkedHashMap';
 $conf = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $proxyIdentifier = $conf->getString(PROXY_IDENTIFIER);
-assert($proxyIdentifier === null || empty($proxyIdentifier));
+assert(empty($proxyIdentifier));
 
 $attributesDefinitions = $conf->getArray(ATTRIBUTES_DEFINITIONS);
 assert($attributesDefinitions === null || is_array($attributesDefinitions));
 
 $perunProxyIdentifierAttr = $conf->getString(PERUN_PROXY_IDENTIFIER_ATTR_NAME);
 $perunProxyEntityIDAttr = $conf->getString(PERUN_PROXY_ENTITY_ID_ATTR_NAME);
-assert($perunProxyEntityIDAttr === null || empty($perunProxyEntityIDAttr) ||
-    $perunProxyIdentifierAttr === null || empty($perunProxyIdentifierAttr));
+
+assert(empty($perunProxyEntityIDAttr) || empty($perunProxyIdentifierAttr));
 
 $absoluteFileName = $conf->getString(ABSOLUTE_FILE_NAME);
-assert($absoluteFileName === null || empty($absoluteFileName));
+assert(empty($absoluteFileName));
 
 $rpcAdapter = new AdapterRpc();
 

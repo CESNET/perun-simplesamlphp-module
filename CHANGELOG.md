@@ -66,6 +66,7 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - RpcConnector now stores cookie into file
 - Set CONNECTTIMEOUT and TIMEOUT in RpcConnector
+- Removed checks in ifs that var is (not) null before empty(var) function (empty checks that itself)
 - Use new object perunFacility in LDAP to search information about facility
 - Configuration for warning on DS is now in module_perun.php
 

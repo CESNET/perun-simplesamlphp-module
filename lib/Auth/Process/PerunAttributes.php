@@ -81,7 +81,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             foreach ($this->attrMap as $attrName => $attrValue) {
                 if (isset($request['Attributes'][$attrValue])) {
                     $attr = $request['Attributes'][$attrValue];
-                    if ($attr === null || empty($attr)) {
+                    if (empty($attr)) {
                         array_push($attributes, $attrName);
                     }
                 } else {

@@ -337,7 +337,7 @@ class AdapterLdap extends Adapter
             ["perunGroupid"]
         );
 
-        if ($groupId === null || empty($groupId)) {
+        if (empty($groupId)) {
             return Member::INVALID;
         }
         return Member::VALID;
