@@ -105,6 +105,18 @@ class Disco extends PowerIdPDisco
             HTTP::redirectTrustedURL($url);
         }
 
+        try {
+            $warningInstance = WarningConfiguration::getInstance();
+            $warningAttributes = $warningInstance->getWarningAttributes();
+        } catch (Exception $ex) {
+            $warningAttributes = [
+                'warningIsOn' => false,
+                'warningType' => '',
+                'warningTitle' => '',
+                'warningText' => ''
+            ];
+        }
+
         $t = new DiscoTemplate($this->config);
         $t->data['originalsp'] = $this->originalsp;
         $t->data['idplist'] = $this->idplistStructured($idpList);
@@ -113,6 +125,10 @@ class Disco extends PowerIdPDisco
         $t->data['return'] = $this->returnURL;
         $t->data['returnIDParam'] = $this->returnIdParam;
         $t->data['AuthnContextClassRef'] = $this->authnContextClassRef;
+        $t->data['warningIsOn'] = $warningAttributes['warningIsOn'];
+        $t->data['warningType'] = $warningAttributes['warningType'];
+        $t->data['warningTitle'] = $warningAttributes['warningTitle'];
+        $t->data['warningText'] = $warningAttributes['warningText'];
         $t->show();
     }
 

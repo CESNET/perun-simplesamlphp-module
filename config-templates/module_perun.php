@@ -159,5 +159,51 @@ $config = [
         ''
     ],
 
+    /**
+     ********************************************
+     * Part of configuration for Warning on DS  *
+     ********************************************
+     */
 
+    /**
+     * Choose one of allowed sources: CONFIG/FILE/URL
+     * If FILE or URL is chosen, please read the 'warning_file_or_url' file to see how it should look
+     */
+    'disco.warning.source' => '',
+
+    /**
+     * Specify the absolute path to configuration file
+     * REQUIRED ONLY FOR TYPE FILE
+     */
+    'disco.warning.file' => '/etc/simplesamlphp/cesnet/config/warning',
+
+    /**
+     * Specify the url to configuration file
+     * REQUIRED ONLY FOR TYPE URL
+     */
+    'disco.warning.url' => 'url to configuration file',
+
+    /**
+     * When true, the config file is switched on.
+     * REQUIRED ONLY FOR TYPE CONFIG
+     */
+    'disco.warning.isOn' => true,
+
+    /**
+     * Choose one of allowed types: INFO/WARNING/ERROR.
+     * REQUIRED ONLY FOR TYPE CONFIG
+     */
+    'disco.warning.type' => 'INFO',
+
+    /**
+     * Title of the warning. It is possible to use HTML.
+     * REQUIRED ONLY FOR TYPE CONFIG
+     */
+    'disco.warning.title' => '',
+
+    /**
+     * Text of the warning. It is possible to use HTML.
+     * REQUIRED ONLY FOR TYPE CONFIG
+     */
+    'disco.warning.text' => '',
 ];

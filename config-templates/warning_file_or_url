@@ -1,0 +1,6 @@
+{
+  "disco.warning.isOn": true,
+  "disco.warning.type": "INFO/WARNING/ERROR",
+  "disco.warning.title": "Some warning title",
+  "disco.warning.text": "Some warning text"
+}

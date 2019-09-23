@@ -30,90 +30,53 @@ $this->data['head'] .= '<script type="text/javascript" src="' .
 
 $this->data['head'] .= searchScript();
 
-const WARNING_CONFIG_FILE_NAME = 'config-warning.php';
-const WARNING_IS_ON = 'isOn';
-const WARNING_USER_CAN_CONTINUE = 'userCanContinue';
-const WARNING_TITLE = 'title';
-const WARNING_TEXT = 'text';
+const CONFIG_FILE_NAME = 'module_perun.php';
 
-const PERUN_CONFIG_FILE_NAME = 'module_perun.php';
 const ADD_INSTITUTION_URL = 'disco.addInstitution.URL';
 const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
 
 const URN_CESNET_PROXYIDP_IDPENTITYID = "urn:cesnet:proxyidp:idpentityid:";
 
+const WARNING_TYPE_INFO = 'INFO';
+const WARNING_TYPE_WARNING = 'WARNING';
+const WARNING_TYPE_ERROR = 'ERROR';
+
+$warningIsOn = $this->data['warningIsOn'];
+$warningType = $this->data['warningType'];
+$warningTitle = $this->data['warningTitle'];
+$warningText = $this->data['warningText'];
+
 $authContextClassRef = null;
 $idpEntityId = null;
 
-$warningIsOn = false;
-$warningUserCanContinue = null;
-$warningTitle = null;
-$warningText = null;
-$configWarning = null;
+$config = null;
 
-$configPerun = null;
 $addInstitutionUrl = '';
 $addInstitutionEmail = '';
 
 try {
-    $configWarning = Configuration::getConfig(WARNING_CONFIG_FILE_NAME);
+    $config = Configuration::getConfig(CONFIG_FILE_NAME);
 } catch (\Exception $ex) {
-    Logger::warning("perun:disco-tpl: missing or invalid config-warning file");
+    Logger::warning("perun:disco-tpl: missing or invalid module_perun.php config file");
 }
 
-try {
-    $configPerun = Configuration::getConfig(PERUN_CONFIG_FILE_NAME);
-} catch (\Exception $ex) {
-    Logger::warning("perun:disco-tpl: invalid module_perun.php file");
-}
-
-if (!is_null($configPerun)) {
+if ($config !== null) {
     try {
-        $addInstitutionUrl = $configPerun->getString(ADD_INSTITUTION_URL);
+        $addInstitutionUrl = $config->getString(ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
         Logger::warning("perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file");
     }
 }
 
-if (!is_null($configPerun)) {
+if ($config !== null) {
     try {
-        $addInstitutionEmail = $configPerun->getString(ADD_INSTITUTION_EMAIL);
+        $addInstitutionEmail = $config->getString(ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
         Logger::warning("perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file");
     }
 }
 
-if ($configWarning != null) {
-    try {
-        $warningIsOn = $configWarning->getBoolean(WARNING_IS_ON);
-    } catch (\Exception $ex) {
-        Logger::warning("perun:disco-tpl: missing or invalid isOn parameter in config-warning file");
-        $warningIsOn = false;
-    }
-}
-
-if ($warningIsOn) {
-    try {
-        $warningUserCanContinue = $configWarning->getBoolean(WARNING_USER_CAN_CONTINUE);
-    } catch (\Exception $ex) {
-        Logger::warning(
-            "perun:disco-tpl: missing or invalid userCanContinue parameter in config-warning file"
-        );
-        $warningUserCanContinue = true;
-    }
-    try {
-        $warningTitle = $configWarning->getString(WARNING_TITLE);
-        $warningText = $configWarning->getString(WARNING_TEXT);
-        if (empty($warningTitle) || empty($warningText)) {
-            throw new Exception();
-        }
-    } catch (Exception $ex) {
-        Logger::warning("perun:disco-tpl: missing or invalid title or text in config-warning file");
-        $warningIsOn = false;
-    }
-}
-
-if ($warningIsOn && !$warningUserCanContinue) {
+if ($warningIsOn && $warningType === WARNING_TYPE_ERROR) {
     $this->data['header'] = $this->t('{perun:disco:warning}');
 }
 
@@ -143,9 +106,11 @@ if ($this->isAddInstitutionApp()) {
     }
 
     if ($warningIsOn) {
-        if ($warningUserCanContinue) {
+        if ($warningType === WARNING_TYPE_INFO) {
+            echo '<div class="alert alert-info">';
+        } elseif ($warningType === WARNING_TYPE_WARNING) {
             echo '<div class="alert alert-warning">';
-        } else {
+        } elseif ($warningType === WARNING_TYPE_ERROR) {
             echo '<div class="alert alert-danger">';
         }
         echo '<h4> <strong>' . $warningTitle . '</strong> </h4>';
@@ -153,7 +118,7 @@ if ($this->isAddInstitutionApp()) {
         echo '</div>';
     }
 
-    if (!$warningIsOn || $warningUserCanContinue) {
+    if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
         if (!empty($this->getPreferredIdp())) {
             echo '<p class="descriptionp">' . $this->t('{perun:disco:previous_selection}') . '</p>';
             echo '<div class="metalist list-group">';
@@ -192,7 +157,7 @@ if ($this->isAddInstitutionApp()) {
     }
 }
 
-if (!$warningIsOn || $warningUserCanContinue) {
+if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
     echo '<div class="inlinesearch">';
     echo '	<form id="idpselectform" action="?" method="get">
 			<input class="inlinesearchf form-control input-lg" placeholder="' .
