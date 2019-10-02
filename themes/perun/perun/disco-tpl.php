@@ -125,29 +125,10 @@ if ($this->isAddInstitutionApp()) {
             echo showEntry($this, $this->getPreferredIdp(), true);
             echo '</div>';
 
-
             echo getOr();
         }
 
-        echo '<div class="row">';
-        foreach ($this->getIdps('preferred') as $idpentry) {
-            echo '<div class="col-md-4">';
-            echo '<div class="metalist list-group">';
-            echo showEntry($this, $idpentry, false);
-            echo '</div>';
-            echo '</div>';
-        }
-        echo '</div>';
-
-        echo '<div class="row">';
-        foreach ($this->getIdps('social') as $idpentry) {
-            echo '<div class="col-md-4">';
-            echo '<div class="metalist list-group">';
-            echo showEntry($this, $idpentry, false);
-            echo '</div>';
-            echo '</div>';
-        }
-        echo '</div>';
+        echo showAllTaggedIdPs($this);
 
         echo getOr();
 
@@ -188,6 +169,11 @@ if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARN
             $this->t('{perun:disco:add_institution}') .
             '</a>';
     }
+
+    if (!empty($this->getPreferredIdp())) {
+        echo '</div>';
+    }
+
     echo '</div>';
 }
 
@@ -237,9 +223,11 @@ function showEntry($t, $metadata, $favourite = false)
 /**
  * @param DiscoTemplate $t
  * @param array $metadata
+ * @param bool $showSignInWith
+ *
  * @return string html
  */
-function showTaggedEntry($t, $metadata)
+function showTaggedEntry($t, $metadata, $showSignInWith = false)
 {
 
     $bck = 'white';
@@ -252,7 +240,14 @@ function showTaggedEntry($t, $metadata)
 
     $html .= '<img src="' . $metadata['icon'] . '">';
 
-    $html .= '<strong>Sign in with ' . $t->getTranslatedEntityName($metadata) . '</strong>';
+    if (isset($metadata['fullDisplayName'])) {
+        $html .= '<strong>' . $metadata['fullDisplayName'] . '</strong>';
+    } elseif ($showSignInWith) {
+        $html .= '<strong>' . $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata) .
+                 '</strong>';
+    } else {
+        $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
+    }
 
     $html .= '</a>';
 
@@ -284,4 +279,49 @@ function getOr()
     $or .= '	<span>or</span>';
     $or .= '</div>';
     return $or;
+}
+
+function showAllTaggedIdPs($t)
+{
+    $html = '';
+    $html .= showTaggedIdPs($t, 'preferred');
+    $html .= showTaggedIdPs($t, 'social', true);
+    return $html;
+}
+
+
+function showTaggedIdPs($t, $tag, $showSignInWith = false)
+{
+    $html = '';
+    $idps = $t->getIdPs($tag);
+    $idpCount = count($idps);
+    $counter = 0;
+
+    $fullRowCount = floor($idpCount / 3);
+    for ($i = 0; $i < $fullRowCount; $i++ ) {
+        $html .= '<div class="row">';
+        for ($j = 0; $j < 3; $j++) {
+            $html .= '<div class="col-md-4">';
+            $html .= '<div class="metalist list-group">';
+            $html .= showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
+            $html .= '</div>';
+            $html .= '</div>';
+            $counter++;
+        }
+        $html .= '</div>';
+    }
+    if (($idpCount % 3) !== 0) {
+        $html .= '<div class="row">';
+        for ($i = 0; $i < $idpCount % 3; $i++) {
+            $html .= '<div class="col-md-' . (12 / ($idpCount % 3))  . '">';
+            $html .= '<div class="metalist list-group">';
+            $html .= showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
+            $html .= '</div>';
+            $html .= '</div>';
+            $counter++;
+        }
+        $html .= '</div>';
+    }
+
+    return $html;
 }

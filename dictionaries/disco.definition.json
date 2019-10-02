@@ -19,6 +19,10 @@
       "en": "your previous selection",
       "cs": "vaše předchozí volba"
   },
+  "sign_in_with": {
+    "en": "Sign in with ",
+    "cs": "Přihlásit se pomocí "
+  },
   "type_name_institution": {
     "en": "Type the name of your institution",
     "cs": "Zadejte název instituce"
