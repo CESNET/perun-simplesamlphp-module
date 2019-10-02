@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Remove star which was shown on items on Discovery Service. Now the star will be shown only at previously selected IdP. 
+
 #### Fixed
 - Fixed the bug in 'getEntitylesAttribute' function to return correct value of Entityless attribute 
 

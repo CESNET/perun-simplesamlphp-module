@@ -1,20 +1,21 @@
 a.metaentry {
-    padding: 10px 15px 10px 35px;
+    padding: 10px 15px 10px 15px;
+}
+
+a.metaentry:hover {
+    background-image: none;
 }
 
 a.metaentry.favourite {
     background-image: url(../../../../resources/icons/silk/star.png);
     background-position: 10px center;
+    padding-left: 35px;
 }
 
 a.metaentry .idp-logo {
     float: right;
     height: 20px;
     max-width: 120px;
-}
-
-a.metaentry:hover {
-    background-position: 10px center;
 }
 
 a.metaentryrow .idp-logo {
