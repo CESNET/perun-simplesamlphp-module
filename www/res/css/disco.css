@@ -6,6 +6,11 @@ a.metaentry:hover {
     background-image: none;
 }
 
+a.metaentry:focus {
+    outline: none;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
 a.metaentry.favourite {
     background-image: url(../../../../resources/icons/silk/star.png);
     background-position: 10px center;

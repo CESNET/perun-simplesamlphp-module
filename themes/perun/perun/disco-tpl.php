@@ -30,6 +30,7 @@ $this->data['head'] .= '<script type="text/javascript" src="' .
 
 $this->data['head'] .= searchScript();
 $this->data['head'] .= showEntriesScript();
+$this->data['head'] .= setFocus();
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 
@@ -122,7 +123,7 @@ if ($this->isAddInstitutionApp()) {
     if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
         if (!empty($this->getPreferredIdp())) {
             echo '<p class="descriptionp">' . $this->t('{perun:disco:previous_selection}') . '</p>';
-            echo '<div class="metalist list-group">';
+            echo '<div id="last-used-idp" class="metalist list-group">';
             echo showEntry($this, $this->getPreferredIdp(), true);
             echo '</div>';
 
@@ -204,6 +205,21 @@ function searchScript()
 
 	$(document).ready(function() { 
 		$("#query").liveUpdate("#list");
+	});
+	
+	</script>';
+
+    return $script;
+}
+
+function setFocus()
+{
+    $script = '<script type="text/javascript">
+
+	$(document).ready(function() {
+	    if ($("#last-used-idp")) {
+		    $("#last-used-idp .metaentry").focus();
+	    }
 	});
 	
 	</script>';
