@@ -247,8 +247,6 @@ function showEntry($t, $metadata, $favourite = false)
 
     $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
 
-    $html .= showIcon($metadata);
-
     $html .= '</a>';
 
     return $html;
@@ -284,25 +282,6 @@ function showTaggedEntry($t, $metadata, $showSignInWith = false)
     }
 
     $html .= '</a>';
-
-    return $html;
-}
-
-
-function showIcon($metadata)
-{
-    $html = '';
-    // Logos are turned off, because they are loaded via URL from IdP. Some IdPs have bad configuration,
-    // so it breaks the WAYF.
-
-    /*if (isset($metadata['UIInfo']['Logo'][0]['url'])) {
-        $html .= '<img src="' .
-                    htmlspecialchars(\SimpleSAML\Utils\HTTP::resolveURL($metadata['UIInfo']['Logo'][0]['url'])) .
-                    '" class="idp-logo">';
-    } else if (isset($metadata['icon'])) {
-        $html .= '<img src="' . htmlspecialchars(\SimpleSAML\Utils\HTTP::resolveURL($metadata['icon'])) .
-                    '" class="idp-logo">';
-    }*/
 
     return $html;
 }
