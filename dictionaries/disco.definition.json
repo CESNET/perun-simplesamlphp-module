@@ -15,6 +15,10 @@
     "en": "your institutional account",
     "cs": "váš univerzitní účet"
   },
+  "sign_with_other_institution": {
+    "en": "Sign in using other institution",
+    "cs": "Přihlásit se účtem jiné instituce"
+  },
   "previous_selection": {
       "en": "your previous selection",
       "cs": "vaše předchozí volba"

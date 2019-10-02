@@ -29,6 +29,7 @@ $this->data['head'] .= '<script type="text/javascript" src="' .
     Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>';
 
 $this->data['head'] .= searchScript();
+$this->data['head'] .= showEntriesScript();
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 
@@ -126,6 +127,10 @@ if ($this->isAddInstitutionApp()) {
             echo '</div>';
 
             echo getOr();
+
+            echo '<span id="showEntries" class="btn btn-block btn-default btn-lg">' .
+                 $this->t('{perun:disco:sign_with_other_institution}') .'</span>' ;
+            echo '<div id="entries" style="display: none">';
         }
 
         echo showAllTaggedIdPs($this);
@@ -178,6 +183,19 @@ if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARN
 }
 
 $this->includeAtTemplateBase('includes/footer.php');
+
+function showEntriesScript()
+{
+    $script = '<script type="text/javascript">
+     $(document).ready(function() {
+         $("#showEntries").click(function() {
+             $("#entries").show();
+             $("#showEntries").hide();
+         });
+     });
+    </script>';
+    return $script;
+}
 
 function searchScript()
 {
