@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed the bug in 'getEntitylesAttribute' function to return correct value of Entityless attribute 
 
 ## [v3.3.0]
 #### Added
