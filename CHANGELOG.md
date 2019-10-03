@@ -2,6 +2,16 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Remove star which was shown on items on Discovery Service. Now the star will be shown only at previously selected IdP.
+- Change work with IdP entities with tags 'social' and  'preferred' on DS
+    - Width of entities is now counted automatically
+    - Social IdP has 'Sign in with' before name, Preferred IdP hasn't
+    - Added possibility to change display name in attribute 'fullDisplayName' in metadata
+- If user's last selected IdP is known then show only this IdP and button to show all IdPs 
+- Set autofocus on previously selected IdP if exist
+- Removed unused function showIcon() in disco-tpl.php
+
 #### Fixed
 - Fixed the bug in 'getEntitylesAttribute' function to return correct value of Entityless attribute 
 
