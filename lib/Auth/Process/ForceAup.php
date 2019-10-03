@@ -181,7 +181,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                         $userLatestAup = $this->getLatestAup($userAupsList);
 
                         if ($latest_aup->date === $userLatestAup->date) {
-                            break;
+                            continue;
                         }
                     }
                     $newAups[$requiredAup] = $latest_aup;
@@ -198,7 +198,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                         $userLatestAup = $this->getLatestAup($userAupsList);
 
                         if ($latest_aup->date === $userLatestAup->date) {
-                            break;
+                            continue;
                         }
                     }
 
