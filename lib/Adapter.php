@@ -99,7 +99,7 @@ abstract class Adapter
 
     /**
      * @param string $attrName
-     * @return array of all entityless attributes with attrName (for all namespaces of same attribute).
+     * @return map of all entityless attributes with attrName (for all namespaces of same attribute).
      */
     abstract public function getEntitylessAttribute($attrName);
 

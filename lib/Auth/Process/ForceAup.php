@@ -151,7 +151,12 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                 return;
             }
 
-            $perunAups = $this->adapter->getEntitylessAttribute($this->perunAupsAttr);
+            $perunAupsAttr = $this->adapter->getEntitylessAttribute($this->perunAupsAttr);
+
+            $perunAups = [];
+            foreach ($perunAupsAttr as $key => $attr) {
+                $perunAups[$key] = $attr['value'];
+            }
 
             $userAups = $this->adapter->getUserAttributes(
                 $user,

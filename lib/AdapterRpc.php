@@ -250,13 +250,25 @@ class AdapterRpc extends Adapter
 
     public function getEntitylessAttribute($attrName)
     {
-        $perunAttrs = $this->connector->get('attributesManager', 'getEntitylessAttributes', [
+        $attributes = [];
+
+        $perunAttrValues = $this->connector->get('attributesManager', 'getEntitylessAttributes', [
             'attrName' => $attrName,
         ]);
 
-        $attributes = [];
-        foreach ($perunAttrs as $perunAttr) {
-            $attributes[key($perunAttr['value'])] = $perunAttr['value'][key($perunAttr['value'])];
+        if (!isset($perunAttrValues[0]['id'])) {
+            return $attributes;
+        }
+        $attrId = $perunAttrValues[0]['id'];
+
+        $perunAttrKeys = $this->connector->get('attributesManager', 'getEntitylessKeys', [
+            'attributeDefinition' => $attrId,
+        ]);
+
+        for ($i = 0, $iMax = count($perunAttrKeys); $i < $iMax; $i++) {
+            $key = $perunAttrKeys[$i];
+            $value = $perunAttrValues[$i];
+            $attributes[$key] = $value;
         }
 
         return $attributes;
