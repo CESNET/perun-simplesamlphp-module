@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 
 #### Fixed
 - Fixed the bug in 'getEntitylesAttribute' function to return correct value of Entityless attribute 
+- Fixed the bug in getting new aups to sign
 
 ## [v3.3.0]
 #### Added
