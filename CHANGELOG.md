@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.4.0]
 #### Changed
 - Remove star which was shown on items on Discovery Service. Now the star will be shown only at previously selected IdP.
 - Change work with IdP entities with tags 'social' and  'preferred' on DS
@@ -192,6 +194,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.4.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.4.0
 [v3.3.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.3.0
 [v3.2.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.1
 [v3.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.2.0
