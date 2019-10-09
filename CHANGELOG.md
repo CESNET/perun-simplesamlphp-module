@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed bugs in disco-tpl.php
 
 ## [v3.4.0]
 #### Changed
