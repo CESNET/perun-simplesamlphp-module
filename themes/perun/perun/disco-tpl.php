@@ -129,8 +129,8 @@ if ($this->isAddInstitutionApp()) {
 
             echo getOr();
 
-            echo '<span id="showEntries" class="btn btn-block btn-default btn-lg">' .
-                 $this->t('{perun:disco:sign_with_other_institution}') .'</span>' ;
+            echo '<a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
+                 $this->t('{perun:disco:sign_with_other_institution}') .'</a>' ;
             echo '<div id="entries" style="display: none">';
         }
 
@@ -267,7 +267,7 @@ function showTaggedEntry($t, $metadata, $showSignInWith = false)
         $bck = $metadata['color'];
     }
 
-    $html = '<a class="btn btn-block tagged" href="' . $t->getContinueUrl($metadata['entityid']) .
+    $html = '<a class="metaentry btn btn-block tagged" href="' . $t->getContinueUrl($metadata['entityid']) .
         '" style="background: ' . $bck . '">';
 
     $html .= '<img src="' . $metadata['icon'] . '">';
