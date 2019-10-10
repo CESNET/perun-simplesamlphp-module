@@ -98,21 +98,25 @@ echo '<h3 id="attributeheader">' .
 echo present_attributes($this, $attributes, '');
 
 ?>
+    <div class="row">
+        <div class="col-xs-12">
+            <?php
+            if ($this->data['usestorage']) {
+                $checked = ($this->data['checked'] ? 'checked="checked"' : '');
+                echo '<div class="checkbox">
+            <input type="checkbox" form="yesform" name="saveconsent" id="saveconsent" value="1" /> '
+                . '<label for="saveconsent">' . $this->t('{perun:consent:remember}') . '</label>
+            </div>';
+            }
+            ?>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-xs-6">
 
-            <form action="<?php echo htmlspecialchars($this->data['yesTarget']); ?>">
+            <form action="<?php echo htmlspecialchars($this->data['yesTarget']); ?>" id="yesform">
                 <?php
-                if ($this->data['usestorage']) {
-                    $checked = ($this->data['checked'] ? 'checked="checked"' : '');
-                    echo '<div class="checkbox">
-    	        <label>
-      		    <input type="checkbox" name="saveconsent" value="1" /> ' . $this->t('{perun:consent:remember}') . '
-	            </label>    
-                </div>';
-                }
-
                 // Embed hidden fields...
                 foreach ($this->data['yesData'] as $name => $value) {
                     echo '<input type="hidden" name="' . htmlspecialchars($name) .
@@ -121,7 +125,7 @@ echo present_attributes($this, $attributes, '');
                 ?>
 
                 <button type="submit" name="yes" class="btn btn-lg btn-success btn-block" id="yesbutton">
-                    <?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?></span>
                 </button>
 
             </form>
@@ -138,7 +142,7 @@ echo present_attributes($this, $attributes, '');
                 }
                 ?>
                 <button type="submit" class="btn btn-lg btn-default btn-block  btn-no" name="no" id="nobutton">
-                    <?php echo htmlspecialchars($this->t('{consent:consent:no}')) ?>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:no}')) ?></span>
                 </button>
 
             </form>
