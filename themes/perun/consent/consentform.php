@@ -65,9 +65,10 @@ function perun_present_attributes($t, $attributes, $nameParent)
             if (max(array_map('strlen', $value)) < 30) {
                 $liClasses[] = 'perun-attr-singleline';
             }
-            $str .= "\n".'<li class="' . implode(' ', $liClasses) . '"><h3 class="perun-attrname">'.htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h3>';
+            $str .= "\n".'<li class="' . implode(' ', $liClasses) . '">'
+              . '<div class="row"><div class="col-sm-6"><h3 class="perun-attrname">'.htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h3></div>';
 
-            $str .= '<div class="perun-attrcontainer">';
+            $str .= '<div class="perun-attrcontainer col-sm-6">';
             $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
             if ($isHidden) {
                 $hiddenId = \SimpleSAML\Utils\Random::generateID();
@@ -95,7 +96,7 @@ function perun_present_attributes($t, $attributes, $nameParent)
                 $str .= '</div>';
             }
 
-            $str .= '</div><!-- .perun-attrcontainer --></li>';
+            $str .= '</div><!-- .perun-attrcontainer --></div><!-- .row --></li>';
         }       // end else: not child table
     }   // end foreach
     $str .= isset($attributes) ? '</ul>' : '';
@@ -173,7 +174,7 @@ echo '<h1 id="attributeheader">' .
 echo perun_present_attributes($this, $attributes, '');
 
 ?>
-    <div class="row">
+    <div class="row" id="saveconsentcontainer">
         <div class="col-xs-12">
             <?php
             if ($this->data['usestorage']) {
