@@ -28,6 +28,81 @@ assert('is_array($this->data["attributes"])');
 assert('is_array($this->data["hiddenAttributes"])');
 assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
 
+function present_attributes_photo_or_value($nameraw, $listitem) {
+    if ($nameraw === 'jpegPhoto') {
+        return '<img src="data:image/jpeg;base64,' . htmlspecialchars($listitem) . '" alt="User photo" />';
+    } else {
+        return htmlspecialchars($listitem);
+    }
+}
+
+function perun_present_attributes($t, $attributes, $nameParent)
+{
+    $translator = $t->getTranslator();
+
+    if (strlen($nameParent) > 0) {
+        $parentStr = strtolower($nameParent).'_';
+        $str = '<ul class="perun-attributes">';
+    } else {
+        $parentStr = '';
+        $str = '<h2>' . $translator->t('{consent:consent:table_caption}') . '</h2>' . "\n";
+        $str .= '<ul id="perun-table_with_attributes" class="perun-attributes">';
+    }
+
+    foreach ($attributes as $name => $value) {
+        $nameraw = $name;
+        $name = $translator->getAttributeTranslation($parentStr.$nameraw);
+
+        if (preg_match('/^child_/', $nameraw)) {
+            // insert child table
+            throw new Exception('Unsupported');
+        } else {
+            // insert values directly
+            $liClasses = [];
+            if (count($value) <= 1) {
+                $liClasses[] = 'perun-attr-singlevalue';
+            }
+            if (max(array_map('strlen', $value)) < 30) {
+                $liClasses[] = 'perun-attr-singleline';
+            }
+            $str .= "\n".'<li class="' . implode(' ', $liClasses) . '"><h3 class="perun-attrname">'.htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h3>';
+
+            $str .= '<div class="perun-attrcontainer">';
+            $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
+            if ($isHidden) {
+                $hiddenId = \SimpleSAML\Utils\Random::generateID();
+                $str .= '<span class="perun-attrvalue hidden" id="hidden_'.$hiddenId.'">';
+            } else {
+                $str .= '<span class="perun-attrvalue">';
+            }
+
+            if (count($value) > 0) {
+                $str .= '<ul class="perun-attrlist">';
+                foreach ($value as $listitem) {
+                    $str .= '<li>' . present_attributes_photo_or_value($nameraw, $listitem) . '</li>';
+                }
+                $str .= '</ul>';
+            }
+            $str .= '</span>';
+
+            if ($isHidden) {
+                $str .= '<div class="perun-attrvalue consent_showattribute" id="visible_'.$hiddenId.'">';
+                $str .= '&#8230; ';
+                $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_'.$hiddenId;
+                $str .= '\'); SimpleSAML_hide(\'visible_'.$hiddenId.'\');">';
+                $str .= $t->t('{consent:consent:show_attribute}');
+                $str .= '</a>';
+                $str .= '</div>';
+            }
+
+            $str .= '</div><!-- .perun-attrcontainer --></li>';
+        }       // end else: not child table
+    }   // end foreach
+    $str .= isset($attributes) ? '</ul>' : '';
+    return $str;
+}
+
+
 // Parse parameters
 if (array_key_exists('name', $this->data['srcMetadata'])) {
     $srcName = $this->data['srcMetadata']['name'];
@@ -88,14 +163,14 @@ if ($this->data['sppp'] !== false) {
     echo "</p>";
 }
 
-echo '<h3 id="attributeheader">' .
+echo '<h1 id="attributeheader">' .
     $this->t(
         '{perun:consent:consent_attributes_header}',
         ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
     ) .
-    '</h3>';
+    '</h1>';
 
-echo present_attributes($this, $attributes, '');
+echo perun_present_attributes($this, $attributes, '');
 
 ?>
     <div class="row">
@@ -124,7 +199,7 @@ echo present_attributes($this, $attributes, '');
                 }
                 ?>
 
-                <button type="submit" name="yes" class="btn btn-lg btn-success btn-block" id="yesbutton">
+                <button type="submit" name="yes" class="btn btn-lg btn-primary btn-success btn-block" id="yesbutton">
                     <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?></span>
                 </button>
 
