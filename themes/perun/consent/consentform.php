@@ -188,7 +188,7 @@ echo perun_present_attributes($this, $attributes, '');
     </div>
 
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-sm-6">
 
             <form action="<?php echo htmlspecialchars($this->data['yesTarget']); ?>" id="yesform">
                 <?php
@@ -206,7 +206,7 @@ echo perun_present_attributes($this, $attributes, '');
             </form>
 
         </div>
-        <div class="col-xs-6">
+        <div class="col-sm-6">
 
             <form action="<?php echo htmlspecialchars($this->data['noTarget']); ?>">
 
