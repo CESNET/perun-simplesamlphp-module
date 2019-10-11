@@ -7,7 +7,7 @@
     padding: 0;
 }
 
-#perun-table_with_attributes > :not(.perun-attr-singlevalue) .perun-attrlist li {
+#perun-table_with_attributes > :not(.perun-attr-singlevalue) .perun-attrlist {
     padding-left: 15px;
 }
 
@@ -15,13 +15,6 @@
     clear: both;
     overflow: hidden;
     padding: 0.8em 0.5em;
-}
-
-@media(min-width:768px) {
-    .perun-attr-singleline h3, .perun-attr-singleline .perun-attrcontainer {
-        float: left;
-        width: 50%;
-    }
 }
 
 #perun-table_with_attributes .perun-attr-singlevalue li {
@@ -32,6 +25,19 @@
     content: none !important;
 }
 
+#perun-table_with_attributes {
+    margin-bottom: 2em;
+}
+
+#saveconsentcontainer {
+    margin-bottom: 1em;
+}
+
 #saveconsent {
-    margin: 2em 0 1em;
+    position: static;
+    margin-left: 0;
+}
+
+#perun-table_with_attributes h3 {
+    border-bottom: 0;
 }
