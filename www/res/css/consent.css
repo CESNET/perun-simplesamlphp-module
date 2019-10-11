@@ -41,3 +41,7 @@
 #perun-table_with_attributes h3 {
     border-bottom: 0;
 }
+
+.perun-attrcontainer {
+    overflow-wrap: break-word;
+}
