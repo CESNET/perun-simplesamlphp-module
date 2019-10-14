@@ -4,6 +4,7 @@ namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Configuration;
 
 /**
  * Class sspmod_perun_Auth_Process_ProxyFilter
@@ -46,9 +47,9 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        $conf = SimpleSAML\Configuration::loadFromArray($config);
+        $conf = Configuration::loadFromArray($config);
         $this->config = $conf->getArray('config');
-        $this->nestedClass = SimpleSAML\Configuration::loadFromArray($this->config)->getString('class');
+        $this->nestedClass = Configuration::loadFromArray($this->config)->getString('class');
         unset($this->config['class']);
         $this->filterSPs = $conf->getArray('filterSPs', []);
         $this->filterAttributes = $conf->getArray('filterAttributes', []);
@@ -72,7 +73,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
                             $this->nestedClass,
                             $attr,
                             $value
-                        );
+                        )
                     );
 
                     return;
@@ -88,7 +89,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
                         "perun.ProxyFilter: Filtering out filter %s for SP %s",
                         $this->nestedClass,
                         $currentSp
-                    );
+                    )
                 );
 
                 return;
