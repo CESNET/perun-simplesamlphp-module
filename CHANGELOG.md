@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Added filterAttributes option to ProxyFilter for filtering out based on user attribute values
 
 ## [v3.4.1]
 #### Fixed
