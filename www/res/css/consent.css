@@ -45,3 +45,7 @@
 .perun-attrcontainer {
     overflow-wrap: break-word;
 }
+
+#yesbutton, #nobutton {
+    margin-top: 1em;
+}
