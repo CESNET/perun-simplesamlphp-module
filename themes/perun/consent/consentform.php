@@ -45,7 +45,6 @@ function perun_present_attributes($t, $attributes, $nameParent)
         $str = '<ul class="perun-attributes">';
     } else {
         $parentStr = '';
-        $str = '<h2>' . $translator->t('{consent:consent:table_caption}') . '</h2>' . "\n";
         $str .= '<ul id="perun-table_with_attributes" class="perun-attributes">';
     }
 
@@ -62,11 +61,8 @@ function perun_present_attributes($t, $attributes, $nameParent)
             if (count($value) <= 1) {
                 $liClasses[] = 'perun-attr-singlevalue';
             }
-            if (max(array_map('strlen', $value)) < 30) {
-                $liClasses[] = 'perun-attr-singleline';
-            }
             $str .= "\n".'<li class="' . implode(' ', $liClasses) . '">'
-              . '<div class="row"><div class="col-sm-6"><h3 class="perun-attrname">'.htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h3></div>';
+              . '<div class="row"><div class="col-sm-6"><h2 class="perun-attrname h4">'.htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
 
             $str .= '<div class="perun-attrcontainer col-sm-6">';
             $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
