@@ -132,7 +132,10 @@ $attributes = $this->data['attributes'];
 
 $this->data['header'] = $this->t('{consent:consent:consent_header}');
 
-$this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
+if (!isset($this->data['head'])) {
+    $this->data['head'] = '';
+}
+$this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('consent/assets/css/consent.css') . '" />';
 $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/consent.css') . '" />';
