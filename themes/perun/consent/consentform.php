@@ -28,7 +28,8 @@ assert('is_array($this->data["attributes"])');
 assert('is_array($this->data["hiddenAttributes"])');
 assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
 
-function present_attributes_photo_or_value($nameraw, $listitem) {
+function present_attributes_photo_or_value($nameraw, $listitem)
+{
     if ($nameraw === 'jpegPhoto') {
         return '<img src="data:image/jpeg;base64,' . htmlspecialchars($listitem) . '" alt="User photo" />';
     } else {
@@ -62,7 +63,8 @@ function perun_present_attributes($t, $attributes, $nameParent)
                 $liClasses[] = 'perun-attr-singlevalue';
             }
             $str .= "\n".'<li class="' . implode(' ', $liClasses) . '">'
-              . '<div class="row"><div class="col-sm-6"><h2 class="perun-attrname h4">'.htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
+              . '<div class="row"><div class="col-sm-6"><h2 class="perun-attrname h4">'
+              . htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
 
             $str .= '<div class="perun-attrcontainer col-sm-6">';
             $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
