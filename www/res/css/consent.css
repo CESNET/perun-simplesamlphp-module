@@ -2,7 +2,7 @@
     background-color: #DFDFDF;
 }
 
-#perun-table_with_attributes, #perun-table_with_attributes ul, #perun-table_with_attributes h3, #perun-table_with_attributes li {
+#perun-table_with_attributes, #perun-table_with_attributes ul, #perun-table_with_attributes .perun-attrname, #perun-table_with_attributes li {
     margin: 0;
     padding: 0;
 }
@@ -38,7 +38,7 @@
     margin-left: 0;
 }
 
-#perun-table_with_attributes h3 {
+#perun-table_with_attributes .perun-attrname {
     border-bottom: 0;
 }
 
