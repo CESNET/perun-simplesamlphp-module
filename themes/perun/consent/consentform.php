@@ -46,7 +46,7 @@ function perun_present_attributes($t, $attributes, $nameParent)
         $str = '<ul class="perun-attributes">';
     } else {
         $parentStr = '';
-        $str .= '<ul id="perun-table_with_attributes" class="perun-attributes">';
+        $str = '<ul id="perun-table_with_attributes" class="perun-attributes">';
     }
 
     foreach ($attributes as $name => $value) {
