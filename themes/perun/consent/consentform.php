@@ -43,6 +43,11 @@ $default_translations = [
 ];
 $this->data['t'] = array_merge($default_translations, $this->data['t']);
 
+if (!isset($this->data['label-col'])) {
+  $this->data['label-col'] = 5;
+}
+$this->data['value-col'] = 12 - $this->data['label-col'];
+
 function present_attributes_photo_or_value($nameraw, $listitem)
 {
     if ($nameraw === 'jpegPhoto') {
@@ -73,15 +78,12 @@ function perun_present_attributes($t, $attributes, $nameParent)
             throw new Exception('Unsupported');
         } else {
             // insert values directly
-            $liClasses = [];
-            if (count($value) <= 1) {
-                $liClasses[] = 'perun-attr-singlevalue';
-            }
-            $str .= "\n".'<li class="' . implode(' ', $liClasses) . '">'
-              . '<div class="row"><div class="col-sm-6"><h2 class="perun-attrname h4">'
+            $str .= "\n".'<li>'
+              . '<div class="row"><div class="col-sm-' . $this->data['label-col']
+              . '"><h2 class="perun-attrname h4">'
               . htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
 
-            $str .= '<div class="perun-attrcontainer col-sm-6">';
+            $str .= '<div class="perun-attrcontainer col-sm-' . $this->data['value-col'] . '">';
             $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
             if ($isHidden) {
                 $hiddenId = \SimpleSAML\Utils\Random::generateID();
