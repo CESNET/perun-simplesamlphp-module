@@ -7,22 +7,20 @@
     padding: 0;
 }
 
-#perun-table_with_attributes > :not(.perun-attr-singlevalue) .perun-attrlist {
-    padding-left: 15px;
-}
-
 #perun-table_with_attributes > li {
     clear: both;
     overflow: hidden;
     padding: 0.8em 0.5em;
 }
 
-#perun-table_with_attributes .perun-attr-singlevalue li {
-    list-style-type: none;
+#perun-table_with_attributes li {
+    margin-left: 15px;
+    list-style-type: disc;
 }
 
-#perun-table_with_attributes .perun-attr-singlevalue li:before {
-    content: none !important;
+#perun-table_with_attributes li:only-child {
+    list-style-type: none;
+    margin-left: 0;
 }
 
 #perun-table_with_attributes {
