@@ -29,22 +29,22 @@ assert('is_array($this->data["hiddenAttributes"])');
 assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
 
 if (!isset($this->data['t'])) {
-  $this->data['t'] = [];
+    $this->data['t'] = [];
 }
 $default_translations = [
-  'show_attribute' => '{consent:consent:show_attribute}',
-  'consent_header' => '{consent:consent:consent_header}',
-  'consent_purpose' => '{consent:consent:consent_purpose}',
-  'consent_privacypolicy' => '{consent:consent:consent_privacypolicy}',
-  'consent_attributes_header' => '{perun:consent:consent_attributes_header}',
-  'remember' => '{perun:consent:remember}',
-  'yes' => '{consent:consent:yes}',
-  'no' => '{consent:consent:no}',
+    'show_attribute' => '{consent:consent:show_attribute}',
+    'consent_header' => '{consent:consent:consent_header}',
+    'consent_purpose' => '{consent:consent:consent_purpose}',
+    'consent_privacypolicy' => '{consent:consent:consent_privacypolicy}',
+    'consent_attributes_header' => '{perun:consent:consent_attributes_header}',
+    'remember' => '{perun:consent:remember}',
+    'yes' => '{consent:consent:yes}',
+    'no' => '{consent:consent:no}',
 ];
 $this->data['t'] = array_merge($default_translations, $this->data['t']);
 
 if (!isset($this->data['label-col'])) {
-  $this->data['label-col'] = 5;
+    $this->data['label-col'] = 5;
 }
 $this->data['value-col'] = 12 - $this->data['label-col'];
 
