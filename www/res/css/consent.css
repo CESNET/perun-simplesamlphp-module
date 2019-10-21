@@ -18,6 +18,10 @@
     list-style-type: disc;
 }
 
+#perun-table_with_attributes > li {
+    list-style-type: none;
+}
+
 #perun-table_with_attributes li:only-child {
     list-style-type: none;
     margin-left: 0;
