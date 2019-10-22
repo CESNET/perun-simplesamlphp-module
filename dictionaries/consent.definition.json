@@ -1,11 +1,11 @@
 {
   "remember": {
-    "en": "Do not ask again",
-    "cs": "Příště se již neptat"
+    "en": "Remember my approval",
+    "cs": "Zapamatovat souhlas"
   },
   "consent_attributes_header": {
-    "en":"Information that will be sent to SPNAME",
-    "cs":"Atributy, které budou zaslány službě SPNAME"
+    "en": "Information sent to SPNAME",
+    "cs": "Atributy pro službu SPNAME"
   },
   "forwardedscopedaffiliation": {
     "en": "Home organization affiliation",
