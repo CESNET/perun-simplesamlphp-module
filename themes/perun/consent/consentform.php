@@ -31,7 +31,6 @@ assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
 if (!isset($this->data['label-col'])) {
     $this->data['label-col'] = 5;
 }
-$this->data['value-col'] = 12 - $this->data['label-col'];
 
 function present_attributes_photo_or_value($nameraw, $listitem)
 {
@@ -42,7 +41,7 @@ function present_attributes_photo_or_value($nameraw, $listitem)
     }
 }
 
-function perun_present_attributes($t, $attributes, $nameParent)
+function perun_present_attributes($t, $attributes, $nameParent, $labelCol = 5)
 {
     $translator = $t->getTranslator();
 
@@ -64,11 +63,11 @@ function perun_present_attributes($t, $attributes, $nameParent)
         } else {
             // insert values directly
             $str .= "\n".'<li>'
-              . '<div class="row"><div class="col-sm-' . $this->data['label-col']
+              . '<div class="row"><div class="col-sm-' . $labelCol
               . '"><h2 class="perun-attrname h4">'
               . htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
 
-            $str .= '<div class="perun-attrcontainer col-sm-' . $this->data['value-col'] . '">';
+            $str .= '<div class="perun-attrcontainer col-sm-' . (12-$labelCol) . '">';
             $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
             if ($isHidden) {
                 $hiddenId = \SimpleSAML\Utils\Random::generateID();
@@ -174,7 +173,7 @@ echo '<h1 id="attributeheader">' .
     ) .
     '</h1>';
 
-echo perun_present_attributes($this, $attributes, '');
+echo perun_present_attributes($this, $attributes, '', $this->data['label-col']);
 
 ?>
     <div class="row" id="saveconsentcontainer">
