@@ -28,21 +28,6 @@ assert('is_array($this->data["attributes"])');
 assert('is_array($this->data["hiddenAttributes"])');
 assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
 
-if (!isset($this->data['t'])) {
-    $this->data['t'] = [];
-}
-$default_translations = [
-    'show_attribute' => '{consent:consent:show_attribute}',
-    'consent_header' => '{consent:consent:consent_header}',
-    'consent_purpose' => '{consent:consent:consent_purpose}',
-    'consent_privacypolicy' => '{consent:consent:consent_privacypolicy}',
-    'consent_attributes_header' => '{perun:consent:consent_attributes_header}',
-    'remember' => '{perun:consent:remember}',
-    'yes' => '{consent:consent:yes}',
-    'no' => '{consent:consent:no}',
-];
-$this->data['t'] = array_merge($default_translations, $this->data['t']);
-
 if (!isset($this->data['label-col'])) {
     $this->data['label-col'] = 5;
 }
@@ -106,7 +91,7 @@ function perun_present_attributes($t, $attributes, $nameParent)
                 $str .= '&#8230; ';
                 $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_'.$hiddenId;
                 $str .= '\'); SimpleSAML_hide(\'visible_'.$hiddenId.'\');">';
-                $str .= $t->t($this->data['t']['show_attribute']);
+                $str .= $t->t('{consent:consent:show_attribute}');
                 $str .= '</a>';
                 $str .= '</div>';
             }
@@ -149,7 +134,7 @@ $dstName = htmlspecialchars($dstName);
 
 $attributes = $this->data['attributes'];
 
-$this->data['header'] = $this->t($this->data['t']['consent_header']);
+$this->data['header'] = $this->t('{consent:consent:consent_header}');
 
 if (!isset($this->data['head'])) {
     $this->data['head'] = '';
@@ -163,7 +148,7 @@ $this->includeAtTemplateBase('includes/header.php');
 
 if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
     echo '</p><p>' . $this->t(
-        $this->data['t']['consent_purpose'],
+        '{consent:consent:consent_purpose}',
         [
             'SPNAME' => $dstName,
             'SPDESC' => $this->getTranslation(
@@ -177,14 +162,14 @@ if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
 }
 
 if ($this->data['sppp'] !== false) {
-    echo "<p>" . htmlspecialchars($this->t($this->data['t']['consent_privacypolicy'])) . " ";
+    echo "<p>" . htmlspecialchars($this->t('{consent:consent:consent_privacypolicy}')) . " ";
     echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . "</a>";
     echo "</p>";
 }
 
 echo '<h1 id="attributeheader">' .
     $this->t(
-        $this->data['t']['consent_attributes_header'],
+        '{perun:consent:consent_attributes_header}',
         ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
     ) .
     '</h1>';
@@ -199,7 +184,7 @@ echo perun_present_attributes($this, $attributes, '');
                 $checked = ($this->data['checked'] ? 'checked="checked"' : '');
                 echo '<div class="checkbox">
             <input type="checkbox" form="yesform" name="saveconsent" id="saveconsent" value="1" /> '
-                . '<label for="saveconsent">' . $this->t($this->data['t']['remember']) . '</label>
+                . '<label for="saveconsent">' . $this->t('{perun:consent:remember}') . '</label>
             </div>';
             }
             ?>
@@ -219,7 +204,7 @@ echo perun_present_attributes($this, $attributes, '');
                 ?>
 
                 <button type="submit" name="yes" class="btn btn-lg btn-primary btn-success btn-block" id="yesbutton">
-                    <span><?php echo htmlspecialchars($this->t($this->data['t']['yes'])) ?></span>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?></span>
                 </button>
 
             </form>
@@ -236,7 +221,7 @@ echo perun_present_attributes($this, $attributes, '');
                 }
                 ?>
                 <button type="submit" class="btn btn-lg btn-default btn-block  btn-no" name="no" id="nobutton">
-                    <span><?php echo htmlspecialchars($this->t($this->data['t']['no'])) ?></span>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:no}')) ?></span>
                 </button>
 
             </form>
