@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
     - Consent page is shown as a list instead of a teble
     - Changes in dictionary
     - Change the width for keys(col-sm-5) and values(col-sm-7)
+- Added filterAttributes option to ProxyFilter for filtering out based on user attribute values
 
 ## [v3.4.1]
 #### Fixed
