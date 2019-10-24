@@ -28,6 +28,81 @@ assert('is_array($this->data["attributes"])');
 assert('is_array($this->data["hiddenAttributes"])');
 assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
 
+if (!isset($this->data['label-col'])) {
+    $this->data['label-col'] = 5;
+}
+
+function present_attributes_photo_or_value($nameraw, $listitem)
+{
+    if ($nameraw === 'jpegPhoto') {
+        return '<img src="data:image/jpeg;base64,' . htmlspecialchars($listitem) . '" alt="User photo" />';
+    } else {
+        return htmlspecialchars($listitem);
+    }
+}
+
+function perun_present_attributes($t, $attributes, $nameParent, $labelCol = 5)
+{
+    $translator = $t->getTranslator();
+
+    if (strlen($nameParent) > 0) {
+        $parentStr = strtolower($nameParent).'_';
+        $str = '<ul class="perun-attributes">';
+    } else {
+        $parentStr = '';
+        $str = '<ul id="perun-table_with_attributes" class="perun-attributes">';
+    }
+
+    foreach ($attributes as $name => $value) {
+        $nameraw = $name;
+        $name = $translator->getAttributeTranslation($parentStr.$nameraw);
+
+        if (preg_match('/^child_/', $nameraw)) {
+            // insert child table
+            throw new Exception('Unsupported');
+        } else {
+            // insert values directly
+            $str .= "\n".'<li>'
+              . '<div class="row"><div class="col-sm-' . $labelCol
+              . '"><h2 class="perun-attrname h4">'
+              . htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
+
+            $str .= '<div class="perun-attrcontainer col-sm-' . (12-$labelCol) . '">';
+            $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
+            if ($isHidden) {
+                $hiddenId = \SimpleSAML\Utils\Random::generateID();
+                $str .= '<span class="perun-attrvalue hidden" id="hidden_'.$hiddenId.'">';
+            } else {
+                $str .= '<span class="perun-attrvalue">';
+            }
+
+            if (count($value) > 0) {
+                $str .= '<ul class="perun-attrlist">';
+                foreach ($value as $listitem) {
+                    $str .= '<li>' . present_attributes_photo_or_value($nameraw, $listitem) . '</li>';
+                }
+                $str .= '</ul>';
+            }
+            $str .= '</span>';
+
+            if ($isHidden) {
+                $str .= '<div class="perun-attrvalue consent_showattribute" id="visible_'.$hiddenId.'">';
+                $str .= '&#8230; ';
+                $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_'.$hiddenId;
+                $str .= '\'); SimpleSAML_hide(\'visible_'.$hiddenId.'\');">';
+                $str .= $t->t('{consent:consent:show_attribute}');
+                $str .= '</a>';
+                $str .= '</div>';
+            }
+
+            $str .= '</div><!-- .perun-attrcontainer --></div><!-- .row --></li>';
+        }       // end else: not child table
+    }   // end foreach
+    $str .= isset($attributes) ? '</ul>' : '';
+    return $str;
+}
+
+
 // Parse parameters
 if (array_key_exists('name', $this->data['srcMetadata'])) {
     $srcName = $this->data['srcMetadata']['name'];
@@ -60,7 +135,10 @@ $attributes = $this->data['attributes'];
 
 $this->data['header'] = $this->t('{consent:consent:consent_header}');
 
-$this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
+if (!isset($this->data['head'])) {
+    $this->data['head'] = '';
+}
+$this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('consent/assets/css/consent.css') . '" />';
 $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/consent.css') . '" />';
@@ -88,31 +166,35 @@ if ($this->data['sppp'] !== false) {
     echo "</p>";
 }
 
-echo '<h3 id="attributeheader">' .
+echo '<h1 id="attributeheader">' .
     $this->t(
         '{perun:consent:consent_attributes_header}',
         ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
     ) .
-    '</h3>';
+    '</h1>';
 
-echo present_attributes($this, $attributes, '');
+echo perun_present_attributes($this, $attributes, '', $this->data['label-col']);
 
 ?>
+    <div class="row" id="saveconsentcontainer">
+        <div class="col-xs-12">
+            <?php
+            if ($this->data['usestorage']) {
+                $checked = ($this->data['checked'] ? 'checked="checked"' : '');
+                echo '<div class="checkbox">
+            <input type="checkbox" form="yesform" name="saveconsent" id="saveconsent" value="1" /> '
+                . '<label for="saveconsent">' . $this->t('{perun:consent:remember}') . '</label>
+            </div>';
+            }
+            ?>
+        </div>
+    </div>
 
     <div class="row">
-        <div class="col-xs-6">
+        <div class="col-sm-6">
 
-            <form action="<?php echo htmlspecialchars($this->data['yesTarget']); ?>">
+            <form action="<?php echo htmlspecialchars($this->data['yesTarget']); ?>" id="yesform">
                 <?php
-                if ($this->data['usestorage']) {
-                    $checked = ($this->data['checked'] ? 'checked="checked"' : '');
-                    echo '<div class="checkbox">
-    	        <label>
-      		    <input type="checkbox" name="saveconsent" value="1" /> ' . $this->t('{perun:consent:remember}') . '
-	            </label>    
-                </div>';
-                }
-
                 // Embed hidden fields...
                 foreach ($this->data['yesData'] as $name => $value) {
                     echo '<input type="hidden" name="' . htmlspecialchars($name) .
@@ -120,14 +202,14 @@ echo present_attributes($this, $attributes, '');
                 }
                 ?>
 
-                <button type="submit" name="yes" class="btn btn-lg btn-success btn-block" id="yesbutton">
-                    <?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?>
+                <button type="submit" name="yes" class="btn btn-lg btn-primary btn-success btn-block" id="yesbutton">
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?></span>
                 </button>
 
             </form>
 
         </div>
-        <div class="col-xs-6">
+        <div class="col-sm-6">
 
             <form action="<?php echo htmlspecialchars($this->data['noTarget']); ?>">
 
@@ -138,7 +220,7 @@ echo present_attributes($this, $attributes, '');
                 }
                 ?>
                 <button type="submit" class="btn btn-lg btn-default btn-block  btn-no" name="no" id="nobutton">
-                    <?php echo htmlspecialchars($this->t('{consent:consent:no}')) ?>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:no}')) ?></span>
                 </button>
 
             </form>

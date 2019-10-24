@@ -1,43 +1,55 @@
-h3#attributeheader {
-    margin: 0em 0em 0.5em 0em;
+#perun-table_with_attributes > :nth-child(odd) {
+    background-color: #DFDFDF;
 }
 
-table.attributes {
-    border: inherit;
-    margin-bottom: 20px;
+#perun-table_with_attributes, #perun-table_with_attributes ul, #perun-table_with_attributes .perun-attrname, #perun-table_with_attributes li {
+    margin: 0;
+    padding: 0;
 }
 
-table.attributes tr td {
-    border-bottom: inherit;
+#perun-table_with_attributes > li {
+    clear: both;
+    overflow: hidden;
+    padding: 0.8em 0.5em;
 }
 
-table#table_with_attributes .attrvalue {
-    padding-left: 2em;
-    margin: 0.2em 0 0.1em 0;
+#perun-table_with_attributes li {
+    margin-left: 15px;
+    list-style-type: disc;
 }
 
-.btn:hover {
-    background-image: none;
+#perun-table_with_attributes > li {
+    list-style-type: none;
 }
 
-.btn-no {
-    margin-top: 40px;
+#perun-table_with_attributes li:only-child {
+    list-style-type: none;
+    margin-left: 0;
 }
 
-.checkbox input[type=checkbox], .checkbox-inline input[type=checkbox], .radio input[type=radio], .radio-inline input[type=radio] {
-    position: absolute;
-    margin-left: -20px;
+#perun-table_with_attributes {
+    margin-bottom: 2em;
+    margin-left: -15px;
+    margin-right: -15px;
 }
 
-.checkbox-tight label.form-check-label {
-    font-weight: 500;
+#saveconsentcontainer {
+    margin-bottom: 1em;
 }
 
-.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
-    border-top: none;
-    border-bottom: 1px solid #ddd;
+#saveconsent {
+    position: static;
+    margin-left: 0;
 }
 
-#table_with_attributes {
-    border: none;
+#perun-table_with_attributes .perun-attrname {
+    border-bottom: 0;
+}
+
+.perun-attrcontainer {
+    overflow-wrap: break-word;
+}
+
+#yesbutton, #nobutton {
+    margin-top: 1em;
 }
