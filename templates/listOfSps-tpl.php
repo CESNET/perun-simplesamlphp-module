@@ -11,12 +11,12 @@ $this->data['header'] = '';
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/listOfSps.css') . '" />';
 
-$this->data['head'] .= '<meta name="translations" id="translations" content="'.htmlspecialchars(json_encode([
+$this->data['head'] .= '<meta name="translations" id="translations" content="' . htmlspecialchars(json_encode([
     'saml_production' => $this->t('{perun:listOfSps:saml_production}'),
     'saml_test' => $this->t('{perun:listOfSps:saml_test}'),
     'oidc_production' => $this->t('{perun:listOfSps:oidc_production}'),
     'oidc_test' => $this->t('{perun:listOfSps:oidc_test}'),
-])).'">';
+])) . '">';
 
 $statistics = $this->data['statistics'];
 $attributesToShow = $this->data['attributesToShow'];
@@ -31,12 +31,12 @@ $testServicesCount = $statistics['samlTestServicesCount'] + $statistics['oidcTes
 $samlProductionCount = $statistics['samlServicesCount'] - $statistics['samlTestServicesCount'];
 $oidcProductionCount = $statistics['oidcServicesCount'] - $statistics['oidcTestServicesCount'];
 
-$this->data['head'] .= '<meta name="data" id="data" content="'.htmlspecialchars(json_encode([
+$this->data['head'] .= '<meta name="data" id="data" content="' . htmlspecialchars(json_encode([
     'samlProductionCount' => $samlProductionCount,
     'samlTestServicesCount' => $statistics['samlTestServicesCount'],
     'oidcProductionCount' => $oidcProductionCount,
     'oidcTestServicesCount' => $statistics['oidcTestServicesCount'],
-])).'">';
+])) . '">';
 
 $this->includeAtTemplateBase('includes/header.php');
 ?>

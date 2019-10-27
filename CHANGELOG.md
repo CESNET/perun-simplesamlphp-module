@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Changed
 - Slightly modified text displayed on WAYF
+- Updated phpcs ruleset to PSR-12
 
 #### Fixed
 - Fixed wrong dictionary name in post.php
