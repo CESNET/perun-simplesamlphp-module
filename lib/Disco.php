@@ -149,7 +149,7 @@ class Disco extends PowerIdPDisco
             || !$this->originalsp['disco.doNotFilterIdps']
         ) {
             $list = parent::filterList($list);
-            self::doFilter($list, $disableWhitelisting, $this->scopedIDPList);
+            $list = self::doFilter($list, $disableWhitelisting, $this->scopedIDPList);
             $list = $this->greylistingPerSP($list, $this->originalsp);
         }
 

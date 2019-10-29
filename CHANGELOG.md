@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed bug in filtering IdPs on DS
 
 ## [v3.5.0]
 #### Changed
