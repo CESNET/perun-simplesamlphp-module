@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.5.1]
 #### Fixed
 - Fixed bug in filtering IdPs on DS
 
@@ -208,6 +210,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.5.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.5.1
 [v3.5.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.5.0
 [v3.4.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.4.1
 [v3.4.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.4.0
