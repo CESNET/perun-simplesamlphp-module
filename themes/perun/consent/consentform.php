@@ -133,7 +133,10 @@ $dstName = htmlspecialchars($dstName);
 
 $attributes = $this->data['attributes'];
 
-$this->data['header'] = $this->t('{consent:consent:consent_header}');
+$this->data['header'] = $this->t(
+    '{perun:consent:consent_attributes_header}',
+    ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
+);
 
 if (!isset($this->data['head'])) {
     $this->data['head'] = '';
@@ -165,13 +168,6 @@ if ($this->data['sppp'] !== false) {
     echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . "</a>";
     echo "</p>";
 }
-
-echo '<h1 id="attributeheader">' .
-    $this->t(
-        '{perun:consent:consent_attributes_header}',
-        ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
-    ) .
-    '</h1>';
 
 echo perun_present_attributes($this, $attributes, '', $this->data['label-col']);
 
