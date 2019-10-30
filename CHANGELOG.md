@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed the header on consentform
 
 ## [v3.5.1]
 #### Fixed
