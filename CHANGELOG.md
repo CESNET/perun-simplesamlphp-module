@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Slightly modified text displayed on WAYF
+
 #### Fixed
 - Fixed wrong dictionary name in post.php
 
