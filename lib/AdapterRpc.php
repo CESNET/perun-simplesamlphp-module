@@ -3,15 +3,15 @@
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
-use SimpleSAML\Module\perun\model\User;
-use SimpleSAML\Module\perun\model\Group;
-use SimpleSAML\Module\perun\model\Facility;
-use SimpleSAML\Module\perun\model\Vo;
-use SimpleSAML\Module\perun\model\Resource;
-use SimpleSAML\Module\perun\model\Member;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\Exception as PerunException;
+use SimpleSAML\Module\perun\model\Facility;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\Member;
+use SimpleSAML\Module\perun\model\Resource;
+use SimpleSAML\Module\perun\model\User;
+use SimpleSAML\Module\perun\model\Vo;
 
 /**
  * Class sspmod_perun_AdapterRpc
@@ -23,15 +23,20 @@ use SimpleSAML\Module\perun\Exception as PerunException;
 class AdapterRpc extends Adapter
 {
     const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
+
     const RPC_URL = 'rpc.url';
+
     const RPC_USER = 'rpc.username';
+
     const RPC_PASSWORD = 'rpc.password';
 
-    private $rpcUrl;
-    private $rpcUser;
-    private $rpcPassword;
-
     protected $connector;
+
+    private $rpcUrl;
+
+    private $rpcUser;
+
+    private $rpcPassword;
 
     public function __construct($configFileName = null)
     {
@@ -83,9 +88,8 @@ class AdapterRpc extends Adapter
                 } elseif ($e->getName() === 'ExtSourceNotExistsException') {
                     // Because use of original/source entityID as extSourceName
                     continue;
-                } else {
-                    throw $e;
                 }
+                    throw $e;
             }
         }
 
@@ -100,7 +104,6 @@ class AdapterRpc extends Adapter
                 'user' => $user->getId(),
             ]);
 
-
             $memberGroups = $this->connector->get('groupsManager', 'getAllMemberGroups', [
                 'member' => $member['id'],
             ]);
@@ -113,9 +116,9 @@ class AdapterRpc extends Adapter
             try {
                 $attr = $this->connector->get('attributesManager', 'getAttribute', [
                     'group' => $group['id'],
-                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName',
                 ]);
-                $uniqueName = $attr['value'] . ":" . $group['name'];
+                $uniqueName = $attr['value'] . ':' . $group['name'];
                 array_push(
                     $convertedGroups,
                     new Group(
@@ -168,9 +171,9 @@ class AdapterRpc extends Adapter
             foreach ($groups as $group) {
                 $attr = $this->connector->get('attributesManager', 'getAttribute', [
                     'group' => $group['id'],
-                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName',
                 ]);
-                $uniqueName = $attr['value'] . ":" . $group['name'];
+                $uniqueName = $attr['value'] . ':' . $group['name'];
                 array_push(
                     $spGroups,
                     new Group(
@@ -184,9 +187,7 @@ class AdapterRpc extends Adapter
             }
         }
 
-        $spGroups = $this->removeDuplicateEntities($spGroups);
-
-        return $spGroups;
+        return $this->removeDuplicateEntities($spGroups);
     }
 
     public function getGroupByName($vo, $name)
@@ -197,9 +198,9 @@ class AdapterRpc extends Adapter
         ]);
         $attr = $this->connector->get('attributesManager', 'getAttribute', [
             'group' => $group['id'],
-            'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName'
+            'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName',
         ]);
-        $uniqueName = $attr['value'] . ":" . $group['name'];
+        $uniqueName = $attr['value'] . ':' . $group['name'];
         return new Group(
             $group['id'],
             $group['voId'],
@@ -236,7 +237,7 @@ class AdapterRpc extends Adapter
 
         $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
-            $perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
+            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
 
             $attributes[$perunAttrName] = $perunAttr['value'];
         }
@@ -279,7 +280,7 @@ class AdapterRpc extends Adapter
 
         $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
-            $perunAttrName = $perunAttr['namespace'] . ":" . $perunAttr['friendlyName'];
+            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
 
             $attributes[$perunAttrName] = $perunAttr['value'];
         }
@@ -296,7 +297,6 @@ class AdapterRpc extends Adapter
 
         return $perunAttr['value'];
     }
-
 
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
@@ -331,9 +331,7 @@ class AdapterRpc extends Adapter
                 ));
             }
         }
-        $groups = $this->removeDuplicateEntities($groups);
-
-        return $groups;
+        return $this->removeDuplicateEntities($groups);
     }
 
     public function getFacilitiesByEntityId($spEntityId)
@@ -459,7 +457,7 @@ class AdapterRpc extends Adapter
                 'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
                 'displayName' => $perunAttr['displayName'],
                 'type' => $perunAttr['type'],
-                'value' => $perunAttr['value']
+                'value' => $perunAttr['value'],
             ]);
         }
         return $attributes;
@@ -469,14 +467,14 @@ class AdapterRpc extends Adapter
     {
         return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', [
             'extSourceName' => $extSourceName,
-            'extSourceLogin' => $extSourceLogin
+            'extSourceLogin' => $extSourceLogin,
         ]);
     }
 
     public function updateUserExtSourceLastAccess($userExtSource)
     {
         $this->connector->post('usersManager', 'updateUserExtSourceLastAccess', [
-            'userExtSource' => $userExtSource
+            'userExtSource' => $userExtSource,
         ]);
     }
 
@@ -484,7 +482,7 @@ class AdapterRpc extends Adapter
     {
         return $this->connector->get('attributesManager', 'getAttributes', [
             'userExtSource' => $userExtSourceId,
-            'attrNames' => $attrNames
+            'attrNames' => $attrNames,
         ]);
     }
 
@@ -492,7 +490,7 @@ class AdapterRpc extends Adapter
     {
         $this->connector->post('attributesManager', 'setAttributes', [
             'userExtSource' => $userExtSourceId,
-            'attributes' => $attributes
+            'attributes' => $attributes,
         ]);
     }
 
@@ -549,5 +547,23 @@ class AdapterRpc extends Adapter
         }
 
         return $capabilities;
+    }
+
+    public function getAttributesDefinition()
+    {
+        return $this->connector->get('attributesManager', 'getAttributesDefinition');
+    }
+
+    public function setFacilityAttributes($facilityId, $attributes)
+    {
+        $this->connector->post('attributesManager', 'setAttributes', [
+            'facility' => $facilityId,
+            'attributes' => $attributes,
+        ]);
+    }
+
+    public function createFacility($facility)
+    {
+        return $this->connector->post('facilitiesManager', 'createFacility', $facility);
     }
 }
