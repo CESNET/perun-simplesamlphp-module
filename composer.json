@@ -17,6 +17,10 @@
         {
             "name": "Michal Prochazka",
             "email": "michalp@ics.muni.cz"
+        },
+        {
+            "name": "Pavel Brousek",
+            "email": "brousek@ics.muni.cz"
         }
     ],
     "require": {
@@ -24,6 +28,7 @@
         "simplesamlphp/composer-module-installer": "~1.0",
         "cesnet/simplesamlphp-module-perunauthorize": "~2.0",
         "cesnet/simplesamlphp-module-chartjs": "~2.8.0",
+        "symfony/var-exporter": "^5.0",
         "ext-curl": "*",
         "ext-json": "*"
     }
