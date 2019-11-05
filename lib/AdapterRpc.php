@@ -29,6 +29,16 @@ class AdapterRpc extends Adapter
 
     const RPC_PASSWORD = 'rpc.password';
 
+    const TYPE_INTEGER = 'java.lang.Integer';
+
+    const TYPE_BOOLEAN = 'java.lang.Boolean';
+
+    const TYPE_STRING = 'java.lang.String';
+
+    const TYPE_ARRAY = 'java.util.ArrayList';
+
+    const TYPE_MAP = 'java.util.LinkedHashMap';
+
     protected $connector;
 
     private $rpcUrl;
@@ -429,12 +439,25 @@ class AdapterRpc extends Adapter
         ]);
         $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
+            switch ($perunAttr['type']) {
+                case self::TYPE_INTEGER:
+                    $value = is_numeric($perunAttr['value']) ? $perunAttr['value'] : null;
+                    break;
+                case self::TYPE_BOOLEAN:
+                    $value = $perunAttr['value'] !== null && $perunAttr['value'] !== 'false';
+                    break;
+                case self::TYPE_STRING:
+                case self::TYPE_ARRAY:
+                case self::TYPE_MAP:
+                default:
+                    $value = $perunAttr['value'];
+            }
             array_push($attributes, [
                 'id' => $perunAttr['id'],
                 'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
                 'displayName' => $perunAttr['displayName'],
                 'type' => $perunAttr['type'],
-                'value' => $perunAttr['value'],
+                'value' => $value,
             ]);
         }
         return $attributes;
