@@ -9,7 +9,7 @@ $config = [
     /**
      * Name of facility attribute Proxy Identifiers
      */
-    'perunProxyIdentifierAttr' => '',
+    'perunProxyIdentifierAttr' => 'urn:perun:facility:attribute-def:def:proxyIdentifiers',
 
     /**
      * Name of facility attribute Master Proxy Identifier
@@ -19,7 +19,7 @@ $config = [
     /**
      * Name of facility attribute EntityID
      */
-    'perunProxyEntityIDAttr' => '',
+    'perunProxyEntityIDAttr' => 'urn:perun:facility:attribute-def:def:entityID',
 
     /**
      * Absolute path, where the metadata will be stored
@@ -27,11 +27,57 @@ $config = [
     'absoluteFileName' => '',
 
     /**
+     * Names of facility attributes with certificates
+     */
+    'perunProxyCertAttr' => [
+        'signing' => 'urn:perun:facility:attribute-def:def:signingCert',
+        'encryption' => 'urn:perun:facility:attribute-def:def:encryptionCert',
+    ],
+
+    /**
      * List of attributes definitions (for export)
      */
     'attributesDefinitions' => [
         // Name of attribute from perun => key which will be used in generated metadata
-        'perunAttrName' => 'metadataName',
+        'urn:perun:facility:attribute-def:def:entityID' => 'entityid',
+        'urn:perun:facility:attribute-def:def:serviceName' => 'name',
+        'urn:perun:facility:attribute-def:def:serviceDescription' => 'description',
+        'urn:perun:facility:attribute-def:def:spInformationURL' => 'url',
+        'urn:perun:facility:attribute-def:def:privacyPolicyURL' => 'privacypolicy',
+        'urn:perun:facility:attribute-def:def:organizationName' => 'OrganizationName',
+        'urn:perun:facility:attribute-def:def:spOrganizationURL' => 'OrganizationURL',
+        'urn:perun:facility:attribute-def:def:artifactResolutionServices' => 'ArtifactResolutionService',
+        'urn:perun:facility:attribute-def:def:assertionConsumerServices' => 'AssertionConsumerService',
+        'urn:perun:facility:attribute-def:def:singleLogoutServices' => 'SingleLogoutService',
+        'urn:perun:facility:attribute-def:def:singleSignOnServices' => 'SingleSignOnService',
+        'urn:perun:facility:attribute-def:def:relayState' => 'RelayState',
+        'urn:perun:facility:attribute-def:def:requiredAttributes' => 'attributes',
+        'urn:perun:facility:attribute-def:def:nameIDFormat' => 'NameIDFormat',
+    ],
+
+    /**
+     * Transform attributes after retrieving from Perun (during export).
+     * Array of arrays with string class (of the transformer),
+     * array attributes (which are transformed)
+     * and array config (passed to the transformer).
+     * The transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
+     */
+    'exportTransformers' => [
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
+            'attributes' => ['ArtifactResolutionService'],
+            'config' => ['defaultBinding' => 'SOAP'],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
+            'attributes' => ['AssertionConsumerService'],
+            'config' => ['defaultBinding' => 'HTTP-POST'],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
+            'attributes' => ['SingleLogoutService', 'SingleSignOnService'],
+            'config' => ['defaultBinding' => 'HTTP-Redirect'],
+        ],
     ],
 
     /**
@@ -64,8 +110,10 @@ $config = [
         'keys' => 'keys',
         'spAdminContact' => 'contacts',
         'spSupportContact' => 'contacts',
+        'artifactResolutionService' => 'ArtifactResolutionService',
         'assertionConsumerService' => 'AssertionConsumerService',
         'singleLogoutService' => 'SingleLogoutService',
+        'singleSignOnService' => 'SingleSignOnService',
     ],
 
     /**
@@ -85,8 +133,10 @@ $config = [
         'urn:perun:facility:attribute-def:def:organizationName' => 'organizationName',
         'urn:perun:facility:attribute-def:def:spOrganizationURL' => 'spOrganizationURL',
         'urn:perun:facility:attribute-def:def:nameIDFormat' => 'nameIDFormat',
+        'urn:perun:facility:attribute-def:def:artifactResolutionServices' => 'artifactResolutionService',
         'urn:perun:facility:attribute-def:def:assertionConsumerServices' => 'assertionConsumerService',
         'urn:perun:facility:attribute-def:def:singleLogoutServices' => 'singleLogoutService',
+        'urn:perun:facility:attribute-def:def:singleSignOnServices' => 'singleSignOnService',
         'urn:perun:facility:attribute-def:def:relayState' => 'relayState',
     ],
 
@@ -105,8 +155,13 @@ $config = [
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMap',
-            'attributes' => ['singleLogoutService'],
+            'attributes' => ['singleLogoutService', 'singleSignOnService'],
             'config' => ['defaultBinding' => 'HTTP-Redirect'],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMap',
+            'attributes' => ['artifactResolutionService'],
+            'config' => ['defaultBinding' => 'SOAP'],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\KeyLists',
