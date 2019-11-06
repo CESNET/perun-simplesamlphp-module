@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed wrong dictionary name in post.php
 
 ## [v3.5.2]
 #### Fixed

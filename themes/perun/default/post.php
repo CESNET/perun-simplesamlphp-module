@@ -69,7 +69,7 @@
     ?>
 
     <noscript>
-        <button type="submit" class="btn"><?php echo $this->t('{cesnet:einfra:continue}'); ?></button>
+        <button type="submit" class="btn"><?php echo $this->t('{perun:perun:continue}'); ?></button>
     </noscript>
 </form>
 
