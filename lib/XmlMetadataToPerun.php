@@ -10,9 +10,17 @@ class XmlMetadataToPerun
 {
     const PROXY_IDENTIFIER = 'proxyIdentifier';
 
+    const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
+
+    const PERUN_MASTER_PROXY_IDENTIFIER_ATTR_NAME = 'perunMasterProxyIdentifierAttr';
+
     const FLATFILE_ATTRIBUTES = 'flatfile2internal';
 
     const XML_ATTRIBUTES = 'xml2internal';
+
+    const PERUN_ATTRIBUTES = 'internal2perun';
+
+    const TRANSFORMERS = 'transformers';
 
     /**
      * @var AdapterRpc
@@ -29,53 +37,40 @@ class XmlMetadataToPerun
         $this->adapter = new AdapterRpc();
         $conf = Configuration::getConfig(MetadataFromPerun::CONFIG_FILE_NAME);
         $this->proxyIdentifier = $conf->getString(self::PROXY_IDENTIFIER);
+        $this->proxyIdentifiersAttr = $conf->getString(self::PERUN_PROXY_IDENTIFIER_ATTR_NAME);
+        $this->masterProxyIdentifierAttr = $conf->getString(self::PERUN_MASTER_PROXY_IDENTIFIER_ATTR_NAME);
         $this->flatfileAttributes = $conf->getArray(self::FLATFILE_ATTRIBUTES, []);
         $this->xmlAttributes = $conf->getArray(self::XML_ATTRIBUTES, []);
+        $this->perunAttributes = $conf->getArray(self::PERUN_ATTRIBUTES, []);
+        $this->transformers = $conf->getArray(self::TRANSFORMERS, []);
+        assert(empty(array_diff(
+            array_merge(array_keys($this->xmlAttributes), array_keys($this->flatfileAttributes)),
+            array_values($this->perunAttributes)
+        )));
     }
 
     /**
      * Convert SSP metadata array to Perun facility array.
      * @param array $metadata
      * @return array facility
+     * @see \SimpleSAML\Module\perun\AttributeTransformer
      */
     public function metadataToFacility(array $metadata)
     {
         $facility = [];
-        if (isset($metadata['AssertionConsumerService'])) {
-            $facility['assertionConsumerService'] = self::getEndpoint(
-                $metadata['AssertionConsumerService'],
-                'HTTP-POST'
-            );
-        }
-        if (isset($metadata['SingleLogoutService'])) {
-            $facility['singleLogoutService'] = self::getEndpoint(
-                $metadata['SingleLogoutService'],
-                'HTTP-Redirect'
-            );
-        }
-        if (!empty($metadata['keys'])) {
-            $certData = self::getCertData($metadata['keys']);
-            $facility['signingCert'] = $certData['signing'];
-            $facility['encryptionCert'] = $certData['encryption'];
-        }
-        if (!empty($metadata['contacts'])) {
-            $contacts = self::getEmailsByType($metadata['contacts']);
-            if (!empty($contacts['administrative']) || !empty($contacts['technical'])) {
-                $facility['spAdminContact'] = array_merge(
-                    $contacts['administrative'] ?? [],
-                    $contacts['technical'] ?? []
-                );
-            }
-            if (!empty($contacts['support'])) {
-                $facility['spSupportContact'] = $contacts['support'];
-            }
-        }
 
         $this->addArrayAttributes($metadata, $facility);
         $this->addXmlAttributes($metadata, $facility);
 
-        $facility['proxyIdentifiers'] = [$this->proxyIdentifier];
-        $facility['masterProxyIdentifier'] = $this->proxyIdentifier;
+        foreach ($this->transformers as $transformer) {
+            $class = $transformer['class'];
+            $t = new $class();
+            $attrs = array_intersect_key($facility, array_flip($transformer['attributes']));
+            if (!empty($attrs)) {
+                $newAttrs = $t->transform($attrs, $transformer['config']);
+                $facility = array_merge($facility, $newAttrs);
+            }
+        }
 
         return $facility;
     }
@@ -123,11 +118,19 @@ class XmlMetadataToPerun
             echo 'Missing some of these attributes: ' . print_r($attribute_names, true) . "\n";
         }
         foreach ($attributes as $i => $attribute) {
-            $value = $info[$attribute['friendlyName']];
-            if (!is_array($value) && substr($attribute['type'], -4) === 'List') {
-                $value = [$value];
+            $perunName = $attribute['name'];
+            if (isset($this->perunAttributes[$perunName])) {
+                $internalName = $this->perunAttributes[$perunName];
+                $value = $info[$internalName];
+                if (!is_array($value) && substr($attribute['type'], -4) === 'List') {
+                    $value = [$value];
+                }
+                $attributes[$i]['value'] = $value;
+            } elseif ($perunName === $this->proxyIdentifiersAttr) {
+                $attributes[$i]['value'] = [$this->proxyIdentifier];
+            } elseif ($perunName === $this->masterProxyIdentifierAttr) {
+                $attributes[$i]['value'] = $this->proxyIdentifier;
             }
-            $attributes[$i]['value'] = $value;
         }
         $this->setFacilityAttributes($facility, $attributes);
 
@@ -150,9 +153,11 @@ class XmlMetadataToPerun
     {
         foreach ($this->flatfileAttributes as $perunAttribute => $metadataAttribute) {
             $indexes = is_array($metadataAttribute) ? $metadataAttribute : [$metadataAttribute];
-            $t = self::getNestedAttribute($metadata, $indexes);
-            if ($t !== null) {
-                $facility[$perunAttribute] = $t;
+            foreach ($indexes as $index) {
+                $t = self::getNestedAttribute($metadata, explode('.', $index));
+                if ($t !== null) {
+                    $facility[$perunAttribute] = $t;
+                }
             }
         }
     }
@@ -206,42 +211,6 @@ class XmlMetadataToPerun
         $this->adapter->createFacility($facility);
     }
 
-    private static function getEndpoint($endpoints, string $binding)
-    {
-        if (empty($endpoints)) {
-            return null;
-        }
-        if (!is_array($endpoints)) {
-            return [$endpoints];
-        }
-        $result = [];
-        foreach ($endpoints as $endpoint) {
-            if ($endpoint['Binding'] === 'urn:oasis:names:tc:SAML:2.0:bindings:' . $binding) {
-                $result[] = $endpoint['Location'];
-            }
-        }
-        return $result;
-    }
-
-    private static function getCertData(array $keys)
-    {
-        $certData = [
-            'encryption' => [],
-            'signing' => [],
-        ];
-        foreach ($keys as $key) {
-            if ($key['type'] === 'X509Certificate' && !empty($key['X509Certificate'])) {
-                if ($key['signing']) {
-                    $certData['signing'][] = $key['X509Certificate'];
-                }
-                if ($key['encryption']) {
-                    $certData['encryption'][] = $key['X509Certificate'];
-                }
-            }
-        }
-        return $certData;
-    }
-
     private static function getNestedAttribute(array $array, array $indexes)
     {
         foreach ($indexes as $index) {
@@ -251,22 +220,5 @@ class XmlMetadataToPerun
             $array = $array[$index];
         }
         return $array;
-    }
-
-    private static function getEmailsByType(array $contacts)
-    {
-        $result = [];
-        foreach ($contacts as $contact) {
-            if (isset($contact['contactType']) && !empty($contact['emailAddress'])) {
-                if (!isset($result[$contact['contactType']])) {
-                    $result[$contact['contactType']] = [];
-                }
-                $result[$contact['contactType']] = array_merge(
-                    $result[$contact['contactType']],
-                    $contact['emailAddress']
-                );
-            }
-        }
-        return $result;
     }
 }
