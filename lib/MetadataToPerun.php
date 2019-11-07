@@ -27,6 +27,8 @@ class MetadataToPerun
 
     const METADATA_SET = 'saml20-sp-remote';
 
+    const NAMESPACE_SEPARATOR = ':';
+
     /**
      * @var AdapterRpc
      */
@@ -149,7 +151,7 @@ class MetadataToPerun
             echo 'Missing some of these attributes: ' . print_r($attribute_names, true) . "\n";
         }
         foreach ($attributes as $i => $attribute) {
-            $perunName = $attribute['name'];
+            $perunName = $attribute['namespace'] . self::NAMESPACE_SEPARATOR . $attribute['friendlyName'];
             if (isset($this->perunAttributes[$perunName])) {
                 $internalName = $this->perunAttributes[$perunName];
                 $value = $info[$internalName];
