@@ -6,7 +6,10 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Metadata\MetaDataStorageSource;
 use SimpleSAML\Module\perun\model\Facility;
 
-class XmlMetadataToPerun
+/**
+ * Get metadata and save them in Perun.
+ */
+class MetadataToPerun
 {
     const PROXY_IDENTIFIER = 'proxyIdentifier';
 
@@ -21,6 +24,8 @@ class XmlMetadataToPerun
     const PERUN_ATTRIBUTES = 'internal2perun';
 
     const TRANSFORMERS = 'transformers';
+
+    const METADATA_SET = 'saml20-sp-remote';
 
     /**
      * @var AdapterRpc
@@ -79,11 +84,37 @@ class XmlMetadataToPerun
      * Load XML metadata file and get SPs.
      * @param string $filename
      * @return array metadata
+     * @see getFacilitiesFrom()
      */
-    public function createFacilityFromXml(string $filename)
+    public function getFacilitiesFromXml(string $filename)
     {
-        $sps = MetaDataStorageSource::getSource(['type' => 'xml', 'file' => $filename])
-            ->getMetadataSet('saml20-sp-remote');
+        return $this->getFacilitiesFrom(['type' => 'xml', 'file' => $filename]);
+    }
+
+    /**
+     * Load flatfile metadata and get SPs.
+     * @param string $directory
+     * @return array metadata
+     * @see getFacilitiesFrom()
+     */
+    public function getFacilitiesFromFlatfile(string $directory = null)
+    {
+        $config = ['type' => 'flatfile'];
+        if ($directory !== null) {
+            $config['directory'] = $directory;
+        }
+        return $this->getFacilitiesFrom($config);
+    }
+
+    /**
+     * Load metadata and get SPs. See MetaDataStorageSource and subclasses for details.
+     * @param array $config - config for MetaDataStorageSource::getSource (type, file, directory...)
+     * @return array metadata
+     * @see https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Metadata/MetaDataStorageSource.php
+     */
+    public function getFacilitiesFrom(array $config)
+    {
+        $sps = MetaDataStorageSource::getSource($config)->getMetadataSet(self::METADATA_SET);
 
         return array_map([$this, 'metadataToFacility'], $sps);
     }
@@ -143,7 +174,7 @@ class XmlMetadataToPerun
      */
     public function convertXml($filename)
     {
-        $facilities = $this->createFacilityFromXml($filename);
+        $facilities = $this->getFacilitiesFromXml($filename);
         foreach ($facilities as $facility) {
             $this->createFacilityWithAttributes($facility);
         }
