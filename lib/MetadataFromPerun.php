@@ -20,10 +20,6 @@ class MetadataFromPerun
 
     const FACILITY_ATTRIBUTES = 'facilityAttributes';
 
-    const PERUN_PROXY_CERT_ATTR_NAME = 'perunProxyCertAttr';
-
-    const STRING_IF_SINGLE = ['AssertionConsumerService', 'SingleLogoutService', 'NameIDFormat'];
-
     const TRANSFORMERS = 'exportTransformers';
 
     private $perunProxyEntityIDAttr;
@@ -42,7 +38,6 @@ class MetadataFromPerun
         $this->conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $this->perunProxyEntityIDAttr = $this->conf->getString(self::PERUN_PROXY_ENTITY_ID_ATTR_NAME);
         $this->attributesDefinitions = $this->conf->getArray(self::ATTRIBUTES_DEFINITIONS);
-        $this->certAttributes = $this->conf->getArray(self::PERUN_PROXY_CERT_ATTR_NAME, []);
         $this->rpcAdapter = new AdapterRpc();
     }
 
@@ -76,7 +71,10 @@ class MetadataFromPerun
             }
         }
 
-        //$this->addComplexAttributes($facility, $metadata);
+        $metadata = array_filter($metadata, function ($value) {
+            return $value !== null;
+        });
+
         return [$id => $metadata];
     }
 
@@ -139,36 +137,6 @@ class MetadataFromPerun
     }
 
     /**
-     * @todo If key has both signing and encryption, do not add it twice
-     */
-    private function addComplexAttributes($facility, array &$metadata)
-    {
-        $keys = [];
-        foreach ($this->certAttributes as $purpose => $attrName) {
-            if (!empty($facility[self::FACILITY_ATTRIBUTES][$attrName]['value'])) {
-                $keys = array_merge(
-                    $keys,
-                    self::formatKeys($facility[self::FACILITY_ATTRIBUTES][$attrName]['value'], $purpose)
-                );
-            }
-        }
-        if ($keys) {
-            $metadata['keys'] = $keys;
-        }
-    }
-
-    private static function formatKeys(array $keys, string $purpose)
-    {
-        return array_map(function ($key) use ($purpose) {
-            return [
-                'type' => 'X509Certificate',
-                'X509Certificate' => $key,
-                $purpose => true,
-            ];
-        }, $keys);
-    }
-
-    /**
      * Get list of all attribute names.
      */
     private function getAllAttributeNames()
@@ -176,9 +144,6 @@ class MetadataFromPerun
         $allAttrNames = [];
         array_push($allAttrNames, $this->perunProxyEntityIDAttr);
         foreach (array_keys($this->attributesDefinitions) as $attr) {
-            array_push($allAttrNames, $attr);
-        }
-        foreach ($this->certAttributes as $attr) {
             array_push($allAttrNames, $attr);
         }
         return $allAttrNames;
