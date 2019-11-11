@@ -97,7 +97,7 @@ $config = [
      * and array config (passed to the transformer).
      * The transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
      */
-    'transformers' => [
+    'importTransformers' => [
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMap',
             'attributes' => ['assertionConsumerService'],

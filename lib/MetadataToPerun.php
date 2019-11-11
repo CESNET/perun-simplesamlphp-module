@@ -23,7 +23,7 @@ class MetadataToPerun
 
     const PERUN_ATTRIBUTES = 'internal2perun';
 
-    const TRANSFORMERS = 'transformers';
+    const TRANSFORMERS = 'importTransformers';
 
     const METADATA_SET = 'saml20-sp-remote';
 
