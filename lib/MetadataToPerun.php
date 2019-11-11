@@ -241,7 +241,7 @@ class MetadataToPerun
             'name' => self::generateFacilityName($info),
             'description' => $info['description'] ?? '',
         ]];
-        $this->adapter->createFacility($facility);
+        return $this->adapter->createFacility($facility);
     }
 
     private static function getNestedAttribute(array $array, array $indexes)

@@ -496,6 +496,6 @@ class AdapterRpc extends Adapter
 
     public function createFacility($facility)
     {
-        $this->connector->post('facilitiesManager', 'createFacility', $facility);
+        return $this->connector->post('facilitiesManager', 'createFacility', $facility);
     }
 }
