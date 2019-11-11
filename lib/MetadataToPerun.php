@@ -144,7 +144,10 @@ class MetadataToPerun
                 throw new \Exception('AssertionError');
         }
 
-        $attributes = $this->getAttributesDefinition(array_keys($this->perunAttributes));
+        $attributes = $this->getAttributesDefinition(array_merge(
+            array_keys($this->perunAttributes),
+            [$this->proxyIdentifiersAttr, $this->masterProxyIdentifierAttr]
+        ));
         if (empty($attributes)) {
             throw new \Exception('Did not get attribute definitions from Perun');
         }
@@ -152,11 +155,13 @@ class MetadataToPerun
             $perunName = $attribute['namespace'] . self::NAMESPACE_SEPARATOR . $attribute['friendlyName'];
             if (isset($this->perunAttributes[$perunName])) {
                 $internalName = $this->perunAttributes[$perunName];
-                $value = $info[$internalName];
-                if (!is_array($value) && substr($attribute['type'], -4) === 'List') {
-                    $value = [$value];
+                $value = $info[$internalName] ?? null;
+                if ($value !== null) {
+                    if (!is_array($value) && substr($attribute['type'], -4) === 'List') {
+                        $value = [$value];
+                    }
+                    $attributes[$i]['value'] = $value;
                 }
-                $attributes[$i]['value'] = $value;
             } elseif ($perunName === $this->proxyIdentifiersAttr) {
                 $attributes[$i]['value'] = [$this->proxyIdentifier];
             } elseif ($perunName === $this->masterProxyIdentifierAttr) {
