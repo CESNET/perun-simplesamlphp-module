@@ -14,7 +14,7 @@ $config = [
     /**
      * Name of facility attribute Master Proxy Identifier
      */
-    'perunMasterProxyIdentifierAttr' => '',
+    'perunMasterProxyIdentifierAttr' => 'urn:perun:facility:attribute-def:def:masterProxyIdentifier',
 
     /**
      * Name of facility attribute EntityID
@@ -25,14 +25,6 @@ $config = [
      * Absolute path, where the metadata will be stored
      */
     'absoluteFileName' => '',
-
-    /**
-     * Names of facility attributes with certificates
-     */
-    'perunProxyCertAttr' => [
-        'signing' => 'urn:perun:facility:attribute-def:def:signingCert',
-        'encryption' => 'urn:perun:facility:attribute-def:def:encryptionCert',
-    ],
 
     /**
      * List of attributes definitions (for export)
@@ -53,6 +45,8 @@ $config = [
         'urn:perun:facility:attribute-def:def:relayState' => 'RelayState',
         'urn:perun:facility:attribute-def:def:requiredAttributes' => 'attributes',
         'urn:perun:facility:attribute-def:def:nameIDFormat' => 'NameIDFormat',
+        'urn:perun:facility:attribute-def:def:signingCert' => 'signingCert',
+        'urn:perun:facility:attribute-def:def:encryptionCert' => 'encryptionCert',
     ],
 
     /**
@@ -77,6 +71,15 @@ $config = [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
             'attributes' => ['SingleLogoutService', 'SingleSignOnService'],
             'config' => ['defaultBinding' => 'HTTP-Redirect'],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\KeyListsToArray',
+            'attributes' => ['signingCert', 'encryptionCert'],
+            'config' => [
+                'purposes' => ['signingCert' => 'signing', 'encryptionCert' => 'encryption'],
+                'outputKeys' => 'keys',
+                'outputCertData' => 'certData',
+            ],
         ],
     ],
 
@@ -138,6 +141,8 @@ $config = [
         'urn:perun:facility:attribute-def:def:singleLogoutServices' => 'singleLogoutService',
         'urn:perun:facility:attribute-def:def:singleSignOnServices' => 'singleSignOnService',
         'urn:perun:facility:attribute-def:def:relayState' => 'relayState',
+        'urn:perun:facility:attribute-def:def:signingCert' => 'signingCert',
+        'urn:perun:facility:attribute-def:def:encryptionCert' => 'encryptionCert',
     ],
 
     /**
