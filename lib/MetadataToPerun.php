@@ -144,11 +144,9 @@ class MetadataToPerun
                 throw new \Exception('AssertionError');
         }
 
-        $attribute_names = array_keys($info);
-        $attributes = $this->getAttributesDefinition($attribute_names);
-        if (empty($attributes) || count($attributes) !== count($attribute_names)) {
-            //throw new \Exception('Did not get all attributes from Perun');
-            echo 'Missing some of these attributes: ' . print_r($attribute_names, true) . "\n";
+        $attributes = $this->getAttributesDefinition(array_keys($this->perunAttributes));
+        if (empty($attributes)) {
+            throw new \Exception('Did not get attribute definitions from Perun');
         }
         foreach ($attributes as $i => $attribute) {
             $perunName = $attribute['namespace'] . self::NAMESPACE_SEPARATOR . $attribute['friendlyName'];
@@ -213,7 +211,8 @@ class MetadataToPerun
             array_filter(
                 $this->adapter->getAttributesDefinition(),
                 function ($attr) use ($attrNames) {
-                    return in_array($attr['friendlyName'], $attrNames, true);
+                    $perunName = $attr['namespace'] . self::NAMESPACE_SEPARATOR . $attr['friendlyName'];
+                    return in_array($perunName, $attrNames, true);
                 }
             )
         );
