@@ -63,4 +63,3 @@ function getBadgeByStatus($status)
         return '<span class="status label label-danger">CRITICAL</span>';
     }
 }
-

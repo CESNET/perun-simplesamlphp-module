@@ -99,7 +99,7 @@ $config = [
      * OPTIONAL
      * Default: show all received services
      */
-    'status.shown_services'=> [
+    'status.shown_services' => [
         'serviceIdentifier' => [
             'name' => 'serviceName',
             'description' => 'serviceDescription'

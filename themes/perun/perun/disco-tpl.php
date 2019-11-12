@@ -130,7 +130,7 @@ if ($this->isAddInstitutionApp()) {
             echo getOr();
 
             echo '<a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
-                 $this->t('{perun:disco:sign_with_other_institution}') .'</a>' ;
+                 $this->t('{perun:disco:sign_with_other_institution}') . '</a>' ;
             echo '<div id="entries" style="display: none">';
         }
 
@@ -311,7 +311,7 @@ function showTaggedIdPs($t, $tag, $showSignInWith = false)
     $counter = 0;
 
     $fullRowCount = floor($idpCount / 3);
-    for ($i = 0; $i < $fullRowCount; $i++ ) {
+    for ($i = 0; $i < $fullRowCount; $i++) {
         $html .= '<div class="row">';
         for ($j = 0; $j < 3; $j++) {
             $html .= '<div class="col-md-4">';

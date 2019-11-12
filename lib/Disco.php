@@ -66,7 +66,6 @@ class Disco extends PowerIdPDisco
         if (isset($state) && isset($state['SPMetadata'])) {
             $this->originalsp = $state['SPMetadata'];
         }
-
     }
 
     /**
