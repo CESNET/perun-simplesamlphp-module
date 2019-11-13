@@ -29,7 +29,7 @@ class EmailList implements AttributeTransformer
                 && (empty($types) || in_array($contact['contactType'], $types, true))
                 && !empty($contact['emailAddress'])
             ) {
-                $result[] = $contact['emailAddress'];
+                $result[] = is_array($contact['emailAddress']) ? $contact['emailAddress'][0] : $contact['emailAddress'];
             }
         }
         return $result;
