@@ -7,6 +7,7 @@ use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Module\perun\model\Group;
 use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Module\perun\model\Member;
+use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
@@ -28,6 +29,9 @@ class AdapterLdap extends Adapter
     const LDAP_USER = 'ldap.username';
     const LDAP_PASSWORD = 'ldap.password';
     const LDAP_BASE = 'ldap.base';
+    const PERUN_FACILITY_ID = 'perunFacilityId';
+    const CN = 'cn';
+    const DESCRIPTION = 'description';
 
     private $ldapBase;
 
@@ -118,13 +122,14 @@ class AdapterLdap extends Adapter
 
     public function getSpGroups($spEntityId)
     {
-        $facility = $this->connector->searchForEntity(
-            $this->ldapBase,
-            '(&(objectClass=perunFacility)(entityID=' . $spEntityId . '))',
-            ['perunFacilityId']
-        );
+        $facility = $this->getFacilityByEntityId($spEntityId);
 
-        $id = $facility['perunFacilityId'][0];
+        if ($facility === null) {
+            return [];
+        }
+
+        $id = $facility->getId();
+
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
             '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $id . ',' . $this->ldapBase . '))',
@@ -226,6 +231,31 @@ class AdapterLdap extends Adapter
         // TODO: Implement getEntityByEntityId() method.
     }
 
+    public function getFacilityByEntityId($spEntityId)
+    {
+        $ldapResult = $this->connector->searchForEntity(
+            $this->ldapBase,
+            '(&(objectClass=perunFacility)(entityID=' . $spEntityId . '))',
+            [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
+        );
+
+        if (empty($ldapResult)) {
+            Logger::warning(
+                'perun:AdapterLdap: No facility with entityID \'' . $spEntityId . '\' found.'
+            );
+            return null;
+        }
+
+        $facility = new Facility(
+            $ldapResult[self::PERUN_FACILITY_ID][0],
+            $ldapResult[self::CN][0],
+            $ldapResult[self::DESCRIPTION][0],
+            $spEntityId
+        );
+
+        return $facility;
+    }
+
     public function getEntitylessAttribute($attrName)
     {
         throw new BadMethodCallException('NotImplementedException');
@@ -278,13 +308,14 @@ class AdapterLdap extends Adapter
 
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
-        $facility = $this->connector->searchForEntity(
-            $this->ldapBase,
-            '(&(objectClass=perunFacility)(entityID=' . $spEntityId . '))',
-            ['perunFacilityId']
-        );
+        $facility = $this->getFacilityByEntityId($spEntityId);
 
-        $id = $facility['perunFacilityId'][0];
+        if ($facility === null) {
+            return [];
+        }
+
+        $id = $facility->getId();
+
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
             '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $id . ',' . $this->ldapBase . '))',

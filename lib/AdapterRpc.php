@@ -10,6 +10,7 @@ use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Module\perun\model\Resource;
 use SimpleSAML\Module\perun\model\Member;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\Exception as PerunException;
 
 /**
@@ -135,16 +136,11 @@ class AdapterRpc extends Adapter
 
     public function getSpGroups($spEntityId)
     {
-        $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-            'attributeValue' => $spEntityId,
-        ])[0];
-        $facility = new Facility(
-            $perunAttr['id'],
-            $perunAttr['name'],
-            $perunAttr['description'],
-            $spEntityId
-        );
+        $facility = $this->getFacilityByEntityId($spEntityId);
+
+        if ($facility === null) {
+            return [];
+        }
 
         $perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', [
             'facility' => $facility->getId(),
@@ -304,37 +300,35 @@ class AdapterRpc extends Adapter
 
     public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
-        $facilities = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-            'attributeValue' => $spEntityId,
-        ]);
-
+        $facility = $this->getFacilityByEntityId($spEntityId);
         $groups = [];
 
-        foreach ($facilities as $facility) {
-            $usersGroupsOnFacility = $this->connector->get(
-                'usersManager',
-                'getRichGroupsWhereUserIsActive',
-                [
-                    'facility' => $facility['id'],
-                    'user' => $userId,
-                    'attrNames' => ['urn:perun:group:attribute-def:virt:voShortName']
-                ]
-            );
+        if ($facility === null) {
+            return $groups;
+        }
 
-            foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
-                if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
-                    $usersGroupOnFacility['attributes'][0]['friendlyName'] === 'voShortName') {
-                    $uniqueName = $usersGroupOnFacility['attributes'][0]['value'] . ":" . $usersGroupOnFacility['name'];
+        $usersGroupsOnFacility = $this->connector->get(
+            'usersManager',
+            'getRichGroupsWhereUserIsActive',
+            [
+                'facility' => $facility->getId(),
+                'user' => $userId,
+                'attrNames' => ['urn:perun:group:attribute-def:virt:voShortName']
+            ]
+        );
 
-                    array_push($groups, new Group(
-                        $usersGroupOnFacility['id'],
-                        $usersGroupOnFacility['voId'],
-                        $usersGroupOnFacility['name'],
-                        $uniqueName,
-                        $usersGroupOnFacility['description']
-                    ));
-                }
+        foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
+            if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
+                $usersGroupOnFacility['attributes'][0]['friendlyName'] === 'voShortName') {
+                $uniqueName = $usersGroupOnFacility['attributes'][0]['value'] . ":" . $usersGroupOnFacility['name'];
+
+                array_push($groups, new Group(
+                    $usersGroupOnFacility['id'],
+                    $usersGroupOnFacility['voId'],
+                    $usersGroupOnFacility['name'],
+                    $uniqueName,
+                    $usersGroupOnFacility['description']
+                ));
             }
         }
         $groups = $this->removeDuplicateEntities($groups);
@@ -361,6 +355,37 @@ class AdapterRpc extends Adapter
             );
         }
         return $facilities;
+    }
+
+    public function getFacilityByEntityId($spEntityId)
+    {
+        $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
+            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+            'attributeValue' => $spEntityId,
+        ]);
+
+        if (empty($perunAttr)) {
+            Logger::warning(
+                'perun:AdapterRpc: No facility with entityID \'' . $spEntityId . '\' found.'
+            );
+            return null;
+        }
+
+        if (count($perunAttr) > 1) {
+            Logger::warning(
+                'perun:AdapterRpc: There is more than one facility with entityID \'' . $spEntityId . '.'
+            );
+            return null;
+        }
+
+        $facility = new Facility(
+            $perunAttr[0]['id'],
+            $perunAttr[0]['name'],
+            $perunAttr[0]['description'],
+            $spEntityId
+        );
+
+        return $facility;
     }
 
     /**

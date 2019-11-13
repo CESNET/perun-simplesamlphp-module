@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- Added method getFacilityByEntityId
+
 #### Changed
 - Slightly modified text displayed on WAYF
 - Updated phpcs ruleset to PSR-12
@@ -9,6 +12,8 @@ All notable changes to this project will be documented in this file.
 - Using identity comparison instead of equality comparison
 - Removed checks in ifs that var is (not) null before empty(var) function (empty checks that itself)
 - Double quotes changed to single quotes
+- getFacilitiesByEntityId marked as deprecated (getFacilityByEntityId should be used instead)
+- Using of getFacilityByEntityId instead of getFacilitiesByEntityId
 
 #### Fixed
 - Fixed wrong dictionary name in post.php
