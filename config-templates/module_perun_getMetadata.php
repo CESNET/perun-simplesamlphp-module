@@ -22,6 +22,11 @@ $config = [
     'perunProxyEntityIDAttr' => 'urn:perun:facility:attribute-def:def:entityID',
 
     /**
+     * Name of facility attribute isSamlFacility (optional)
+     */
+    'perunIsSamlFacilityAttr' => 'urn:perun:facility:attribute-def:def:isSamlFacility',
+
+    /**
      * Absolute path, where the metadata will be stored
      */
     'absoluteFileName' => '',

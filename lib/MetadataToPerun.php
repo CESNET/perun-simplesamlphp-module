@@ -17,6 +17,8 @@ class MetadataToPerun
 
     const PERUN_MASTER_PROXY_IDENTIFIER_ATTR_NAME = 'perunMasterProxyIdentifierAttr';
 
+    const PERUN_IS_SAML_FACILITY_ATTR_NAME = 'perunIsSamlFacilityAttr';
+
     const FLATFILE_ATTRIBUTES = 'flatfile2internal';
 
     const XML_ATTRIBUTES = 'xml2internal';
@@ -46,6 +48,7 @@ class MetadataToPerun
         $this->proxyIdentifier = $conf->getString(self::PROXY_IDENTIFIER);
         $this->proxyIdentifiersAttr = $conf->getString(self::PERUN_PROXY_IDENTIFIER_ATTR_NAME);
         $this->masterProxyIdentifierAttr = $conf->getString(self::PERUN_MASTER_PROXY_IDENTIFIER_ATTR_NAME);
+        $this->isSamlFacilityAttr = $conf->getString(self::PERUN_IS_SAML_FACILITY_ATTR_NAME, '');
         $this->flatfileAttributes = $conf->getArray(self::FLATFILE_ATTRIBUTES, []);
         $this->xmlAttributes = $conf->getArray(self::XML_ATTRIBUTES, []);
         $this->perunAttributes = $conf->getArray(self::PERUN_ATTRIBUTES, []);
@@ -146,7 +149,8 @@ class MetadataToPerun
 
         $attributes = $this->getAttributesDefinition(array_merge(
             array_keys($this->perunAttributes),
-            [$this->proxyIdentifiersAttr, $this->masterProxyIdentifierAttr]
+            [$this->proxyIdentifiersAttr, $this->masterProxyIdentifierAttr],
+            $this->isSamlFacilityAttr ? [$this->isSamlFacilityAttr] : []
         ));
         if (empty($attributes)) {
             throw new \Exception('Did not get attribute definitions from Perun');
@@ -166,6 +170,8 @@ class MetadataToPerun
                 $attributes[$i]['value'] = [$this->proxyIdentifier];
             } elseif ($perunName === $this->masterProxyIdentifierAttr) {
                 $attributes[$i]['value'] = $this->proxyIdentifier;
+            } elseif ($this->isSamlFacilityAttr !== '' && $perunName === $this->isSamlFacilityAttr) {
+                $attributes[$i]['value'] = true;
             }
         }
         $this->setFacilityAttributes($facility, $attributes);
