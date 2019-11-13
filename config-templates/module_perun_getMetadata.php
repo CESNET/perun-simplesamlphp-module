@@ -99,6 +99,8 @@ $config = [
             . '[local-name() = "AttributeValue"][text() = "http://refeds.org/category/research-and-scholarship"])',
         'requiredAttributes' => ['//*[local-name() = "RequestedAttribute"][@isRequired = "true"]/@FriendlyName'],
         'loginURL' => 'string(//*[local-name() = "RequestInitiator"]/@Location)',
+        'entityCategory' => ['//*[local-name() = "EntityAttributes"]/*[@Name = "http://macedir.org/entity-category"]/*'
+            . '[local-name() = "AttributeValue"]'],
     ],
 
     /**
@@ -150,6 +152,7 @@ $config = [
         'urn:perun:facility:attribute-def:def:encryptionCert' => 'encryptionCert',
         'urn:perun:facility:attribute-def:def:spAdminContact' => 'spAdminContact',
         'urn:perun:facility:attribute-def:def:spSupportContact' => 'spSupportContact',
+        'urn:perun:facility:attribute-def:def:entityCategory' => 'entityCategory',
     ],
 
     /**
