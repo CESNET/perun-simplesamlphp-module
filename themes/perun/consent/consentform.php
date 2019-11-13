@@ -46,7 +46,7 @@ function perun_present_attributes($t, $attributes, $nameParent, $labelCol = 5)
     $translator = $t->getTranslator();
 
     if (strlen($nameParent) > 0) {
-        $parentStr = strtolower($nameParent).'_';
+        $parentStr = strtolower($nameParent) . '_';
         $str = '<ul class="perun-attributes">';
     } else {
         $parentStr = '';
@@ -55,23 +55,23 @@ function perun_present_attributes($t, $attributes, $nameParent, $labelCol = 5)
 
     foreach ($attributes as $name => $value) {
         $nameraw = $name;
-        $name = $translator->getAttributeTranslation($parentStr.$nameraw);
+        $name = $translator->getAttributeTranslation($parentStr . $nameraw);
 
         if (preg_match('/^child_/', $nameraw)) {
             // insert child table
             throw new Exception('Unsupported');
         } else {
             // insert values directly
-            $str .= "\n".'<li>'
+            $str .= "\n" . '<li>'
               . '<div class="row"><div class="col-sm-' . $labelCol
               . '"><h2 class="perun-attrname h4">'
-              . htmlspecialchars(str_replace("domovksé", "domovské", $name)).'</h2></div>';
+              . htmlspecialchars(str_replace("domovksé", "domovské", $name)) . '</h2></div>';
 
-            $str .= '<div class="perun-attrcontainer col-sm-' . (12-$labelCol) . '">';
+            $str .= '<div class="perun-attrcontainer col-sm-' . (12 - $labelCol) . '">';
             $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
             if ($isHidden) {
                 $hiddenId = \SimpleSAML\Utils\Random::generateID();
-                $str .= '<span class="perun-attrvalue hidden" id="hidden_'.$hiddenId.'">';
+                $str .= '<span class="perun-attrvalue hidden" id="hidden_' . $hiddenId . '">';
             } else {
                 $str .= '<span class="perun-attrvalue">';
             }
@@ -86,10 +86,10 @@ function perun_present_attributes($t, $attributes, $nameParent, $labelCol = 5)
             $str .= '</span>';
 
             if ($isHidden) {
-                $str .= '<div class="perun-attrvalue consent_showattribute" id="visible_'.$hiddenId.'">';
+                $str .= '<div class="perun-attrvalue consent_showattribute" id="visible_' . $hiddenId . '">';
                 $str .= '&#8230; ';
-                $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_'.$hiddenId;
-                $str .= '\'); SimpleSAML_hide(\'visible_'.$hiddenId.'\');">';
+                $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_' . $hiddenId;
+                $str .= '\'); SimpleSAML_hide(\'visible_' . $hiddenId . '\');">';
                 $str .= $t->t('{consent:consent:show_attribute}');
                 $str .= '</a>';
                 $str .= '</div>';
