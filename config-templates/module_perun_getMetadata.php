@@ -143,6 +143,8 @@ $config = [
         'urn:perun:facility:attribute-def:def:relayState' => 'relayState',
         'urn:perun:facility:attribute-def:def:signingCert' => 'signingCert',
         'urn:perun:facility:attribute-def:def:encryptionCert' => 'encryptionCert',
+        'urn:perun:facility:attribute-def:def:spAdminContact' => 'spAdminContact',
+        'urn:perun:facility:attribute-def:def:spSupportContact' => 'spSupportContact',
     ],
 
     /**
