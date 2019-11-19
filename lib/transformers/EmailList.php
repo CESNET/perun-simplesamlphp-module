@@ -6,27 +6,29 @@ use SimpleSAML\Module\perun\AttributeTransformer;
 
 class EmailList implements AttributeTransformer
 {
-    public function __construct()
+    private $types;
+
+    public function __construct($config)
     {
+        $this->types = $config['types'] ?? [];
     }
 
-    public function transform($attributes, $config)
+    public function transform($attributes)
     {
-        $types = $config['types'] ?? [];
         $result = [];
         foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = self::getEmailsByType($value, $types);
+            $result[$attribute] = $this->getEmailsByType($value);
         }
         return $result;
     }
 
-    private static function getEmailsByType(array $contacts, array $types = [])
+    private function getEmailsByType(array $contacts)
     {
         $result = [];
         foreach ($contacts as $contact) {
             if (
                 isset($contact['contactType'])
-                && (empty($types) || in_array($contact['contactType'], $types, true))
+                && (empty($this->types) || in_array($contact['contactType'], $this->types, true))
                 && !empty($contact['emailAddress'])
             ) {
                 $result[] = is_array($contact['emailAddress']) ? $contact['emailAddress'][0] : $contact['emailAddress'];

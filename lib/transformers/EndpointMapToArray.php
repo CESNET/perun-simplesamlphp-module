@@ -12,19 +12,21 @@ class EndpointMapToArray implements AttributeTransformer
 
     const INDEX_MIN = 0;
 
-    private $fullNames = true;
+    private $defaultBinding;
 
-    public function __construct()
+    private $fullNames;
+
+    public function __construct($config)
     {
+        $this->fullNames = empty($config['shortNames']);
+        $this->defaultBinding = $this->getBindingName($config['defaultBinding']);
     }
 
-    public function transform($attributes, $config)
+    public function transform($attributes)
     {
-        $defaultBinding = $config['defaultBinding'];
-        $this->fullNames = empty($config['shortNames']);
         $result = [];
         foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = $this->getEndpointsArray($value, $defaultBinding, $fullNames);
+            $result[$attribute] = $this->getEndpointsArray($value);
         }
         return $result;
     }
@@ -39,30 +41,28 @@ class EndpointMapToArray implements AttributeTransformer
         return $binding;
     }
 
-    private function getEndpointsArray($endpointMap, string $defaultBinding)
+    private function getEndpointsArray($endpointMap)
     {
         if (empty($endpointMap) || !is_array($endpointMap)) {
             return null;
         }
 
-        $defaultBinding = $this->getBindingName($defaultBinding);
-
         // if all endpoints use the default binding
-        if (count($endpointMap) === 1 && isset($endpointMap[$defaultBinding])) {
-            $result = explode(self::MAPLIST_SEPARATOR, $endpointMap[$defaultBinding]);
+        if (count($endpointMap) === 1 && isset($endpointMap[$this->defaultBinding])) {
+            $result = explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]);
             return count($result) === 1 ? $result[0] : $result;
         }
 
         $result = [];
         $index = self::INDEX_MIN;
         // prefer default binding
-        if (isset($endpointMap[$defaultBinding])) {
-            foreach (explode(self::MAPLIST_SEPARATOR, $endpointMap[$defaultBinding]) as $location) {
-                $result[] = $this->getEndpoint($location, $defaultBinding, $index++, $index === self::INDEX_MIN);
+        if (isset($endpointMap[$this->defaultBinding])) {
+            foreach (explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]) as $location) {
+                $result[] = $this->getEndpoint($location, $this->defaultBinding, $index++, $index === self::INDEX_MIN);
             }
         }
         foreach ($endpointMap as $binding => $locations) {
-            if ($binding !== $defaultBinding) {
+            if ($binding !== $this->defaultBinding) {
                 foreach (explode(self::MAPLIST_SEPARATOR, $locations) as $location) {
                     $result[] = $this->getEndpoint($location, $binding, $index++);
                 }

@@ -6,26 +6,32 @@ use SimpleSAML\Module\perun\AttributeTransformer;
 
 class KeyListsToArray implements AttributeTransformer
 {
-    public function __construct()
+    private $purposes;
+
+    private $removeSource;
+
+    private $purposesValues;
+
+    public function __construct($config)
     {
+        $this->purposes = $config['purposes'] ?? [];
+        $this->removeSource = $config['keepSource'] ?? true;
+        $this->purposesValues = array_values($this->purposes);
     }
 
-    public function transform($attributes, $config)
+    public function transform($attributes)
     {
-        $purposes = $config['purposes'] ?? [];
-        $removeSource = $config['keepSource'] ?? true;
-        $purposesValues = array_values($purposes);
         $result = [];
         $keys = [];
         foreach ($attributes as $attribute => $value) {
-            if ($removeSource) {
+            if ($this->removeSource) {
                 $result[$attribute] = null;
             }
-            if (!empty($value) && isset($purposes[$attribute])) {
-                $purpose = $purposes[$attribute];
+            if (!empty($value) && isset($this->purposes[$attribute])) {
+                $purpose = $this->purposes[$attribute];
                 foreach ($value as $key) {
                     if (!isset($keys[$key])) {
-                        $keys[$key] = array_fill_keys($purposesValues, false);
+                        $keys[$key] = array_fill_keys($this->purposesValues, false);
                     }
                     $keys[$key][$purpose] = true;
                 }
@@ -38,7 +44,7 @@ class KeyListsToArray implements AttributeTransformer
         // one key for everything (certData)
         if (
             !empty($config['outputCertData']) && count($keys) === 1
-            && count(array_filter(current($keys))) === count($purposes)
+            && count(array_filter(current($keys))) === count($this->purposes)
         ) {
             return array_merge($result, [$config['outputCertData'] => key($keys)]);
         }

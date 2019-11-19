@@ -8,21 +8,26 @@ class EndpointList implements AttributeTransformer
 {
     const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
-    public function __construct()
+    private $binding;
+
+    public function __construct($config)
     {
+        $this->binding = $config['binding'];
+        if (strpos($this->binding, self::BINDING_PREFIX) !== 0) {
+            $this->binding = self::BINDING_PREFIX . $this->binding;
+        }
     }
 
-    public function transform($attributes, $config)
+    public function transform($attributes)
     {
-        $binding = $config['binding'];
         $result = [];
         foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = self::getEndpoint($value, $binding);
+            $result[$attribute] = $this->getEndpoint($value);
         }
         return $result;
     }
 
-    private static function getEndpoint($endpoints, string $binding)
+    private function getEndpoint($endpoints)
     {
         if (empty($endpoints)) {
             return null;
@@ -31,11 +36,8 @@ class EndpointList implements AttributeTransformer
             return [$endpoints];
         }
         $result = [];
-        if (strpos($binding, self::BINDING_PREFIX) !== 0) {
-            $binding = self::BINDING_PREFIX . $binding;
-        }
         foreach ($endpoints as $endpoint) {
-            if ($endpoint['Binding'] === $binding) {
+            if ($endpoint['Binding'] === $this->binding) {
                 $result[] = $endpoint['Location'];
             }
         }

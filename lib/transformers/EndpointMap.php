@@ -10,33 +10,37 @@ class EndpointMap implements AttributeTransformer
 
     const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
-    public function __construct()
+    private $defaultBinding;
+
+    private $fullNames;
+
+    public function __construct($config)
     {
+        $this->defaultBinding = $config['defaultBinding'];
+        $this->fullNames = empty($config['shortNames']);
     }
 
-    public function transform($attributes, $config)
+    public function transform($attributes)
     {
-        $defaultBinding = $config['defaultBinding'];
-        $fullNames = empty($config['shortNames']);
         $result = [];
         foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = self::getEndpointsMap($value, $defaultBinding, $fullNames);
+            $result[$attribute] = $this->getEndpointsMap($value);
         }
         return $result;
     }
 
-    private static function getEndpointsMap($endpoints, string $defaultBinding, $fullNames = true)
+    private function getEndpointsMap($endpoints)
     {
         if (empty($endpoints)) {
             return null;
         }
         if (!is_array($endpoints)) {
-            return [$defaultBinding => $endpoints];
+            return [$this->defaultBinding => $endpoints];
         }
         $result = [];
         foreach ($endpoints as $endpoint) {
-            $binding = $endpoint['Binding'] ?: $defaultBinding;
-            if (!$fullNames) {
+            $binding = $endpoint['Binding'] ?: $this->defaultBinding;
+            if (!$this->fullNames) {
                 $binding = str_replace(self::BINDING_PREFIX, '', $binding);
             }
             if (!isset($result[$binding])) {

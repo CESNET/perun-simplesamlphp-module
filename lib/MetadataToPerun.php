@@ -11,6 +11,8 @@ use SimpleSAML\Module\perun\model\Facility;
  */
 class MetadataToPerun
 {
+    const ENTITY_ID = 'entityID';
+
     const PROXY_IDENTIFIER = 'proxyIdentifier';
 
     const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
@@ -53,10 +55,11 @@ class MetadataToPerun
         $this->xmlAttributes = $conf->getArray(self::XML_ATTRIBUTES, []);
         $this->perunAttributes = $conf->getArray(self::PERUN_ATTRIBUTES, []);
         $this->transformers = $conf->getArray(self::TRANSFORMERS, []);
-        assert(empty(array_diff(
-            array_merge(array_keys($this->xmlAttributes), array_keys($this->flatfileAttributes)),
-            array_values($this->perunAttributes)
-        )));
+        $this->transformers = array_map(function ($transformer) {
+            $class = $transformer['class'];
+            $t = new $class($transformer['config'] ?? []);
+            return ['instance' => $t, 'attributes' => $transformer['attributes']];
+        }, $this->transformers);
     }
 
     /**
@@ -73,11 +76,9 @@ class MetadataToPerun
         $this->addXmlAttributes($metadata, $facility);
 
         foreach ($this->transformers as $transformer) {
-            $class = $transformer['class'];
-            $t = new $class();
             $attrs = array_intersect_key($facility, array_flip($transformer['attributes']));
             if (!empty($attrs)) {
-                $newAttrs = $t->transform($attrs, $transformer['config']);
+                $newAttrs = $transformer['instance']->transform($attrs);
                 $facility = array_merge($facility, $newAttrs);
             }
         }
@@ -131,11 +132,11 @@ class MetadataToPerun
      */
     public function createFacilityWithAttributes(array $info)
     {
-        if (empty($info['entityID'])) {
+        if (empty($info[self::ENTITY_ID])) {
             throw new \Exception('Missing entityID');
         }
 
-        $facilities = $this->adapter->getFacilitiesByEntityId($info['entityID']);
+        $facilities = $this->adapter->getFacilitiesByEntityId($info[self::ENTITY_ID]);
         switch (count($facilities)) {
             case 0:
                 $facility = $this->createFacility($info);
@@ -239,10 +240,10 @@ class MetadataToPerun
      */
     private static function generateFacilityName(array $info)
     {
-        if (empty($info['entityID'])) {
+        if (empty($info[self::ENTITY_ID])) {
             return false;
         }
-        return preg_replace('~[^-_\.a-zA-Z0-9]~', '_', $info['entityID']);
+        return preg_replace('~[^-_\.a-zA-Z0-9]~', '_', $info[self::ENTITY_ID]);
     }
 
     private function createFacility(array $info)
