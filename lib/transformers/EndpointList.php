@@ -4,20 +4,29 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Get list(s) of endpoints of selected type.
+ */
 class EndpointList implements AttributeTransformer
 {
     const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
     private $binding;
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->binding = $config['binding'];
+        $this->binding = $config->getString('binding');
         if (strpos($this->binding, self::BINDING_PREFIX) !== 0) {
             $this->binding = self::BINDING_PREFIX . $this->binding;
         }
     }
 
+    /**
+     * @override
+     */
     public function transform($attributes)
     {
         $result = [];

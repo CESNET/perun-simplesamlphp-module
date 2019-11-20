@@ -4,16 +4,25 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Get lists of certificates per purpose.
+ */
 class KeyLists implements AttributeTransformer
 {
     private $purpose2internal;
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->purpose2internal = $config['purpose2internal'];
+        $this->purpose2internal = $config->getArray('purpose2internal');
     }
 
-    public function transform($attributes)
+    /**
+     * @override
+     */
+    public function transform(array $attributes)
     {
         if (count($attributes) !== 1) {
             throw new \Exception('KeyLists transformer only works with 1 attribute.');

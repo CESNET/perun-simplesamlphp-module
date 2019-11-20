@@ -4,6 +4,9 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Get map of binding to comma separated list of endpoints.
+ */
 class EndpointMap implements AttributeTransformer
 {
     const MAPLIST_SEPARATOR = ',';
@@ -14,13 +17,19 @@ class EndpointMap implements AttributeTransformer
 
     private $fullNames;
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->defaultBinding = $config['defaultBinding'];
-        $this->fullNames = empty($config['shortNames']);
+        $this->defaultBinding = $config->getString('defaultBinding');
+        $this->fullNames = !$config->getBoolean('shortNames', false);
     }
 
-    public function transform($attributes)
+    /**
+     * @override
+     */
+    public function transform(array $attributes)
     {
         $result = [];
         foreach ($attributes as $attribute => $value) {

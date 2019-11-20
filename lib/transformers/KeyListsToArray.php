@@ -4,6 +4,9 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Get SSP keys array from key lists.
+ */
 class KeyListsToArray implements AttributeTransformer
 {
     private $purposes;
@@ -12,14 +15,20 @@ class KeyListsToArray implements AttributeTransformer
 
     private $purposesValues;
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->purposes = $config['purposes'] ?? [];
-        $this->removeSource = $config['keepSource'] ?? true;
+        $this->purposes = $config->getArray('purposes');
+        $this->removeSource = !$config->getBoolean('keepSource', true);
         $this->purposesValues = array_values($this->purposes);
     }
 
-    public function transform($attributes)
+    /**
+     * @override
+     */
+    public function transform(array $attributes)
     {
         $result = [];
         $keys = [];

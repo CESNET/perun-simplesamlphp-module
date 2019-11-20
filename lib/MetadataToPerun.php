@@ -57,7 +57,7 @@ class MetadataToPerun
         $this->transformers = $conf->getArray(self::TRANSFORMERS, []);
         $this->transformers = array_map(function ($transformer) {
             $class = $transformer['class'];
-            $t = new $class($transformer['config'] ?? []);
+            $t = new $class(Configuration::loadFromArray($transformer['config'] ?? []));
             return ['instance' => $t, 'attributes' => $transformer['attributes']];
         }, $this->transformers);
     }

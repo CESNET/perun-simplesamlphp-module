@@ -4,6 +4,9 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Get SSP endpoint array from endpoint map.
+ */
 class EndpointMapToArray implements AttributeTransformer
 {
     const MAPLIST_SEPARATOR = ',';
@@ -16,13 +19,19 @@ class EndpointMapToArray implements AttributeTransformer
 
     private $fullNames;
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->fullNames = empty($config['shortNames']);
-        $this->defaultBinding = $this->getBindingName($config['defaultBinding']);
+        $this->fullNames = !$config->getBoolean('shortNames', false);
+        $this->defaultBinding = $this->getBindingName($config->getString('defaultBinding'));
     }
 
-    public function transform($attributes)
+    /**
+     * @override
+     */
+    public function transform(array $attributes)
     {
         $result = [];
         foreach ($attributes as $attribute => $value) {

@@ -31,8 +31,9 @@ interface AttributeTransformer
 {
     /**
      * The construtor. Called only once.
+     * @param Configuration $config
      */
-    public function __construct($config);
+    public function __construct(Configuration $config);
 
     /**
      * Transform attributes (array with keys as attribute names).
@@ -41,6 +42,7 @@ interface AttributeTransformer
      * The input attributes are not automatically deleted.
      * To delete an attribute, include it in the output with a null value.
      * If entityID is deleted, facility is NOT created.
+     * @param array $attributes
      */
-    public function transform($attributes);
+    public function transform(array $attributes);
 }

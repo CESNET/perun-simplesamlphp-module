@@ -4,16 +4,25 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Extract list of emails of certain type(s) from contacts.
+ */
 class EmailList implements AttributeTransformer
 {
     private $types;
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->types = $config['types'] ?? [];
+        $this->types = $config->getArray('types', []);
     }
 
-    public function transform($attributes)
+    /**
+     * @override
+     */
+    public function transform(array $attributes)
     {
         $result = [];
         foreach ($attributes as $attribute => $value) {

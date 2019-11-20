@@ -4,6 +4,9 @@ namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
 
+/**
+ * Parse Shibboleth attribute filter and get released attributes.
+ */
 class ShibbolethAttributeFilter implements AttributeTransformer
 {
     const DENIED_ATTRIBUTE_PREFIX = '-';
@@ -30,23 +33,34 @@ class ShibbolethAttributeFilter implements AttributeTransformer
 
     private $tags = [];
 
-    public function __construct($config)
+    /**
+     * @override
+     */
+    public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->ignoreAttributes = $config['ignore.attributes'] ?? [];
-        $this->ignoreEntityIds = $config['ignore.entityIDs'] ?? [];
-        $this->entityCategories = $config['entityCategories'] ?? [];
+        $this->ignoreAttributes = $config->getArray('ignore.attributes', []);
+        $this->ignoreEntityIds = $config->getArray('ignore.entityIDs', []);
+        $this->entityCategories = $config->getArray('entityCategories', []);
         $this->entityIdAttribute = \SimpleSAML\Module\perun\MetadataToPerun::ENTITY_ID;
-        $this->attributesAttribute = $config['attributesAttribute'] ?? 'requiredAttributes';
-        $this->entityCategoriesAttribute = $config['entityCategoriesAttribute'] ?? 'entityCategory';
-        $this->tagsAttribute = $config['tagsAttribute'] ?? null;
-        $this->skipDefault = !empty($config['skipDefault']);
+        $this->attributesAttribute = $config->getString('attributesAttribute', 'requiredAttributes');
+        $this->entityCategoriesAttribute = $config->getString('entityCategoriesAttribute', 'entityCategory');
+        $this->tagsAttribute = $config->getString('tagsAttribute', null);
+        $this->skipDefault = $config->getBoolean('skipDefault', false);
 
-        $data = $config['file'] ?? $config['xml'];
-        $data_is_url = !empty($config['file']);
+        $data = $config->getString('file', null);
+        if ($data !== null) {
+            $data_is_url = true;
+        } else {
+            $data_is_url = false;
+            $data = $config->getString('xml');
+        }
         $this->parseAttributeFilter($data, $data_is_url);
     }
 
-    public function transform($attributes)
+    /**
+     * @override
+     */
+    public function transform(array $attributes)
     {
         if (empty($attributes[$this->entityIdAttribute])) {
             throw new \Exception('entityId is missing');
@@ -83,9 +97,9 @@ class ShibbolethAttributeFilter implements AttributeTransformer
             ) {
                 return null;
             }
-                return $attributes;
+            return $attributes;
         }
-            return $this->skipDefault ? null : $this->releasedAttributesForAll;
+        return $this->skipDefault ? null : $this->releasedAttributesForAll;
     }
 
     public function getDefaultAttributes($entityCategories = [])
