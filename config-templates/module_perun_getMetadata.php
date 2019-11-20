@@ -108,7 +108,7 @@ $config = [
      * Map of internal name => flatfile name (nesting by dots) or array of indexes for multiple sources
      */
     'flatfile2internal' => [
-        'entityID' => 'entityid',
+        \SimpleSAML\Module\perun\MetadataToPerun::ENTITY_ID => 'entityid',
         'serviceName' => 'name',
         'serviceDescription' => 'description',
         'spInformationURL' => 'url',
@@ -135,7 +135,7 @@ $config = [
         'urn:perun:facility:attribute-def:def:RaS' => 'RaS',
         'urn:perun:facility:attribute-def:def:requiredAttributes' => 'requiredAttributes',
         'urn:perun:facility:attribute-def:def:loginURL' => 'loginURL',
-        'urn:perun:facility:attribute-def:def:entityID' => 'entityID',
+        'urn:perun:facility:attribute-def:def:entityID' => \SimpleSAML\Module\perun\MetadataToPerun::ENTITY_ID,
         'urn:perun:facility:attribute-def:def:serviceName' => 'serviceName',
         'urn:perun:facility:attribute-def:def:serviceDescription' => 'serviceDescription',
         'urn:perun:facility:attribute-def:def:spInformationURL' => 'spInformationURL',

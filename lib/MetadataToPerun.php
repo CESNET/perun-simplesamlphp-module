@@ -69,7 +69,7 @@ class MetadataToPerun
     /**
      * Convert SSP metadata array to Perun facility array.
      * @param array $metadata
-     * @return array facility
+     * @return array facility or null if a transformer deleted entityID
      * @see \SimpleSAML\Module\perun\AttributeTransformer
      */
     public function metadataToFacility(array $metadata)
@@ -84,6 +84,9 @@ class MetadataToPerun
             if (!empty($attrs)) {
                 $newAttrs = $transformer['instance']->transform($attrs);
                 $facility = array_merge($facility, $newAttrs);
+                if (!isset($facility[self::ENTITY_ID]) || $facility[self::ENTITY_ID] === null) {
+                    return null;
+                }
             }
         }
 
@@ -126,7 +129,7 @@ class MetadataToPerun
     {
         $sps = MetaDataStorageSource::getSource($config)->getMetadataSet(self::METADATA_SET);
 
-        return array_map([$this, 'metadataToFacility'], $sps);
+        return array_filter(array_map([$this, 'metadataToFacility'], $sps));
     }
 
     /**
