@@ -29,7 +29,7 @@ $config = [
     /**
      * Absolute path, where the metadata will be stored
      */
-    'absoluteFileName' => '',
+    //'absoluteFileName' => '',
 
     /**
      * List of attributes definitions (for export)
@@ -153,6 +153,7 @@ $config = [
         'urn:perun:facility:attribute-def:def:spAdminContact' => 'spAdminContact',
         'urn:perun:facility:attribute-def:def:spSupportContact' => 'spSupportContact',
         'urn:perun:facility:attribute-def:def:entityCategory' => 'entityCategory',
+        'urn:perun:facility:attribute-def:def:proxyIdentifiers' => 'proxyIdentifiers',
     ],
 
     /**
@@ -201,7 +202,9 @@ $config = [
                 'entityCategoriesAttribute' => 'entityCategory',
                 'attributesAttribute' => 'requiredAttributes',
                 'skipDefault' => false,
-                'ignore.attributes' => ['programme', 'field', 'national', 'degree', 'isTeacher', 'principal', 'encTest'],
+                'ignore.attributes' => [
+                    'programme', 'field', 'national', 'degree', 'isTeacher', 'principal', 'encTest',
+                ],
                 'ignore.entityIDs' => [
                     'google.com',
                     'https://engine.elixir-czech.org/authentication/sp/metadata',
@@ -274,8 +277,32 @@ $config = [
                         'transientId',
                     ],
                 ],
-                'file' => 'attribute-filter.xml',
+                'file' => __DIR__ . '/attribute-filter.xml',
                 //'xml' => '...',
+            ],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\AttributeAlter',
+            'attributes' => ['proxyIdentifiers'],
+            'config' => [
+                'pattern' => '/^release(To)?/',
+                'replacement' => '',
+            ],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\AttributeAlter',
+            'attributes' => ['proxyIdentifiers'],
+            'config' => [
+                'pattern' => '/^(All|ScopedAffiliation|Mail|TargetedID|Entitlement|eduroamUID)$/',
+                '%remove',
+            ],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\AttributeAlter',
+            'attributes' => ['proxyIdentifiers'],
+            'config' => [
+                'pattern' => '/^/',
+                'replacement' => 'https://idp2.ics.muni.cz/idp/shibboleth#',
             ],
         ],
     ],
