@@ -167,12 +167,13 @@ class MetadataToPerun
                     }
                     $attributes[$i]['value'] = $value;
                 }
-            } elseif ($perunName === $this->proxyIdentifiersAttr) {
-                $attributes[$i]['value'] = [$this->proxyIdentifier];
             } elseif ($perunName === $this->masterProxyIdentifierAttr) {
                 $attributes[$i]['value'] = $this->proxyIdentifier;
             } elseif ($this->isSamlFacilityAttr !== '' && $perunName === $this->isSamlFacilityAttr) {
                 $attributes[$i]['value'] = true;
+            }
+            if ($perunName === $this->proxyIdentifiersAttr) {
+                $attributes[$i]['value'][] = $this->proxyIdentifier;
             }
         }
         $this->setFacilityAttributes($facility, $attributes);

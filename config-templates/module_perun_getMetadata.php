@@ -195,7 +195,7 @@ $config = [
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\ShibbolethAttributeFilter',
-            'attributes' => ['requiredAttributes'],
+            'attributes' => ['requiredAttributes', 'entityCategory'],
             'config' => [
                 'tagsAttribute' => 'proxyIdentifiers',
                 'entityCategoriesAttribute' => 'entityCategory',
