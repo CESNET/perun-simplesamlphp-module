@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author Pavel Brousek <brousek@ics.muni.cz>
+ */
+
 namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;

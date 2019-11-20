@@ -201,7 +201,7 @@ $config = [
                 'entityCategoriesAttribute' => 'entityCategory',
                 'attributesAttribute' => 'requiredAttributes',
                 'skipDefault' => false,
-                'ignore.attributes' => ['programme', 'field', 'national', 'degree', 'isTeacher', 'principal'],
+                'ignore.attributes' => ['programme', 'field', 'national', 'degree', 'isTeacher', 'principal', 'encTest'],
                 'ignore.entityIDs' => [
                     'google.com',
                     'https://engine.elixir-czech.org/authentication/sp/metadata',

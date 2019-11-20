@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author Pavel Brousek <brousek@ics.muni.cz>
+ */
+
 namespace SimpleSAML\Module\perun\transformers;
 
 use SimpleSAML\Module\perun\AttributeTransformer;
@@ -79,8 +83,8 @@ class ShibbolethAttributeFilter implements AttributeTransformer
         }
 
         $result = [$this->attributesAttribute => $releasedAttributes];
-        if ($this->tagsAttribute !== null) {
-            $result[$this->tagsAttribute] = $this->tags;
+        if ($this->tagsAttribute !== null && !empty($this->tags[$entityId])) {
+            $result[$this->tagsAttribute] = $this->tags[$entityId];
         }
         return $result;
     }
@@ -117,7 +121,7 @@ class ShibbolethAttributeFilter implements AttributeTransformer
 
     private function parseAttributeFilter($data, $data_is_url)
     {
-        $attributeFilterPolicyGroup = new SimpleXMLElement($data, 0, $data_is_url);
+        $attributeFilterPolicyGroup = new \SimpleXMLElement($data, 0, $data_is_url);
         foreach ($attributeFilterPolicyGroup->AttributeFilterPolicy as $policy) {
             $sps = [];
             $notSps = [];
@@ -172,7 +176,7 @@ class ShibbolethAttributeFilter implements AttributeTransformer
     private function requirementAny($policy)
     {
         foreach ($policy->AttributeRule as $rule) {
-            addAttributeTo($this->releasedAttributesForAll, $rule);
+            $this->addAttributeTo($this->releasedAttributesForAll, $rule);
         }
     }
 
