@@ -97,7 +97,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             $sspAttr = $this->attrMap[$attrName];
 
             // convert $attrValue into array
-            if (is_null($attrValue)) {
+            if ($attrValue === null) {
                 $value = [];
             } elseif (is_string($attrValue) || is_numeric($attrValue)) {
                 $value = [$attrValue];

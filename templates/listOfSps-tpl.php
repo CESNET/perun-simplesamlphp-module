@@ -96,7 +96,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         <th><?php echo $this->t('{perun:listOfSps:description}') ?></th>
                         <?php
                         foreach ($attributesToShow as $attr) {
-                            if (!is_null($samlServices) && !empty($samlServices)) {
+                            if ($samlServices !== null && !empty($samlServices)) {
                                 echo "<th class='" .
                                     getClass(array_values($samlServices)[0]['facilityAttributes'][$attr]) .
                                     "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
@@ -109,7 +109,7 @@ $this->includeAtTemplateBase('includes/header.php');
                     <tbody>
                     <?php
                     foreach ($allServices as $service) {
-                        if (is_null($service['showOnServiceList']) || is_null($service['showOnServiceList']['value']) ||
+                        if ($service['showOnServiceList'] === null || $service['showOnServiceList']['value'] === null ||
                             empty($service['showOnServiceList']['value']) ||
                             !($service['showOnServiceList']['value'])
                         ) {
@@ -142,7 +142,7 @@ $this->includeAtTemplateBase('includes/footer.php');
 
 function printServiceName($service)
 {
-    if (is_null($service['loginURL']) || is_null($service['loginURL']['value']) ||
+    if ($service['loginURL'] === null || $service['loginURL']['value'] === null ||
         empty($service['loginURL']['value'])
     ) {
         return $service['facility']->getName();
@@ -155,7 +155,7 @@ function printServiceName($service)
 function printAttributeValue($attribute, $service, $attr)
 {
     $value = $attribute['value'];
-    if ((is_null($value) || empty($value)) && $attribute['type'] != "java.lang.Boolean") {
+    if (($value === null || empty($value)) && $attribute['type'] != "java.lang.Boolean") {
         return "<td class='center'>&horbar;</td>";
     }
     $string = '';
@@ -168,7 +168,7 @@ function printAttributeValue($attribute, $service, $attr)
     } elseif ($attribute['type'] == "java.lang.Integer") {
         $string = $value;
     } elseif ($attribute['type'] == "java.lang.Boolean") {
-        if (!is_null($value) && $value) {
+        if ($value !== null && $value) {
             $string = "&#x2714;";
         } else {
             $string = "&#x2715;";

@@ -22,18 +22,18 @@ const TYPE_MAP = 'java.util.LinkedHashMap';
 $conf = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $proxyIdentifier = $conf->getString(PROXY_IDENTIFIER);
-assert(is_null($proxyIdentifier) || empty($proxyIdentifier));
+assert($proxyIdentifier === null || empty($proxyIdentifier));
 
 $attributesDefinitions = $conf->getArray(ATTRIBUTES_DEFINITIONS);
-assert(is_null($attributesDefinitions) || is_array($attributesDefinitions));
+assert($attributesDefinitions === null || is_array($attributesDefinitions));
 
 $perunProxyIdentifierAttr = $conf->getString(PERUN_PROXY_IDENTIFIER_ATTR_NAME);
 $perunProxyEntityIDAttr = $conf->getString(PERUN_PROXY_ENTITY_ID_ATTR_NAME);
-assert(is_null($perunProxyEntityIDAttr) || empty($perunProxyEntityIDAttr) ||
-    is_null($perunProxyIdentifierAttr) || empty($perunProxyIdentifierAttr));
+assert($perunProxyEntityIDAttr === null || empty($perunProxyEntityIDAttr) ||
+    $perunProxyIdentifierAttr === null || empty($perunProxyIdentifierAttr));
 
 $absoluteFileName = $conf->getString(ABSOLUTE_FILE_NAME);
-assert(is_null($absoluteFileName) || empty($absoluteFileName));
+assert($absoluteFileName === null || empty($absoluteFileName));
 
 $rpcAdapter = new AdapterRpc();
 
@@ -78,25 +78,25 @@ foreach ($facilitiesWithAttributes as $facilityWithAttributes) {
             $attribute = $facilityWithAttributes[FACILITY_ATTRIBUTES][$perunAttrName];
             if (($attribute['type'] === TYPE_INTEGER) &&
                 is_numeric($attribute['value']) &&
-                !is_null($attribute['value'])
+                $attribute['value'] !== null
             ) {
                 $metadataContent .= "\t '" . $metadataAttrName . "' => " . $attribute['value'] . "," . PHP_EOL;
-            } elseif (($attribute['type'] === TYPE_STRING) && !is_null($attribute['value'])) {
+            } elseif (($attribute['type'] === TYPE_STRING) && $attribute['value'] !== null) {
                 $metadataContent .= "\t '" . $metadataAttrName . "' => '" . $attribute['value'] . "'," . PHP_EOL;
             } elseif ($attribute['type'] === TYPE_BOOLEAN) {
                 $metadataContent .= "\t '" . $metadataAttrName . "' => ";
-                if (is_null($attribute['value']) || $attribute['value'] === 'false') {
+                if ($attribute['value'] === null || $attribute['value'] === 'false') {
                     $metadataContent .= "false," . PHP_EOL;
                 } else {
                     $metadataContent .= "true," . PHP_EOL;
                 }
-            } elseif ($attribute['type'] === TYPE_ARRAY && !is_null($attribute['value'])) {
+            } elseif ($attribute['type'] === TYPE_ARRAY && $attribute['value'] !== null) {
                 $metadataContent .= "\t '" . $metadataAttrName . "' => [" . PHP_EOL;
                 foreach ($attribute['value'] as $value) {
                     $metadataContent .= "\t\t'" . $value . "'," . PHP_EOL;
                 }
                 $metadataContent .= "\t]," . PHP_EOL;
-            } elseif ($attribute['type'] === TYPE_MAP && !is_null($attribute['value'])) {
+            } elseif ($attribute['type'] === TYPE_MAP && $attribute['value'] !== null) {
                 $metadataContent .= "\t '" . $metadataAttrName . "' => [" . PHP_EOL;
                 foreach ($attribute['value'] as $key => $value) {
                     $metadataContent .= "\t\t'" . $key . "' => '" . $value . "'," . PHP_EOL;

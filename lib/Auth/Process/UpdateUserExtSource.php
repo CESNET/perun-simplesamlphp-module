@@ -50,7 +50,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
                 $request['Attributes']['sourceIdPEntityID'][0],
                 $request['Attributes']['sourceIdPEppn'][0]
             );
-            if (is_null($userExtSource)) {
+            if ($userExtSource === null) {
                 throw new Exception(
                     "sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource " .
                     $request['Attributes']['sourceIdPEntityID'][0] . " and Login " .
@@ -60,7 +60,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 
             $attributes = $this->adapter->getUserExtSourceAttributes($userExtSource['id'], array_keys($this->attrMap));
 
-            if (is_null($attributes)) {
+            if ($attributes === null) {
                 throw new Exception(
                     "sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful."
                 );

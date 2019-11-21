@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - Slightly modified text displayed on WAYF
 - Updated phpcs ruleset to PSR-12
+- is_null() changed to === null
 
 #### Fixed
 - Fixed wrong dictionary name in post.php

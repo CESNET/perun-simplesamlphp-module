@@ -47,7 +47,7 @@ class Disco extends PowerIdPDisco
             $id = explode(":", $query['AuthID'])[0];
             $state = State::loadState($id, 'saml:sp:sso', true);
 
-            if (!is_null($state)) {
+            if ($state !== null) {
                 if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
                     $this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
                     $this->removeAuthContextClassRefWithPrefix($state);
@@ -358,7 +358,7 @@ class Disco extends PowerIdPDisco
         $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $prefix = $conf->getString(self::PROPNAME_PREFIX, null);
 
-        if (is_null($prefix)) {
+        if ($prefix === null) {
             return;
         }
         unset($state['saml:RequestedAuthnContext']['AuthnContextClassRef']);
