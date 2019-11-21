@@ -27,11 +27,11 @@ class DatabaseCommand
         $greyListTableName = $databaseConnector->getGreyListTableName();
         $table = null;
         $listOfIdPs = [];
-        assert($conn != null);
+        assert($conn !== null);
 
-        if ($tableName == self::WHITELIST) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif ($tableName == self::GREYLIST) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
@@ -74,11 +74,11 @@ class DatabaseCommand
         $greyListTableName = $databaseConnector->getGreyListTableName();
         $table = null;
         $listOfIdPs = [];
-        assert($conn != null);
+        assert($conn !== null);
 
-        if ($tableName == self::WHITELIST) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif ($tableName == self::GREYLIST) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
@@ -117,11 +117,11 @@ class DatabaseCommand
         $whiteListTableName = $databaseConnector->getWhiteListTableName();
         $greyListTableName = $databaseConnector->getGreyListTableName();
         $table = null;
-        assert($conn != null);
+        assert($conn !== null);
 
-        if ($tableName == self::WHITELIST) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif ($tableName == self::GREYLIST) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
@@ -155,11 +155,11 @@ class DatabaseCommand
         $whiteListTableName = $databaseConnector->getWhiteListTableName();
         $greyListTableName = $databaseConnector->getGreyListTableName();
         $table = null;
-        assert($conn != null);
+        assert($conn !== null);
 
-        if ($tableName == self::WHITELIST) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif ($tableName == self::GREYLIST) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 

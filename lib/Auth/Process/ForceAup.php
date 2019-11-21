@@ -246,7 +246,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
         $vos = [];
         foreach ($voShortNames as $voShortName) {
             $vo = $this->adapter->getVoByShortName($voShortName);
-            if ($vo != null) {
+            if ($vo !== null) {
                 array_push($vos, $vo);
             }
         }
@@ -254,7 +254,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
         $voAups = [];
         foreach ($vos as $vo) {
             $aups = $this->adapter->getVoAttributes($vo, [$this->perunVoAupAttr])[$this->perunVoAupAttr];
-            if ($aups != null) {
+            if ($aups !== null) {
                 $voAups[$vo->getShortName()] = $aups;
             }
         }

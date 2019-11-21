@@ -30,7 +30,6 @@ $informationURL = '';
 if ($spMetadata['name']['en']) {
     $serviceName = $spMetadata['name']['en'];
 }
-
 if ($spMetadata['InformationURL']['en']) {
     $informationURL = $spMetadata['InformationURL']['en'];
 }

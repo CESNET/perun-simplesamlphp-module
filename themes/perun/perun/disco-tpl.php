@@ -94,7 +94,7 @@ if ($this->isAddInstitutionApp()) {
 } else {
     $this->includeAtTemplateBase('includes/header.php');
 
-    if ($authContextClassRef != null) {
+    if ($authContextClassRef !== null) {
         foreach ($authContextClassRef as $value) {
             if (substr($value, 0, strlen(URN_CESNET_PROXYIDP_IDPENTITYID))
                 === URN_CESNET_PROXYIDP_IDPENTITYID) {

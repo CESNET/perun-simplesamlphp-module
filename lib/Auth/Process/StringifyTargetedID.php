@@ -55,7 +55,7 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
      */
     private function stringify($attributeValue)
     {
-        if (is_object($attributeValue) && get_class($attributeValue) == "SAML2\XML\saml\NameID") {
+        if (is_object($attributeValue) && get_class($attributeValue) === "SAML2\XML\saml\NameID") {
             return $attributeValue->NameQualifier . '!' . $attributeValue->SPNameQualifier . '!'
                 . $attributeValue->value;
         } else {

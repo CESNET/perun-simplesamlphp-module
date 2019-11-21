@@ -324,7 +324,7 @@ class AdapterRpc extends Adapter
 
             foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
                 if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
-                    $usersGroupOnFacility['attributes'][0]['friendlyName'] == 'voShortName') {
+                    $usersGroupOnFacility['attributes'][0]['friendlyName'] === 'voShortName') {
                     $uniqueName = $usersGroupOnFacility['attributes'][0]['value'] . ":" . $usersGroupOnFacility['name'];
 
                     array_push($groups, new Group(

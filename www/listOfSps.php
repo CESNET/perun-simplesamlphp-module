@@ -145,11 +145,11 @@ $statistics['oidcTestServicesCount'] = $oidcTestServicesCount;
 
 $attributesToShow = [];
 foreach ($attrNames as $attrName) {
-    if ($attrName != $perunLoginURLAttr
-        && $attrName != $perunShowOnServiceListAttr
-        && $attrName != $perunTestSpAttr
-        && $attrName != $perunOidcClientIdAttr
-        && $attrName != $perunSaml2EntityIdAttr
+    if ($attrName !== $perunLoginURLAttr
+        && $attrName !== $perunShowOnServiceListAttr
+        && $attrName !== $perunTestSpAttr
+        && $attrName !== $perunOidcClientIdAttr
+        && $attrName !== $perunSaml2EntityIdAttr
     ) {
         array_push($attributesToShow, $attrName);
     }
