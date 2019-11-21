@@ -21,7 +21,7 @@ $config = Configuration::getInstance();
 $conf = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $proxyIdentifier = $conf->getString(PROXY_IDENTIFIER);
-if ($proxyIdentifier === null || empty($proxyIdentifier)) {
+if (empty($proxyIdentifier)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '" . PROXY_IDENTIFIER
         . "'."
@@ -29,7 +29,7 @@ if ($proxyIdentifier === null || empty($proxyIdentifier)) {
 }
 
 $perunProxyIdentifierAttr = $conf->getString(PERUN_PROXY_IDENTIFIER_ATTR_NAME);
-if ($perunProxyIdentifierAttr === null || empty($perunProxyIdentifierAttr)) {
+if (empty($perunProxyIdentifierAttr)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . PERUN_PROXY_IDENTIFIER_ATTR_NAME . "'."
@@ -37,7 +37,7 @@ if ($perunProxyIdentifierAttr === null || empty($perunProxyIdentifierAttr)) {
 }
 
 $attributesDefinitions = $conf->getArray(ATTRIBUTES_DEFINITIONS);
-if ($attributesDefinitions === null || empty($attributesDefinitions)) {
+if (empty($attributesDefinitions)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . ATTRIBUTES_DEFINITIONS . "'."
@@ -46,7 +46,7 @@ if ($attributesDefinitions === null || empty($attributesDefinitions)) {
 
 $showOIDCServices = $conf->getBoolean(SHOW_OIDC_SERVICES, false);
 $perunSaml2EntityIdAttr = $conf->getString(PERUN_SAML2_ENTITY_ID_ATTR_NAME);
-if ($perunSaml2EntityIdAttr === null || empty($perunSaml2EntityIdAttr)) {
+if (empty($perunSaml2EntityIdAttr)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . PERUN_SAML2_ENTITY_ID_ATTR_NAME . "'."
@@ -54,10 +54,7 @@ if ($perunSaml2EntityIdAttr === null || empty($perunSaml2EntityIdAttr)) {
 }
 
 $perunOidcClientIdAttr = $conf->getString(PERUN_OIDC_CLIENT_ID_ATTR_NAME);
-if ($showOIDCServices
-    && ($perunOidcClientIdAttr === null
-        || empty($perunOidcClientIdAttr))
-) {
+if ($showOIDCServices && empty($perunOidcClientIdAttr)) {
     throw new Exception(
         "perun:listOfSps: missing mandatory config option '"
         . PERUN_OIDC_CLIENT_ID_ATTR_NAME . "'."
@@ -78,18 +75,16 @@ $facilities
 $attrNames = [];
 
 array_push($attrNames, $perunSaml2EntityIdAttr);
-if ($perunOidcClientIdAttr !== null && !empty($perunOidcClientIdAttr)) {
+if (!empty($perunOidcClientIdAttr)) {
     array_push($attrNames, $perunOidcClientIdAttr);
 }
-if ($perunLoginURLAttr !== null && !empty($perunLoginURLAttr)) {
+if (!empty($perunLoginURLAttr)) {
     array_push($attrNames, $perunLoginURLAttr);
 }
-if ($perunTestSpAttr !== null && !empty($perunTestSpAttr)) {
+if (!empty($perunTestSpAttr)) {
     array_push($attrNames, $perunTestSpAttr);
 }
-if ($perunShowOnServiceListAttr !== null
-    && !empty($perunShowOnServiceListAttr)
-) {
+if (!empty($perunShowOnServiceListAttr)) {
     array_push($attrNames, $perunShowOnServiceListAttr);
 }
 foreach ($attributesDefinitions as $attributeDefinition) {
@@ -107,9 +102,7 @@ foreach ($facilities as $facility) {
     foreach ($attributes as $attribute) {
         $facilityAttributes[$attribute['name']] = $attribute;
     }
-    if ($facilityAttributes[$perunSaml2EntityIdAttr]['value'] !== null
-        && !empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])
-    ) {
+    if (!empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
         $samlServices[$facility->getId()] = [
             'facility' => $facility,
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
@@ -121,10 +114,7 @@ foreach ($facilities as $facility) {
         }
     }
 
-    if ($showOIDCServices
-        && ($facilityAttributes[$perunOidcClientIdAttr]['value'] !== null
-            && !empty($facilityAttributes[$perunOidcClientIdAttr]['value']))
-    ) {
+    if ($showOIDCServices && !empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
         $oidcServices[$facility->getId()] = [
             'facility' => $facility,
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],

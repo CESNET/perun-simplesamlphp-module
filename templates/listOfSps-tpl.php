@@ -96,7 +96,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         <th><?php echo $this->t('{perun:listOfSps:description}') ?></th>
                         <?php
                         foreach ($attributesToShow as $attr) {
-                            if ($samlServices !== null && !empty($samlServices)) {
+                            if (!empty($samlServices)) {
                                 echo "<th class='" .
                                     getClass(array_values($samlServices)[0]['facilityAttributes'][$attr]) .
                                     "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
@@ -109,8 +109,7 @@ $this->includeAtTemplateBase('includes/header.php');
                     <tbody>
                     <?php
                     foreach ($allServices as $service) {
-                        if ($service['showOnServiceList'] === null || $service['showOnServiceList']['value'] === null ||
-                            empty($service['showOnServiceList']['value']) ||
+                        if (empty($service['showOnServiceList']['value']) ||
                             !($service['showOnServiceList']['value'])
                         ) {
                             continue;
@@ -142,8 +141,7 @@ $this->includeAtTemplateBase('includes/footer.php');
 
 function printServiceName($service)
 {
-    if ($service['loginURL'] === null || $service['loginURL']['value'] === null ||
-        empty($service['loginURL']['value'])
+    if (empty($service['loginURL']['value'])
     ) {
         return $service['facility']->getName();
     } else {
@@ -155,7 +153,7 @@ function printServiceName($service)
 function printAttributeValue($attribute, $service, $attr)
 {
     $value = $attribute['value'];
-    if (($value === null || empty($value)) && $attribute['type'] !== "java.lang.Boolean") {
+    if (empty($value) && $attribute['type'] !== "java.lang.Boolean") {
         return "<td class='center'>&horbar;</td>";
     }
     $string = '';
