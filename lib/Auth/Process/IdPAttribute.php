@@ -24,7 +24,7 @@ class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config['attrMap'])) {
             throw new Exception(
-                "perun:IdPAttribute: missing mandatory configuration option 'attrMap'."
+                'perun:IdPAttribute: missing mandatory configuration option \'attrMap\'.'
             );
         }
 

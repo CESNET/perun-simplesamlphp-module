@@ -114,20 +114,20 @@ $this->includeAtTemplateBase('includes/header.php');
                         ) {
                             continue;
                         }
-                        echo "<tr>";
-                        echo "<td>" . printServiceName($service) . "</td>";
-                        if (array_key_exists($service["facility"]->getID(), $samlServices)) {
-                            echo "<td>" . $this->t('{perun:listOfSps:saml}') . "</td>";
+                        echo '<tr>';
+                        echo '<td>' . printServiceName($service) . '</td>';
+                        if (array_key_exists($service['facility']->getID(), $samlServices)) {
+                            echo 'td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
                         } else {
-                            echo "<td>" . $this->t('{perun:listOfSps:oidc}') . "</td>";
+                            echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
                         }
-                        echo "<td>" . $service['facility']->getDescription() . "</td>";
+                        echo '<td>' . $service['facility']->getDescription() . '</td>';
                         foreach ($attributesToShow as $attr) {
                             $value = printAttributeValue($service['facilityAttributes'][$attr], $service, $attr);
                             echo $value;
                         }
                     }
-                    echo "</tr>";
+                    echo '</tr>';
                     ?>
                     </tbody>
                 </table>
@@ -153,39 +153,39 @@ function printServiceName($service)
 function printAttributeValue($attribute, $service, $attr)
 {
     $value = $attribute['value'];
-    if (empty($value) && $attribute['type'] !== "java.lang.Boolean") {
+    if (empty($value) && $attribute['type'] !== 'java.lang.Boolean') {
         return "<td class='center'>&horbar;</td>";
     }
     $string = '';
-    if ($attribute['type'] === "java.lang.String" || $attribute['type'] === "java.lang.LargeString") {
+    if ($attribute['type'] === 'java.lang.String' || $attribute['type'] === 'java.lang.LargeString') {
         if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $string = "<a class='customLink' href='" . $value . "'>" . $value . "</a>";
+            $string = '<a class="customLink" href="' . $value . '">' . $value . '</a>';
         } else {
             $string = $value;
         }
-    } elseif ($attribute['type'] === "java.lang.Integer") {
+    } elseif ($attribute['type'] === 'java.lang.Integer') {
         $string = $value;
-    } elseif ($attribute['type'] === "java.lang.Boolean") {
+    } elseif ($attribute['type'] === 'java.lang.Boolean') {
         if ($value !== null && $value) {
-            $string = "&#x2714;";
+            $string = '&#x2714;';
         } else {
-            $string = "&#x2715;";
+            $string = '&#x2715;';
         }
-    } elseif ($attribute['type'] === "java.util.ArrayList" || $attribute['type'] === "java.lang.LargeArrayList") {
-        $string = "<ul>";
+    } elseif ($attribute['type'] === 'java.util.ArrayList' || $attribute['type'] === 'java.lang.LargeArrayList') {
+        $string = '<ul>';
         foreach ($value as $v) {
-            $string .= "<li>" . $v . "</li>";
+            $string .= '<li>' . $v . '</li>';
         }
-        $string .= "</ul>";
-    } elseif ($attribute['type'] === "java.util.LinkedHashMap") {
-        $string = "<ul>";
+        $string .= '</ul>';
+    } elseif ($attribute['type'] === 'java.util.LinkedHashMap') {
+        $string = '<ul>';
         foreach ($value as $k => $v) {
-            $string .= "<li>" . $k . " &rarr; " . $v . "</li>";
+            $string .= '<li>' . $k . ' &rarr; ' . $v . '</li>';
         }
-        $string .= "</ul>";
+        $string .= '</ul>';
     }
     if (!empty($string)) {
-        return "<td class='" . getClass($service['facilityAttributes'][$attr]) . "'>" . $string . "</td>";
+        return '<td class="' . getClass($service['facilityAttributes'][$attr]) . '">' . $string . '</td>';
     } else {
         return '<td/>';
     }
@@ -193,16 +193,16 @@ function printAttributeValue($attribute, $service, $attr)
 
 function getClass($attribute)
 {
-    if ($attribute['type'] === "java.lang.String") {
-        return "string";
-    } elseif ($attribute['type'] === "java.lang.Integer") {
-        return "integer";
-    } elseif ($attribute['type'] === "java.lang.Boolean") {
-        return "boolean";
-    } elseif ($attribute['type'] === "java.util.ArrayList" || $attribute['type'] === "java.util.LargeArrayList") {
-        return "array";
-    } elseif ($attribute['type'] === "java.util.LinkedHashMap") {
-        return "map";
+    if ($attribute['type'] === 'java.lang.String') {
+        return 'string';
+    } elseif ($attribute['type'] === 'java.lang.Integer') {
+        return 'integer';
+    } elseif ($attribute['type'] === 'java.lang.Boolean') {
+        return 'boolean';
+    } elseif ($attribute['type'] === 'java.util.ArrayList' || $attribute['type'] === 'java.util.LargeArrayList') {
+        return 'array';
+    } elseif ($attribute['type'] === 'java.util.LinkedHashMap') {
+        return 'map';
     } else {
         return '';
     }

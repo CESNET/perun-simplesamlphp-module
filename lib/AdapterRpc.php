@@ -377,8 +377,8 @@ class AdapterRpc extends Adapter
         ]);
         if ($member === null) {
             throw new Exception(
-                "Member for User with name " . $user->getName() . " and Vo with shortName " .
-                $vo->getShortName() . "does not exist in Perun!"
+                'Member for User with name ' . $user->getName() . ' and Vo with shortName ' .
+                $vo->getShortName() . 'does not exist in Perun!'
             );
         }
         return new Member($member['id'], $member['voId'], $member['status']);
@@ -443,31 +443,31 @@ class AdapterRpc extends Adapter
     public function getUserExtSource($extSourceName, $extSourceLogin)
     {
         return $this->connector->get('usersManager', 'getUserExtSourceByExtLoginAndExtSourceName', [
-            "extSourceName" => $extSourceName,
-            "extSourceLogin" => $extSourceLogin
+            'extSourceName' => $extSourceName,
+            'extSourceLogin' => $extSourceLogin
         ]);
     }
 
     public function updateUserExtSourceLastAccess($userExtSource)
     {
         $this->connector->post('usersManager', 'updateUserExtSourceLastAccess', [
-            "userExtSource" => $userExtSource
+            'userExtSource' => $userExtSource
         ]);
     }
 
     public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
     {
         return $this->connector->get('attributesManager', 'getAttributes', [
-            "userExtSource" => $userExtSourceId,
-            "attrNames" => $attrNames
+            'userExtSource' => $userExtSourceId,
+            'attrNames' => $attrNames
         ]);
     }
 
     public function setUserExtSourceAttributes($userExtSourceId, $attributes)
     {
         $this->connector->post('attributesManager', 'setAttributes', [
-            "userExtSource" => $userExtSourceId,
-            "attributes" => $attributes
+            'userExtSource' => $userExtSourceId,
+            'attributes' => $attributes
         ]);
     }
 

@@ -67,14 +67,14 @@ class IdpListsServiceCsv extends IdpListsService
                 flock($wf, LOCK_UN);
             } else {
                 throw new Exception(
-                    "IdpListsServiceCsv - unable to get file lock. Hint: " .
-                    "Try to create folder config/idplists and add write rights."
+                    'IdpListsServiceCsv - unable to get file lock. Hint: ' .
+                    'Try to create folder config/idplists and add write rights.'
                 );
             }
         } else {
             throw new Exception(
-                "IdpListsServiceCsv - unable to get file lock. Hint: " .
-                "Try to create folder config/idplists and add write rights."
+                'IdpListsServiceCsv - unable to get file lock. Hint: ' .
+                'Try to create folder config/idplists and add write rights.'
             );
         }
         fclose($wf);
@@ -83,22 +83,22 @@ class IdpListsServiceCsv extends IdpListsService
 
     public function getWhitelist()
     {
-        return $this->listToArray("whitelist", true);
+        return $this->listToArray('whitelist', true);
     }
 
     public function getGreylist()
     {
-        return $this->listToArray("greyList", true);
+        return $this->listToArray('greyList', true);
     }
 
     public function getWhitelistEntityIds()
     {
-        return $this->listToArray("whitelist", false);
+        return $this->listToArray('whitelist', false);
     }
 
     public function getGreylistEntityIds()
     {
-        return $this->listToArray("greyList", false);
+        return $this->listToArray('greyList', false);
     }
 
     /**
@@ -108,7 +108,7 @@ class IdpListsServiceCsv extends IdpListsService
      */
     public function listToArray($listName, $all)
     {
-        if ($listName === "whitelist") {
+        if ($listName === 'whitelist') {
             $list = $this->whitelistFile;
         } else {
             $list = $this->greylistFile;
@@ -136,8 +136,8 @@ class IdpListsServiceCsv extends IdpListsService
             flock($f, LOCK_UN);
         } else {
             throw new Exception(
-                "IdpListsServiceCsv - unable to get file lock. Hint: " .
-                "Try to create folder config/idplists and add write rights."
+                'IdpListsServiceCsv - unable to get file lock. Hint: ' .
+                'Try to create folder config/idplists and add write rights.'
             );
         }
         fclose($f);

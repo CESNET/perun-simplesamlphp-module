@@ -25,7 +25,7 @@ class Disco extends PowerIdPDisco
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
     const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
-    const PROPNAME_PREFIX = "disco.removeAuthnContextClassRefPrefix";
+    const PROPNAME_PREFIX = 'disco.removeAuthnContextClassRefPrefix';
 
     private $originalsp;
     private $whitelist;
@@ -253,11 +253,11 @@ class Disco extends PowerIdPDisco
             if (isset($idp['EntityAttributes']['http://macedir.org/entity-category-support'])) {
                 $entityCategorySupport
                     = $idp['EntityAttributes']['http://macedir.org/entity-category-support'];
-                if (in_array("http://refeds.org/category/research-and-scholarship", $entityCategorySupport)
+                if (in_array('http://refeds.org/category/research-and-scholarship', $entityCategorySupport)
                 ) {
                     $unset = false;
                 }
-                if (in_array("http://www.geant.net/uri/dataprotection-code-of-conduct/v1", $entityCategorySupport)
+                if (in_array('http://www.geant.net/uri/dataprotection-code-of-conduct/v1', $entityCategorySupport)
                 ) {
                     $unset = false;
                 }

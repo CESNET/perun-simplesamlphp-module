@@ -69,13 +69,13 @@ class RpcConnector
         $json = curl_exec($ch);
         curl_close($ch);
 
-        Logger::debug("perun.RPC: GET call $uri with params: " . $paramsQuery . ", response: " . $json);
+        Logger::debug('perun.RPC: GET call $uri with params: ' . $paramsQuery . ', response: ' . $json);
 
         $result = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(
-                "Cant't decode response from Perun. Call: $uri, Params: $paramsQuery, Response: $json"
+                'Cant\'t decode response from Perun. Call: $uri, Params: $paramsQuery, Response: $json'
             );
         }
         if (isset($result['errorId'])) {
@@ -110,14 +110,14 @@ class RpcConnector
         $json = curl_exec($ch);
         curl_close($ch);
 
-        Logger::debug("perun.RPC: POST call $uri with params: " . $paramsJson . ", response: " . $json);
+        Logger::debug('perun.RPC: POST call $uri with params: ' . $paramsJson . ', response: ' . $json);
 
         $result = json_decode($json, true);
 
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(
-                "Cant't decode response from Perun. Call: $uri, Params: $paramsJson, Response: $json"
+                'Cant\'t decode response from Perun. Call: $uri, Params: $paramsJson, Response: $json'
             );
         }
         if (isset($result['errorId'])) {
@@ -129,6 +129,10 @@ class RpcConnector
 
     private static function error($id, $name, $message, $uri, $params)
     {
-        throw new PerunException($id, $name, $message . "\ncall: $uri, params: " . var_export($params, true));
+        throw new PerunException(
+            $id,
+            $name,
+            $message . '\ncall: ' . $uri . ', params: ' . var_export($params, true)
+        );
     }
 }

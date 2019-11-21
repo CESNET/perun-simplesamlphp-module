@@ -39,7 +39,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config['attrMap'])) {
             throw new Exception(
-                "perun:PerunAttributes: missing mandatory configuration option 'attrMap'."
+                'perun:PerunAttributes: missing mandatory configuration option \'attrMap\'.'
             );
         }
         if (!isset($config['interface'])) {
@@ -67,9 +67,9 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             $user = $request['perun']['user'];
         } else {
             throw new Exception(
-                "perun:PerunAttributes: " .
-                "missing mandatory field 'perun.user' in request." .
-                "Hint: Did you configured PerunIdentity filter before this filter?"
+                'perun:PerunAttributes: ' .
+                'missing mandatory field \'perun.user\' in request.' .
+                'Hint: Did you configured PerunIdentity filter before this filter?'
             );
         }
 
@@ -107,9 +107,9 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
                 $value = $attrValue;
             } else {
                 throw new Exception(
-                    "sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. "
-                    .
-                    "Attribute name: $attrName, Supported types: null, string, numeric, array, associative array."
+                    'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' .
+                    'Attribute name: ' . $attrName . ', ' .
+                    'Supported types: null, string, numeric, array, associative array.'
                 );
             }
 
@@ -120,14 +120,14 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
                 $attrArray = $sspAttr;
             } else {
                 throw new Exception(
-                    "sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. " .
-                    "Attribute \$attrName, Supported types: string, array."
+                    'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' .
+                    'Attribute \$attrName, Supported types: string, array.'
                 );
             }
 
-            Logger::debug("perun:PerunAttributes: perun attribute $attrName was fetched. " .
-                "Value " . implode(",", $value) .
-                " is being setted to ssp attributes " . implode(",", $attrArray));
+            Logger::debug('perun:PerunAttributes: perun attribute $attrName was fetched. ' .
+                'Value ' . implode(',', $value) .
+                ' is being setted to ssp attributes ' . implode(',', $attrArray));
 
 
             // write $value to all SP attributes

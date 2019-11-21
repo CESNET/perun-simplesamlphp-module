@@ -59,17 +59,17 @@ class LdapConnector
 
         if (empty($entries)) {
             Logger::debug(
-                "sspmod_perun_LdapConnector.searchForEntity - No entity found. Returning 'null'. " .
-                "query base: $base, filter: $filter"
+                'sspmod_perun_LdapConnector.searchForEntity - No entity found. Returning \'null\'. ' .
+                'query base: ' . $base . ', filter: ' . $filter . '"'
             );
             return null;
         }
 
         if (sizeof($entries) > 1) {
             throw new Exception(
-                "sspmod_perun_LdapConnector.searchForEntity - More than one entity found. " .
-                "query base: $base, filter: $filter. " .
-                "Hint: Use method searchForEntities if you expect array of entities."
+                'sspmod_perun_LdapConnector.searchForEntity - More than one entity found. ' .
+                'query base: ' . $base . ', filter: ' . $filter . '.' .
+                'Hint: Use method searchForEntities if you expect array of entities.'
             );
         }
 
@@ -89,8 +89,8 @@ class LdapConnector
 
         if (empty($entries)) {
             Logger::debug(
-                "sspmod_perun_LdapConnector.searchForEntity - No entities found. Returning empty array. " .
-                "query base: $base, filter: $filter"
+                'sspmod_perun_LdapConnector.searchForEntity - No entities found. Returning empty array. ' .
+                'query base: ' . $base . ', filter: ' . $filter
             );
             return $entries;
         }
@@ -113,8 +113,8 @@ class LdapConnector
             throw new Exception('Unable to bind user to the Perun LDAP, ' . $this->hostname);
         }
 
-        Logger::debug("sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. " .
-            "Ready to perform search query. host: $this->hostname, user: $this->user");
+        Logger::debug('sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. ' .
+            'Ready to perform search query. host: ' . $this->hostname . ', user: ' . $this->user);
 
         $result = ldap_search($conn, $base, $filter, $attributes);
 
@@ -127,8 +127,8 @@ class LdapConnector
 
         ldap_close($conn);
 
-        Logger::debug("sspmod_perun_LdapConnector.search - search query proceeded. " .
-            "query base: $base, filter: $filter, response: " . var_export($entries, true));
+        Logger::debug('sspmod_perun_LdapConnector.search - search query proceeded. ' .
+            'query base: ' . $base . ', filter: ' . $filter . ', response: ' . var_export($entries, true));
 
         return $entries;
     }

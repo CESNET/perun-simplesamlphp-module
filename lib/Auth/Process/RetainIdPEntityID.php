@@ -39,13 +39,13 @@ class RetainIdPEntityID extends \SimpleSAML\Auth\ProcessingFilter
         if (isset($request['Source']['entityid'])) {
             $entityId = $request['Source']['entityid'];
         } else {
-            throw new Exception("perun:RetainIdPEntityID: Cannot find entityID of remote IDP. " .
-                "hint: Do you have this filter in SP context?");
+            throw new Exception('perun:RetainIdPEntityID: Cannot find entityID of remote IDP. ' .
+                'hint: Do you have this filter in SP context?');
         }
 
         $request['Attributes'][$this->attrName] = [$entityId];
         Logger::debug(
-            "perun:RetainIdPEntityID: entityID '$entityId' was extracted to attribute " . $this->attrName
+            'perun:RetainIdPEntityID: entityID \'' . $entityId . '\' was extracted to attribute ' . $this->attrName
         );
     }
 }

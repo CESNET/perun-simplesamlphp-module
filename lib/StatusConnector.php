@@ -16,8 +16,8 @@ abstract class StatusConnector
 
     const NAGIOS = 'NAGIOS';
 
-    const CONFIG_FILE_NAME = "module_perun.php";
-    const STATUS_TYPE = "status.type";
+    const CONFIG_FILE_NAME = 'module_perun.php';
+    const STATUS_TYPE = 'status.type';
 
     protected $configuration;
 
@@ -36,13 +36,13 @@ abstract class StatusConnector
     public static function getInstance()
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $statusType = $configuration->getString(self::STATUS_TYPE, "NAGIOS");
+        $statusType = $configuration->getString(self::STATUS_TYPE, 'NAGIOS');
         if ($statusType === self::NAGIOS) {
             return new NagiosStatusConnector();
         } else {
             throw new Exception(
-                "Unknown StatusConnector type in option '" . self::STATUS_TYPE . "'. Only " .
-                self::NAGIOS . " type available now!"
+                'Unknown StatusConnector type in option \'' . self::STATUS_TYPE . '\'. Only ' .
+                self::NAGIOS . ' type available now!'
             );
         }
     }

@@ -29,7 +29,7 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
         if (!isset($config['uidAttr'])) {
             throw new Exception(
-                "perun:ProcessTargetedID: missing mandatory configuration option 'uidAttr'."
+                'perun:ProcessTargetedID: missing mandatory configuration option \'uidAttr\'.'
             );
         }
         if (!isset($config['targetAttr'])) {
@@ -55,7 +55,7 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
      */
     private function stringify($attributeValue)
     {
-        if (is_object($attributeValue) && get_class($attributeValue) === "SAML2\XML\saml\NameID") {
+        if (is_object($attributeValue) && get_class($attributeValue) === 'SAML2\XML\saml\NameID') {
             return $attributeValue->NameQualifier . '!' . $attributeValue->SPNameQualifier . '!'
                 . $attributeValue->value;
         } else {

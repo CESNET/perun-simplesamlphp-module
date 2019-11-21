@@ -17,7 +17,7 @@ use SimpleSAML\Error\Exception;
  */
 
 if (!isset($_REQUEST['entityId'])) {
-    sendError("parametr 'entityId' is missing", 400);
+    sendError('parametr \'entityId\' is missing', 400);
 }
 
 $entityid = $_REQUEST['entityId'];
@@ -27,7 +27,7 @@ $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $idpsMatadata = $metadataHandler->getList('saml20-idp-remote');
 
 if (!array_key_exists($entityid, $idpsMatadata)) {
-    sendError("unknown IdP with entityId '$entityid'. Metadata not found.", 400);
+    sendError('unknown IdP with entityId \'' . $entityid . '\'. Metadata not found.', 400);
 }
 
 try {
