@@ -119,10 +119,17 @@ abstract class Adapter
     abstract public function getFacilityAttribute($facility, $attrName);
 
     /**
+     * @deprecated getFacilityByEntityId($spEntityId) should be used instead
      * @param string $spEntityId
      * @return Facility entities[]
      */
     abstract public function getFacilitiesByEntityId($spEntityId);
+
+    /**
+     * @param string $spEntityId
+     * @return Facility facility
+     */
+    abstract public function getFacilityByEntityId($spEntityId);
 
     /**
      * @param string $spEntityId entity id of the sp

@@ -118,28 +118,31 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
         }
 
         try {
-            $facilities = $this->adapter->getFacilitiesByEntityId($request['SPMetadata']['entityid']);
+            $facility = $this->adapter->getFacilityByEntityId($request['SPMetadata']['entityid']);
+
+            if ($facility === null) {
+                return;
+            }
 
             $requiredAups = [];
             $voShortNames = [];
-            foreach ($facilities as $facility) {
-                $facilityAups = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityReqAupsAttr);
 
-                if ($facilityAups !== null) {
-                    foreach ($facilityAups as $facilityAup) {
-                        array_push($requiredAups, $facilityAup);
-                    }
+            $facilityAups = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityReqAupsAttr);
+
+            if ($facilityAups !== null) {
+                foreach ($facilityAups as $facilityAup) {
+                    array_push($requiredAups, $facilityAup);
                 }
+            }
 
-                $facilityVoShortNames = $this->adapter->getFacilityAttribute(
-                    $facility,
-                    $this->perunFacilityVoShortNames
-                );
+            $facilityVoShortNames = $this->adapter->getFacilityAttribute(
+                $facility,
+                $this->perunFacilityVoShortNames
+            );
 
-                if ($facilityVoShortNames !== null) {
-                    foreach ($facilityVoShortNames as $facilityVoShortName) {
-                        array_push($voShortNames, $facilityVoShortName);
-                    }
+            if ($facilityVoShortNames !== null) {
+                foreach ($facilityVoShortNames as $facilityVoShortName) {
+                    array_push($voShortNames, $facilityVoShortName);
                 }
             }
 

@@ -430,16 +430,14 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     protected function getSPAttributes($spEntityID)
     {
         try {
-            $facilities = $this->rpcAdapter->getFacilitiesByEntityId($spEntityID);
-            if (empty($facilities)) {
-                Logger::warning(
-                    'perun:PerunIdentity: No facility with entityID \'' . $spEntityID . '\' found.'
-                );
+            $facility = $this->rpcAdapter->getFacilityByEntityId($spEntityID);
+
+            if ($facility === null) {
                 return;
             }
 
             $checkGroupMembership = $this->rpcAdapter->getFacilityAttribute(
-                $facilities[0],
+                $facility,
                 $this->facilityCheckGroupMembershipAttr
             );
             if ($checkGroupMembership !== null) {
@@ -447,7 +445,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
 
             $facilityVoShortNames = $this->rpcAdapter->getFacilityAttribute(
-                $facilities[0],
+                $facility,
                 $this->facilityVoShortNamesAttr
             );
             if (!empty($facilityVoShortNames)) {
@@ -455,7 +453,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
 
             $dynamicRegistration = $this->rpcAdapter->getFacilityAttribute(
-                $facilities[0],
+                $facility,
                 $this->facilityDynamicRegistrationAttr
             );
             if ($dynamicRegistration !== null) {
@@ -463,7 +461,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
 
             $this->registerUrl = $this->rpcAdapter->getFacilityAttribute(
-                $facilities[0],
+                $facility,
                 $this->facilityRegisterUrlAttr
             );
             if ($this->registerUrl === null) {
@@ -471,7 +469,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
 
             $allowRegistartionToGroups = $this->rpcAdapter->getFacilityAttribute(
-                $facilities[0],
+                $facility,
                 $this->facilityAllowRegistrationToGroupsAttr
             );
             if ($allowRegistartionToGroups !== null) {
