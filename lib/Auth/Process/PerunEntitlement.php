@@ -154,11 +154,9 @@ class PerunEntitlement extends ProcessingFilter
         $capabilities = $this->adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
         $capabilitiesResult = [];
 
-        foreach ($capabilities as $resourceCapabilities) {
-            foreach ($resourceCapabilities as $resourceCapability) {
-                $resourceCapability = $this->capabilitiesWrapper($resourceCapability);
-                array_push($capabilitiesResult, $resourceCapability);
-            }
+        foreach ($capabilities as $capability) {
+            $resourceCapability = $this->capabilitiesWrapper($capability);
+            array_push($capabilitiesResult, $resourceCapability);
         }
 
         return $capabilitiesResult;

@@ -3,11 +3,11 @@
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
-use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Module\perun\model\Group;
 use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Module\perun\model\Member;
+use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
@@ -230,23 +230,8 @@ class AdapterLdap extends Adapter
 
     public function getFacilitiesByEntityId($spEntityId)
     {
-        $facilities = $this->connector->searchForEntity(
-            $this->ldapBase,
-            "(&(objectClass=perunFacility)(entityID=$spEntityId))",
-            [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
-        );
-
-        $facilitiesObjects = [];
-        for ($i = 0; $i < sizeof($facilities[self::PERUN_FACILITY_ID]); $i++) {
-            array_push($facilitiesObjects, new Facility(
-                $facilities[self::PERUN_FACILITY_ID][$i],
-                $facilities[self::CN][$i],
-                $facilities[self::DESCRIPTION][$i],
-                $spEntityId
-            ));
-        }
-
-        return $facilitiesObjects;
+        throw new BadMethodCallException('NotImplementedException');
+        // TODO: Implement getFacilitiesByEntityId() method.
     }
 
     public function getFacilityByEntityId($spEntityId)
@@ -393,7 +378,13 @@ class AdapterLdap extends Adapter
 
     public function getResourceCapabilities($entityId, $userGroups)
     {
-        $facilityId = $this->getFacilityByEntityId($entityId)->getId();
+        $facility = $this->getFacilityByEntityId($entityId);
+
+        if ($facility === null) {
+            return [];
+        }
+
+        $facilityId = $facility->getId();
 
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
@@ -417,7 +408,9 @@ class AdapterLdap extends Adapter
             }
             foreach ($resource[self::ASSIGNED_GROUP_ID] as $groupId) {
                 if (in_array($groupId, $userGroupsIds)) {
-                    array_push($resourceCapabilities, $resource[self::CAPABILITIES]);
+                    foreach ($resource[self::CAPABILITIES] as $resourceCapability) {
+                        array_push($resourceCapabilities, $resourceCapability);
+                    }
                     break;
                 }
             }
