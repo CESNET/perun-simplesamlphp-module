@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Added
 - Added method getFacilityByEntityId
+- Added resource capabilities into entitlements
 
 #### Changed
 - Slightly modified text displayed on WAYF
@@ -14,6 +15,7 @@ All notable changes to this project will be documented in this file.
 - Double quotes changed to single quotes
 - getFacilitiesByEntityId marked as deprecated (getFacilityByEntityId should be used instead)
 - Using of getFacilityByEntityId instead of getFacilitiesByEntityId
+- Filters JoinGroupsAdnEduPersonEntitlement and PerunGroups merged into PerunEntitlement
 
 #### Fixed
 - Fixed wrong dictionary name in post.php

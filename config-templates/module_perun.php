@@ -34,6 +34,18 @@ $config = [
     //'ldap.password' => 'password'
 
     /**
+     * Perun group name to eduPersonEntitlement mapping. Mapping is according to the spec in
+     *      https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
+     * groupNameAARC - enable group naming according to AARC spec globally,
+     *      every SP can overide it with groupMapping option
+     * entitlementPrefix - prefix put in front of the Perun entitlement, do not forget to add ':' at the end
+     * entitlementAuthority - name of the authority issuing the entitlement
+     */
+    'groupNameAARC' => true/false,
+    'entitlementPrefix' => 'prefix',
+    'entitlementAuthority' => 'authority',
+
+    /**
      * specify if disco module should filter out IdPs which are not whitelisted neither commited to CoCo or RaS.
      * default is false.
      */

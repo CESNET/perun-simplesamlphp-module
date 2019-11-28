@@ -3,11 +3,11 @@
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Module\perun\model\Group;
 use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Module\perun\model\Member;
-use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
@@ -32,6 +32,8 @@ class AdapterLdap extends Adapter
     const PERUN_FACILITY_ID = 'perunFacilityId';
     const CN = 'cn';
     const DESCRIPTION = 'description';
+    const CAPABILITIES = 'capabilities';
+    const ASSIGNED_GROUP_ID = 'assignedGroupId';
 
     private $ldapBase;
 
@@ -228,7 +230,23 @@ class AdapterLdap extends Adapter
 
     public function getFacilitiesByEntityId($spEntityId)
     {
-        // TODO: Implement getEntityByEntityId() method.
+        $facilities = $this->connector->searchForEntity(
+            $this->ldapBase,
+            "(&(objectClass=perunFacility)(entityID=$spEntityId))",
+            [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
+        );
+
+        $facilitiesObjects = [];
+        for ($i = 0; $i < sizeof($facilities[self::PERUN_FACILITY_ID]); $i++) {
+            array_push($facilitiesObjects, new Facility(
+                $facilities[self::PERUN_FACILITY_ID][$i],
+                $facilities[self::CN][$i],
+                $facilities[self::DESCRIPTION][$i],
+                $spEntityId
+            ));
+        }
+
+        return $facilitiesObjects;
     }
 
     public function getFacilityByEntityId($spEntityId)
@@ -371,5 +389,40 @@ class AdapterLdap extends Adapter
             return Member::INVALID;
         }
         return Member::VALID;
+    }
+
+    public function getResourceCapabilities($entityId, $userGroups)
+    {
+        $facilityId = $this->getFacilityByEntityId($entityId)->getId();
+
+        $resources = $this->connector->searchForEntities(
+            $this->ldapBase,
+            '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $facilityId . ','
+            . $this->ldapBase . '))',
+            [self::CAPABILITIES, self::ASSIGNED_GROUP_ID]
+        );
+
+        $userGroupsIds = [];
+        foreach ($userGroups as $userGroup) {
+            array_push($userGroupsIds, $userGroup->getId());
+        }
+
+        $resourceCapabilities = [];
+        foreach ($resources as $resource) {
+            if (
+                !array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
+                !array_key_exists(self::CAPABILITIES, $resource)
+            ) {
+                continue;
+            }
+            foreach ($resource[self::ASSIGNED_GROUP_ID] as $groupId) {
+                if (in_array($groupId, $userGroupsIds)) {
+                    array_push($resourceCapabilities, $resource[self::CAPABILITIES]);
+                    break;
+                }
+            }
+        }
+
+        return $resourceCapabilities;
     }
 }
