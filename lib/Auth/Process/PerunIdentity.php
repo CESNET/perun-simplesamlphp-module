@@ -429,6 +429,14 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     protected function getSPAttributes($spEntityID)
     {
+        $attrNames = [
+            $this->facilityCheckGroupMembershipAttr,
+            $this->facilityVoShortNamesAttr,
+            $this->facilityDynamicRegistrationAttr,
+            $this->facilityRegisterUrlAttr,
+            $this->facilityAllowRegistrationToGroupsAttr,
+        ];
+
         try {
             $facility = $this->rpcAdapter->getFacilityByEntityId($spEntityID);
 
@@ -436,44 +444,34 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 return;
             }
 
-            $checkGroupMembership = $this->rpcAdapter->getFacilityAttribute(
+            $facilityAttrValues = $this->rpcAdapter->getFacilityAttributesValues(
                 $facility,
-                $this->facilityCheckGroupMembershipAttr
+                $attrNames
             );
-            if ($checkGroupMembership !== null) {
-                $this->checkGroupMembership = $checkGroupMembership;
+
+            if (array_key_exists($this->facilityCheckGroupMembershipAttr, $facilityAttrValues)) {
+                $this->checkGroupMembership = $facilityAttrValues[$this->facilityCheckGroupMembershipAttr];
             }
 
-            $facilityVoShortNames = $this->rpcAdapter->getFacilityAttribute(
-                $facility,
-                $this->facilityVoShortNamesAttr
-            );
-            if (!empty($facilityVoShortNames)) {
-                $this->facilityVoShortNames = $facilityVoShortNames;
+            if (array_key_exists($this->facilityVoShortNamesAttr, $facilityAttrValues) &&
+                !empty($facilityAttrValues[$this->facilityVoShortNamesAttr])) {
+                $this->facilityVoShortNames = $facilityAttrValues[$this->facilityVoShortNamesAttr];
             }
 
-            $dynamicRegistration = $this->rpcAdapter->getFacilityAttribute(
-                $facility,
-                $this->facilityDynamicRegistrationAttr
-            );
-            if ($dynamicRegistration !== null) {
-                $this->dynamicRegistration = $dynamicRegistration;
+            if (array_key_exists($this->facilityDynamicRegistrationAttr, $facilityAttrValues)) {
+                $this->dynamicRegistration = $facilityAttrValues[$this->facilityDynamicRegistrationAttr];
             }
 
-            $this->registerUrl = $this->rpcAdapter->getFacilityAttribute(
-                $facility,
-                $this->facilityRegisterUrlAttr
-            );
+            if (array_key_exists($this->facilityRegisterUrlAttr, $facilityAttrValues)) {
+                $this->registerUrl = $facilityAttrValues[$this->facilityRegisterUrlAttr];
+            }
+
             if ($this->registerUrl === null) {
                 $this->registerUrl = $this->defaultRegisterUrl;
             }
 
-            $allowRegistartionToGroups = $this->rpcAdapter->getFacilityAttribute(
-                $facility,
-                $this->facilityAllowRegistrationToGroupsAttr
-            );
-            if ($allowRegistartionToGroups !== null) {
-                $this->allowRegistrationToGroups = $allowRegistartionToGroups;
+            if (array_key_exists($this->facilityAllowRegistrationToGroupsAttr, $facilityAttrValues)) {
+                $this->allowRegistrationToGroups = $facilityAttrValues[$this->facilityAllowRegistrationToGroupsAttr];
             }
         } catch (\Exception $ex) {
             Logger::warning('perun:PerunIdentity: ' . $ex);

@@ -283,6 +283,12 @@ class AdapterLdap extends Adapter
         // TODO: Implement getFacilityAttributes() method.
     }
 
+    public function getFacilityAttributesValues($facility, $attrNames)
+    {
+        throw new BadMethodCallException('NotImplementedException');
+        // TODO: Implement getFacilityAttributesValues() method.
+    }
+
     public function getUserExtSource($extSourceName, $extSourceLogin)
     {
         // TODO: Implement getUserExtSource() method.

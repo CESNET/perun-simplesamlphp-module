@@ -140,9 +140,16 @@ abstract class Adapter
     /**
      * @param Facility $facility
      * @param $attrNames array string $attrNames
-     * @return array of attributes
+     * @return array of attribute name -> attribute
      */
     abstract public function getFacilityAttributes($facility, $attrNames);
+
+    /**
+     * @param Facility $facility
+     * @param $attrNames array string $attrNames
+     * @return array of attribute name -> attribute value
+     */
+    abstract public function getFacilityAttributesValues($facility, $attrNames);
 
     /**
      * @param $extSourceName string name of ext source
