@@ -32,6 +32,8 @@ class AdapterLdap extends Adapter
     const PERUN_FACILITY_ID = 'perunFacilityId';
     const CN = 'cn';
     const DESCRIPTION = 'description';
+    const CAPABILITIES = 'capabilities';
+    const ASSIGNED_GROUP_ID = 'assignedGroupId';
 
     private $ldapBase;
 
@@ -228,7 +230,8 @@ class AdapterLdap extends Adapter
 
     public function getFacilitiesByEntityId($spEntityId)
     {
-        // TODO: Implement getEntityByEntityId() method.
+        throw new BadMethodCallException('NotImplementedException');
+        // TODO: Implement getFacilitiesByEntityId() method.
     }
 
     public function getFacilityByEntityId($spEntityId)
@@ -371,5 +374,48 @@ class AdapterLdap extends Adapter
             return Member::INVALID;
         }
         return Member::VALID;
+    }
+
+    public function getResourceCapabilities($entityId, $userGroups)
+    {
+        $facility = $this->getFacilityByEntityId($entityId);
+
+        if ($facility === null) {
+            return [];
+        }
+
+        $facilityId = $facility->getId();
+
+        $resources = $this->connector->searchForEntities(
+            $this->ldapBase,
+            '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $facilityId . ','
+            . $this->ldapBase . '))',
+            [self::CAPABILITIES, self::ASSIGNED_GROUP_ID]
+        );
+
+        $userGroupsIds = [];
+        foreach ($userGroups as $userGroup) {
+            array_push($userGroupsIds, $userGroup->getId());
+        }
+
+        $resourceCapabilities = [];
+        foreach ($resources as $resource) {
+            if (
+                !array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
+                !array_key_exists(self::CAPABILITIES, $resource)
+            ) {
+                continue;
+            }
+            foreach ($resource[self::ASSIGNED_GROUP_ID] as $groupId) {
+                if (in_array($groupId, $userGroupsIds)) {
+                    foreach ($resource[self::CAPABILITIES] as $resourceCapability) {
+                        array_push($resourceCapabilities, $resourceCapability);
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $resourceCapabilities;
     }
 }

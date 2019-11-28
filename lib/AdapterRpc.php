@@ -505,4 +505,49 @@ class AdapterRpc extends Adapter
         }
         return $member->getStatus();
     }
+
+    public function getResourceCapabilities($entityId, $userGroups)
+    {
+        $facility = $this->getFacilityByEntityId($entityId);
+
+        if ($facility === null) {
+            return [];
+        }
+
+        $resources = $this->connector->get('facilitiesManager', 'getAssignedResources', [
+            'facility' => $facility->getId()
+        ]);
+
+        $userGroupsIds = [];
+        foreach ($userGroups as $userGroup) {
+            array_push($userGroupsIds, $userGroup->getId());
+        }
+
+        $capabilities = [];
+        foreach ($resources as $resource) {
+            $resourceGroups = $this->connector->get('resourcesManager', 'getAssignedGroups', [
+               'resource' => $resource['id']
+            ]);
+
+            $resourceCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
+                'resource' => $resource['id'],
+                'attributeName' => 'urn:perun:resource:attribute-def:def:capabilities'
+            ])['value'];
+
+            if ($resourceCapabilities === null) {
+                continue;
+            }
+
+            foreach ($resourceGroups as $resourceGroup) {
+                if (in_array($resourceGroup['id'], $userGroupsIds)) {
+                    foreach ($resourceCapabilities as $capability) {
+                        array_push($capabilities, $capability);
+                    }
+                    break;
+                }
+            }
+        }
+
+        return $capabilities;
+    }
 }

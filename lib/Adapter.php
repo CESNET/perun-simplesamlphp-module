@@ -184,6 +184,13 @@ abstract class Adapter
     abstract public function getMemberStatusByUserAndVo($user, $vo);
 
     /**
+     * @param $entityId int entityId
+     * @param $userGroups array of groups where user belongs to
+     * @return array of resource capabilities
+     */
+    abstract public function getResourceCapabilities($entityId, $userGroups);
+
+    /**
      * @param HasId[] $entities
      * @return HasId[] without duplicates
      */
