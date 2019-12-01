@@ -2,8 +2,6 @@
 
 namespace SimpleSAML\Module\perun;
 
-include 'DatabaseCommand.php';
-
 /**
  * Implementation of IdpListsService using DB
  *

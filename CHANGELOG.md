@@ -20,6 +20,7 @@ All notable changes to this project will be documented in this file.
 
 #### Fixed
 - Fixed wrong dictionary name in post.php
+- Removed unnecessary include
 
 ## [v3.5.2]
 #### Fixed
