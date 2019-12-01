@@ -4,6 +4,7 @@ use SimpleSAML\Module\perun\AdapterRpc;
 use SimpleSAML\Configuration;
 use SimpleSAML\XHTML\Template;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\ListOfSps;
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 const PROXY_IDENTIFIER = 'listOfSps.proxyIdentifier';
@@ -146,7 +147,7 @@ foreach ($attrNames as $attrName) {
 }
 
 $allServices = array_merge($samlServices, $oidcServices);
-usort($allServices, 'sortByName');
+usort($allServices, 'ListOfSps::sortByName');
 
 if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $json = [];
@@ -188,9 +189,4 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $t->data['oidcServices'] = $oidcServices;
     $t->data['allServices'] = $allServices;
     $t->show();
-}
-
-function sortByName($a, $b)
-{
-    return strcmp(strtolower($a['facility']->getName()), strtolower($b['facility']->getName()));
 }

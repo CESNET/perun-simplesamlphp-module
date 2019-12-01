@@ -5,6 +5,8 @@
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 
+use SimpleSAML\Module\perun\StatusConnector;
+
 $config = SimpleSAML_Configuration::getInstance();
 $instanceName = $config->getString('instance_name', '');
 
@@ -22,7 +24,7 @@ echo '<div class="services">';
 
 foreach ($services as $service) {
     echo '<div class="row service">';
-    echo '<h3>' . $service['name'] . getBadgeByStatus($service['status']) . ' </h3>';
+    echo '<h3>' . $service['name'] . StatusConnector::getBadgeByStatus($service['status']) . ' </h3>';
     if (isset($service['description']) && !empty($service['description'])) {
         echo '<p><span class="glyphicon glyphicon-info-sign"></span> ' . $service['description'] . '</p>';
     }

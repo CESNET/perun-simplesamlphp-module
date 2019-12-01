@@ -373,4 +373,171 @@ class Disco extends PowerIdPDisco
                 = $array;
         }
     }
+
+    public static function buildEntry(DiscoTemplate $t, $idp, $favourite = false)
+    {
+
+        $extra = ($favourite ? 'favourite' : '');
+        $html = '<a class="metaentry ' . $extra . ' list-group-item" ' .
+                ' href="' . $t->getContinueUrl($idp['entityid']) . '">';
+
+        $html .= '<strong>' . htmlspecialchars($t->getTranslatedEntityName($idp)) . '</strong>';
+        $html .= '</a>';
+
+        return $html;
+    }
+
+    /**
+     * @param DiscoTemplate $t
+     * @param array $metadata
+     * @param bool $favourite
+     * @return string html
+     */
+    public static function showEntry($t, $metadata, $favourite = false)
+    {
+
+        if (isset($metadata['tags']) &&
+            (in_array('social', $metadata['tags']) || in_array('preferred', $metadata['tags']))) {
+            return self::showTaggedEntry($t, $metadata);
+        }
+
+        $extra = ($favourite ? ' favourite' : '');
+        $html = '<a class="metaentry' . $extra . ' list-group-item" href="' .
+                $t->getContinueUrl($metadata['entityid']) . '">';
+
+        $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
+
+        $html .= '</a>';
+
+        return $html;
+    }
+
+    /**
+     * @param DiscoTemplate $t
+     * @param array $metadata
+     * @param bool $showSignInWith
+     *
+     * @return string html
+     */
+    public static function showTaggedEntry($t, $metadata, $showSignInWith = false)
+    {
+
+        $bck = 'white';
+        if (!empty($metadata['color'])) {
+            $bck = $metadata['color'];
+        }
+
+        $html = '<a class="metaentry btn btn-block tagged" href="' . $t->getContinueUrl($metadata['entityid']) .
+                '" style="background: ' . $bck . '">';
+
+        $html .= '<img src="' . $metadata['icon'] . '">';
+
+        if (isset($metadata['fullDisplayName'])) {
+            $html .= '<strong>' . $metadata['fullDisplayName'] . '</strong>';
+        } elseif ($showSignInWith) {
+            $html .= '<strong>' . $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata) .
+                     '</strong>';
+        } else {
+            $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
+        }
+
+        $html .= '</a>';
+
+        return $html;
+    }
+
+    public static function getOr()
+    {
+        $or = '<div class="hrline">';
+        $or .= '	<span>or</span>';
+        $or .= '</div>';
+        return $or;
+    }
+
+    public static function showAllTaggedIdPs($t)
+    {
+        $html = '';
+        $html .= self::showTaggedIdPs($t, 'preferred');
+        $html .= self::showTaggedIdPs($t, 'social', true);
+        return $html;
+    }
+
+
+    public static function showTaggedIdPs($t, $tag, $showSignInWith = false)
+    {
+        $html = '';
+        $idps = $t->getIdPs($tag);
+        $idpCount = count($idps);
+        $counter = 0;
+
+        $fullRowCount = floor($idpCount / 3);
+        for ($i = 0; $i < $fullRowCount; $i++) {
+            $html .= '<div class="row">';
+            for ($j = 0; $j < 3; $j++) {
+                $html .= '<div class="col-md-4">';
+                $html .= '<div class="metalist list-group">';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
+                $html .= '</div>';
+                $html .= '</div>';
+                $counter++;
+            }
+            $html .= '</div>';
+        }
+        if (($idpCount % 3) !== 0) {
+            $html .= '<div class="row">';
+            for ($i = 0; $i < $idpCount % 3; $i++) {
+                $html .= '<div class="col-md-' . (12 / ($idpCount % 3))  . '">';
+                $html .= '<div class="metalist list-group">';
+                $html .= showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
+                $html .= '</div>';
+                $html .= '</div>';
+                $counter++;
+            }
+            $html .= '</div>';
+        }
+
+        return $html;
+    }
+
+    public static function showEntriesScript()
+    {
+        $script = '<script type="text/javascript">
+         $(document).ready(function() {
+             $("#showEntries").click(function() {
+                 $("#entries").show();
+                 $("#showEntries").hide();
+             });
+         });
+        </script>';
+        return $script;
+    }
+
+    public static function searchScript()
+    {
+
+        $script = '<script type="text/javascript">
+
+        $(document).ready(function() { 
+            $("#query").liveUpdate("#list");
+        });
+        
+        </script>';
+
+        return $script;
+    }
+
+    public static function setFocus()
+    {
+        $script = '<script type="text/javascript">
+
+        $(document).ready(function() {
+            if ($("#last-used-idp")) {
+                $("#last-used-idp .metaentry").focus();
+            }
+        });
+        
+        </script>';
+
+        return $script;
+    }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use SimpleSAML\Module;
+use SimpleSAML\Module\perun\ListOfSps;
 
 /**
  * This is a simple example of template with table of SPs
@@ -98,7 +99,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         foreach ($attributesToShow as $attr) {
                             if (!empty($samlServices)) {
                                 echo "<th class='" .
-                                    getClass(array_values($samlServices)[0]['facilityAttributes'][$attr]) .
+                                    ListOfSps::getClass(array_values($samlServices)[0]['facilityAttributes'][$attr]) .
                                     "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
                                     . "</th>";
                             }
@@ -115,15 +116,19 @@ $this->includeAtTemplateBase('includes/header.php');
                             continue;
                         }
                         echo '<tr>';
-                        echo '<td>' . printServiceName($service) . '</td>';
+                        echo '<td>' . ListOfSps::printServiceName($service) . '</td>';
                         if (array_key_exists($service['facility']->getID(), $samlServices)) {
-                            echo 'td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
+                            echo '<td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
                         } else {
                             echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
                         }
                         echo '<td>' . $service['facility']->getDescription() . '</td>';
                         foreach ($attributesToShow as $attr) {
-                            $value = printAttributeValue($service['facilityAttributes'][$attr], $service, $attr);
+                            $value = ListOfSps::printAttributeValue(
+                                $service['facilityAttributes'][$attr],
+                                $service,
+                                $attr
+                            );
                             echo $value;
                         }
                     }
@@ -139,77 +144,8 @@ $this->includeAtTemplateBase('includes/header.php');
 <?php
 $this->includeAtTemplateBase('includes/footer.php');
 
-function printServiceName($service)
-{
-    if (empty($service['loginURL']['value'])
-    ) {
-        return $service['facility']->getName();
-    } else {
-        return "<a class='customLink' href='" . $service['loginURL']['value'] . "'>" .
-            $service['facility']->getName() . "</a>";
-    }
-}
-
-function printAttributeValue($attribute, $service, $attr)
-{
-    $value = $attribute['value'];
-    if (empty($value) && $attribute['type'] !== 'java.lang.Boolean') {
-        return "<td class='center'>&horbar;</td>";
-    }
-    $string = '';
-    if ($attribute['type'] === 'java.lang.String' || $attribute['type'] === 'java.lang.LargeString') {
-        if (filter_var($value, FILTER_VALIDATE_URL)) {
-            $string = '<a class="customLink" href="' . $value . '">' . $value . '</a>';
-        } else {
-            $string = $value;
-        }
-    } elseif ($attribute['type'] === 'java.lang.Integer') {
-        $string = $value;
-    } elseif ($attribute['type'] === 'java.lang.Boolean') {
-        if ($value !== null && $value) {
-            $string = '&#x2714;';
-        } else {
-            $string = '&#x2715;';
-        }
-    } elseif ($attribute['type'] === 'java.util.ArrayList' || $attribute['type'] === 'java.lang.LargeArrayList') {
-        $string = '<ul>';
-        foreach ($value as $v) {
-            $string .= '<li>' . $v . '</li>';
-        }
-        $string .= '</ul>';
-    } elseif ($attribute['type'] === 'java.util.LinkedHashMap') {
-        $string = '<ul>';
-        foreach ($value as $k => $v) {
-            $string .= '<li>' . $k . ' &rarr; ' . $v . '</li>';
-        }
-        $string .= '</ul>';
-    }
-    if (!empty($string)) {
-        return '<td class="' . getClass($service['facilityAttributes'][$attr]) . '">' . $string . '</td>';
-    } else {
-        return '<td/>';
-    }
-}
-
-function getClass($attribute)
-{
-    if ($attribute['type'] === 'java.lang.String') {
-        return 'string';
-    } elseif ($attribute['type'] === 'java.lang.Integer') {
-        return 'integer';
-    } elseif ($attribute['type'] === 'java.lang.Boolean') {
-        return 'boolean';
-    } elseif ($attribute['type'] === 'java.util.ArrayList' || $attribute['type'] === 'java.util.LargeArrayList') {
-        return 'array';
-    } elseif ($attribute['type'] === 'java.util.LinkedHashMap') {
-        return 'map';
-    } else {
-        return '';
-    }
-}
-
 ?>
 
-<script src="<?php echo htmlspecialchars(\SimpleSAML\Module::getModuleURL('chartjs/Chart.bundle.min.js'));?>"></script>
+<script src="<?php echo htmlspecialchars(Module::getModuleURL('chartjs/Chart.bundle.min.js'));?>"></script>
 
-<script src="<?php echo htmlspecialchars(\SimpleSAML\Module::getModuleURL('perun/listOfSps.js'));?>"></script>
+<script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/listOfSps.js'));?>"></script>

@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 #### Fixed
 - Fixed wrong dictionary name in post.php
 - Removed unnecessary include
+- Resolve problem with Sideeffects (PSR1.Files.SideEffects)
 
 ## [v3.5.2]
 #### Fixed
