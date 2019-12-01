@@ -16,6 +16,7 @@ All notable changes to this project will be documented in this file.
 - getFacilitiesByEntityId marked as deprecated (getFacilityByEntityId should be used instead)
 - Using of getFacilityByEntityId instead of getFacilitiesByEntityId
 - Filters JoinGroupsAdnEduPersonEntitlement and PerunGroups merged into PerunEntitlement
+- Using expression in asserts (String in assert() is DEPRECATED from PHP 7.2)
 
 #### Fixed
 - Fixed wrong dictionary name in post.php

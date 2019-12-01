@@ -24,7 +24,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        assert('is_array($config)');
+        assert(is_array($config));
 
         if (!isset($config['attrMap'])) {
             throw new Exception(
@@ -44,7 +44,7 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
         try {
             $userExtSource = $this->adapter->getUserExtSource(
                 $request['Attributes']['sourceIdPEntityID'][0],

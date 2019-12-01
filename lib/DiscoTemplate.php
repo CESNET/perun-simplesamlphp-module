@@ -139,7 +139,7 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
     {
         if (isset($metadata['UIInfo']['DisplayName'])) {
             $displayName = $metadata['UIInfo']['DisplayName'];
-            assert('is_array($displayName)'); // Should always be an array of language code -> translation
+            assert(is_array($displayName)); // Should always be an array of language code -> translation
             if (!empty($displayName)) {
                 return $this->getTranslation($displayName);
             }

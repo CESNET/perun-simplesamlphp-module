@@ -25,7 +25,7 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        assert('is_array($config)');
+        assert(is_array($config));
 
         if (!isset($config['uidAttr'])) {
             throw new Exception(
@@ -42,7 +42,7 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
 
         if (!empty($request['Attributes'][$this->uidAttr])) {
             $stringified = $this->stringify($request['Attributes'][$this->uidAttr][0]);
