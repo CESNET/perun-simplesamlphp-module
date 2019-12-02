@@ -2,6 +2,7 @@
 
 use SimpleSAML\Module\perun\IdpListsService;
 use SimpleSAML\Metadata\MetaDataStorageHandler;
+use SimpleSAML\Module\perun\Whitelisting;
 
 /**
  * List all whitelisted IdPs.
@@ -30,30 +31,11 @@ $idps = $service->getWhitelist();
 foreach ($idps as $idp) {
     $entityID = $idp['entityid'];
 
-    print getEntityName($idpsMetadata[$entityID]);
+    print Whitelisting::getEntityName($idpsMetadata[$entityID]);
 
     print $delimiter;
 
     print $entityID;
 
     print "\n";
-}
-
-function getEntityName($metadata)
-{
-    if (isset($metadata['UIInfo']['DisplayName'])) {
-        $displayName = $metadata['UIInfo']['DisplayName'];
-        assert(is_array($displayName)); // Should always be an array of language code -> translation
-        if (!empty($displayName)) {
-            return preg_replace("/\r|\n/", "", $displayName['en']);
-        }
-    }
-    if (array_key_exists('name', $metadata)) {
-        if (is_array($metadata['name'])) {
-            return preg_replace("/\r|\n/", "", $metadata['name']['en']);
-        } else {
-            return preg_replace("/\r|\n/", "", $metadata['name']);
-        }
-    }
-    return $metadata['entityid'];
 }

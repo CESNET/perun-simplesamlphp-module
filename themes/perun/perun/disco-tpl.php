@@ -4,6 +4,7 @@ use SimpleSAML\Module;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\Disco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Module\perun\DiscoTemplate;
 
@@ -28,9 +29,9 @@ $this->data['head'] .= '<script type="text/javascript" src="' .
 $this->data['head'] .= '<script type="text/javascript" src="' .
     Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>';
 
-$this->data['head'] .= searchScript();
-$this->data['head'] .= showEntriesScript();
-$this->data['head'] .= setFocus();
+$this->data['head'] .= Disco::searchScript();
+$this->data['head'] .= Disco::showEntriesScript();
+$this->data['head'] .= Disco::setFocus();
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 
@@ -124,19 +125,19 @@ if ($this->isAddInstitutionApp()) {
         if (!empty($this->getPreferredIdp())) {
             echo '<p class="descriptionp">' . $this->t('{perun:disco:previous_selection}') . '</p>';
             echo '<div id="last-used-idp" class="metalist list-group">';
-            echo showEntry($this, $this->getPreferredIdp(), true);
+            echo Disco::showEntry($this, $this->getPreferredIdp(), true);
             echo '</div>';
 
-            echo getOr();
+            echo Disco::getOr();
 
             echo '<a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
                  $this->t('{perun:disco:sign_with_other_institution}') . '</a>' ;
             echo '<div id="entries" style="display: none">';
         }
 
-        echo showAllTaggedIdPs($this);
+        echo Disco::showAllTaggedIdPs($this);
 
-        echo getOr();
+        echo Disco::getOr();
 
         echo '<p class="descriptionp">';
         echo $this->t('{perun:disco:institutional_account}');
@@ -156,7 +157,7 @@ if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARN
 
     echo '<div class="metalist list-group" id="list">';
     foreach ($this->getIdps() as $idpentry) {
-        echo showEntry($this, $idpentry, false);
+        echo Disco::showEntry($this, $idpentry, false);
     }
     echo '</div>';
 
@@ -184,157 +185,3 @@ if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARN
 }
 
 $this->includeAtTemplateBase('includes/footer.php');
-
-function showEntriesScript()
-{
-    $script = '<script type="text/javascript">
-     $(document).ready(function() {
-         $("#showEntries").click(function() {
-             $("#entries").show();
-             $("#showEntries").hide();
-         });
-     });
-    </script>';
-    return $script;
-}
-
-function searchScript()
-{
-
-    $script = '<script type="text/javascript">
-
-	$(document).ready(function() { 
-		$("#query").liveUpdate("#list");
-	});
-	
-	</script>';
-
-    return $script;
-}
-
-function setFocus()
-{
-    $script = '<script type="text/javascript">
-
-	$(document).ready(function() {
-	    if ($("#last-used-idp")) {
-		    $("#last-used-idp .metaentry").focus();
-	    }
-	});
-	
-	</script>';
-
-    return $script;
-}
-
-/**
- * @param DiscoTemplate $t
- * @param array $metadata
- * @param bool $favourite
- * @return string html
- */
-function showEntry($t, $metadata, $favourite = false)
-{
-
-    if (isset($metadata['tags']) &&
-        (in_array('social', $metadata['tags']) || in_array('preferred', $metadata['tags']))) {
-        return showTaggedEntry($t, $metadata);
-    }
-
-    $extra = ($favourite ? ' favourite' : '');
-    $html = '<a class="metaentry' . $extra . ' list-group-item" href="' .
-        $t->getContinueUrl($metadata['entityid']) . '">';
-
-    $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
-
-    $html .= '</a>';
-
-    return $html;
-}
-
-/**
- * @param DiscoTemplate $t
- * @param array $metadata
- * @param bool $showSignInWith
- *
- * @return string html
- */
-function showTaggedEntry($t, $metadata, $showSignInWith = false)
-{
-
-    $bck = 'white';
-    if (!empty($metadata['color'])) {
-        $bck = $metadata['color'];
-    }
-
-    $html = '<a class="metaentry btn btn-block tagged" href="' . $t->getContinueUrl($metadata['entityid']) .
-        '" style="background: ' . $bck . '">';
-
-    $html .= '<img src="' . $metadata['icon'] . '">';
-
-    if (isset($metadata['fullDisplayName'])) {
-        $html .= '<strong>' . $metadata['fullDisplayName'] . '</strong>';
-    } elseif ($showSignInWith) {
-        $html .= '<strong>' . $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata) .
-                 '</strong>';
-    } else {
-        $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
-    }
-
-    $html .= '</a>';
-
-    return $html;
-}
-
-function getOr()
-{
-    $or = '<div class="hrline">';
-    $or .= '	<span>or</span>';
-    $or .= '</div>';
-    return $or;
-}
-
-function showAllTaggedIdPs($t)
-{
-    $html = '';
-    $html .= showTaggedIdPs($t, 'preferred');
-    $html .= showTaggedIdPs($t, 'social', true);
-    return $html;
-}
-
-
-function showTaggedIdPs($t, $tag, $showSignInWith = false)
-{
-    $html = '';
-    $idps = $t->getIdPs($tag);
-    $idpCount = count($idps);
-    $counter = 0;
-
-    $fullRowCount = floor($idpCount / 3);
-    for ($i = 0; $i < $fullRowCount; $i++) {
-        $html .= '<div class="row">';
-        for ($j = 0; $j < 3; $j++) {
-            $html .= '<div class="col-md-4">';
-            $html .= '<div class="metalist list-group">';
-            $html .= showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
-            $html .= '</div>';
-            $html .= '</div>';
-            $counter++;
-        }
-        $html .= '</div>';
-    }
-    if (($idpCount % 3) !== 0) {
-        $html .= '<div class="row">';
-        for ($i = 0; $i < $idpCount % 3; $i++) {
-            $html .= '<div class="col-md-' . (12 / ($idpCount % 3))  . '">';
-            $html .= '<div class="metalist list-group">';
-            $html .= showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
-            $html .= '</div>';
-            $html .= '</div>';
-            $counter++;
-        }
-        $html .= '</div>';
-    }
-
-    return $html;
-}

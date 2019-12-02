@@ -27,7 +27,13 @@ $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $idpsMatadata = $metadataHandler->getList('saml20-idp-remote');
 
 if (!array_key_exists($entityid, $idpsMatadata)) {
-    sendError('unknown IdP with entityId \'' . $entityid . '\'. Metadata not found.', 400);
+    http_response_code(400);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'result' => 'ERROR',
+        'msg' => 'unknown IdP with entityId \'' . $entityid . '\'. Metadata not found.'
+    ]);
+    exit;
 }
 
 try {
@@ -54,15 +60,4 @@ try {
     ]);
 } catch (Exception $e) {
     sendError($e->getMessage());
-}
-
-function sendError($msg, $code = 500)
-{
-    http_response_code($code);
-    header('Content-Type: application/json');
-    echo json_encode([
-        'result' => 'ERROR',
-        'msg' => $msg
-    ]);
-    exit;
 }

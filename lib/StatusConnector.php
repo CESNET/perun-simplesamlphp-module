@@ -59,4 +59,21 @@ abstract class StatusConnector
      * @return array
      */
     abstract public function getStatus();
+
+    /**
+     * Returns the HTML code with correct class
+     * @param $status String Status of services
+     *
+     * @return string
+     */
+    public static function getBadgeByStatus($status)
+    {
+        if ($status === OK) {
+            return '<span class="status label label-success">OK</span>';
+        } elseif ($status === WARNING) {
+            return '<span class="status label label-warning">WARNING</span>';
+        } elseif ($status === CRITICAL || $status === UNKNOWN) {
+            return '<span class="status label label-danger">CRITICAL</span>';
+        }
+    }
 }
