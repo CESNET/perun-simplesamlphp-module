@@ -18,15 +18,15 @@ use SimpleSAML\Utils\Arrays;
  *
  * @package SimpleSAMLphp
  */
-assert('is_array($this->data["srcMetadata"])');
-assert('is_array($this->data["dstMetadata"])');
-assert('is_string($this->data["yesTarget"])');
-assert('is_array($this->data["yesData"])');
-assert('is_string($this->data["noTarget"])');
-assert('is_array($this->data["noData"])');
-assert('is_array($this->data["attributes"])');
-assert('is_array($this->data["hiddenAttributes"])');
-assert('$this->data["sppp"] === false || is_string($this->data["sppp"])');
+assert(is_array($this->data['srcMetadata']));
+assert(is_array($this->data['dstMetadata']));
+assert(is_string($this->data['yesTarget']));
+assert(is_array($this->data['yesData']));
+assert(is_string($this->data['noTarget']));
+assert(is_array($this->data['noData']));
+assert(is_array($this->data['attributes']));
+assert(is_array($this->data['hiddenAttributes']));
+assert($this->data['sppp'] === false || is_string($this->data['sppp']));
 
 if (!isset($this->data['label-col'])) {
     $this->data['label-col'] = 5;

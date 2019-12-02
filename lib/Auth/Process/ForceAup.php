@@ -102,7 +102,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
      */
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
 
         if (isset($request['perun']['user'])) {
             /** allow IDE hint whisperer

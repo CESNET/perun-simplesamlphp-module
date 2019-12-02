@@ -26,9 +26,9 @@
         $post = $this->data['post'];
     } else {
         // For backwards compatibility
-        assert('array_key_exists("response", $this->data)');
-        assert('array_key_exists("RelayStateName", $this->data)');
-        assert('array_key_exists("RelayState", $this->data)');
+        assert(array_key_exists('response', $this->data));
+        assert(array_key_exists('RelayStateName', $this->data));
+        assert(array_key_exists('RelayState', $this->data));
 
         $post = [
             'SAMLResponse' => $this->data['response'],
@@ -48,8 +48,8 @@
      */
     function printItem($name, $value)
     {
-        assert('is_string($name)');
-        assert('is_string($value) || is_array($value)');
+        assert(is_string($name));
+        assert(is_string($value) || is_array($value));
 
         if (is_string($value)) {
             echo '<input type="hidden" name="' . htmlspecialchars($name) .

@@ -28,7 +28,7 @@ class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
 
         $attributes = [];
 

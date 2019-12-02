@@ -35,7 +35,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        assert('is_array($config)');
+        assert(is_array($config));
 
         if (!isset($config['attrMap'])) {
             throw new Exception(
@@ -61,7 +61,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
 
         if (isset($request['perun']['user'])) {
             $user = $request['perun']['user'];

@@ -59,7 +59,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
 
         foreach ($this->filterAttributes as $attr => $values) {
             if (!isset($request['Attributes'][$attr]) || !is_array($request['Attributes'][$attr])) {

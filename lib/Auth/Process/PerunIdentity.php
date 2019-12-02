@@ -175,7 +175,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert('is_array($request)');
+        assert(is_array($request));
 
         # Store all user ids in an array
         $uids = [];
