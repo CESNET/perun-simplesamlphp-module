@@ -2,9 +2,12 @@
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Module;
+use SimpleSAML\Module\perun\UpdateUESThread;
 
 /**
  * Class sspmod_perun_Auth_Process_UpdateUserExtSource
@@ -12,13 +15,12 @@ use SimpleSAML\Logger;
  * This filter updates userExtSource attributes when he logs in.
  *
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
+ * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
-class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
+class UpdateUserExtSource extends ProcessingFilter
 {
     private $attrMap;
     private $attrsToConversion;
-    private $adapter;
-    const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def:';
 
     public function __construct($config, $reserved)
     {
@@ -39,77 +41,19 @@ class UpdateUserExtSource extends \SimpleSAML\Auth\ProcessingFilter
         }
 
         $this->attrMap = (array)$config['attrMap'];
-        $this->adapter = Adapter::getInstance(Adapter::RPC);
     }
 
     public function process(&$request)
     {
-        assert(is_array($request));
-        try {
-            $userExtSource = $this->adapter->getUserExtSource(
-                $request['Attributes']['sourceIdPEntityID'][0],
-                $request['Attributes']['sourceIdPEppn'][0]
-            );
-            if ($userExtSource === null) {
-                throw new Exception(
-                    'sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource ' .
-                    $request['Attributes']['sourceIdPEntityID'][0] . " and Login " .
-                    $request['Attributes']['sourceIdPEppn'][0]
-                );
-            }
+        $data = [
+            'attributes' => $request['Attributes'],
+            'attrMap' => $this->attrMap,
+            'attrsToConversion' => $this->attrsToConversion,
+            'perunUserId' => $request['perun']['user']->getId()
+        ];
 
-            $attributes = $this->adapter->getUserExtSourceAttributes($userExtSource['id'], array_keys($this->attrMap));
-
-            if ($attributes === null) {
-                throw new Exception(
-                    'sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful.'
-                );
-            }
-
-            $attributesToUpdate = [];
-            foreach ($attributes as $attribute) {
-                $attrName = self::UES_ATTR_NMS . $attribute['friendlyName'];
-                if (isset($this->attrMap[$attrName]) && isset($request['Attributes'][$this->attrMap[$attrName]])) {
-                    $attr = $request['Attributes'][$this->attrMap[$attrName]];
-
-                    if (in_array(self::UES_ATTR_NMS . $attribute['friendlyName'], $this->attrsToConversion)) {
-                        $arrayAsString = [''];
-                        foreach ($attr as $value) {
-                            $arrayAsString[0] .= $value . ';';
-                        }
-                        if (!empty($arrayAsString[0])) {
-                            $arrayAsString[0] = substr($arrayAsString[0], 0, -1);
-                        }
-                        $attr = $arrayAsString;
-                    }
-
-                    if (strpos($attribute['type'], 'String') ||
-                        strpos($attribute['type'], 'Integer') ||
-                        strpos($attribute['type'], 'Boolean')) {
-                        $valueFromIdP = $attr[0];
-                    } elseif (strpos($attribute['type'], 'Array') || strpos($attribute['type'], 'Map')) {
-                        $valueFromIdP = $attr;
-                    } else {
-                        throw new Exception(
-                            'sspmod_perun_Auth_Process_UpdateUserExtSource: unsupported type of attribute.'
-                        );
-                    }
-                    if ($valueFromIdP !== $attribute['value']) {
-                        $attribute['value'] = $valueFromIdP;
-                        array_push($attributesToUpdate, $attribute);
-                    }
-                }
-            }
-
-            if (!empty($attributesToUpdate)) {
-                $this->adapter->setUserExtSourceAttributes($userExtSource['id'], $attributesToUpdate);
-            }
-            $this->adapter->updateUserExtSourceLastAccess($userExtSource['id']);
-        } catch (\Exception $ex) {
-            Logger::warning(
-                'sspmod_perun_Auth_Process_UpdateUserExtSource: update was not successful: ' .
-                $ex->getMessage() . ' Skip to next filter.'
-            );
-        }
+        $cmd = 'curl -X POST -H "Content-Type: application/json" -d \'' . json_encode($data) . '\' ' .
+               Module::getModuleURL('perun/updateUes.php') . ' > /dev/null &';
+        exec($cmd);
     }
 }

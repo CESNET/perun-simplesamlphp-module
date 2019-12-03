@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- UserExtSources are now updated asynchronously
 
 ## [v3.6.0]
 #### Added
