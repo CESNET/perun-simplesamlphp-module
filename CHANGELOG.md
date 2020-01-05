@@ -5,6 +5,10 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - UserExtSources are now updated asynchronously
 
+#### Fixed
+- Fix method stringify in StringifyTargetedID.php to be compatible with SimpleSAMLphp 1.18.0+
+    - Using getters to get private properties
+
 ## [v3.6.0]
 #### Added
 - Added method getFacilityByEntityId

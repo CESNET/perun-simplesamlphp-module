@@ -2,6 +2,8 @@
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use SAML2\XML\saml\NameID;
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Error\Exception;
 
 /**
@@ -16,7 +18,7 @@ use SimpleSAML\Error\Exception;
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
-class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
+class StringifyTargetedID extends ProcessingFilter
 {
     private $uidAttr;
     private $targetAttr;
@@ -52,12 +54,16 @@ class StringifyTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
     /**
      * Convert NameID value into the text representation.
+     *
+     * @param NameID $attributeValue
+     *
+     * @return NameID|string
      */
-    private function stringify($attributeValue)
+    private function stringify(NameID $attributeValue)
     {
         if (is_object($attributeValue) && get_class($attributeValue) === 'SAML2\XML\saml\NameID') {
-            return $attributeValue->NameQualifier . '!' . $attributeValue->SPNameQualifier . '!'
-                . $attributeValue->value;
+            return $attributeValue->getNameQualifier() . '!' . $attributeValue->getSPNameQualifier() . '!'
+                . $attributeValue->getValue();
         } else {
             return $attributeValue;
         }
