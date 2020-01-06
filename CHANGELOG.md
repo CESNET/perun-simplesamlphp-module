@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.7.0]
 #### Changed
 - UserExtSources are now updated asynchronously
 
@@ -242,6 +244,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.7.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.0
 [v3.6.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.6.0
 [v3.5.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.5.2
 [v3.5.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.5.1
