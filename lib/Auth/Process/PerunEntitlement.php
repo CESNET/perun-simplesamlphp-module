@@ -190,12 +190,12 @@ class PerunEntitlement extends ProcessingFilter
                 ' for SP ' . $request['SPMetadata']['entityid']
             );
             return $request['SPMetadata']['groupMapping'][$groupName];
-        } elseif (isset($request['SPMetadata'][self::GROUPNAMEPREFIX_ATTR])) {
+        } elseif (isset($request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR])) {
             Logger::debug(
-                'GroupNamePrefix overridden by a SP ' . $request['SPMetadata']['entityid'] .
-                ' to ' . $request['SPMetadata'][self::GROUPNAMEPREFIX_ATTR]
+                'EntitlementPrefix overridden by a SP ' . $request['SPMetadata']['entityid'] .
+                ' to ' . $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR]
             );
-            return $request['SPMetadata'][self::GROUPNAMEPREFIX_ATTR] . $groupName;
+            return $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR] . $groupName;
         } else {
             # No mapping defined, so just put groupNamePrefix in front of the group
             Logger::debug(
