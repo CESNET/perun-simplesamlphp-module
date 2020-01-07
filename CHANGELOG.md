@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Allow omitted config for nested class in ProxyFilter
 
 ## [v3.7.1]
 #### Fixed

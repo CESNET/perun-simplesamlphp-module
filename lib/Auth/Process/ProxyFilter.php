@@ -48,7 +48,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
         parent::__construct($config, $reserved);
 
         $conf = Configuration::loadFromArray($config);
-        $this->config = $conf->getArray('config');
+        $this->config = $conf->getArray('config', []);
         $this->nestedClass = Configuration::loadFromArray($this->config)->getString('class');
         unset($this->config['class']);
         $this->filterSPs = $conf->getArray('filterSPs', []);
