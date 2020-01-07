@@ -201,7 +201,7 @@ class PerunEntitlement extends ProcessingFilter
             Logger::debug(
                 'No mapping found for group $groupName for SP ' . $request['SPMetadata']['entityid']
             );
-            return $this->entitlementPrefix . $groupName;
+            return $this->entitlementPrefix . 'group:' . $groupName;
         }
     }
 
