@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Fixed
 - Using correct const for EntitlementPrefix in PerunEntitlement.php
+- Added missing 'group' between entitlementPrefix and groupName in mapGroupName()
 
 ## [v3.7.0]
 #### Changed
