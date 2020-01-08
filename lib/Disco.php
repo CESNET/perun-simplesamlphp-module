@@ -488,7 +488,7 @@ class Disco extends PowerIdPDisco
             for ($i = 0; $i < $idpCount % 3; $i++) {
                 $html .= '<div class="col-md-' . (12 / ($idpCount % 3))  . '">';
                 $html .= '<div class="metalist list-group">';
-                $html .= showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
                 $html .= '</div>';
                 $html .= '</div>';
                 $counter++;
