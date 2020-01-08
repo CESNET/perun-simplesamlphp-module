@@ -2,8 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
-#### Fixed
 - Allow omitted config for nested class in ProxyFilter
+- Fixed bad call of function 'showTaggedEntry()'
 
 ## [v3.7.1]
 #### Fixed
