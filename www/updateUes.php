@@ -14,7 +14,7 @@ $adapter = Adapter::getInstance(Adapter::RPC);
 $entityBody = file_get_contents('php://input');
 $body = json_decode($entityBody, true);
 
-$attributes = $body['attributes'];
+$attributesFromIdP = $body['attributes'];
 $attrMap = $body['attrMap'];
 $attrsToConversion = $body['attrsToConversion'];
 $perunUserId = $body['perunUserId'];
@@ -23,30 +23,37 @@ const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def:';
 
 try {
     $userExtSource = $adapter->getUserExtSource(
-        $attributes['sourceIdPEntityID'][0],
-        $attributes['sourceIdPEppn'][0]
+        $attributesFromIdP['sourceIdPEntityID'][0],
+        $attributesFromIdP['sourceIdPEppn'][0]
     );
     if ($userExtSource === null) {
         throw new Exception(
             'sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource ' .
-            $attributes['sourceIdPEntityID'][0] . " and Login " .
-            $attributes['sourceIdPEppn'][0]
+            $attributesFromIdP['sourceIdPEntityID'][0] . " and Login " .
+            $attributesFromIdP['sourceIdPEppn'][0]
         );
     }
 
-    $attributes = $adapter->getUserExtSourceAttributes($userExtSource['id'], array_keys($attrMap));
+    $attributesFromPerunRaw = $adapter->getUserExtSourceAttributes($userExtSource['id'], array_keys($attrMap));
+    $attributesFromPerun = [];
+    foreach ($attributesFromPerunRaw as $attributeFromPerunRaw) {
+        $attributesFromPerun[$attributeFromPerunRaw['friendlyName']] = $attributeFromPerunRaw;
+    }
 
-    if ($attributes === null) {
+    if ($attributesFromPerun === null) {
         throw new Exception(
             'sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful.'
         );
     }
 
     $attributesToUpdate = [];
-    foreach ($attributes as $attribute) {
+
+    foreach ($attributesFromPerun as $attribute) {
+
         $attrName = UES_ATTR_NMS . $attribute['friendlyName'];
-        if (isset($attrMap[$attrName], $attributes[$attrMap[$attrName]])) {
-            $attr = $attributes[$attrMap[$attrName]];
+
+        if (isset($attrMap[$attrName], $attributesFromIdP[$attrMap[$attrName]])) {
+            $attr = $attributesFromIdP[$attrMap[$attrName]];
 
             if (in_array(UES_ATTR_NMS . $attribute['friendlyName'], $attrsToConversion)) {
                 $arrayAsString = [''];
