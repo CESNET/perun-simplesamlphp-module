@@ -28,7 +28,7 @@ try {
     );
     if ($userExtSource === null) {
         throw new Exception(
-            'sspmod_perun_Auth_Process_UpdateUserExtSource: there is no UserExtSource with ExtSource ' .
+            'perun/www/updateUes.php: there is no UserExtSource with ExtSource ' .
             $attributesFromIdP['sourceIdPEntityID'][0] . " and Login " .
             $attributesFromIdP['sourceIdPEppn'][0]
         );
@@ -42,7 +42,7 @@ try {
 
     if ($attributesFromPerun === null) {
         throw new Exception(
-            'sspmod_perun_Auth_Process_UpdateUserExtSource: getting attributes was not successful.'
+            'perun/www/updateUes.php: getting attributes was not successful.'
         );
     }
 
@@ -74,7 +74,7 @@ try {
                 $valueFromIdP = $attr;
             } else {
                 throw new Exception(
-                    'sspmod_perun_updateUes: unsupported type of attribute.'
+                    'perun/www/updateUes.php: unsupported type of attribute.'
                 );
             }
             if ($valueFromIdP !== $attribute['value']) {
@@ -90,10 +90,10 @@ try {
 
     $adapter->updateUserExtSourceLastAccess($userExtSource['id']);
 
-    Logger::debug('sspmod_perun_updateUes - Updating UES for user with userId: ' . $perunUserId . ' was successful.');
+    Logger::debug('perun/www/updateUes.php: Updating UES for user with userId: ' . $perunUserId . ' was successful.');
 } catch (\Exception $ex) {
     Logger::warning(
-        'sspmod_perun_updateUes: Updating UES for user with userId: ' . $perunUserId . ' was not successful: ' .
+        'perun/www/updateUes.php: Updating UES for user with userId: ' . $perunUserId . ' was not successful: ' .
         $ex->getMessage()
     );
 }

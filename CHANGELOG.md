@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Fixed
 - Fixed the bug from [bc3ec33] which caused that the updating UES didn't work.
+- Use the same prefix for all messages in updateUes.php
 
 [bc3ec33]:https://github.com/CESNET/perun-simplesamlphp-module/commit/bc3ec33c8f5088f7be712b8e5a0e70f229731648"
 
