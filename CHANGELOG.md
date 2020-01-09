@@ -2,11 +2,13 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.7.3]
 #### Fixed
 - Fixed the bug from [bc3ec33] which caused that the updating UES didn't work.
 - Use the same prefix for all messages in updateUes.php
 
-[bc3ec33]:https://github.com/CESNET/perun-simplesamlphp-module/commit/bc3ec33c8f5088f7be712b8e5a0e70f229731648"
+[bc3ec33]:https://github.com/CESNET/perun-simplesamlphp-module/commit/bc3ec33c8f5088f7be712b8e5a0e70f229731648
 
 ## [v3.7.2]
 #### Fixed
@@ -259,6 +261,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.7.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.3
 [v3.7.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.2
 [v3.7.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.1
 [v3.7.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.0
