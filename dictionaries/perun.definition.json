@@ -94,5 +94,17 @@
   "unauthorized-access_redirect_to_registration": {
     "en": "Now you will be redirected to registration to Perun system.",
     "cs": "Nyní budete přesměrování na registraci do systému Perun."
+  },
+  "redirect_some_users-header": {
+    "en": "Your activity is necessary to access the service",
+    "cs": "Pro přístup ke službě je vyžadována vaše aktivita"
+  },
+  "redirect_some_users-text": {
+    "en": "Text",
+    "cs": "Text"
+  },
+  "continue_to_service": {
+    "en": "You can continue to the service",
+    "cs": "Na službu můžete pokračovat"
   }
 }
