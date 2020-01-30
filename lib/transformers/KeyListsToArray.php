@@ -11,7 +11,7 @@ use SimpleSAML\Module\perun\AttributeTransformer;
 /**
  * Get SSP keys array from key lists.
  */
-class KeyListsToArray implements AttributeTransformer
+class KeyListsToArray extends AttributeTransformer
 {
     private $purposes;
 

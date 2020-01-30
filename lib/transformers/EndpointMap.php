@@ -6,12 +6,12 @@
 
 namespace SimpleSAML\Module\perun\transformers;
 
-use SimpleSAML\Module\perun\AttributeTransformer;
+use SimpleSAML\Module\perun\SingularAttributeTransformer;
 
 /**
  * Get map of binding to comma separated list of endpoints.
  */
-class EndpointMap implements AttributeTransformer
+class EndpointMap extends SingularAttributeTransformer
 {
     const MAPLIST_SEPARATOR = ',';
 
@@ -33,17 +33,9 @@ class EndpointMap implements AttributeTransformer
     /**
      * @override
      */
-    public function transform(array $attributes)
+    public function singleTransform(array $values)
     {
-        $result = [];
-        foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = $this->getEndpointsMap($value);
-        }
-        return $result;
-    }
-
-    private function getEndpointsMap($endpoints)
-    {
+        $endpoints = $values;
         if (empty($endpoints)) {
             return null;
         }
@@ -63,5 +55,13 @@ class EndpointMap implements AttributeTransformer
             }
         }
         return $result;
+    }
+
+    /**
+     * @override
+     */
+    public function singleDescription(string $description)
+    {
+        return sprintf('comma-separated lists of Locations per Bindings from (%s)', $description);
     }
 }

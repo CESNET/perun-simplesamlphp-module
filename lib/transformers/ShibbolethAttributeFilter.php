@@ -11,7 +11,7 @@ use SimpleSAML\Module\perun\AttributeTransformer;
 /**
  * Parse Shibboleth attribute filter and get released attributes.
  */
-class ShibbolethAttributeFilter implements AttributeTransformer
+class ShibbolethAttributeFilter extends AttributeTransformer
 {
     const DENIED_ATTRIBUTE_PREFIX = '-';
 
@@ -125,6 +125,21 @@ class ShibbolethAttributeFilter implements AttributeTransformer
         return $attributes;
     }
 
+    public function getDescription(array $attributes)
+    {
+        $description = $attributes[$this->attributesAttribute];
+        $d = [
+            $this->attributesAttribute => sprintf(
+                'currently released attributes from internal Shibboleth configuration if superset of (%s)',
+                $description
+            ),
+        ];
+        if ($this->tagsAttribute !== null) {
+            $d[$this->tagsAttribute] = sprintf('internal tags from Shibboleth configuration');
+        }
+        return $d;
+    }
+
     private static function error($message)
     {
         throw new \Exception($message);
@@ -132,7 +147,7 @@ class ShibbolethAttributeFilter implements AttributeTransformer
 
     private static function warning($message)
     {
-        trigger_error($message, E_USER_NOTICE);
+        \SimpleSAML\Logger::info('ShibbolethAttributeFilter: ' . $message);
     }
 
     private function parseAttributeFilter($data, $data_is_url)

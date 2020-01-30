@@ -11,7 +11,7 @@ use SimpleSAML\Module\perun\AttributeTransformer;
 /**
  * Get SSP endpoint array from endpoint map.
  */
-class EndpointMapToArray implements AttributeTransformer
+class EndpointMapToArray extends AttributeTransformer
 {
     const MAPLIST_SEPARATOR = ',';
 
@@ -21,14 +21,11 @@ class EndpointMapToArray implements AttributeTransformer
 
     private $defaultBinding;
 
-    private $fullNames;
-
     /**
      * @override
      */
     public function __construct(\SimpleSAML\Configuration $config)
     {
-        $this->fullNames = !$config->getBoolean('shortNames', false);
         $this->defaultBinding = $this->getBindingName($config->getString('defaultBinding'));
     }
 
@@ -46,14 +43,15 @@ class EndpointMapToArray implements AttributeTransformer
 
     private function getBindingName($binding)
     {
-        if ($this->fullNames && strpos($binding, self::BINDING_PREFIX) !== 0) {
+        if (strpos($binding, 'urn:') !== 0) {
             return self::BINDING_PREFIX . $binding;
-        } elseif (!$this->fullNames && strpos($binding, self::BINDING_PREFIX) === 0) {
-            return str_replace(self::BINDING_PREFIX, '', $binding);
         }
         return $binding;
     }
 
+    /**
+     * @see https://simplesamlphp.org/docs/stable/simplesamlphp-metadata-endpoints
+     */
     private function getEndpointsArray($endpointMap)
     {
         if (empty($endpointMap) || !is_array($endpointMap)) {

@@ -6,12 +6,12 @@
 
 namespace SimpleSAML\Module\perun\transformers;
 
-use SimpleSAML\Module\perun\AttributeTransformer;
+use SimpleSAML\Module\perun\SingularAttributeTransformer;
 
 /**
  * Get list(s) of endpoints of selected type.
  */
-class EndpointList implements AttributeTransformer
+class EndpointList extends SingularAttributeTransformer
 {
     const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
@@ -31,17 +31,9 @@ class EndpointList implements AttributeTransformer
     /**
      * @override
      */
-    public function transform($attributes)
+    public function singleTransform(array $values)
     {
-        $result = [];
-        foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = $this->getEndpoint($value);
-        }
-        return $result;
-    }
-
-    private function getEndpoint($endpoints)
-    {
+        $endpoints = $values;
         if (empty($endpoints)) {
             return null;
         }
@@ -55,5 +47,13 @@ class EndpointList implements AttributeTransformer
             }
         }
         return $result;
+    }
+
+    /**
+     * @override
+     */
+    public function singleDescription(string $description)
+    {
+        return sprintf('endpoints with type %s from (%s)', $this->binding, $description);
     }
 }

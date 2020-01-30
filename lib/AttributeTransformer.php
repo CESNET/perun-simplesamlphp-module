@@ -28,13 +28,13 @@
 
 namespace SimpleSAML\Module\perun;
 
-interface AttributeTransformer
+abstract class AttributeTransformer
 {
     /**
      * The construtor. Called only once.
      * @param \SimpleSAML\Configuration $config
      */
-    public function __construct(\SimpleSAML\Configuration $config);
+    abstract public function __construct(\SimpleSAML\Configuration $config);
 
     /**
      * Transform attributes (array with keys as attribute names).
@@ -45,5 +45,15 @@ interface AttributeTransformer
      * If entityID is deleted, facility is NOT created.
      * @param array $attributes
      */
-    public function transform(array $attributes);
+    abstract public function transform(array $attributes);
+
+    /**
+     * Get human readable description of the transformation performed on attributes.
+     * Optional, but useful for generating documentation or instructions.
+     * @param array $attributes keys are attribute names, values are current description
+     */
+    public function getDescription(array $attributes)
+    {
+        return $attributes;
+    }
 }

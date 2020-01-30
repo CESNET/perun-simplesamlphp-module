@@ -11,7 +11,7 @@ use SimpleSAML\Module\perun\AttributeTransformer;
 /**
  * Get lists of certificates per purpose.
  */
-class KeyLists implements AttributeTransformer
+class KeyLists extends AttributeTransformer
 {
     private $purpose2internal;
 
@@ -34,6 +34,20 @@ class KeyLists implements AttributeTransformer
         foreach ($attributes as $keys) {
             return $this->getCertData($keys);
         }
+    }
+
+    public function getDescription(array $attributes)
+    {
+        $description = null;
+        foreach ($attributes as $desc) {
+            $description = $desc;
+            break;
+        }
+        $descriptions = [];
+        foreach ($this->purpose2internal as $purpose => $internal) {
+            $descriptions[$internal] = sprintf('X509Certificate with %s=true from (%s)', $purpose, $description);
+        }
+        return $descriptions;
     }
 
     private function getCertData(array $keys)

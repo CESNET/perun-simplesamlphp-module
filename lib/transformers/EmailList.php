@@ -6,12 +6,12 @@
 
 namespace SimpleSAML\Module\perun\transformers;
 
-use SimpleSAML\Module\perun\AttributeTransformer;
+use SimpleSAML\Module\perun\SingularAttributeTransformer;
 
 /**
  * Extract list of emails of certain type(s) from contacts.
  */
-class EmailList implements AttributeTransformer
+class EmailList extends SingularAttributeTransformer
 {
     private $types;
 
@@ -26,19 +26,10 @@ class EmailList implements AttributeTransformer
     /**
      * @override
      */
-    public function transform(array $attributes)
+    public function singleTransform(array $values)
     {
         $result = [];
-        foreach ($attributes as $attribute => $value) {
-            $result[$attribute] = $this->getEmailsByType($value);
-        }
-        return $result;
-    }
-
-    private function getEmailsByType(array $contacts)
-    {
-        $result = [];
-        foreach ($contacts as $contact) {
+        foreach ($values as $contact) {
             if (
                 isset($contact['contactType'])
                 && (empty($this->types) || in_array($contact['contactType'], $this->types, true))
@@ -48,5 +39,18 @@ class EmailList implements AttributeTransformer
             }
         }
         return $result;
+    }
+
+    /**
+     * @override
+     */
+    public function singleDescription(string $description)
+    {
+        return sprintf(
+            'emails of type%s %s from (%s)',
+            count($this->types) > 1 ? 's' : '',
+            implode(',', $this->types),
+            $description
+        );
     }
 }
