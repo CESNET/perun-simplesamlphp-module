@@ -52,6 +52,7 @@ $config = [
         'urn:perun:facility:attribute-def:def:nameIDFormat' => 'NameIDFormat',
         'urn:perun:facility:attribute-def:def:signingCert' => 'signingCert',
         'urn:perun:facility:attribute-def:def:encryptionCert' => 'encryptionCert',
+        'urn:perun:facility:attribute-def:def:spDisableEncryption' => 'disableEncryption',
     ],
 
     /**
@@ -71,6 +72,16 @@ $config = [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
             'attributes' => ['SingleLogoutService'],
             'config' => ['defaultBinding' => 'HTTP-Redirect'],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\LogicalNot',
+            'attributes' => ['disableEncryption'],
+            'config' => ['mapping' => ['disableEncryption'=>'assertion.encryption']],
+        ],
+        [
+            'class' => '\\SimpleSAML\\Module\\perun\\transformers\\LogicalAnd',
+            'attributes' => ['encryptionCert', 'assertion.encryption'],
+            'config' => ['output' => 'assertion.encryption']
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\KeyListsToArray',
