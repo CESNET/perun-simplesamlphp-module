@@ -66,16 +66,21 @@ class RpcConnector
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
         curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 
+        $startTime = microtime(true);
         $json = curl_exec($ch);
+        $endTime = microtime(true);
         curl_close($ch);
 
-        Logger::debug('perun.RPC: GET call $uri with params: ' . $paramsQuery . ', response: ' . $json);
+        $responseTime = round($endTime - $startTime, 3);
+        Logger::debug('perun.RPC: GET call ' . $uri . ' with params: ' . $paramsQuery . ', response : ' .
+            $json . ' in: ' . $responseTime . 's.');
 
         $result = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(
-                'Cant\'t decode response from Perun. Call: $uri, Params: $paramsQuery, Response: $json'
+                'Cant\'t decode response from Perun. Call: ' . $uri . ', Params: ' . $paramsQuery .
+                ', Response: ' . $json
             );
         }
         if (isset($result['errorId'])) {
@@ -107,17 +112,22 @@ class RpcConnector
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, self::CONNECT_TIMEOUT);
         curl_setopt($ch, CURLOPT_TIMEOUT, self::TIMEOUT);
 
+        $startTime = microtime(true);
         $json = curl_exec($ch);
+        $endTime = microtime(true);
         curl_close($ch);
 
-        Logger::debug('perun.RPC: POST call $uri with params: ' . $paramsJson . ', response: ' . $json);
+        $responseTime = round($endTime - $startTime, 3);
+        Logger::debug('perun.RPC: POST call ' . $uri . ' with params: ' . $paramsJson . ', response : ' .
+            $json . ' in: ' . $responseTime . 's.');
 
         $result = json_decode($json, true);
 
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(
-                'Cant\'t decode response from Perun. Call: $uri, Params: $paramsJson, Response: $json'
+                'Cant\'t decode response from Perun. Call: ' . $uri . ', Params: ' . $paramsJson .
+                ', Response: ' . $json
             );
         }
         if (isset($result['errorId'])) {
