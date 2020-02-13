@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- Added logging response time for each request into RPC/LDAP
+
+#### Fixed
+- Fix logging request params
 
 ## [v3.7.3]
 #### Fixed
