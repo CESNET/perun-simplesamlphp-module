@@ -121,11 +121,11 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             } else {
                 throw new Exception(
                     'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' .
-                    'Attribute \$attrName, Supported types: string, array.'
+                    'Attribute ' . $attrName . ', Supported types: string, array.'
                 );
             }
 
-            Logger::debug('perun:PerunAttributes: perun attribute $attrName was fetched. ' .
+            Logger::debug('perun:PerunAttributes: perun attribute ' . $attrName . ' was fetched. ' .
                 'Value ' . implode(',', $value) .
                 ' is being setted to ssp attributes ' . implode(',', $attrArray));
 
