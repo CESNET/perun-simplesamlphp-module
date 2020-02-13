@@ -116,7 +116,11 @@ class LdapConnector
         Logger::debug('sspmod_perun_LdapConnector.search - Connection to Perun LDAP established. ' .
             'Ready to perform search query. host: ' . $this->hostname . ', user: ' . $this->user);
 
+        $startTime = microtime(true);
         $result = ldap_search($conn, $base, $filter, $attributes);
+        $endTime = microtime(true);
+
+        $responseTime = round(($endTime - $startTime) * 1000, 3);
 
         // no such entity
         if (ldap_errno($conn) === 2) {
@@ -127,8 +131,8 @@ class LdapConnector
 
         ldap_close($conn);
 
-        Logger::debug('sspmod_perun_LdapConnector.search - search query proceeded. ' .
-            'query base: ' . $base . ', filter: ' . $filter . ', response: ' . var_export($entries, true));
+        Logger::debug('sspmod_perun_LdapConnector.search - search query proceeded in ' . $responseTime . 'ms. ' .
+            'Query base: ' . $base . ', filter: ' . $filter . ', response: ' . var_export($entries, true));
 
         return $entries;
     }
