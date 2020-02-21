@@ -141,7 +141,7 @@ class PerunEntitlement extends ProcessingFilter
         $user = $request['perun']['user'];
 
         try {
-            $forwardedEduPersonEntitlementMap = $this->adapter->getUserAttributes(
+            $forwardedEduPersonEntitlementMap = $this->adapter->getUserAttributesValues(
                 $user,
                 [$this->forwardedEduPersonEntitlement]
             );

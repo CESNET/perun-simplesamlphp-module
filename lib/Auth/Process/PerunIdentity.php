@@ -14,6 +14,7 @@ use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Configuration;
 
 /**
  * Class PerunIdentity
@@ -156,6 +157,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             is_array($config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION])) {
             $this->listOfSpsWithoutInfoAboutRedirection = $config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION];
         }
+
         $this->uidsAttr = $config[self::UIDS_ATTR];
         $this->registerUrlBase = (string)$config[self::REGISTER_URL_BASE];
         $this->defaultRegisterUrl = (string)$config[self::REGISTER_URL];
@@ -163,12 +165,14 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $this->interface = (string)$config[self::INTERFACE_PROPNAME];
         $this->sourceIdPEntityIDAttr = $config[self::SOURCE_IDP_ENTITY_ID_ATTR];
         $this->forceRegistrationToGroups = $config[self::FORCE_REGISTRATION_TO_GROUPS];
+
         $this->facilityCheckGroupMembershipAttr = (string)$config[self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR];
         $this->facilityDynamicRegistrationAttr = (string)$config[self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR];
         $this->facilityVoShortNamesAttr = (string)$config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
         $this->facilityRegisterUrlAttr = (string)$config[self::PERUN_FACILITY_REGISTER_URL_ATTR];
         $this->facilityAllowRegistrationToGroupsAttr =
             (string) $config[self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS];
+
         $this->adapter = Adapter::getInstance($this->interface);
         $this->rpcAdapter = new AdapterRpc();
     }
@@ -429,7 +433,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     protected function getSPAttributes($spEntityID)
     {
-        $attrNames = [
+        $attributes = [
             $this->facilityCheckGroupMembershipAttr,
             $this->facilityVoShortNamesAttr,
             $this->facilityDynamicRegistrationAttr,
@@ -438,32 +442,32 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         ];
 
         try {
-            $facility = $this->rpcAdapter->getFacilityByEntityId($spEntityID);
+            $facility = $this->adapter->getFacilityByEntityId($spEntityID);
 
             if ($facility === null) {
                 return;
             }
 
-            $facilityAttrValues = $this->rpcAdapter->getFacilityAttributesValues(
+            $facilityAttrValues = $this->adapter->getFacilityAttributesValues(
                 $facility,
-                $attrNames
+                $attributes
             );
 
             if (array_key_exists($this->facilityCheckGroupMembershipAttr, $facilityAttrValues)) {
-                $this->checkGroupMembership = $facilityAttrValues[$this->facilityCheckGroupMembershipAttr];
+                $this->checkGroupMembership = $facilityAttrValues[(string)$this->facilityCheckGroupMembershipAttr];
             }
 
             if (array_key_exists($this->facilityVoShortNamesAttr, $facilityAttrValues) &&
-                !empty($facilityAttrValues[$this->facilityVoShortNamesAttr])) {
-                $this->facilityVoShortNames = $facilityAttrValues[$this->facilityVoShortNamesAttr];
+                !empty($facilityAttrValues[(string)$this->facilityVoShortNamesAttr])) {
+                $this->facilityVoShortNames = $facilityAttrValues[(string)$this->facilityVoShortNamesAttr];
             }
 
             if (array_key_exists($this->facilityDynamicRegistrationAttr, $facilityAttrValues)) {
-                $this->dynamicRegistration = $facilityAttrValues[$this->facilityDynamicRegistrationAttr];
+                $this->dynamicRegistration = $facilityAttrValues[(string)$this->facilityDynamicRegistrationAttr];
             }
 
             if (array_key_exists($this->facilityRegisterUrlAttr, $facilityAttrValues)) {
-                $this->registerUrl = $facilityAttrValues[$this->facilityRegisterUrlAttr];
+                $this->registerUrl = $facilityAttrValues[(string)$this->facilityRegisterUrlAttr];
             }
 
             if ($this->registerUrl === null) {
@@ -471,7 +475,8 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
 
             if (array_key_exists($this->facilityAllowRegistrationToGroupsAttr, $facilityAttrValues)) {
-                $this->allowRegistrationToGroups = $facilityAttrValues[$this->facilityAllowRegistrationToGroupsAttr];
+                $this->allowRegistrationToGroups =
+                    $facilityAttrValues[(string)$this->facilityAllowRegistrationToGroupsAttr];
             }
         } catch (\Exception $ex) {
             Logger::warning('perun:PerunIdentity: ' . $ex);

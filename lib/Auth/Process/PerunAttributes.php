@@ -3,6 +3,7 @@
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
@@ -50,9 +51,10 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             $config['mode'] = self::MODE_FULL;
         }
 
-        $this->attrMap = (array)$config['attrMap'];
         $this->interface = (string)$config['interface'];
         $this->mode = (string)$config['mode'];
+        $this->attrMap = (array)$config['attrMap'];
+
         if (!in_array($this->mode, [self::MODE_FULL, self::MODE_PARTIAL])) {
             $this->mode = self::MODE_FULL;
         }
@@ -90,8 +92,7 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
             }
         }
 
-
-        $attrs = $this->adapter->getUserAttributes($user, $attributes);
+        $attrs = $this->adapter->getUserAttributesValues($user, $attributes);
 
         foreach ($attrs as $attrName => $attrValue) {
             $sspAttr = $this->attrMap[$attrName];

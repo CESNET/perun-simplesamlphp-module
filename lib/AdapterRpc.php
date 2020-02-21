@@ -240,19 +240,26 @@ class AdapterRpc extends Adapter
 
     public function getUserAttributes($user, $attrNames)
     {
+        $attrNamesMap = AttributeUtils::getRpcAttrNames($attrNames);
+
         $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'user' => $user->getId(),
-            'attrNames' => $attrNames,
+            'attrNames' => array_keys($attrNamesMap),
         ]);
 
-        $attributes = [];
-        foreach ($perunAttrs as $perunAttr) {
-            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
+        return $this->getAttributes($perunAttrs, $attrNamesMap);
+    }
 
-            $attributes[$perunAttrName] = $perunAttr['value'];
+    public function getUserAttributesValues($user, $attributes)
+    {
+        $perunAttrs = $this->getUserAttributes($user, $attributes);
+        $attributesValues = [];
+
+        foreach ($perunAttrs as $perunAttrName => $perunAttr) {
+            $attributesValues[$perunAttrName] = $perunAttr['value'];
         }
 
-        return $attributes;
+        return $attributesValues;
     }
 
     public function getEntitylessAttribute($attrName)
@@ -283,19 +290,26 @@ class AdapterRpc extends Adapter
 
     public function getVoAttributes($vo, $attrNames)
     {
+        $attrNamesMap = AttributeUtils::getRpcAttrNames($attrNames);
+
         $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'vo' => $vo->getId(),
-            'attrNames' => $attrNames,
+            'attrNames' => array_keys($attrNamesMap),
         ]);
 
-        $attributes = [];
-        foreach ($perunAttrs as $perunAttr) {
-            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
+        return $this->getAttributes($perunAttrs, $attrNamesMap);
+    }
 
-            $attributes[$perunAttrName] = $perunAttr['value'];
+    public function getVoAttributesValues($vo, $attributes)
+    {
+        $perunAttrs = $this->getVoAttributes($vo, $attributes);
+        $attributesValues = [];
+
+        foreach ($perunAttrs as $perunAttrName => $perunAttr) {
+            $attributesValues[$perunAttrName] = $perunAttr['value'];
         }
 
-        return $attributes;
+        return $attributesValues;
     }
 
     public function getFacilityAttribute($facility, $attrName)
@@ -433,48 +447,25 @@ class AdapterRpc extends Adapter
 
     public function getFacilityAttributes($facility, $attrNames)
     {
+        $attrNamesMap = AttributeUtils::getRpcAttrNames($attrNames);
+
         $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'facility' => $facility->getId(),
-            'attrNames' => $attrNames,
+            'attrNames' => array_keys($attrNamesMap),
         ]);
-        $attributes = [];
-        foreach ($perunAttrs as $perunAttr) {
-            switch ($perunAttr['type']) {
-                case self::TYPE_INTEGER:
-                    $value = is_numeric($perunAttr['value']) ? $perunAttr['value'] : null;
-                    break;
-                case self::TYPE_BOOLEAN:
-                    $value = $perunAttr['value'] !== null && $perunAttr['value'] !== 'false';
-                    break;
-                case self::TYPE_STRING:
-                case self::TYPE_ARRAY:
-                case self::TYPE_MAP:
-                default:
-                    $value = $perunAttr['value'];
-            }
-            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
-            $attributes[$perunAttrName] = [
-                'id' => $perunAttr['id'],
-                'name' => $perunAttrName,
-                'displayName' => $perunAttr['displayName'],
-                'type' => $perunAttr['type'],
-                'value' => $value,
-            ];
-        }
-        return $attributes;
+
+        return $this->getAttributes($perunAttrs, $attrNamesMap);
     }
 
-    public function getFacilityAttributesValues($facility, $attrNames)
+    public function getFacilityAttributesValues($facility, $attributes)
     {
-        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
-            'facility' => $facility->getId(),
-            'attrNames' => $attrNames,
-        ]);
+        $perunAttrs = $this->getFacilityAttributes($facility, $attributes);
         $attributesValues = [];
-        foreach ($perunAttrs as $perunAttr) {
-            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
+
+        foreach ($perunAttrs as $perunAttrName => $perunAttr) {
             $attributesValues[$perunAttrName] = $perunAttr['value'];
         }
+
         return $attributesValues;
     }
 
@@ -600,5 +591,23 @@ class AdapterRpc extends Adapter
     public function createFacility($facility)
     {
         return $this->connector->post('facilitiesManager', 'createFacility', $facility);
+    }
+
+    private function getAttributes($perunAttrs, $attrNamesMap)
+    {
+        $attributes = [];
+
+        foreach ($perunAttrs as $perunAttr) {
+            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
+            $attributes[$attrNamesMap[$perunAttrName]] = [
+                'id' => $perunAttr['id'],
+                'name' => $perunAttrName,
+                'displayName' => $perunAttr['displayName'],
+                'type' => $perunAttr['type'],
+                'value' => $perunAttr['value']
+            ];
+        }
+
+        return $attributes;
     }
 }

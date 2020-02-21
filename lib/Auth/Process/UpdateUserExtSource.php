@@ -3,18 +3,20 @@
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
-use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
+use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\Module\perun\UpdateUESThread;
+use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun;
 
 /**
  * Class sspmod_perun_Auth_Process_UpdateUserExtSource
  *
  * This filter updates userExtSource attributes when he logs in.
  *
- * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
+ * @author Dominik Baránek <baranek@ics.muni.cz>
  * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 class UpdateUserExtSource extends ProcessingFilter
@@ -35,12 +37,12 @@ class UpdateUserExtSource extends ProcessingFilter
         }
 
         if (isset($config['arrayToStringConversion'])) {
-            $this->attrsToConversion = (array)$config['arrayToStringConversion'];
+            $this->attrsToConversion = AttributeUtils::getRpcAttrNames((array)$config['arrayToStringConversion']);
         } else {
             $this->attrsToConversion = [];
         }
 
-        $this->attrMap = (array)$config['attrMap'];
+        $this->attrMap = AttributeUtils::getRpcAttrNames((array)$config['attrMap']);
     }
 
     public function process(&$request)
