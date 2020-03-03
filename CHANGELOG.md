@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.7.4]
 #### Added
 - Added logging response time for each request into RPC/LDAP
 
@@ -266,6 +268,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.7.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.4
 [v3.7.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.3
 [v3.7.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.2
 [v3.7.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.1
