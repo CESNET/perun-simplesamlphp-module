@@ -14,11 +14,13 @@ use SimpleSAML\Logger;
  * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement and resource capabilities
  *
  * @author Dominik Baránek <baranek@ics.muni.cz>
+ * @author Pavel Vyskočil <Pavel.Vyskocil@cesnet.cz>
  */
 class PerunEntitlement extends ProcessingFilter
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
     const EDU_PERSON_ENTITLEMENT = 'eduPersonEntitlement';
+    const RELEASE_FORWARDED_ENTITLEMENT = 'releaseForwardedEntitlement';
     const FORWARDED_EDU_PERSON_ENTITLEMENT = 'forwardedEduPersonEntitlement';
     const ENTITLEMENTPREFIX_ATTR = 'entitlementPrefix';
     const ENTITLEMENTAUTHORITY_ATTR = 'entitlementAuthority';
@@ -26,6 +28,7 @@ class PerunEntitlement extends ProcessingFilter
     const INTERFACE_PROPNAME = 'interface';
 
     private $eduPersonEntitlement;
+    private $releaseForwardedEntitlement;
     private $forwardedEduPersonEntitlement;
     private $entitlementPrefix;
     private $entitlementAuthority;
@@ -45,7 +48,11 @@ class PerunEntitlement extends ProcessingFilter
                 self::EDU_PERSON_ENTITLEMENT . '.'
             );
         }
+        $configuration = Configuration::loadFromArray($config);
+
         $this->eduPersonEntitlement = $config[self::EDU_PERSON_ENTITLEMENT];
+
+        $this->releaseForwardedEntitlement = $configuration->getBoolean(self::RELEASE_FORWARDED_ENTITLEMENT, true);
 
         if (!isset($config[self::FORWARDED_EDU_PERSON_ENTITLEMENT])) {
             throw new Exception(
@@ -77,7 +84,10 @@ class PerunEntitlement extends ProcessingFilter
     public function process(&$request)
     {
         $eduPersonEntitlement = $this->getEduPersonEntitlement($request);
-        $forwardedEduPersonEntitlement = $this->getForwardedEduPersonEntitlement($request);
+        $forwardedEduPersonEntitlement = [];
+        if ($this->releaseForwardedEntitlement) {
+            $forwardedEduPersonEntitlement = $this->getForwardedEduPersonEntitlement($request);
+        }
         $resourceCapabilities = $this->getResourceCapabilities($request);
 
         $request['Attributes'][$this->eduPersonEntitlement] = array_unique(array_merge(
