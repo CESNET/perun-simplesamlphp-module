@@ -2,6 +2,11 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed releasing entitlement for Virtual Organization
+    - Before: einfra:members
+    - Now: einfra
+
 #### Changed
 - Releasing forwardedEduPersonEntitlement is now optional (forwardedEduPersonEntitlement are released by default)
 
