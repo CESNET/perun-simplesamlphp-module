@@ -195,7 +195,7 @@ class AdapterLdap extends Adapter
             ['perunVoId', 'o', 'description']
         );
         if ($vo === null) {
-            throw new Exception('Vo with name: ' . $vo . ' does not exists in Perun LDAP.');
+            throw new Exception('Vo with name: ' . $voShortName . ' does not exists in Perun LDAP.');
         }
 
         return new Vo($vo['perunVoId'][0], $vo['description'][0], $vo['o'][0]);
