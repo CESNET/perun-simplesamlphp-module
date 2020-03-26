@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added facility capabilities to PerunEntitlement
 
+#### Changed
+- Use object `Configuration` for getting base module configuration
+
 #### Fixed
 - Fixed the width of showed tagged idps in case the count of idps is equal to (x * 3) + 1
 

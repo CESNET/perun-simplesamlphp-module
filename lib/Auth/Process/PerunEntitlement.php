@@ -43,42 +43,30 @@ class PerunEntitlement extends ProcessingFilter
         $modulePerunConfiguration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         assert('is_array($config)');
 
-        if (!isset($config[self::EDU_PERSON_ENTITLEMENT])) {
-            throw new Exception(
-                'perun:PerunEntitlement: missing mandatory configuration option ' .
-                self::EDU_PERSON_ENTITLEMENT . '.'
-            );
-        }
         $configuration = Configuration::loadFromArray($config);
 
-        $this->eduPersonEntitlement = $config[self::EDU_PERSON_ENTITLEMENT];
-
+        $this->eduPersonEntitlement = $configuration->getString(self::EDU_PERSON_ENTITLEMENT);
         $this->releaseForwardedEntitlement = $configuration->getBoolean(self::RELEASE_FORWARDED_ENTITLEMENT, true);
+        $this->forwardedEduPersonEntitlement = $configuration->getString(
+            self::FORWARDED_EDU_PERSON_ENTITLEMENT,
+            $this->releaseForwardedEntitlement ? Configuration::REQUIRED_OPTION : ''
+        );
 
-        if (!isset($config[self::FORWARDED_EDU_PERSON_ENTITLEMENT])) {
-            throw new Exception(
-                'perun:PerunEntitlement: missing mandatory configuration option ' .
-                self::FORWARDED_EDU_PERSON_ENTITLEMENT . '.'
-            );
-        }
-        $this->forwardedEduPersonEntitlement = $config[self::FORWARDED_EDU_PERSON_ENTITLEMENT];
-
-        $this->entitlementPrefix = $modulePerunConfiguration->getString(self::ENTITLEMENTPREFIX_ATTR, '');
-        $this->entitlementAuthority = $modulePerunConfiguration->getString(self::ENTITLEMENTAUTHORITY_ATTR, '');
         $this->groupNameAARC = $modulePerunConfiguration->getBoolean(self::GROUPNAMEAARC_ATTR, false);
+        $this->entitlementPrefix = $modulePerunConfiguration->getString(
+            self::ENTITLEMENTPREFIX_ATTR,
+            $this->groupNameAARC ? Configuration::REQUIRED_OPTION : ''
+        );
+        $this->entitlementAuthority = $modulePerunConfiguration->getString(
+            self::ENTITLEMENTAUTHORITY_ATTR,
+            $this->groupNameAARC ? Configuration::REQUIRED_OPTION : ''
+        );
 
-        if ($this->groupNameAARC && (empty($this->entitlementAuthority) || empty($this->entitlementPrefix))) {
-            throw new Exception(
-                'perun:PerunEntitlement: \'groupNameAARC\' has been set, \'entitlementAuthority\' ' .
-                'and \'entitlementPrefix\' options must be set as well'
-            );
-        }
-
-        if (!isset($config[self::INTERFACE_PROPNAME])) {
-            $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
-        }
-
-        $this->interface = (string)$config[self::INTERFACE_PROPNAME];
+        $this->interface = $configuration->getValueValidate(
+            self::INTERFACE_PROPNAME,
+            [Adapter::RPC, Adapter::LDAP],
+            Adapter::RPC
+        );
         $this->adapter = Adapter::getInstance($this->interface);
     }
 
