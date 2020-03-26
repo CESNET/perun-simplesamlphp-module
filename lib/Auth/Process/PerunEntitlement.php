@@ -40,7 +40,7 @@ class PerunEntitlement extends ProcessingFilter
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
-        $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
+        $modulePerunConfiguration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         assert('is_array($config)');
 
         if (!isset($config[self::EDU_PERSON_ENTITLEMENT])) {
@@ -63,9 +63,9 @@ class PerunEntitlement extends ProcessingFilter
         }
         $this->forwardedEduPersonEntitlement = $config[self::FORWARDED_EDU_PERSON_ENTITLEMENT];
 
-        $this->entitlementPrefix = $conf->getString(self::ENTITLEMENTPREFIX_ATTR, '');
-        $this->entitlementAuthority = $conf->getString(self::ENTITLEMENTAUTHORITY_ATTR, '');
-        $this->groupNameAARC = $conf->getBoolean(self::GROUPNAMEAARC_ATTR, false);
+        $this->entitlementPrefix = $modulePerunConfiguration->getString(self::ENTITLEMENTPREFIX_ATTR, '');
+        $this->entitlementAuthority = $modulePerunConfiguration->getString(self::ENTITLEMENTAUTHORITY_ATTR, '');
+        $this->groupNameAARC = $modulePerunConfiguration->getBoolean(self::GROUPNAMEAARC_ATTR, false);
 
         if ($this->groupNameAARC && (empty($this->entitlementAuthority) || empty($this->entitlementPrefix))) {
             throw new Exception(
