@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Releasing forwardedEduPersonEntitlement is now optional (forwardedEduPersonEntitlement are released by default)
 
 ## [v3.7.4]
 #### Added

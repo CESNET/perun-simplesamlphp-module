@@ -38,6 +38,21 @@ Example how to enable filter IdPAttribute:
 'OrganizationName:en' => 'idp_organizationName' means that the $IdPMetadata['Organization']['en'] will be save into 
 $request['Attributes']['idp_organizationName']
 
+## PerunEntitlement
+
+Example how to enable/configure filter PerunEntitlement:
+
+```php
+33 => array(
+    'class' => 'perun:PerunEntitlement',
+    'interface' => 'ldap',
+    'eduPersonEntitlement' => 'eduPersonEntitlement',
+    # forwarded entitlement are released by default
+    #'releaseForwardedEntitlement' => false, OPTIONAL
+    'forwardedEduPersonEntitlement' => 'eduPersonEntitlement',
+),
+```
+
 ## ForceAup
 
 1.Create these attributes in Perun:
