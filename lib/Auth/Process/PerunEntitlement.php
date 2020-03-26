@@ -34,7 +34,6 @@ class PerunEntitlement extends ProcessingFilter
     private $entitlementPrefix;
     private $entitlementAuthority;
     private $groupNameAARC;
-    private $interface;
     private $adapter;
 
     public function __construct($config, $reserved)
@@ -62,12 +61,12 @@ class PerunEntitlement extends ProcessingFilter
             $this->groupNameAARC ? Configuration::REQUIRED_OPTION : ''
         );
 
-        $this->interface = $configuration->getValueValidate(
+        $interface = $configuration->getValueValidate(
             self::INTERFACE_PROPNAME,
             [Adapter::RPC, Adapter::LDAP],
             Adapter::RPC
         );
-        $this->adapter = Adapter::getInstance($this->interface);
+        $this->adapter = Adapter::getInstance($interface);
     }
 
     public function process(&$request)
