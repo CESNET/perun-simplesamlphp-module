@@ -186,7 +186,7 @@ class PerunEntitlement extends ProcessingFilter
             isset($request['SPMetadata']['groupMapping']) &&
             isset($request['SPMetadata']['groupMapping'][$groupName])) {
             Logger::debug(
-                'Mapping $groupName to ' . $request['SPMetadata']['groupMapping'][$groupName] .
+                'Mapping ' . $groupName . ' to ' . $request['SPMetadata']['groupMapping'][$groupName] .
                 ' for SP ' . $request['SPMetadata']['entityid']
             );
             return $request['SPMetadata']['groupMapping'][$groupName];
@@ -199,7 +199,7 @@ class PerunEntitlement extends ProcessingFilter
         } else {
             # No mapping defined, so just put groupNamePrefix in front of the group
             Logger::debug(
-                'No mapping found for group $groupName for SP ' . $request['SPMetadata']['entityid']
+                'No mapping found for group ' . $groupName . ' for SP ' . $request['SPMetadata']['entityid']
             );
             return $this->entitlementPrefix . 'group:' . $groupName;
         }
