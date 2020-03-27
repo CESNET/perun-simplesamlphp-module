@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - Releasing forwardedEduPersonEntitlement is now optional (forwardedEduPersonEntitlement are released by default)
 
+#### Removed
+- Removed deprecated getFacilitiesByEntityId method
+
 ## [v3.7.4]
 #### Added
 - Added logging response time for each request into RPC/LDAP

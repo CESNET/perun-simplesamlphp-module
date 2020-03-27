@@ -336,27 +336,6 @@ class AdapterRpc extends Adapter
         return $groups;
     }
 
-    public function getFacilitiesByEntityId($spEntityId)
-    {
-        $perunAttrs = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
-            'attributeValue' => $spEntityId,
-        ]);
-        $facilities = [];
-        foreach ($perunAttrs as $perunAttr) {
-            array_push(
-                $facilities,
-                new Facility(
-                    $perunAttr['id'],
-                    $perunAttr['name'],
-                    $perunAttr['description'],
-                    $spEntityId
-                )
-            );
-        }
-        return $facilities;
-    }
-
     public function getFacilityByEntityId($spEntityId)
     {
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [

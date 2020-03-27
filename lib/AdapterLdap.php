@@ -228,12 +228,6 @@ class AdapterLdap extends Adapter
         return $attributes;
     }
 
-    public function getFacilitiesByEntityId($spEntityId)
-    {
-        throw new BadMethodCallException('NotImplementedException');
-        // TODO: Implement getFacilitiesByEntityId() method.
-    }
-
     public function getFacilityByEntityId($spEntityId)
     {
         $ldapResult = $this->connector->searchForEntity(
