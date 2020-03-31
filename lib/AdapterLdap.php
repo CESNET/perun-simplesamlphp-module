@@ -114,7 +114,7 @@ class AdapterLdap extends Adapter
                     $group['perunVoId'][0],
                     $group['cn'][0],
                     $group['perunUniqueGroupName'][0],
-                    $group['description'][0]
+                    $group['description'][0] ?? ''
                 )
             );
         }
@@ -154,7 +154,7 @@ class AdapterLdap extends Adapter
                             $group['perunVoId'][0],
                             $group['cn'],
                             $group['perunUniqueGroupName'][0],
-                            $group['description'][0]
+                            $group['description'][0] ?? ''
                         )
                     );
                 }
@@ -183,7 +183,7 @@ class AdapterLdap extends Adapter
             $group['perunVoId'][0],
             $group['cn'][0],
             $group['perunUniqueGroupName'][0],
-            $group['description'][0]
+            $group['description'][0] ?? ''
         );
     }
 
@@ -352,7 +352,7 @@ class AdapterLdap extends Adapter
                     $group['perunVoId'][0],
                     $group['cn'][0],
                     $group['perunUniqueGroupName'][0],
-                    $group['description'][0]
+                    $group['description'][0] ?? ''
                 )
             );
         }
