@@ -2,12 +2,13 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Releasing forwardedEduPersonEntitlement is now optional (forwardedEduPersonEntitlement are released by default)
+
+#### Fixed
 - Fixed problem with getting group without description from LDAP 
   * Before: Exeption
   * Now: Description is ''
-
-#### Changed
-- Releasing forwardedEduPersonEntitlement is now optional (forwardedEduPersonEntitlement are released by default)
 
 #### Removed
 - Removed deprecated getFacilitiesByEntityId method
