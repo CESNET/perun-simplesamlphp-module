@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added logging response time for each request into RPC/LDAP
 
+#### Changed
+- If needed to get more facility attributes, method getFacilityAttributesValues() is used instead of several calls of getFacilityAttribute()
+
 #### Fixed
 - Fix logging request params
 

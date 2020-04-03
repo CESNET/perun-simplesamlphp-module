@@ -117,6 +117,11 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
             );
         }
 
+        $attrNames = [
+            $this->perunFacilityReqAupsAttr,
+            $this->perunFacilityVoShortNames
+        ];
+
         try {
             $facility = $this->adapter->getFacilityByEntityId($request['SPMetadata']['entityid']);
 
@@ -127,21 +132,21 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
             $requiredAups = [];
             $voShortNames = [];
 
-            $facilityAups = $this->adapter->getFacilityAttribute($facility, $this->perunFacilityReqAupsAttr);
+            $facilityAttrValues = $this->adapter->getFacilityAttributesValues(
+                $facility,
+                $attrNames
+            );
 
-            if ($facilityAups !== null) {
-                foreach ($facilityAups as $facilityAup) {
+            if (isset($this->perunFacilityReqAupsAttr, $facilityAttrValues) &&
+                is_array($facilityAttrValues[$this->perunFacilityReqAupsAttr])) {
+                foreach ($facilityAttrValues[$this->perunFacilityReqAupsAttr] as $facilityAup) {
                     array_push($requiredAups, $facilityAup);
                 }
             }
 
-            $facilityVoShortNames = $this->adapter->getFacilityAttribute(
-                $facility,
-                $this->perunFacilityVoShortNames
-            );
-
-            if ($facilityVoShortNames !== null) {
-                foreach ($facilityVoShortNames as $facilityVoShortName) {
+            if (isset($this->perunFacilityVoShortNames, $facilityAttrValues) &&
+                is_array($facilityAttrValues[$this->perunFacilityVoShortNames])) {
+                foreach ($facilityAttrValues[$this->perunFacilityVoShortNames] as $facilityVoShortName) {
                     array_push($voShortNames, $facilityVoShortName);
                 }
             }

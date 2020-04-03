@@ -433,15 +433,30 @@ class AdapterRpc extends Adapter
         ]);
         $attributes = [];
         foreach ($perunAttrs as $perunAttr) {
-            array_push($attributes, [
+            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
+            $attributes[$perunAttrName] = [
                 'id' => $perunAttr['id'],
-                'name' => $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'],
+                'name' => $perunAttrName,
                 'displayName' => $perunAttr['displayName'],
                 'type' => $perunAttr['type'],
                 'value' => $perunAttr['value']
-            ]);
+            ];
         }
         return $attributes;
+    }
+
+    public function getFacilityAttributesValues($facility, $attrNames)
+    {
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
+            'facility' => $facility->getId(),
+            'attrNames' => $attrNames,
+        ]);
+        $attributesValues = [];
+        foreach ($perunAttrs as $perunAttr) {
+            $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
+            $attributesValues[$perunAttrName] = $perunAttr['value'];
+        }
+        return $attributesValues;
     }
 
     public function getUserExtSource($extSourceName, $extSourceLogin)
