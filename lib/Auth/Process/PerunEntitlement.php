@@ -114,6 +114,9 @@ class PerunEntitlement extends ProcessingFilter
 
         $eduPersonEntitlement = [];
         foreach ($groups as $group) {
+            $groupName = $group->getUniqueName();
+            $groupName = preg_replace('/^(\w*)\:members$/', '$1', $groupName);
+
             if (isset($request['SPMetadata']['groupNameAARC']) || $this->groupNameAARC) {
                 # https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
                 # Group name is URL encoded by RFC 3986 (http://www.ietf.org/rfc/rfc3986.txt)
@@ -125,10 +128,9 @@ class PerunEntitlement extends ProcessingFilter
                         '\'groupNameAuthority\' or \'groupNamePrefix\'.'
                     );
                 }
-
-                $groupName = $this->groupNameWrapper($group->getUniqueName());
+                $groupName = $this->groupNameWrapper($groupName);
             } else {
-                $groupName = $this->mapGroupName($request, $group->getUniqueName());
+                $groupName = $this->mapGroupName($request, $groupName);
             }
             array_push($eduPersonEntitlement, $groupName);
         }
