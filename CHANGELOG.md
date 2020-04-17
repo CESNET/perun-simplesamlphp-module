@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- Added facility capabilities to PerunEntitlement
 
 ## [v3.8.0]
 #### Changed
