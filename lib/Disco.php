@@ -483,10 +483,12 @@ class Disco extends PowerIdPDisco
             }
             $html .= '</div>';
         }
-        if (($idpCount % 3) !== 0) {
+
+        $remainIdpsCount = ($idpCount - ($fullRowCount * 3)) % 3;
+        if ($remainIdpsCount !== 0) {
             $html .= '<div class="row">';
-            for ($i = 0; $i < $idpCount % 3; $i++) {
-                $html .= '<div class="col-md-' . (12 / ($idpCount % 3))  . '">';
+            for ($i = 0; $i < $remainIdpsCount; $i++) {
+                $html .= '<div class="' . self::getCssClass($remainIdpsCount) . '">';
                 $html .= '<div class="metalist list-group">';
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
                 $html .= '</div>';
@@ -497,6 +499,14 @@ class Disco extends PowerIdPDisco
         }
 
         return $html;
+    }
+
+    protected static function getCssClass($remainIdpsCount)
+    {
+        if ($remainIdpsCount === 1) {
+            return 'col-md-4 col-md-offset-4';
+        }
+        return 'col-md-6';
     }
 
     public static function showEntriesScript()
