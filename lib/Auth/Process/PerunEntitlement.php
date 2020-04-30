@@ -71,12 +71,23 @@ class PerunEntitlement extends ProcessingFilter
 
     public function process(&$request)
     {
-        $eduPersonEntitlement = $this->getEduPersonEntitlement($request);
+        $eduPersonEntitlement = [];
+        $capabilities = [];
         $forwardedEduPersonEntitlement = [];
+
+        if (isset($request['perun']['groups'])) {
+            $eduPersonEntitlement = $this->getEduPersonEntitlement($request);
+            $capabilities = $this->getCapabilities($request);
+        } else {
+            Logger::debug(
+                'perun:PerunEntitlement: There are no user groups assign to facility.' .
+                '=> Skipping getEduPersonEntitlement and getResourceCapabilities'
+            );
+        }
+
         if ($this->releaseForwardedEntitlement) {
             $forwardedEduPersonEntitlement = $this->getForwardedEduPersonEntitlement($request);
         }
-        $capabilities = $this->getCapabilities($request);
 
         $request['Attributes'][$this->eduPersonEntitlement] = array_unique(array_merge(
             $eduPersonEntitlement,
@@ -87,20 +98,9 @@ class PerunEntitlement extends ProcessingFilter
 
     private function getEduPersonEntitlement(&$request)
     {
-        if (isset($request['perun']['groups'])) {
-            /** allow IDE hint whisperer
-             * @var model\Group[] $groups
-             */
-            $groups = $request['perun']['groups'];
-        } else {
-            throw new Exception(
-                'perun:PerunEntitlement: ' .
-                'missing mandatory field \'perun.groups\' in request.' .
-                'Hint: Did you configure PerunIdentity filter before this filter?'
-            );
-        }
-
         $eduPersonEntitlement = [];
+
+        $groups = $request['perun']['groups'];
         foreach ($groups as $group) {
             $groupName = $group->getUniqueName();
             $groupName = preg_replace('/^(\w*)\:members$/', '$1', $groupName);
@@ -129,6 +129,14 @@ class PerunEntitlement extends ProcessingFilter
     private function getForwardedEduPersonEntitlement(&$request)
     {
         $forwardedEduPersonEntitlement = [];
+
+        if (!isset($request['perun']['user'])) {
+            Logger::debug(
+                'perun:PerunEntitlement: Object Perun User is not specified. => Skipping getting forwardedEntitlement.'
+            );
+            return $forwardedEduPersonEntitlement;
+        }
+
         $user = $request['perun']['user'];
         $forwardedEduPersonEntitlementMap = $this->adapter->getUserAttributes(
             $user,
