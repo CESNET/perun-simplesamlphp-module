@@ -11,7 +11,8 @@ use SimpleSAML\Logger;
 /**
  * Class PerunEntitlement
  *
- * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement and resource capabilities
+ * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities
+ * and facility capabilities
  *
  * @author Dominik Baránek <baranek@ics.muni.cz>
  * @author Pavel Vyskočil <Pavel.Vyskocil@cesnet.cz>
@@ -88,12 +89,12 @@ class PerunEntitlement extends ProcessingFilter
         if ($this->releaseForwardedEntitlement) {
             $forwardedEduPersonEntitlement = $this->getForwardedEduPersonEntitlement($request);
         }
-        $resourceCapabilities = $this->getResourceCapabilities($request);
+        $capabilities = $this->getCapabilities($request);
 
         $request['Attributes'][$this->eduPersonEntitlement] = array_unique(array_merge(
             $eduPersonEntitlement,
             $forwardedEduPersonEntitlement,
-            $resourceCapabilities
+            $capabilities
         ));
     }
 
@@ -154,21 +155,18 @@ class PerunEntitlement extends ProcessingFilter
         return $forwardedEduPersonEntitlement;
     }
 
-    private function getResourceCapabilities(&$request)
+    private function getCapabilities(&$request)
     {
-        if (isset($request['SPMetadata']['entityid'])) {
-            $spEntityId = $request['SPMetadata']['entityid'];
-        } else {
-            throw new Exception('perun:PerunEntitlement: Cannot find entityID of remote SP. ' .
-                'hint: Do you have this filter in IdP context?');
-        }
+        $spEntityId = $this->getSpEntityId($request);
+        $resourceCapabilities = $this->adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
+        $facilityCapabilities = $this->adapter->getFacilityCapabilities($spEntityId);
 
-        $capabilities = $this->adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
+        $capabilities = array_unique(array_merge($resourceCapabilities, $facilityCapabilities));
         $capabilitiesResult = [];
 
         foreach ($capabilities as $capability) {
-            $resourceCapability = $this->capabilitiesWrapper($capability);
-            array_push($capabilitiesResult, $resourceCapability);
+            $wrappedCapability = $this->capabilitiesWrapper($capability);
+            array_push($capabilitiesResult, $wrappedCapability);
         }
 
         return $capabilitiesResult;
@@ -242,5 +240,15 @@ class PerunEntitlement extends ProcessingFilter
         }
 
         return $name;
+    }
+
+    private function getSpEntityId(&$request)
+    {
+        if (isset($request['SPMetadata']['entityid'])) {
+            return $request['SPMetadata']['entityid'];
+        } else {
+            throw new Exception('perun:PerunEntitlement: Cannot find entityID of remote SP. ' .
+                'hint: Do you have this filter in IdP context?');
+        }
     }
 }

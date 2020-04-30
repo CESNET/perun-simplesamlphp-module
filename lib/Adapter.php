@@ -191,6 +191,12 @@ abstract class Adapter
     abstract public function getResourceCapabilities($entityId, $userGroups);
 
     /**
+     * @param $entityId int entityId
+     * @return array of facility capabilities
+     */
+    abstract public function getFacilityCapabilities($entityId);
+
+    /**
      * @param HasId[] $entities
      * @return HasId[] without duplicates
      */

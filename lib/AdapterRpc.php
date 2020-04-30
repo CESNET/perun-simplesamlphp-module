@@ -544,4 +544,20 @@ class AdapterRpc extends Adapter
 
         return $capabilities;
     }
+
+    public function getFacilityCapabilities($entityId)
+    {
+        $facility = $this->getFacilityByEntityId($entityId);
+
+        if ($facility === null) {
+            return [];
+        }
+
+        $facilityCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
+            'facility' => $facility->getId(),
+            'attributeName' => 'urn:perun:facility:attribute-def:def:capabilities'
+        ])['value'];
+
+        return $facilityCapabilities;
+    }
 }

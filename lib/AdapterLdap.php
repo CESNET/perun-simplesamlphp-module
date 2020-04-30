@@ -418,4 +418,19 @@ class AdapterLdap extends Adapter
 
         return $resourceCapabilities;
     }
+
+    public function getFacilityCapabilities($entityId)
+    {
+        $facilityCapabilities = $this->connector->searchForEntity(
+            $this->ldapBase,
+            '(&(objectClass=perunFacility)(entityID=' . $entityId . '))',
+            [self::CAPABILITIES]
+        );
+
+        if (empty($facilityCapabilities)) {
+            return [];
+        }
+
+        return $facilityCapabilities['capabilities'];
+    }
 }
