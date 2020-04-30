@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Added
 - Added facility capabilities to PerunEntitlement
+- Added process filter for logging info about login
 
 #### Changed
 - Use object `Configuration` for getting base module configuration
