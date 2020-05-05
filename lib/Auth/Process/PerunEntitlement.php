@@ -132,16 +132,25 @@ class PerunEntitlement extends ProcessingFilter
 
         if (!isset($request['perun']['user'])) {
             Logger::debug(
-                'perun:PerunEntitlement: Object Perun User is not specified. => Skipping getting forwardedEntitlement.'
+                'perun:PerunEntitlement: Object Perun User is not specified.' .
+                '=> Skipping getting forwardedEntitlement.'
             );
             return $forwardedEduPersonEntitlement;
         }
 
         $user = $request['perun']['user'];
-        $forwardedEduPersonEntitlementMap = $this->adapter->getUserAttributes(
-            $user,
-            [$this->forwardedEduPersonEntitlement]
-        );
+
+        try {
+            $forwardedEduPersonEntitlementMap = $this->adapter->getUserAttributes(
+                $user,
+                [$this->forwardedEduPersonEntitlement]
+            );
+        } catch (Exception $exception) {
+            Logger::error(
+                'perun:PerunEntitlement: Exception ' . $exception->getMessage() .
+                ' was thrown in method \'getForwardedEduPersonEntitlement\'.'
+            );
+        }
 
         if (!empty($forwardedEduPersonEntitlementMap)) {
             $forwardedEduPersonEntitlement = array_values($forwardedEduPersonEntitlementMap)[0];
@@ -152,12 +161,22 @@ class PerunEntitlement extends ProcessingFilter
 
     private function getCapabilities(&$request)
     {
+        $resourceCapabilities = [];
+        $facilityCapabilities = [];
+        $capabilitiesResult = [];
+
         $spEntityId = $this->getSpEntityId($request);
-        $resourceCapabilities = $this->adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
-        $facilityCapabilities = $this->adapter->getFacilityCapabilities($spEntityId);
+        try {
+            $resourceCapabilities = $this->adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
+            $facilityCapabilities = $this->adapter->getFacilityCapabilities($spEntityId);
+        } catch (Exception $exception) {
+            Logger::error(
+                'perun:PerunEntitlement: Exception ' . $exception->getMessage() .
+                ' was thrown in method \'getCapabilities\'.'
+            );
+        }
 
         $capabilities = array_unique(array_merge($resourceCapabilities, $facilityCapabilities));
-        $capabilitiesResult = [];
 
         foreach ($capabilities as $capability) {
             $wrappedCapability = $this->capabilitiesWrapper($capability);
