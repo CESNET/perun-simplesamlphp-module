@@ -11,6 +11,7 @@ All notable changes to this project will be documented in this file.
 
 #### Fixed
 - Fixed the width of showed tagged idps in case the count of idps is equal to (x * 3) + 1
+- Using try{}catch{} to avoid to PerunException in PerunEntitlement.php
 
 ## [v3.8.0]
 #### Changed
