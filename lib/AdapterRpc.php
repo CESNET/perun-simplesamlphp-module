@@ -577,6 +577,10 @@ class AdapterRpc extends Adapter
             'attributeName' => 'urn:perun:facility:attribute-def:def:capabilities'
         ])['value'];
 
+        if (empty($facilityCapabilities)) {
+            $facilityCapabilities = [];
+        }
+
         return $facilityCapabilities;
     }
 
