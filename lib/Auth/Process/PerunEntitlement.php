@@ -92,7 +92,7 @@ class PerunEntitlement extends ProcessingFilter
         $request['Attributes'][$this->eduPersonEntitlement] = array_unique(array_merge(
             $eduPersonEntitlement,
             $forwardedEduPersonEntitlement,
-            $capabilities
+            $capabilities ?? []
         ));
     }
 
@@ -176,7 +176,7 @@ class PerunEntitlement extends ProcessingFilter
             );
         }
 
-        $capabilities = array_unique(array_merge($resourceCapabilities, $facilityCapabilities));
+        $capabilities = array_unique(array_merge($resourceCapabilities, $facilityCapabilities ?? []));
 
         foreach ($capabilities as $capability) {
             $wrappedCapability = $this->capabilitiesWrapper($capability);
