@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 #### Changed
 - Use object `Configuration` for getting base module configuration
+- Add possibility to select mode(whitelist/blacklist) in ProxyFilter.php
+    * The default option is blacklist
 
 #### Fixed
 - Fixed the width of showed tagged idps in case the count of idps is equal to (x * 3) + 1
