@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v3.9.0]
 #### Added
 - Added facility capabilities to PerunEntitlement
 - Added process filter for logging info about login
@@ -300,6 +302,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v3.9.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.8.0
 [v3.8.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.8.0
 [v3.7.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.4
 [v3.7.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.3
