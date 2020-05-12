@@ -248,10 +248,7 @@ class PerunEntitlement extends ProcessingFilter
         ];
 
         $name = array_map('rawurlencode', explode(':', $name));
-
-        foreach ($charsToSkip as $key => $value) {
-            $name = str_replace($value, $key, $name);
-        }
+        $name = str_replace(array_values($charsToSkip), array_keys($charsToSkip), $name);
 
         return $name;
     }
