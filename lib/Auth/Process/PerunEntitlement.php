@@ -232,6 +232,7 @@ class PerunEntitlement extends ProcessingFilter
     private function encodeName($name)
     {
         $charsToSkip = [
+            ' ' => '%20',
             '!' => '%21',
             '$' => '%24',
             '\'' => '%27',
