@@ -312,6 +312,13 @@ class AdapterRpc extends Adapter
         return $attributesValues;
     }
 
+    public function getFacilityAdmins($facility)
+    {
+        return $this->connector->get('facilitiesManager', 'getAdmins', [
+            'facility' => $facility->getId(),
+        ]);
+    }
+
     public function getFacilityAttribute($facility, $attrName)
     {
         $perunAttr = $this->connector->get('attributesManager', 'getAttribute', [
