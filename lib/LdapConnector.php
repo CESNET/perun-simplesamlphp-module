@@ -31,18 +31,21 @@ class LdapConnector
     private $hostname;
     private $user;
     private $password;
+    private $enableTLS;
 
     /**
      * LdapConnector constructor.
      * @param $hostname
      * @param $user
      * @param $password
+     * @param $enableTLS
      */
-    public function __construct($hostname, $user, $password)
+    public function __construct($hostname, $user, $password, $enableTLS = false)
     {
         $this->hostname = $hostname;
         $this->user = $user;
         $this->password = $password;
+        $this->enableTLS = $enableTLS;
     }
 
     /**
@@ -108,6 +111,13 @@ class LdapConnector
         }
 
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
+        
+        // Enable TLS, if needed
+        if ($this->enableTLS && stripos($this->hostname, "ldaps:") === false) {
+            if (!@ldap_start_tls($conn)) {
+                throw new Exception('Unable to force TLS on Perun LDAP');
+            }
+        }
 
         if (ldap_bind($conn, $this->user, $this->password) === false) {
             throw new Exception('Unable to bind user to the Perun LDAP, ' . $this->hostname);
