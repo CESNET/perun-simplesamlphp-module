@@ -30,6 +30,7 @@ class AdapterLdap extends Adapter
     const LDAP_USER = 'ldap.username';
     const LDAP_PASSWORD = 'ldap.password';
     const LDAP_BASE = 'ldap.base';
+    const LDAP_TLS = 'ldap.enable_tls';
     const PERUN_FACILITY_ID = 'perunFacilityId';
     const CN = 'cn';
     const DESCRIPTION = 'description';
@@ -57,8 +58,9 @@ class AdapterLdap extends Adapter
         $ldapUser = $conf->getString(self::LDAP_USER, null);
         $ldapPassword = $conf->getString(self::LDAP_PASSWORD, null);
         $this->ldapBase = $conf->getString(self::LDAP_BASE);
+        $ldapEnableTLS = $conf->getBoolean(self::LDAP_TLS, false);
 
-        $this->connector = new LdapConnector($ldapHostname, $ldapUser, $ldapPassword);
+        $this->connector = new LdapConnector($ldapHostname, $ldapUser, $ldapPassword, $ldapEnableTLS);
         $this->fallbackAdapter = new AdapterRpc();
     }
 
