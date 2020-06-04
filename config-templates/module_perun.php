@@ -32,6 +32,12 @@ $config = [
      */
     //'ldap.username' => '_proxy-idp',
     //'ldap.password' => 'password'
+    
+    /**
+     * Whether to use startTLS on port 389. Defaults to false.
+     * SSL/TLS is always used for ldaps: regardless of this setting.
+     */
+    //'ldap.enable_tls' => true,
 
     /**
      * Perun group name to eduPersonEntitlement mapping. Mapping is according to the spec in
