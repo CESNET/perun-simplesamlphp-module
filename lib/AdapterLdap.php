@@ -267,8 +267,22 @@ class AdapterLdap extends Adapter
 
     public function getFacilityAttribute($facility, $attrName)
     {
-        throw new BadMethodCallException('NotImplementedException');
-        // TODO: Implement getFacilityAttribute() method.
+        $attrName = end(explode(':', $attrName));
+        $ldapResult = $this->connector->searchForEntity(
+            $this->ldapBase,
+            '(&(objectClass=perunFacility)(entityID=' . $facility->getEntityId() . '))',
+            [$attrName]
+        );
+
+        if ($ldapResult === null) {
+            Logger::warning(sprintf(
+                'perun:AdapterLdap: No facility with entityID \'%s\' found.',
+                $facility->getEntityId()
+            ));
+            return null;
+        }
+
+        return $ldapResult[$attrName] ?? null;
     }
 
     public function searchFacilitiesByAttributeValue($attribute)
