@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Changed
+- Return sorted eduPersonEntitlement
 
 ## [v3.9.0]
 #### Added
