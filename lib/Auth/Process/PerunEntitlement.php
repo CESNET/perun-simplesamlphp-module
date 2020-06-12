@@ -122,7 +122,7 @@ class PerunEntitlement extends ProcessingFilter
             }
             array_push($eduPersonEntitlement, $groupName);
         }
-
+        natsort($eduPersonEntitlement);
         return $eduPersonEntitlement;
     }
 
