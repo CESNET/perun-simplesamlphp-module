@@ -4,11 +4,13 @@ namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\Module\perun\model;
 use SimpleSAML\Logger;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Module;
 use SimpleSAML\Utils\HTTP;
+use SimpleSAML\Configuration;
 
 /**
  * Class ForceAup
@@ -33,8 +35,8 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
     const PERUN_AUPS_ATTR = 'perunAupsAttr';
     const PERUN_USER_AUP_ATTR = 'perunUserAupAttr';
     const PERUN_VO_AUP_ATTR = 'perunVoAupAttr';
-    const PERUN_FACILITY_REQ_AUPS_ATTR = 'perunFacilityReqAupsAttr';
-    const PERUN_FACILITY_VO_SHORT_NAMES = 'facilityVoShortNames';
+    const PERUN_FACILITY_REQ_AUPS_ATTR = 'facilityReqAupsAttr';
+    const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'facilityVoShortNamesAttr';
 
     private $uidAttr;
     private $perunAupsAttr;
@@ -73,16 +75,6 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                 'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_FACILITY_REQ_AUPS_ATTR])) {
-            throw new Exception(
-                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_FACILITY_REQ_AUPS_ATTR . '\'.'
-            );
-        }
-        if (!isset($config[self::PERUN_FACILITY_VO_SHORT_NAMES])) {
-            throw new Exception(
-                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_FACILITY_REQ_AUPS_ATTR . '\'.'
-            );
-        }
         if (!isset($config[self::INTERFACE_PROPNAME])) {
             $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
         }
@@ -91,10 +83,18 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
         $this->perunAupsAttr = (string)$config[self::PERUN_AUPS_ATTR];
         $this->perunUserAupAttr = (string)$config[self::PERUN_USER_AUP_ATTR];
         $this->perunVoAupAttr = (string)$config[self::PERUN_VO_AUP_ATTR];
-        $this->perunFacilityReqAupsAttr = (string)$config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
-        $this->perunFacilityVoShortNames = (string)$config[self::PERUN_FACILITY_VO_SHORT_NAMES];
         $this->interface = (string)$config[self::INTERFACE_PROPNAME];
         $this->adapter = Adapter::getInstance($this->interface);
+
+        $this->perunFacilityReqAupsAttr = AttributeUtils::getAttrName(
+            self::PERUN_FACILITY_REQ_AUPS_ATTR,
+            $this->interface
+        );
+
+        $this->perunFacilityVoShortNames = AttributeUtils::getAttrName(
+            self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR,
+            $this->interface
+        );
     }
 
     /**
@@ -117,11 +117,6 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
             );
         }
 
-        $attrNames = [
-            $this->perunFacilityReqAupsAttr,
-            $this->perunFacilityVoShortNames
-        ];
-
         try {
             $facility = $this->adapter->getFacilityByEntityId($request['SPMetadata']['entityid']);
 
@@ -134,7 +129,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
 
             $facilityAttrValues = $this->adapter->getFacilityAttributesValues(
                 $facility,
-                $attrNames
+                [self::PERUN_FACILITY_REQ_AUPS_ATTR, self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR]
             );
 
             if (isset($this->perunFacilityReqAupsAttr, $facilityAttrValues) &&
@@ -166,7 +161,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
                 $perunAups[$key] = $attr['value'];
             }
 
-            $userAups = $this->adapter->getUserAttributes(
+            $userAups = $this->adapter->getUserAttributesValues(
                 $user,
                 [$this->perunUserAupAttr]
             )[$this->perunUserAupAttr];
@@ -261,7 +256,7 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
 
         $voAups = [];
         foreach ($vos as $vo) {
-            $aups = $this->adapter->getVoAttributes($vo, [$this->perunVoAupAttr])[$this->perunVoAupAttr];
+            $aups = $this->adapter->getVoAttributesValues($vo, [$this->perunVoAupAttr])[$this->perunVoAupAttr];
             if ($aups !== null) {
                 $voAups[$vo->getShortName()] = $aups;
             }

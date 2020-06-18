@@ -92,10 +92,16 @@ abstract class Adapter
     /**
      * @param User $user
      * @param array $attrNames .
-     * @return array associative of attributes. Keys are attribute names
-     * and values are attr values (can be null, string, array, associative array)
+     * @return array of attribute name -> attribute
      */
     abstract public function getUserAttributes($user, $attrNames);
+
+    /**
+     * @param User $user
+     * @param array $attributes of internal attribute names
+     * @return array of attribute name -> attribute value
+     */
+    abstract public function getUserAttributesValues($user, $attributes);
 
     /**
      * @param string $attrName
@@ -106,10 +112,16 @@ abstract class Adapter
     /**
      * @param Vo $vo
      * @param array $attrNames
-     * @return array associative of attributes. Keys are attribute names
-     * and values are attr values (can be null, string, array, associative array)* @return
+     * @return array of attribute name -> attribute
      */
     abstract public function getVoAttributes($vo, $attrNames);
+
+    /**
+     * @param Vo $vo
+     * @param array $attributes of internal attribute names
+     * @return array of attribute name -> attribute value
+     */
+    abstract public function getVoAttributesValues($vo, $attributes);
 
     /**
      * @param Facility $facility
@@ -146,10 +158,10 @@ abstract class Adapter
 
     /**
      * @param Facility $facility
-     * @param $attrNames array string $attrNames
+     * @param $attributes array of internal attribute names
      * @return array of attribute name -> attribute value
      */
-    abstract public function getFacilityAttributesValues($facility, $attrNames);
+    abstract public function getFacilityAttributesValues($facility, $attributes);
 
     /**
      * @param $extSourceName string name of ext source
