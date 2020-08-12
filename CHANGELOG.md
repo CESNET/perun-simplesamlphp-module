@@ -10,6 +10,7 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - Changed the way of getting attribute names for interfaces: through internal attribute names in perun_attributes.php config
 - Return sorted eduPersonEntitlement
+- Don't show previous selection when user show all entries on the discovery page
 
 ## [v3.9.0]
 #### Added
