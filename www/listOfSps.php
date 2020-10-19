@@ -109,6 +109,7 @@ foreach ($facilities as $facility) {
     if (!empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
         $samlServices[$facility->getId()] = [
             'facility' => $facility,
+            'name' => $facilityAttributes[$perunServiceNameAttr],
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
             'facilityAttributes' => $facilityAttributes
@@ -190,7 +191,5 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $t->data['samlServices'] = $samlServices;
     $t->data['oidcServices'] = $oidcServices;
     $t->data['allServices'] = $allServices;
-    $t->data['loginURLAttribute'] = $perunLoginURLAttr;
-    $t->data['serviceNameAttribute'] = $perunServiceNameAttr;
     $t->show();
 }
