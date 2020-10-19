@@ -169,8 +169,6 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
             $a['authenticationProtocol'] = 'OIDC';
         }
 
-        $a['description'] = $service['facility']->getDescription();
-
         foreach ($attributesToShow as $attr) {
             $parsedName = explode(':', $service['facilityAttributes'][$attr]['name']);
             $key = end($parsedName);
