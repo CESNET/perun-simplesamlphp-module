@@ -115,9 +115,7 @@ $this->includeAtTemplateBase('includes/header.php');
                             continue;
                         }
                         echo '<tr>';
-                        echo '<td>'
-                            . ListOfSps::printServiceName($service['name']['value'], $service['loginURL']['value'] ?? null)
-                            . '</td>';
+                        echo '<td>' . ListOfSps::printServiceName($service['name'], $service['loginURL'] ?? null) . '</td>';
                         if (array_key_exists($service['facility']->getID(), $samlServices)) {
                             echo '<td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
                         } else {
