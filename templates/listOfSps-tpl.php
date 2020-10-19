@@ -94,7 +94,6 @@ $this->includeAtTemplateBase('includes/header.php');
                     <tr>
                         <th><?php echo $this->t('{perun:listOfSps:name}') ?></th>
                         <th><?php echo $this->t('{perun:listOfSps:authenticate_protocol}') ?></th>
-                        <th><?php echo $this->t('{perun:listOfSps:description}') ?></th>
                         <?php
                         foreach ($attributesToShow as $attr) {
                             if (!empty($samlServices)) {
@@ -122,7 +121,6 @@ $this->includeAtTemplateBase('includes/header.php');
                         } else {
                             echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
                         }
-                        echo '<td>' . $service['facility']->getDescription() . '</td>';
                         foreach ($attributesToShow as $attr) {
                             $value = ListOfSps::printAttributeValue(
                                 $service['facilityAttributes'][$attr],
