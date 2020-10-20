@@ -27,8 +27,7 @@ class ListOfSps
 
     public static function printServiceName($name, $loginURL = null)
     {
-        if (empty($loginURL))
-        ) {
+        if (empty($loginURL)) {
             return $name;
         }
 
