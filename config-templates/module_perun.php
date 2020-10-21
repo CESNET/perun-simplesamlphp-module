@@ -147,9 +147,8 @@ $config = [
     
     /**
      * Specify attribute name for facility attribute with service name
-     * Defaults to facility name (urn:perun:facility:attribute-def:core:name)
      */
-    //'listOfSps.serviceNameAttr' => '',
+    'listOfSps.serviceNameAttr' => '',
 
     /**
      * Specify attribute name for facility attribute with loginUrL for service

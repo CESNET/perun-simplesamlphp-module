@@ -63,7 +63,13 @@ if ($showOIDCServices && empty($perunOidcClientIdAttr)) {
     );
 }
 
-$perunServiceNameAttr = $conf->getString(PERUN_SERVICE_NAME_ATTR_NAME, 'urn:perun:facility:attribute-def:core:name');
+$perunServiceNameAttr = $conf->getString(PERUN_SERVICE_NAME_ATTR_NAME, null);
+if (empty($perunServiceNameAttr)) {
+    throw new Exception(
+        'perun:listOfSps: missing mandatory config option \''
+        . PERUN_SERVICE_NAME_ATTR_NAME . '\'.'
+    );
+}
 $perunLoginURLAttr = $conf->getString(PERUN_LOGIN_URL_ATTR_NAME, null);
 $perunTestSpAttr = $conf->getString(PERUN_TEST_SP_ATTR_NAME, null);
 $perunShowOnServiceListAttr
