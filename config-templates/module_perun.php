@@ -183,6 +183,13 @@ $config = [
     ],
 
     /**
+     * Specify list of facility attributes which have translations.
+     * If an attribute is not included in listOfSps.attributesDefinitions, it will be added.
+     * Defaults to an empty array.
+     */
+    //'listOfSps.multilingualAttributes' => [],
+
+    /**
      ********************************************
      * Part of configuration for Warning on DS  *
      ********************************************
