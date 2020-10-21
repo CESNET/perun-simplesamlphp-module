@@ -37,13 +37,13 @@ class ListOfSps
         return "<a class='customLink' href='" . htmlspecialchars($loginURL) . "'>" . htmlspecialchars($name) . "</a>";
     }
 
-    public static function printAttributeValue($type, $value)
+    public static function printAttributeValue($attribute, $language = 'en')
     {
         if (empty($value) && $type !== 'java.lang.Boolean') {
             return "<td class='center'>&horbar;</td>";
         }
 
-        switch ($type) {
+        switch ($attribute['type']) {
             case 'java.lang.String':
             case 'java.lang.LargeString':
                 if (filter_var($value, FILTER_VALIDATE_URL)) {
@@ -88,7 +88,8 @@ class ListOfSps
         }
     }
 
-    public static function getPreferredTranslation($translations, $language = 'en') {
+    public static function getPreferredTranslation($translations, $language = 'en')
+    {
         if (is_string($translations)) {
             return $translations;
         }
@@ -109,5 +110,4 @@ class ListOfSps
         // we don't have anything to return
         throw new \Exception('Nothing to return from translation.');
     }
-
 }
