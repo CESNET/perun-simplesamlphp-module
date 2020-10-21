@@ -122,6 +122,7 @@ foreach ($facilities as $facility) {
     if ($showOIDCServices && !empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
         $oidcServices[$facility->getId()] = [
             'facility' => $facility,
+            'name' => $facilityAttributes[$perunServiceNameAttr],
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
             'facilityAttributes' => $facilityAttributes
