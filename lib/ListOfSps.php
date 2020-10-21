@@ -74,4 +74,27 @@ class ListOfSps
             return '<td/>';
         }
     }
+
+    public static function getPreferredTranslation($translations, $language = 'en') {
+        if (is_string($translations)) {
+            return $translations;
+        }
+
+        if (isset($translations[$language])) {
+            return $translations[$language];
+        }
+
+        if (isset($translations['en'])) {
+            return $translations['en'];
+        }
+
+        if (count($translations) > 0) {
+            $languages = array_keys($translations);
+            return $translations[$languages[0]];
+        }
+
+        // we don't have anything to return
+        throw new \Exception('Nothing to return from translation.');
+    }
+
 }
