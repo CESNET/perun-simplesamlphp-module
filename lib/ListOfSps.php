@@ -37,14 +37,13 @@ class ListOfSps
         return "<a class='customLink' href='" . htmlspecialchars($loginURL) . "'>" . htmlspecialchars($name) . "</a>";
     }
 
-    public static function printAttributeValue($attribute, $language = 'en')
+    public static function printAttributeValue($type, $value)
     {
-        $value = $attribute['value'];
-        if (empty($value) && $attribute['type'] !== 'java.lang.Boolean') {
+        if (empty($value) && $type !== 'java.lang.Boolean') {
             return "<td class='center'>&horbar;</td>";
         }
 
-        switch ($attribute['type']) {
+        switch ($type) {
             case 'java.lang.String':
             case 'java.lang.LargeString':
                 if (filter_var($value, FILTER_VALIDATE_URL)) {
