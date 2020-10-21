@@ -127,14 +127,13 @@ $this->includeAtTemplateBase('includes/header.php');
                             echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
                         }
                         foreach ($attributesToShow as $attr) {
-                            if (in_array($attr, $t->data['multilingualAttributes'])) {
-                                echo htmlspecialchars(ListOfSps::getPreferredTranslation(
-                                    $service['facilityAttributes'][$attr]['value'],
-                                    $this->getLanguage()
-                                ));
-                            } else {
-                                echo ListOfSps::printAttributeValue($service['facilityAttributes'][$attr]);
+                            $type = $service['facilityAttributes'][$attr]['type'];
+                            $value = $service['facilityAttributes'][$attr]['value'];
+                            if ($value !== null && in_array($attr, $t->data['multilingualAttributes'])) {
+                                $type = 'java.lang.String';
+                                $value = ListOfSps::getPreferredTranslation($value, $this->getLanguage());
                             }
+                            echo ListOfSps::printAttributeValue($type, $value);
                         }
                     }
                     echo '</tr>';
