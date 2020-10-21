@@ -82,7 +82,7 @@ class ListOfSps
                 $string = '';
         }
         if (!empty($string)) {
-            return '<td class="' . self::getClass($attribute['type']) . '">' . $string . '</td>';
+            return '<td class="' . self::getClass($type) . '">' . $string . '</td>';
         } else {
             return '<td/>';
         }
