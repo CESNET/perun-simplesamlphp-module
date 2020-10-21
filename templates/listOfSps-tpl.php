@@ -116,10 +116,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         }
                         echo '<tr>';
                         echo '<td>'
-                            . ListOfSps::printServiceName(
-                                ListOfSps::getPreferredTranslation($service['name']['value'], $this->getLanguage()),
-                                $service['loginURL']['value'] ?? null
-                            )
+                            . ListOfSps::printServiceName($service['name']['value'], $service['loginURL']['value'] ?? null)
                             . '</td>';
                         if (array_key_exists($service['facility']->getID(), $samlServices)) {
                             echo '<td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
