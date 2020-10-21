@@ -88,8 +88,7 @@ class ListOfSps
         }
     }
 
-    public static function getPreferredTranslation($translations, $language = 'en')
-    {
+    public static function getPreferredTranslation($translations, $language = 'en') {
         if (is_string($translations)) {
             return $translations;
         }
@@ -110,4 +109,5 @@ class ListOfSps
         // we don't have anything to return
         throw new \Exception('Nothing to return from translation.');
     }
+
 }
