@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added some methods for getting values to Adapter.php
 - Added fallback to RPC for methods we're not able to run in LDAP
+- Add getFacilityAdmins method to RPC Connector
 
 #### Changed
 - Changed the way of getting attribute names for interfaces: through internal attribute names in perun_attributes.php config
