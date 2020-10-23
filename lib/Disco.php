@@ -446,9 +446,14 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-    public static function getOr()
+    public static function getOr($id = NULL)
     {
-        $or = '<div class="hrline">';
+        $or = '';
+        if (!is_null($id)) {
+            $or .= '<div class="hrline" id="' . $id . '">';
+        } else {
+            $or .= '<div class="hrline">';
+        }
         $or .= '	<span>or</span>';
         $or .= '</div>';
         return $or;
@@ -514,6 +519,9 @@ class Disco extends PowerIdPDisco
         $script = '<script type="text/javascript">
          $(document).ready(function() {
              $("#showEntries").click(function() {
+                 $("#last-used-idp").hide();
+                 $("#last-used-idp-desc").hide();
+                 $("#last-used-idp-or").hide();
                  $("#entries").show();
                  $("#showEntries").hide();
              });

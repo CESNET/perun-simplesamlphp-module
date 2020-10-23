@@ -123,12 +123,12 @@ if ($this->isAddInstitutionApp()) {
 
     if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
         if (!empty($this->getPreferredIdp())) {
-            echo '<p class="descriptionp">' . $this->t('{perun:disco:previous_selection}') . '</p>';
+            echo '<p class="descriptionp" id="last-used-idp-desc">' . $this->t('{perun:disco:previous_selection}') . '</p>';
             echo '<div id="last-used-idp" class="metalist list-group">';
             echo Disco::showEntry($this, $this->getPreferredIdp(), true);
             echo '</div>';
 
-            echo Disco::getOr();
+            echo Disco::getOr("last-used-idp-or");
 
             echo '<a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
                  $this->t('{perun:disco:sign_with_other_institution}') . '</a>' ;
