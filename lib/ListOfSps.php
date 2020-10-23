@@ -25,15 +25,13 @@ class ListOfSps
         }
     }
 
-    public static function printServiceName($service)
+    public static function printServiceName($name, $loginURL = null)
     {
-        if (empty($service['loginURL']['value'])
-        ) {
-            return $service['facility']->getName();
+        if (empty($loginURL)) {
+            return $name;
         }
 
-        return "<a class='customLink' href='" . $service['loginURL']['value'] . "'>" .
-               $service['facility']->getName() . "</a>";
+        return "<a class='customLink' href='" . htmlspecialchars($loginURL) . "'>" . htmlspecialchars($name) . "</a>";
     }
 
     public static function printAttributeValue($attribute, $service, $attr)

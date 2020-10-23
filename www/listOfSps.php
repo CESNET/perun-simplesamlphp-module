@@ -11,6 +11,7 @@ const PROXY_IDENTIFIER = 'listOfSps.proxyIdentifier';
 const ATTRIBUTES_DEFINITIONS = 'listOfSps.attributesDefinitions';
 const SHOW_OIDC_SERVICES = 'listOfSps.showOIDCServices';
 
+const PERUN_SERVICE_NAME_ATTR_NAME = 'listOfSps.serviceNameAttr';
 const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'listOfSps.perunProxyIdentifierAttr';
 const PERUN_LOGIN_URL_ATTR_NAME = 'listOfSps.loginURLAttr';
 const PERUN_TEST_SP_ATTR_NAME = 'listOfSps.isTestSpAttr';
@@ -62,6 +63,13 @@ if ($showOIDCServices && empty($perunOidcClientIdAttr)) {
     );
 }
 
+$perunServiceNameAttr = $conf->getString(PERUN_SERVICE_NAME_ATTR_NAME, null);
+if (empty($perunServiceNameAttr)) {
+    throw new Exception(
+        'perun:listOfSps: missing mandatory config option \''
+        . PERUN_SERVICE_NAME_ATTR_NAME . '\'.'
+    );
+}
 $perunLoginURLAttr = $conf->getString(PERUN_LOGIN_URL_ATTR_NAME, null);
 $perunTestSpAttr = $conf->getString(PERUN_TEST_SP_ATTR_NAME, null);
 $perunShowOnServiceListAttr
@@ -76,6 +84,7 @@ $facilities
 $attrNames = [];
 
 array_push($attrNames, $perunSaml2EntityIdAttr);
+array_push($attrNames, $perunServiceNameAttr);
 if (!empty($perunOidcClientIdAttr)) {
     array_push($attrNames, $perunOidcClientIdAttr);
 }
@@ -106,6 +115,7 @@ foreach ($facilities as $facility) {
     if (!empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
         $samlServices[$facility->getId()] = [
             'facility' => $facility,
+            'name' => $facilityAttributes[$perunServiceNameAttr],
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
             'facilityAttributes' => $facilityAttributes
@@ -118,6 +128,7 @@ foreach ($facilities as $facility) {
     if ($showOIDCServices && !empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
         $oidcServices[$facility->getId()] = [
             'facility' => $facility,
+            'name' => $facilityAttributes[$perunServiceNameAttr],
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
             'facilityAttributes' => $facilityAttributes
@@ -137,6 +148,7 @@ $statistics['oidcTestServicesCount'] = $oidcTestServicesCount;
 $attributesToShow = [];
 foreach ($attrNames as $attrName) {
     if ($attrName !== $perunLoginURLAttr
+        && $attrName !== $perunServiceNameAttr
         && $attrName !== $perunShowOnServiceListAttr
         && $attrName !== $perunTestSpAttr
         && $attrName !== $perunOidcClientIdAttr
@@ -161,7 +173,7 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $json['statistics']['oidcTestServicesCount'] = $statistics['oidcTestServicesCount'];
     foreach ($allServices as $service) {
         $a = [];
-        $a['name'] = $service['facility']->getName();
+        $a['name'] = $service['facilityAttributes'][$perunServiceNameAttr]['value'];
 
         if (array_key_exists($service['facility']->getID(), $samlServices)) {
             $a['authenticationProtocol'] = 'SAML';

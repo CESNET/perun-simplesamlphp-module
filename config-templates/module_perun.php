@@ -144,6 +144,11 @@ $config = [
      * Specify attribute name for facility attribute proxy identifiers
      */
     'listOfSps.perunProxyIdentifierAttr' => '',
+    
+    /**
+     * Specify attribute name for facility attribute with service name
+     */
+    'listOfSps.serviceNameAttr' => '',
 
     /**
      * Specify attribute name for facility attribute with loginUrL for service
