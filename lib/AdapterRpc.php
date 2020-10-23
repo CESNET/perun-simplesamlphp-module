@@ -493,10 +493,13 @@ class AdapterRpc extends Adapter
 
     public function getUserExtSourceAttributes($userExtSourceId, $attrNames)
     {
-        return $this->connector->get('attributesManager', 'getAttributes', [
+        $attrNamesMap = AttributeUtils::getRpcAttrNames($attrNames);
+
+        $perunAttrs = $this->connector->get('attributesManager', 'getAttributes', [
             'userExtSource' => $userExtSourceId,
-            'attrNames' => $attrNames,
+            'attrNames' => array_keys($attrNamesMap),
         ]);
+        return $this->getAttributes($perunAttrs, $attrNamesMap);
     }
 
     public function setUserExtSourceAttributes($userExtSourceId, $attributes)

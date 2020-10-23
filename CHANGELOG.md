@@ -16,6 +16,9 @@ All notable changes to this project will be documented in this file.
     - Added required attribute 'listOfSps.serviceNameAttr' !!!
     - Add translation for multi-languages attributes
 
+#### Fixed
+- Fixed Updating UES in Perun
+
 ## [v3.9.0]
 #### Added
 - Added facility capabilities to PerunEntitlement
