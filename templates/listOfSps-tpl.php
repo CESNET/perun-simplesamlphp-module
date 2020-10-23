@@ -97,10 +97,10 @@ $this->includeAtTemplateBase('includes/header.php');
                         <?php
                         foreach ($attributesToShow as $attr) {
                             if (!empty($samlServices)) {
-                                echo "<th class='" .
-                                    ListOfSps::getClass(array_values($samlServices)[0]['facilityAttributes'][$attr]) .
-                                    "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
-                                    . "</th>";
+                                echo "<th class='" . ListOfSps::getClass(
+                                    array_values($samlServices)[0]['facilityAttributes'][$attr]['type']
+                                ) . "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
+                                . "</th>";
                             }
                         }
                         ?>
@@ -116,7 +116,10 @@ $this->includeAtTemplateBase('includes/header.php');
                         }
                         echo '<tr>';
                         echo '<td>'
-                            . ListOfSps::printServiceName($service['name']['value'], $service['loginURL']['value'] ?? null)
+                            . ListOfSps::printServiceName(
+                                ListOfSps::getPreferredTranslation($service['name']['value'], $this->getLanguage()),
+                                $service['loginURL']['value'] ?? null
+                            )
                             . '</td>';
                         if (array_key_exists($service['facility']->getID(), $samlServices)) {
                             echo '<td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
@@ -124,12 +127,13 @@ $this->includeAtTemplateBase('includes/header.php');
                             echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
                         }
                         foreach ($attributesToShow as $attr) {
-                            $value = ListOfSps::printAttributeValue(
-                                $service['facilityAttributes'][$attr],
-                                $service,
-                                $attr
-                            );
-                            echo $value;
+                            $type = $service['facilityAttributes'][$attr]['type'];
+                            $value = $service['facilityAttributes'][$attr]['value'];
+                            if ($value !== null && in_array($attr, $this->data['multilingualAttributes'])) {
+                                $type = 'java.lang.String';
+                                $value = ListOfSps::getPreferredTranslation($value, $this->getLanguage());
+                            }
+                            echo ListOfSps::printAttributeValue($type, $value);
                         }
                     }
                     echo '</tr>';

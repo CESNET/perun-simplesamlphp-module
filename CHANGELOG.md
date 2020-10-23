@@ -14,6 +14,7 @@ All notable changes to this project will be documented in this file.
 - ListOfSps 
     - Don't show the description by default
     - Added required attribute 'listOfSps.serviceNameAttr' !!!
+    - Add translation for multi-languages attributes
 
 ## [v3.9.0]
 #### Added

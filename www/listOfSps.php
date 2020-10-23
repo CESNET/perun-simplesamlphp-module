@@ -9,6 +9,7 @@ use SimpleSAML\Module\perun\ListOfSps;
 const CONFIG_FILE_NAME = 'module_perun.php';
 const PROXY_IDENTIFIER = 'listOfSps.proxyIdentifier';
 const ATTRIBUTES_DEFINITIONS = 'listOfSps.attributesDefinitions';
+const MULTILINGUAL_ATTRIBUTES = 'listOfSps.multilingualAttributes';
 const SHOW_OIDC_SERVICES = 'listOfSps.showOIDCServices';
 
 const PERUN_SERVICE_NAME_ATTR_NAME = 'listOfSps.serviceNameAttr';
@@ -45,6 +46,11 @@ if (empty($attributesDefinitions)) {
         . ATTRIBUTES_DEFINITIONS . '\'.'
     );
 }
+$multilingualAttributes = $conf->getArray(MULTILINGUAL_ATTRIBUTES, []);
+$attributesDefinitions = array_merge(
+    $attributesDefinitions,
+    array_diff($multilingualAttributes, $attributesDefinitions)
+);
 
 $showOIDCServices = $conf->getBoolean(SHOW_OIDC_SERVICES, false);
 $perunSaml2EntityIdAttr = $conf->getString(PERUN_SAML2_ENTITY_ID_ATTR_NAME);
@@ -195,6 +201,7 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $t = new Template($config, 'perun:listOfSps-tpl.php');
     $t->data['statistics'] = $statistics;
     $t->data['attributesToShow'] = $attributesToShow;
+    $t->data['multilingualAttributes'] = $multilingualAttributes;
     $t->data['samlServices'] = $samlServices;
     $t->data['oidcServices'] = $oidcServices;
     $t->data['allServices'] = $allServices;
