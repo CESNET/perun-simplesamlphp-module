@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v4.0.0]
 #### Added
 - Added some methods for getting values to Adapter.php
 - Added fallback to RPC for methods we're not able to run in LDAP
@@ -318,7 +320,8 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
-[v3.9.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.8.0
+[v4.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.0
+[v3.9.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.9.0
 [v3.8.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.8.0
 [v3.7.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.4
 [v3.7.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.7.3
