@@ -2,9 +2,9 @@
 
 use SimpleSAML\Module\perun\AdapterRpc;
 use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\XHTML\Template;
 use SimpleSAML\Error\Exception;
-use SimpleSAML\Module\perun\ListOfSps;
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 const PROXY_IDENTIFIER = 'listOfSps.proxyIdentifier';
@@ -31,7 +31,10 @@ if (empty($proxyIdentifier)) {
     );
 }
 
-$perunProxyIdentifierAttr = $conf->getString(PERUN_PROXY_IDENTIFIER_ATTR_NAME);
+$perunProxyIdentifierAttr = AttributeUtils::getAttrName(
+    $conf->getString(PERUN_PROXY_IDENTIFIER_ATTR_NAME),
+    AdapterRpc::RPC
+);
 if (empty($perunProxyIdentifierAttr)) {
     throw new Exception(
         'perun:listOfSps: missing mandatory config option \''
