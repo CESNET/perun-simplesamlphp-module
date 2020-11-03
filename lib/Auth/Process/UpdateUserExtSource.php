@@ -37,12 +37,12 @@ class UpdateUserExtSource extends ProcessingFilter
         }
 
         if (isset($config['arrayToStringConversion'])) {
-            $this->attrsToConversion = AttributeUtils::getRpcAttrNames((array)$config['arrayToStringConversion']);
+            $this->attrsToConversion = (array)$config['arrayToStringConversion'];
         } else {
             $this->attrsToConversion = [];
         }
 
-        $this->attrMap = AttributeUtils::getRpcAttrNames((array)$config['attrMap']);
+        $this->attrMap = (array)$config['attrMap'];
     }
 
     public function process(&$request)

@@ -19,7 +19,7 @@ $attrMap = $body['attrMap'];
 $attrsToConversion = $body['attrsToConversion'];
 $perunUserId = $body['perunUserId'];
 
-const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def:';
+const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def';
 
 try {
     $userExtSource = $adapter->getUserExtSource(
@@ -37,7 +37,7 @@ try {
     $attributesFromPerunRaw = $adapter->getUserExtSourceAttributes($userExtSource['id'], array_keys($attrMap));
     $attributesFromPerun = [];
     foreach ($attributesFromPerunRaw as $attributeFromPerunRaw) {
-        $attributesFromPerun[$attributeFromPerunRaw['friendlyName']] = $attributeFromPerunRaw;
+        $attributesFromPerun[$attributeFromPerunRaw['name']] = $attributeFromPerunRaw;
     }
 
     if ($attributesFromPerun === null) {
@@ -50,12 +50,12 @@ try {
 
     foreach ($attributesFromPerun as $attribute) {
 
-        $attrName = UES_ATTR_NMS . $attribute['friendlyName'];
+        $attrName = $attribute['name'];
 
         if (isset($attrMap[$attrName], $attributesFromIdP[$attrMap[$attrName]])) {
             $attr = $attributesFromIdP[$attrMap[$attrName]];
 
-            if (in_array(UES_ATTR_NMS . $attribute['friendlyName'], $attrsToConversion)) {
+            if (in_array($attrName, $attrsToConversion)) {
                 $arrayAsString = [''];
                 foreach ($attr as $value) {
                     $arrayAsString[0] .= $value . ';';
@@ -79,13 +79,19 @@ try {
             }
             if ($valueFromIdP !== $attribute['value']) {
                 $attribute['value'] = $valueFromIdP;
+                $attribute['namespace'] = UES_ATTR_NMS;
                 array_push($attributesToUpdate, $attribute);
             }
         }
     }
 
+    $attributesToUpdateFinal = [];
     if (!empty($attributesToUpdate)) {
-        $adapter->setUserExtSourceAttributes($userExtSource['id'], $attributesToUpdate);
+        foreach ($attributesToUpdate as $attribute) {
+            $attribute['name'] = UES_ATTR_NMS . ":" . $attribute['friendlyName'];
+            array_push($attributesToUpdateFinal, $attribute);
+        }
+        $adapter->setUserExtSourceAttributes($userExtSource['id'], $attributesToUpdateFinal);
     }
 
     $adapter->updateUserExtSourceLastAccess($userExtSource['id']);
