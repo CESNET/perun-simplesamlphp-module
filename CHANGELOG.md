@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed getting attributes in class ForceAup
 
 ## [v4.0.0]
 #### Added

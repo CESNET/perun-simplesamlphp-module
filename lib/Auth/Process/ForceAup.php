@@ -2,9 +2,9 @@
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Module\perun\Adapter;
-use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\Module\perun\model;
 use SimpleSAML\Logger;
 use SimpleSAML\Auth\State;
@@ -27,7 +27,7 @@ use SimpleSAML\Configuration;
  *
  * It relies on PerunIdentity filter. Configure it before this filter properly.
  */
-class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
+class ForceAup extends ProcessingFilter
 {
 
     const UID_ATTR = 'uidAttr';
@@ -35,8 +35,8 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
     const PERUN_AUPS_ATTR = 'perunAupsAttr';
     const PERUN_USER_AUP_ATTR = 'perunUserAupAttr';
     const PERUN_VO_AUP_ATTR = 'perunVoAupAttr';
-    const PERUN_FACILITY_REQ_AUPS_ATTR = 'facilityReqAupsAttr';
-    const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'facilityVoShortNamesAttr';
+    const PERUN_FACILITY_REQ_AUPS_ATTR = 'perunFacilityReqAupsAttr';
+    const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'perunFacilityVoShortNamesAttr';
 
     private $uidAttr;
     private $perunAupsAttr;
@@ -44,7 +44,6 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
     private $perunVoAupAttr;
     private $perunFacilityReqAupsAttr;
     private $perunFacilityVoShortNames;
-    private $interface;
 
     /**
      * @var Adapter
@@ -83,18 +82,11 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
         $this->perunAupsAttr = (string)$config[self::PERUN_AUPS_ATTR];
         $this->perunUserAupAttr = (string)$config[self::PERUN_USER_AUP_ATTR];
         $this->perunVoAupAttr = (string)$config[self::PERUN_VO_AUP_ATTR];
-        $this->interface = (string)$config[self::INTERFACE_PROPNAME];
-        $this->adapter = Adapter::getInstance($this->interface);
+        $interface = (string)$config[self::INTERFACE_PROPNAME];
+        $this->adapter = Adapter::getInstance($interface);
 
-        $this->perunFacilityReqAupsAttr = AttributeUtils::getAttrName(
-            self::PERUN_FACILITY_REQ_AUPS_ATTR,
-            $this->interface
-        );
-
-        $this->perunFacilityVoShortNames = AttributeUtils::getAttrName(
-            self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR,
-            $this->interface
-        );
+        $this->perunFacilityReqAupsAttr = (string)$config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
+        $this->perunFacilityVoShortNames = (string)$config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
     }
 
     /**
@@ -129,19 +121,19 @@ class ForceAup extends \SimpleSAML\Auth\ProcessingFilter
 
             $facilityAttrValues = $this->adapter->getFacilityAttributesValues(
                 $facility,
-                [self::PERUN_FACILITY_REQ_AUPS_ATTR, self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR]
+                [$this->perunFacilityReqAupsAttr, $this->perunFacilityVoShortNames]
             );
 
             if (isset($this->perunFacilityReqAupsAttr, $facilityAttrValues) &&
                 is_array($facilityAttrValues[$this->perunFacilityReqAupsAttr])) {
-                foreach ($facilityAttrValues[$this->perunFacilityReqAupsAttr] as $facilityAup) {
+                foreach (array_values($facilityAttrValues[$this->perunFacilityReqAupsAttr]) as $facilityAup) {
                     array_push($requiredAups, $facilityAup);
                 }
             }
 
             if (isset($this->perunFacilityVoShortNames, $facilityAttrValues) &&
                 is_array($facilityAttrValues[$this->perunFacilityVoShortNames])) {
-                foreach ($facilityAttrValues[$this->perunFacilityVoShortNames] as $facilityVoShortName) {
+                foreach (array_values($facilityAttrValues[$this->perunFacilityVoShortNames]) as $facilityVoShortName) {
                     array_push($voShortNames, $facilityVoShortName);
                 }
             }
