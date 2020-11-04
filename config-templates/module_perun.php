@@ -21,6 +21,10 @@ $config = [
     'rpc.password' => 'password',
 
     /**
+     * rpc serializer. Default value is json
+     */
+    'rpc.serializer' => 'json',
+    /**
      * hostname of perun ldap with ldap(s):// at the beginning.
      */
     'ldap.hostname' => 'ldaps://perun.inside.cz',

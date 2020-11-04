@@ -30,6 +30,8 @@ class AdapterRpc extends Adapter
 
     const RPC_PASSWORD = 'rpc.password';
 
+    const RPC_SERIALIZER = 'rpc.serializer';
+
     const TYPE_INTEGER = 'java.lang.Integer';
 
     const TYPE_BOOLEAN = 'java.lang.Boolean';
@@ -48,6 +50,8 @@ class AdapterRpc extends Adapter
 
     private $rpcPassword;
 
+    private $rpcSerializer;
+
     public function __construct($configFileName = null)
     {
         if ($configFileName === null) {
@@ -59,8 +63,9 @@ class AdapterRpc extends Adapter
         $this->rpcUrl = $conf->getString(self::RPC_URL);
         $this->rpcUser = $conf->getString(self::RPC_USER);
         $this->rpcPassword = $conf->getString(self::RPC_PASSWORD);
+        $this->rpcSerializer = $conf->getString(self::RPC_SERIALIZER);
 
-        $this->connector = new RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword);
+        $this->connector = new RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword, $this->rpcSerializer);
     }
 
     public function getPerunUser($idpEntityId, $uids)

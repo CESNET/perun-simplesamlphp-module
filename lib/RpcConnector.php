@@ -35,18 +35,21 @@ class RpcConnector
     private $rpcUrl;
     private $user;
     private $password;
+    private $serializer;
 
     /**
      * sspmod_perun_RpcConnector constructor.
      * @param $rpcUrl
      * @param $user
      * @param $password
+     * @param $serializer
      */
-    public function __construct($rpcUrl, $user, $password)
+    public function __construct($rpcUrl, $user, $password, $serializer)
     {
         $this->rpcUrl = $rpcUrl;
         $this->user = $user;
         $this->password = $password;
+        $this->serializer = $serializer;
     }
 
     public function get($manager, $method, $params = [])
@@ -57,7 +60,7 @@ class RpcConnector
 
         $ch = curl_init();
 
-        $uri = $this->rpcUrl . 'json/' . $manager . '/' . $method;
+        $uri = $this->rpcUrl . $this->serializer . '/' . $manager . '/' . $method;
         curl_setopt($ch, CURLOPT_URL, $uri . '?' . $paramsQuery);
         curl_setopt($ch, CURLOPT_USERPWD, $this->user . ":" . $this->password);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
