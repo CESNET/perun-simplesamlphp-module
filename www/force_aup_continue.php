@@ -4,20 +4,23 @@ use \SimpleSAML\Module\perun\AdapterRpc;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Auth\ProcessingChain;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\AttributeUtils;
+use SimpleSAML\Module\perun\model\User;
 
 $id = $_REQUEST['StateId'];
 $state = State::loadState($id, 'perun:forceAup');
 $rpcAdapter = new AdapterRpc();
 $rpcConnector = $rpcAdapter->getConnector();
 /**
- * @var \SimpleSAML\Module\perun\model\User $user
+ * @var User $user
  */
 $user = $state['perun']['user'];
 
 try {
+    $attrName = AttributeUtils::getRpcAttrName($state['perunUserAupAttr']);
     $userAupsAttr = $rpcConnector->get('attributesManager', 'getAttribute', [
         'user' => $user->getId(),
-        'attributeName' => $state['perunUserAupAttr'],
+        'attributeName' => $attrName,
     ]);
     $userAups = $userAupsAttr['value'];
 } catch (\Exception $exception) {
