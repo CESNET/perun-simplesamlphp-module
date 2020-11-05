@@ -265,9 +265,8 @@ class AdapterRpc extends Adapter
     public function getEntitylessAttribute($attrName)
     {
         $attributes = [];
-
         $perunAttrValues = $this->connector->get('attributesManager', 'getEntitylessAttributes', [
-            'attrName' => $attrName,
+            'attrName' => AttributeUtils::getAttrName($attrName, self::RPC),
         ]);
 
         if (!isset($perunAttrValues[0]['id'])) {
