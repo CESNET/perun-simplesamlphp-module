@@ -63,7 +63,7 @@ class AdapterRpc extends Adapter
         $this->rpcUrl = $conf->getString(self::RPC_URL);
         $this->rpcUser = $conf->getString(self::RPC_USER);
         $this->rpcPassword = $conf->getString(self::RPC_PASSWORD);
-        $this->rpcSerializer = $conf->getString(self::RPC_SERIALIZER);
+        $this->rpcSerializer = $conf->getString(self::RPC_SERIALIZER, 'json');
 
         $this->connector = new RpcConnector($this->rpcUrl, $this->rpcUser, $this->rpcPassword, $this->rpcSerializer);
     }
