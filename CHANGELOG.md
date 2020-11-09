@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v4.0.2]
 #### Fixed
 - Fixed getting attributes from Perun in partial mode
     - Allow to store one source attribute to more destination attributes
@@ -327,6 +329,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v4.0.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.2
 [v4.0.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.1
 [v4.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.0
 [v3.9.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.9.0
