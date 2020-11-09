@@ -21,6 +21,11 @@ $config = [
     'rpc.password' => 'password',
 
     /**
+     * rpc serializer. Default value is 'json'.
+     */
+    'rpc.serializer' => 'json',
+
+    /**
      * hostname of perun ldap with ldap(s):// at the beginning.
      */
     'ldap.hostname' => 'ldaps://perun.inside.cz',
@@ -32,7 +37,7 @@ $config = [
      */
     //'ldap.username' => '_proxy-idp',
     //'ldap.password' => 'password'
-    
+
     /**
      * Whether to use startTLS on port 389. Defaults to false.
      * SSL/TLS is always used for ldaps: regardless of this setting.
@@ -144,7 +149,7 @@ $config = [
      * Specify attribute name for facility attribute proxy identifiers
      */
     'listOfSps.perunProxyIdentifierAttr' => '',
-    
+
     /**
      * Specify attribute name for facility attribute with service name
      */
