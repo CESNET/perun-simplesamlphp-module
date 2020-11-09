@@ -103,7 +103,7 @@ Example how to enable filter ForceAup:
         'perunUserAupAttr' => 'urn:perun:user:attribute-def:def:aups',
         'perunVoAupAttr' => 'urn:perun:vo:attribute-def:def:aup',
         'perunFacilityReqAupsAttr' => 'urn:perun:facility:attribute-def:def:reqAups',
-        'facilityVoShortNames' => 'urn:perun:facility:attribute-def:virt:voShortNames'
+        'perunFacilityVoShortNamesAttr' => 'urn:perun:facility:attribute-def:virt:voShortNames'
     ],
 ],   
 ``` 
