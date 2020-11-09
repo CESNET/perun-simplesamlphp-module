@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed getting attributes from Perun in partial mode
+    - Allow to store one source attribute to more destination attributes
 
 ## [v4.0.1]
 #### Fixed

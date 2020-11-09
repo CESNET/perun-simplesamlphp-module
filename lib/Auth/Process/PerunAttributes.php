@@ -81,17 +81,28 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
         } elseif ($this->mode === self::MODE_PARTIAL) {
             // Check if attribute has some value
             foreach ($this->attrMap as $attrName => $attrValue) {
-                if (isset($request['Attributes'][$attrValue])) {
-                    $attr = $request['Attributes'][$attrValue];
-                    if (empty($attr)) {
+                if (is_array($attrValue)) {
+                    $attrValueList = $attrValue;
+                } else{
+                    $attrValueList = [$attrValue];
+                }
+                foreach ($attrValueList as $item) {
+                    if (isset($request['Attributes'][$item])) {
+                        $attr = $request['Attributes'][$item];
+                        if (empty($attr)) {
+                            array_push($attributes, $attrName);
+                        }
+                    } else {
                         array_push($attributes, $attrName);
                     }
-                } else {
-                    array_push($attributes, $attrName);
                 }
             }
         }
 
+        if (empty($attributes)) {
+            return;
+        }
+        $attributes = array_unique($attributes);
         $attrs = $this->adapter->getUserAttributesValues($user, $attributes);
 
         foreach ($attrs as $attrName => $attrValue) {
