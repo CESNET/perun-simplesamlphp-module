@@ -55,6 +55,12 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     const PERUN_FACILITY_REGISTER_URL_ATTR = 'facilityRegisterUrlAttr';
     const PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS = 'facilityAllowRegistrationToGroups';
     const LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION = 'listOfSpsWithoutInfoAboutRedirection';
+    const MODE = 'mode';
+
+    const MODE_FULL = 'FULL';
+    const MODE_USERONLY = 'USERONLY';
+
+    const MODES = [self::MODE_FULL, self::MODE_USERONLY];
 
     private $uidsAttr;
     private $registerUrlBase;
@@ -63,6 +69,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     private $voShortName;
     private $facilityVoShortNames = [];
     private $listOfSpsWithoutInfoAboutRedirection = [];
+    private $mode;
     private $spEntityId;
     private $interface;
     private $checkGroupMembership = false;
@@ -110,51 +117,53 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $this->listOfSpsWithoutInfoAboutRedirection =
             $config->getArray(self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION, []);
 
+        $this->mode = $config->getValueValidate(self::MODE, self::MODES, self::MODE_FULL);
+
         if (is_null($this->uidsAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::UIDS_ATTR . '\'.'
             );
         }
-        if (is_null($this->registerUrlBase)) {
+        if ($this->mode === self::MODE_FULL && empty($this->registerUrlBase)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::REGISTER_URL_BASE . '\'.'
             );
         }
-        if (is_null($this->defaultRegisterUrl)) {
+        if ($this->mode === self::MODE_FULL && empty($this->defaultRegisterUrl)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::REGISTER_URL . '\'.'
             );
         }
-        if (is_null($this->voShortName)) {
+        if ($this->mode === self::MODE_FULL && empty($this->voShortName)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::VO_SHORTNAME . '\'.'
             );
         }
-        if (is_null($this->facilityCheckGroupMembershipAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityCheckGroupMembershipAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR . '\'.'
             );
         }
-        if (is_null($this->facilityDynamicRegistrationAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityDynamicRegistrationAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR . '\'.'
             );
         }
-        if (is_null($this->facilityVoShortNamesAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityVoShortNamesAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR . '\'.'
             );
         }
-        if (is_null($this->facilityRegisterUrlAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityRegisterUrlAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_REGISTER_URL_ATTR . '\'.'
             );
         }
-        if (is_null($this->facilityAllowRegistrationToGroupsAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityAllowRegistrationToGroupsAttr)) {
             throw new Exception(
                 "perun:PerunIdentity: missing mandatory config option '" .
                 self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS . "'."
@@ -201,36 +210,41 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             $this->registerUrl = $request['SPMetadata'][self::REGISTER_URL];
         }
 
-        $this->getSPAttributes($this->spEntityId);
+        $groups = [];
 
         $user = $this->adapter->getPerunUser($idpEntityId, $uids);
 
-        $this->checkMemberStateDefaultVo($request, $user, $uids);
+        if ($this->mode === self::MODE_FULL) {
+            $this->getSPAttributes($this->spEntityId);
 
-        $groups = $this->adapter->getUsersGroupsOnFacility($this->spEntityId, $user->getId());
+            $this->checkMemberStateDefaultVo($request, $user, $uids);
 
-        if ($this->checkGroupMembership && empty($groups)) {
-            if ($this->allowRegistrationToGroups) {
-                $vosForRegistration = $this->getVosForRegistration($user);
+            $groups = $this->adapter->getUsersGroupsOnFacility($this->spEntityId, $user->getId());
 
-                if (empty($vosForRegistration)) {
+            if ($this->checkGroupMembership && empty($groups)) {
+                if ($this->allowRegistrationToGroups) {
+                    $vosForRegistration = $this->getVosForRegistration($user);
+
+                    if (empty($vosForRegistration)) {
+                        Logger::warning(
+                            'Perun user with name: ' . $user->getName() . ' ' .
+                            'is not valid member of any assigned VO for SP with entityId: (' .
+                            $this->spEntityId . ') and there are no VO for registration.'
+                        );
+                        $this->unauthorized($request);
+                    }
+                    $this->register($request, $vosForRegistration);
+                } else {
                     Logger::warning(
-                        'Perun user with name: ' . $user->getName() . ' ' .
-                        'is not valid member of any assigned VO for SP with entityId: (' .
-                        $this->spEntityId . ') and there are no VO for registration.'
+                        'Perun user with identity/ies: ' . implode(',', $uids) .
+                        ' is not member of any assigned group for resource (' . $this->spEntityId .
+                        ') and registration to groups is disabled.'
                     );
                     $this->unauthorized($request);
                 }
-                $this->register($request, $vosForRegistration);
-            } else {
-                Logger::warning(
-                    'Perun user with identity/ies: ' . implode(',', $uids) .
-                    ' is not member of any assigned group for resource (' . $this->spEntityId .
-                    ') and registration to groups is disabled.'
-                );
-                $this->unauthorized($request);
             }
         }
+
 
         Logger::info(
             'Perun user with identity/ies: ' . implode(',', $uids) .

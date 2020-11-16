@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Changed
 - Allow using Perun RPC serializer from the configuration. Default value is 'json'. 
+- Add new option 'mode' for PerunIdentity process filter:
+    - mode: 'FULL' - Get the user from Perun and check if user has correct rights to access service
+    - mode: 'USERONLY' - Get the user from Perun only
 
 ## [v4.0.1]
 #### Fixed

@@ -17,6 +17,10 @@ Example how to configure PerunIdentity module:
                 'facilityDynamicRegistrationAttr' => 'urn:perun:facility:attribute-def:def:dynamicRegistration',
                 'facilityRegisterUrlAttr' => 'urn:perun:facility:attribute-def:def:registerUrl',
                 'facilityAllowRegistrationToGroups' => 'urn:perun:facility:attribute-def:def:allowRegistration',
+                #MODE: 
+                # * FULL - Get user from Perun and check if user has correct rights to access service
+                # * USERONLY - Only get user from Perun
+                'mode' => 'FULL' #Default value: FULL
         ],
 ],
 ```
