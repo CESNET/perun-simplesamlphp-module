@@ -49,9 +49,6 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     const TARGET_EXTENDED = 'targetextended';
     const INTERFACE_PROPNAME = 'interface';
     const SOURCE_IDP_ENTITY_ID_ATTR = 'sourceIdPEntityIDAttr';
-    const FORCE_REGISTRATION_TO_GROUPS = 'forceRegistrationToGroups';
-    const CHECK_GROUP_MEMBERSHIP = 'checkGroupMembership';
-    const ALLOW_REGISTRATION_TO_GROUPS = 'allowRegistrationToGroups';
     const PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR = 'facilityCheckGroupMembershipAttr';
     const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'facilityVoShortNamesAttr';
     const PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR = 'facilityDynamicRegistrationAttr';
@@ -61,7 +58,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
     private $uidsAttr;
     private $registerUrlBase;
-    private $registerUrl = null;
+    private $registerUrl;
     private $defaultRegisterUrl;
     private $voShortName;
     private $facilityVoShortNames = [];
@@ -69,7 +66,6 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     private $spEntityId;
     private $interface;
     private $checkGroupMembership = false;
-    private $forceRegistrationToGroups = false;
     private $allowRegistrationToGroups;
     private $dynamicRegistration;
     private $sourceIdPEntityIDAttr;
@@ -93,85 +89,77 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
+        $config = Configuration::loadFromArray($config);
 
-        if (!isset($config[self::UIDS_ATTR])) {
+        $this->uidsAttr = $config->getArray(self::UIDS_ATTR, []);
+        $this->registerUrlBase = $config->getString(self::REGISTER_URL_BASE, null);
+        $this->defaultRegisterUrl = $config->getString(self::REGISTER_URL, null);
+        $this->voShortName = $config->getString(self::VO_SHORTNAME, null);
+        $this->interface = $config->getString(self::INTERFACE_PROPNAME, AdapterRpc::RPC);
+        $this->sourceIdPEntityIDAttr =
+            $config->getString(self::SOURCE_IDP_ENTITY_ID_ATTR, 'sourceIdPEntityID');
+        $this->facilityCheckGroupMembershipAttr =
+            $config->getString(self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR, null);
+        $this->facilityDynamicRegistrationAttr =
+            $config->getString(self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR, null);
+        $this->facilityVoShortNamesAttr =
+            $config->getString(self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR, null);
+        $this->facilityRegisterUrlAttr = $config->getString(self::PERUN_FACILITY_REGISTER_URL_ATTR, null);
+        $this->facilityAllowRegistrationToGroupsAttr =
+            $config->getString(self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS, null);
+        $this->listOfSpsWithoutInfoAboutRedirection =
+            $config->getArray(self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION, []);
+
+        if (is_null($this->uidsAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::UIDS_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::REGISTER_URL_BASE])) {
+        if (is_null($this->registerUrlBase)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::REGISTER_URL_BASE . '\'.'
             );
         }
-        if (!isset($config[self::REGISTER_URL])) {
+        if (is_null($this->defaultRegisterUrl)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::REGISTER_URL . '\'.'
             );
         }
-        if (!isset($config[self::VO_SHORTNAME])) {
+        if (is_null($this->voShortName)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::VO_SHORTNAME . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR])) {
+        if (is_null($this->facilityCheckGroupMembershipAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR])) {
+        if (is_null($this->facilityDynamicRegistrationAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR])) {
+        if (is_null($this->facilityVoShortNamesAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_FACILITY_REGISTER_URL_ATTR])) {
+        if (is_null($this->facilityRegisterUrlAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' .
                 self::PERUN_FACILITY_REGISTER_URL_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS])) {
+        if (is_null($this->facilityAllowRegistrationToGroupsAttr)) {
             throw new Exception(
                 "perun:PerunIdentity: missing mandatory config option '" .
                 self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS . "'."
             );
         }
-        if (!isset($config[self::INTERFACE_PROPNAME])) {
-            $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
-        }
-        if (!isset($config[self::SOURCE_IDP_ENTITY_ID_ATTR])) {
-            $config[self::SOURCE_IDP_ENTITY_ID_ATTR] = RetainIdPEntityID::DEFAULT_ATTR_NAME;
-        }
-        if (!isset($config[self::FORCE_REGISTRATION_TO_GROUPS])) {
-            $config[self::FORCE_REGISTRATION_TO_GROUPS] = false;
-        }
-        if (isset($config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION]) &&
-            is_array($config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION])) {
-            $this->listOfSpsWithoutInfoAboutRedirection = $config[self::LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION];
-        }
-
-        $this->uidsAttr = $config[self::UIDS_ATTR];
-        $this->registerUrlBase = (string)$config[self::REGISTER_URL_BASE];
-        $this->defaultRegisterUrl = (string)$config[self::REGISTER_URL];
-        $this->voShortName = $config[self::VO_SHORTNAME];
-        $this->interface = (string)$config[self::INTERFACE_PROPNAME];
-        $this->sourceIdPEntityIDAttr = $config[self::SOURCE_IDP_ENTITY_ID_ATTR];
-        $this->forceRegistrationToGroups = $config[self::FORCE_REGISTRATION_TO_GROUPS];
-
-        $this->facilityCheckGroupMembershipAttr = (string)$config[self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR];
-        $this->facilityDynamicRegistrationAttr = (string)$config[self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR];
-        $this->facilityVoShortNamesAttr = (string)$config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
-        $this->facilityRegisterUrlAttr = (string)$config[self::PERUN_FACILITY_REGISTER_URL_ATTR];
-        $this->facilityAllowRegistrationToGroupsAttr =
-            (string) $config[self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS];
 
         $this->adapter = Adapter::getInstance($this->interface);
         $this->rpcAdapter = new AdapterRpc();
