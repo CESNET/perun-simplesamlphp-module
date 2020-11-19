@@ -272,12 +272,13 @@ class MetadataToPerun
 
     private function getAttributesDefinition(array $attrNames)
     {
+        $perunAttrNames = AttributeUtils::getAttrNames($attrNames, AttributeUtils::RPC);
         return array_values(
             array_filter(
                 $this->adapter->getAttributesDefinition(),
-                function ($attr) use ($attrNames) {
+                function ($attr) use ($perunAttrNames) {
                     $perunName = $attr['namespace'] . self::NAMESPACE_SEPARATOR . $attr['friendlyName'];
-                    return in_array($perunName, $attrNames, true);
+                    return in_array($perunName, $perunAttrNames, true);
                 }
             )
         );

@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
     - mode: 'FULL' - Get the user from Perun and check if user has correct rights to access service
     - mode: 'USERONLY' - Get the user from Perun only
 
+#### Fixed
+- Fixed works with internal attr name in MetadataToPerun/MetadataFromPerun
+
 ## [v4.0.1]
 #### Fixed
 - Fixed getting attributes in class ForceAup
