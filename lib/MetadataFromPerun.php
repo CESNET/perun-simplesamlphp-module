@@ -172,14 +172,15 @@ class MetadataFromPerun
     private function getFacilities()
     {
         $perunProxyIdentifierAttr = $this->conf->getString(self::PERUN_PROXY_IDENTIFIER_ATTR_NAME);
+        $perunProxyIdentifierRpcAttrName = AttributeUtils::getRpcAttrName($perunProxyIdentifierAttr);
         $proxyIdentifier = $this->conf->getString(self::PROXY_IDENTIFIER);
         $attributeDefinition = [
-            $perunProxyIdentifierAttr => $proxyIdentifier,
+            $perunProxyIdentifierRpcAttrName => $proxyIdentifier,
         ];
         return $this->rpcAdapter->searchFacilitiesByAttributeValue($attributeDefinition);
     }
 
-    /**
+    /**+
      * Get facilities with attributes.
      */
     private function getFacilitiesWithAttributes()
