@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed works with internal attr name in MetadataToPerun/MetadataFromPerun
 
 ## [v4.0.2]
 #### Fixed
