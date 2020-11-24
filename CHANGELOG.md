@@ -8,8 +8,14 @@ All notable changes to this project will be documented in this file.
     - mode: 'FULL' - Get the user from Perun and check if user has correct rights to access service
     - mode: 'USERONLY' - Get the user from Perun only
 
+## [v4.0.3]
 #### Fixed
 - Fixed works with internal attr name in MetadataToPerun/MetadataFromPerun
+
+## [v4.0.2]
+#### Fixed
+- Fixed getting attributes from Perun in partial mode
+    - Allow to store one source attribute to more destination attributes
 
 ## [v4.0.1]
 #### Fixed
