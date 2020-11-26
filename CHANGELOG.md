@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
     - mode: 'FULL' - Get the user from Perun and check if user has correct rights to access service
     - mode: 'USERONLY' - Get the user from Perun only
 
+## [v4.0.4]
 #### Fixed
 - Fixed getting SP name from 'UIInfo>DisplayName'
 
@@ -341,6 +342,9 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v4.0.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.4
+[v4.0.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.3
+[v4.0.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.2
 [v4.0.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.1
 [v4.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.0
 [v3.9.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v3.9.0
