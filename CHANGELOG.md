@@ -8,6 +8,9 @@ All notable changes to this project will be documented in this file.
     - mode: 'FULL' - Get the user from Perun and check if user has correct rights to access service
     - mode: 'USERONLY' - Get the user from Perun only
 
+#### Fixed
+- Fixed getting SP name from 'UIInfo>DisplayName'
+
 ## [v4.0.3]
 #### Fixed
 - Fixed works with internal attr name in MetadataToPerun/MetadataFromPerun
