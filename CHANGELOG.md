@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
 
+#### Fixed
+- Fixed getting SP name from 'UIInfo>DisplayName'
+
 ## [v4.0.3]
 #### Fixed
 - Fixed works with internal attr name in MetadataToPerun/MetadataFromPerun
