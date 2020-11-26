@@ -46,7 +46,9 @@ if (is_array($srcName)) {
     $srcName = $this->t($srcName);
 }
 
-if (array_key_exists('name', $this->data['dstMetadata'])) {
+if (isset($this->data['dstMetadata']['UIInfo']['DisplayName'])) {
+    $dstName = $this->data['dstMetadata']['UIInfo']['DisplayName'];
+} elseif (array_key_exists('name', $this->data['dstMetadata'])) {
     $dstName = $this->data['dstMetadata']['name'];
 } elseif (array_key_exists('OrganizationDisplayName', $this->data['dstMetadata'])) {
     $dstName = $this->data['dstMetadata']['OrganizationDisplayName'];
