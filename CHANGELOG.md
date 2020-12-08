@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v4.1.0]
 #### Changed
 - Allow using Perun RPC serializer from the configuration. Default value is 'json'. 
 - Add new option 'mode' for PerunIdentity process filter:
@@ -342,6 +344,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v4.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.1.0
 [v4.0.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.4
 [v4.0.3]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.3
 [v4.0.2]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.2
