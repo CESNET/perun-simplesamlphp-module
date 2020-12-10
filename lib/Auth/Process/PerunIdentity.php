@@ -243,14 +243,26 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                     $this->unauthorized($request);
                 }
             }
+
+            Logger::info(
+                'Perun user with identity/ies: ' . implode(',', $uids) .
+                ' has been found and SP has sufficient rights to get info about him. ' .
+                'User ' . $user->getName() . ' with id: ' . $user->getId() . ' is being set to request'
+            );
+        } elseif ($this->mode === self::MODE_USERONLY) {
+            if (isset($user)) {
+                Logger::info(
+                    'Perun user with identity/ies: ' . implode(',', $uids) .
+                    ' has been found in mode USERONLY ' .
+                    'User ' . $user->getName() . ' with id: ' . $user->getId() . ' is being set to request'
+                );
+            } else {
+                Logger::info(
+                    'Perun user with identity/ies: ' . implode(',', $uids) .
+                    ' has not been found in mode USERONLY. Redirecting to SP.'
+                );
+            }
         }
-
-
-        Logger::info(
-            'Perun user with identity/ies: ' . implode(',', $uids) .
-            ' has been found and SP has sufficient rights to get info about him. ' .
-            'User ' . $user->getName() . ' with id: ' . $user->getId() . ' is being set to request'
-        );
 
         if (!isset($request['perun'])) {
             $request['perun'] = [];

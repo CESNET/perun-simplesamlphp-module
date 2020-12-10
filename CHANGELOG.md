@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed bad log message in PerunIdentity in mode USERONLY
 
 ## [v4.1.0]
 #### Changed
