@@ -7,6 +7,7 @@ use SimpleSAML\Configuration;
 use \SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\EntitlementUtils;
 
 /**
  * Class PerunEntitlement
@@ -77,16 +78,25 @@ class PerunEntitlement extends ProcessingFilter
 
         if (isset($request['perun']['groups'])) {
             $eduPersonEntitlement = $this->getEduPersonEntitlement($request);
-            $capabilities = $this->getCapabilities($request);
+            $capabilities = EntitlementUtils::getCapabilities(
+                $request,
+                $this->adapter,
+                $this->entitlementPrefix,
+                $this->entitlementAuthority
+            );
         } else {
             Logger::debug(
-                'perun:PerunEntitlement: There are no user groups assign to facility.' .
-                '=> Skipping getEduPersonEntitlement and getResourceCapabilities'
+                'perun:PerunEntitlement: There are no user groups assigned to facility.' .
+                '=> Skipping getEduPersonEntitlement and getCapabilities'
             );
         }
 
         if ($this->releaseForwardedEntitlement) {
-            $forwardedEduPersonEntitlement = $this->getForwardedEduPersonEntitlement($request);
+            $forwardedEduPersonEntitlement = EntitlementUtils::getForwardedEduPersonEntitlement(
+                $request,
+                $this->adapter,
+                $this->forwardedEduPersonEntitlement
+            );
         }
 
         $request['Attributes'][$this->eduPersonEntitlement] = array_unique(array_merge(
@@ -126,76 +136,11 @@ class PerunEntitlement extends ProcessingFilter
         return $eduPersonEntitlement;
     }
 
-    private function getForwardedEduPersonEntitlement(&$request)
-    {
-        $forwardedEduPersonEntitlement = [];
-
-        if (!isset($request['perun']['user'])) {
-            Logger::debug(
-                'perun:PerunEntitlement: Object Perun User is not specified.' .
-                '=> Skipping getting forwardedEntitlement.'
-            );
-            return $forwardedEduPersonEntitlement;
-        }
-
-        $user = $request['perun']['user'];
-
-        try {
-            $forwardedEduPersonEntitlementMap = $this->adapter->getUserAttributesValues(
-                $user,
-                [$this->forwardedEduPersonEntitlement]
-            );
-        } catch (Exception $exception) {
-            Logger::error(
-                'perun:PerunEntitlement: Exception ' . $exception->getMessage() .
-                ' was thrown in method \'getForwardedEduPersonEntitlement\'.'
-            );
-        }
-
-        if (!empty($forwardedEduPersonEntitlementMap)) {
-            $forwardedEduPersonEntitlement = array_values($forwardedEduPersonEntitlementMap)[0];
-        }
-
-        return $forwardedEduPersonEntitlement;
-    }
-
-    private function getCapabilities(&$request)
-    {
-        $resourceCapabilities = [];
-        $facilityCapabilities = [];
-        $capabilitiesResult = [];
-
-        $spEntityId = $this->getSpEntityId($request);
-        try {
-            $resourceCapabilities = $this->adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
-            $facilityCapabilities = $this->adapter->getFacilityCapabilities($spEntityId);
-        } catch (Exception $exception) {
-            Logger::error(
-                'perun:PerunEntitlement: Exception ' . $exception->getMessage() .
-                ' was thrown in method \'getCapabilities\'.'
-            );
-        }
-
-        $capabilities = array_unique(array_merge($resourceCapabilities, $facilityCapabilities));
-
-        foreach ($capabilities as $capability) {
-            $wrappedCapability = $this->capabilitiesWrapper($capability);
-            array_push($capabilitiesResult, $wrappedCapability);
-        }
-
-        return $capabilitiesResult;
-    }
-
     private function groupNameWrapper($groupName)
     {
-        return $this->entitlementPrefix . 'group:' . implode(':', $this->encodeName($groupName)) .
-               '#' . $this->entitlementAuthority;
-    }
-
-    private function capabilitiesWrapper($capabilities)
-    {
-        return $this->entitlementPrefix . implode(':', $this->encodeName($capabilities)) .
-               '#' . $this->entitlementAuthority;
+        return $this->entitlementPrefix . 'group:' .
+            implode(':', EntitlementUtils::encodeEntitlement($groupName)) .
+            '#' . $this->entitlementAuthority;
     }
 
     /**
@@ -226,40 +171,6 @@ class PerunEntitlement extends ProcessingFilter
                 'No mapping found for group ' . $groupName . ' for SP ' . $request['SPMetadata']['entityid']
             );
             return $this->entitlementPrefix . 'group:' . $groupName;
-        }
-    }
-
-    private function encodeName($name)
-    {
-        $charsToSkip = [
-            '!' => '%21',
-            '$' => '%24',
-            '\'' => '%27',
-            '(' => '%28',
-            ')' => '%29',
-            '*' => '%2A',
-            ',' => '%2C',
-            ';' => '%3B',
-            '&' => '%26',
-            '=' => '%3D',
-            '@' => '%40',
-            ':' => '%3A',
-            '+' => '%2B'
-        ];
-
-        $name = array_map('rawurlencode', explode(':', $name));
-        $name = str_replace(array_values($charsToSkip), array_keys($charsToSkip), $name);
-
-        return $name;
-    }
-
-    private function getSpEntityId(&$request)
-    {
-        if (isset($request['SPMetadata']['entityid'])) {
-            return $request['SPMetadata']['entityid'];
-        } else {
-            throw new Exception('perun:PerunEntitlement: Cannot find entityID of remote SP. ' .
-                'hint: Do you have this filter in IdP context?');
         }
     }
 }
