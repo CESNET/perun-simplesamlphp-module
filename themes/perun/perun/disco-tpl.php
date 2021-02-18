@@ -40,10 +40,6 @@ const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
 
 const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
 
-const WARNING_TYPE_INFO = 'INFO';
-const WARNING_TYPE_WARNING = 'WARNING';
-const WARNING_TYPE_ERROR = 'ERROR';
-
 $warningIsOn = $this->data['warningIsOn'];
 $warningType = $this->data['warningType'];
 $warningTitle = $this->data['warningTitle'];
@@ -79,7 +75,7 @@ if ($config !== null) {
     }
 }
 
-if ($warningIsOn && $warningType === WARNING_TYPE_ERROR) {
+if ($warningIsOn && $warningType === Disco::WARNING_TYPE_ERROR) {
     $this->data['header'] = $this->t('{perun:disco:warning}');
 }
 
@@ -91,11 +87,12 @@ if (isset($this->data['AuthnContextClassRef'])) {
 if ($this->isAddInstitutionApp()) {
     // Translate title in header
     $this->data['header'] = $this->t('{perun:disco:add_institution}');
-    $this->includeAtTemplateBase('includes/header.php');
-} else {
-    $this->includeAtTemplateBase('includes/header.php');
+}
 
+
+    $this->includeAtTemplateBase('includes/header.php');
     if ($authContextClassRef !== null) {
+        # Check authnContextClassRef and select IdP directly if the correct value is set
         foreach ($authContextClassRef as $value) {
             if (substr($value, 0, strlen(URN_CESNET_PROXYIDP_IDPENTITYID))
                 === URN_CESNET_PROXYIDP_IDPENTITYID) {
@@ -109,19 +106,10 @@ if ($this->isAddInstitutionApp()) {
     }
 
     if ($warningIsOn) {
-        if ($warningType === WARNING_TYPE_INFO) {
-            echo '<div class="alert alert-info">';
-        } elseif ($warningType === WARNING_TYPE_WARNING) {
-            echo '<div class="alert alert-warning">';
-        } elseif ($warningType === WARNING_TYPE_ERROR) {
-            echo '<div class="alert alert-danger">';
-        }
-        echo '<h4> <strong>' . $warningTitle . '</strong> </h4>';
-        echo $warningText;
-        echo '</div>';
+        echo Disco::showWarning($warningType, $warningTitle, $warningText);
     }
 
-    if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
+    if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
         if (!empty($this->getPreferredIdp())) {
             echo '<p class="descriptionp" id="last-used-idp-desc">' . $this->t('{perun:disco:previous_selection}') . '</p>';
             echo '<div id="last-used-idp" class="metalist list-group">';
@@ -135,17 +123,17 @@ if ($this->isAddInstitutionApp()) {
             echo '<div id="entries" style="display: none">';
         }
 
-        echo Disco::showAllTaggedIdPs($this);
-
-        echo Disco::getOr();
-
         echo '<p class="descriptionp">';
         echo $this->t('{perun:disco:institutional_account}');
         echo '</p>';
     }
-}
 
-if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARNING_TYPE_WARNING) {
+
+
+
+
+
+if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
     echo '<div class="inlinesearch">';
     echo '	<form id="idpselectform" action="?" method="get">
 			<input class="inlinesearchf form-control input-lg" placeholder="' .
@@ -155,27 +143,50 @@ if (!$warningIsOn || $warningType === WARNING_TYPE_INFO || $warningType === WARN
 		</form>';
     echo '</div>';
 
-    echo '<div class="metalist list-group" id="list">';
+
+    echo '<div class="metalist list-group" id="list" style="display: none">';
     foreach ($this->getIdps() as $idpentry) {
         echo Disco::showEntry($this, $idpentry, false);
     }
     echo '</div>';
 
-    echo '<br>';
-    echo '<br>';
+    ?>
 
-    echo '<div class="no-idp-found alert alert-info">';
-    if ($this->isAddInstitutionApp()) {
-        echo $this->t('{perun:disco:find_institution_contact}') . ' ' .
-            '<a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
-            $addInstitutionEmail .
-            '</a>';
-    } else {
-        echo $this->t('{perun:disco:find_institution_extended}') . ' ' .
-            '<a class="btn btn-primary" href="' . $addInstitutionUrl . '">' .
-            $this->t('{perun:disco:add_institution}') .
-            '</a>';
-    }
+    <div id="warning-entries" class="alert alert-info">
+				  <h4>Too many (<span id="results-cnt">0</span>) entries satisfy your search. Try to specify your query a bit more.</h4>
+				  <br/>
+				  <div class="col">
+					<button class="btn btn-block btn-info"
+							style="padding: 5px;"
+							onClick="console.log('forceshow');
+									 forceShow=true;
+									 $('#query').trigger('keyup');
+									 showWarningTooMuchEntries(false);">
+                                Display results anyway
+                    </button>
+				   </div>
+				</div>
+    <div id="no-entries" class="no-idp-found alert alert-info">
+        <?php
+            if ($this->isAddInstitutionApp()) {
+                echo $this->t('{perun:disco:find_institution_contact}') . ' ' .
+                    '<a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
+                    $addInstitutionEmail .
+                    '</a>';
+            } else {
+                echo $this->t('{perun:disco:find_institution_extended}') . ' ' .
+                    '<a class="btn btn-primary" href="' . $addInstitutionUrl . '">' .
+                    $this->t('{perun:disco:add_institution}') .
+                    '</a>';
+            }
+        ?>
+    </div>
+    <?php
+    echo Disco::getOr();
+    echo Disco::showAllTaggedIdPs($this);
+
+    echo '<br>';
+    echo '<br>';
 
     if (!empty($this->getPreferredIdp())) {
         echo '</div>';

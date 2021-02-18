@@ -136,3 +136,16 @@ form#idpselectform input {
     max-height: 42px;
     margin-top: -1px;
 }
+
+#warning-entries {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+#no-entries {
+    padding: 10px;
+    margin-top: 10px;
+    display: none;
+}

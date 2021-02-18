@@ -27,6 +27,10 @@ class Disco extends PowerIdPDisco
     const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
     const PROPNAME_PREFIX = 'disco.removeAuthnContextClassRefPrefix';
 
+    const WARNING_TYPE_INFO = 'INFO';
+    const WARNING_TYPE_WARNING = 'WARNING';
+    const WARNING_TYPE_ERROR = 'ERROR';
+
     private $originalsp;
     private $whitelist;
     private $greylist;
@@ -506,6 +510,24 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
+    public static function showWarning($warningType, $warningTitle, $warningText)
+    {
+        $html = '';
+        if ($warningType === WARNING_TYPE_INFO) {
+            $html .= '<div class="alert alert-info">';
+        } elseif ($warningType === WARNING_TYPE_WARNING) {
+            $html .= '<div class="alert alert-warning">';
+        } elseif ($warningType === WARNING_TYPE_ERROR) {
+            $html .='<div class="alert alert-danger">';
+        }
+        $html .= '<h4> <strong>' . $warningTitle . '</strong> </h4>';
+        $html .= $warningText;
+        $html .= '</div>';
+
+        return $html;
+    }
+
+
     protected static function getCssClass($remainIdpsCount)
     {
         if ($remainIdpsCount === 1) {
@@ -558,4 +580,5 @@ class Disco extends PowerIdPDisco
 
         return $script;
     }
+
 }
