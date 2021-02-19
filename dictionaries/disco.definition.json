@@ -1,4 +1,16 @@
 {
+  "header": {
+    "en": "Choose how to log in",
+    "cs": ""
+  },
+  "disco_select_institution": {
+    "en": "You can log in using your institutional account or another account you have on the web.",
+    "cs": ""
+  },
+  "disco_select_institution2": {
+    "en": "You can log in using your institutional account or another account you have on the web.TESTEWET ",
+    "cs": ""
+  },
   "add_institution": {
     "en": "Add your institution",
     "cs": "Přidat vaši instituci"
@@ -8,8 +20,8 @@
     "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
   },
   "find_institution_extended": {
-    "en": "Can't find your institution? Select it in extended list and help us",
-    "cs": "Nemůžete nalézt vaši instituci? Vyberte ji z rozšířeného seznamu institucí a pomožte nám"
+    "en": "Can't find your institution? Select it in extended list and help us!",
+    "cs": "Nemůžete nalézt vaši instituci? Vyberte ji z rozšířeného seznamu institucí a pomožte nám!"
   },
   "institutional_account": {
     "en": "your institutional account",
@@ -34,5 +46,17 @@
   "warning": {
     "en": "Warning!",
     "cs": "Varování!"
+  },
+  "warning_entries_header_part1": {
+    "en": "Too many",
+    "cs": ""
+  },
+  "warning_entries_header_part2": {
+    "en": "entries satisfy your search. Try to specify your query a bit more.",
+    "cs": ""
+  },
+  "warning_entries_btn": {
+    "en": "Display results anyway",
+    "cs": ""
   }
 }

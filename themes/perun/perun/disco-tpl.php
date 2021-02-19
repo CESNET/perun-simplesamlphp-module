@@ -83,55 +83,53 @@ if (isset($this->data['AuthnContextClassRef'])) {
     $authContextClassRef = $this->data['AuthnContextClassRef'];
 }
 
+$this->data['header'] = $this->t('{perun:disco:header}');
+
 # Do not show social IdPs when using addInstitutionApp, show just header Add Institution
 if ($this->isAddInstitutionApp()) {
     // Translate title in header
     $this->data['header'] = $this->t('{perun:disco:add_institution}');
 }
 
-
-    $this->includeAtTemplateBase('includes/header.php');
-    if ($authContextClassRef !== null) {
-        # Check authnContextClassRef and select IdP directly if the correct value is set
-        foreach ($authContextClassRef as $value) {
-            if (substr($value, 0, strlen(URN_CESNET_PROXYIDP_IDPENTITYID))
-                === URN_CESNET_PROXYIDP_IDPENTITYID) {
-                $idpEntityId = substr($value, strlen(URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
-                Logger::info('Redirecting to ' . $idpEntityId);
-                $url = $this->getContinueUrl($idpEntityId);
-                HTTP::redirectTrustedURL($url);
-                exit;
-            }
+$this->includeAtTemplateBase('includes/header.php');
+if ($authContextClassRef !== null) {
+    # Check authnContextClassRef and select IdP directly if the correct value is set
+    foreach ($authContextClassRef as $value) {
+        if (substr($value, 0, strlen(URN_CESNET_PROXYIDP_IDPENTITYID))
+            === URN_CESNET_PROXYIDP_IDPENTITYID) {
+            $idpEntityId = substr($value, strlen(URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
+            Logger::info('Redirecting to ' . $idpEntityId);
+            $url = $this->getContinueUrl($idpEntityId);
+            HTTP::redirectTrustedURL($url);
+            exit;
         }
     }
+}
 
-    if ($warningIsOn) {
-        echo Disco::showWarning($warningType, $warningTitle, $warningText);
+if ($warningIsOn) {
+    echo Disco::showWarning($warningType, $warningTitle, $warningText);
+}
+
+if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
+
+    # Last selection is not null => Firstly show last selection
+    if (!empty($this->getPreferredIdp())) {
+        echo '<p class="descriptionp" id="last-used-idp-desc">' . $this->t('{perun:disco:previous_selection}') . '</p>';
+        echo '<div id="last-used-idp" class="metalist list-group">';
+        echo Disco::showEntry($this, $this->getPreferredIdp(), true);
+        echo '</div>';
+
+        echo Disco::getOr("last-used-idp-or");
+
+        echo '<a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
+             $this->t('{perun:disco:sign_with_other_institution}') . '</a>' ;
+        echo '<div id="entries" style="display: none">';
     }
 
-    if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
-        if (!empty($this->getPreferredIdp())) {
-            echo '<p class="descriptionp" id="last-used-idp-desc">' . $this->t('{perun:disco:previous_selection}') . '</p>';
-            echo '<div id="last-used-idp" class="metalist list-group">';
-            echo Disco::showEntry($this, $this->getPreferredIdp(), true);
-            echo '</div>';
-
-            echo Disco::getOr("last-used-idp-or");
-
-            echo '<a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
-                 $this->t('{perun:disco:sign_with_other_institution}') . '</a>' ;
-            echo '<div id="entries" style="display: none">';
-        }
-
-        echo '<p class="descriptionp">';
-        echo $this->t('{perun:disco:institutional_account}');
-        echo '</p>';
-    }
-
-
-
-
-
+    echo '<p class="descriptionp">';
+    echo $this->t('{perun:disco:disco_select_institution}');
+    echo '</p>';
+}
 
 if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
     echo '<div class="inlinesearch">';
@@ -150,23 +148,23 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
     }
     echo '</div>';
 
-    ?>
+    echo '<div id="warning-entries" class="alert alert-secondary">';
 
-    <div id="warning-entries" class="alert alert-info">
-				  <h4>Too many (<span id="results-cnt">0</span>) entries satisfy your search. Try to specify your query a bit more.</h4>
-				  <br/>
-				  <div class="col">
-					<button class="btn btn-block btn-info"
-							style="padding: 5px;"
-							onClick="console.log('forceshow');
-									 forceShow=true;
-									 $('#query').trigger('keyup');
-									 showWarningTooMuchEntries(false);">
-                                Display results anyway
-                    </button>
-				   </div>
-				</div>
-    <div id="no-entries" class="no-idp-found alert alert-info">
+    echo '    <h4>' . $this->t('{perun:disco:warning_entries_header_part1}') . ' (<span id="results-cnt">0</span>) ' . $this->t('{perun:disco:warning_entries_header_part2}') . '</h4>';
+    echo '    <br/>';
+    ?>
+        <div class="col">
+            <button class="btn btn-block btn-secondary"
+                    style="padding: 5px;"
+                    onClick="console.log('forceshow');
+                             forceShow=true;
+                             $('#query').trigger('keyup');
+                             showWarningTooMuchEntries(false);">
+                        <?php echo $this->t('{perun:disco:warning_entries_btn}');?>
+            </button>
+        </div>
+    </div>
+    <div id="no-entries" class="no-idp-found alert alert-secondary">
         <?php
             if ($this->isAddInstitutionApp()) {
                 echo $this->t('{perun:disco:find_institution_contact}') . ' ' .
@@ -174,10 +172,12 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
                     $addInstitutionEmail .
                     '</a>';
             } else {
-                echo $this->t('{perun:disco:find_institution_extended}') . ' ' .
-                    '<a class="btn btn-primary" href="' . $addInstitutionUrl . '">' .
+                echo '<h4>' . $this->t('{perun:disco:find_institution_extended}') . '</h4>';
+                echo '<div class="col">';
+                echo '<a class="btn btn-block btn-secondary" href="' . $addInstitutionUrl . '">' .
                     $this->t('{perun:disco:add_institution}') .
                     '</a>';
+                echo '</div>';
             }
         ?>
     </div>

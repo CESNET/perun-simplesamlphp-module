@@ -149,3 +149,17 @@ form#idpselectform input {
     margin-top: 10px;
     display: none;
 }
+
+/*Copy from bootstrap 4*/
+.alert-secondary {
+    color: #383d41;
+    background-color: #e2e3e5;
+    border-color: #d6d8db;
+}
+
+/*Copy from bootstrap 4*/
+.btn-secondary {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
