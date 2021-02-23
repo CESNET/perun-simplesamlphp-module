@@ -27,6 +27,8 @@ class Disco extends PowerIdPDisco
     const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
     const PROPNAME_PREFIX = 'disco.removeAuthnContextClassRefPrefix';
 
+    const DEFAULT_THEME = 'perun';
+
     const WARNING_TYPE_INFO = 'INFO';
     const WARNING_TYPE_WARNING = 'WARNING';
     const WARNING_TYPE_ERROR = 'ERROR';
@@ -400,11 +402,6 @@ class Disco extends PowerIdPDisco
     public static function showEntry($t, $metadata, $favourite = false)
     {
 
-        if (isset($metadata['tags']) &&
-            (in_array('social', $metadata['tags']) || in_array('preferred', $metadata['tags']))) {
-            return self::showTaggedEntry($t, $metadata);
-        }
-
         $extra = ($favourite ? ' favourite' : '');
         $html = '<a class="metaentry' . $extra . ' list-group-item" href="' .
                 $t->getContinueUrl($metadata['entityid']) . '">';
@@ -463,11 +460,19 @@ class Disco extends PowerIdPDisco
         return $or;
     }
 
-    public static function showAllTaggedIdPs($t)
+    public static function showAllTaggedIdPs($t, $module)
     {
         $html = '';
-        $html .= self::showTaggedIdPs($t, 'preferred');
-        $html .= self::showTaggedIdPs($t, 'social', true);
+        if (!empty($t->getIdPs('preferred'))) {
+            $html .= self::getOr();
+            $html .= self::getTranslate($t, $module, 'disco', 'preferred_idps_header');
+            $html .= self::showTaggedIdPs($t, 'preferred');
+        }
+        if (!empty($t->getIdPs('social'))) {
+            $html .= self::getOr();
+            $html .= self::getTranslate($t, $module, 'disco', 'social_idps_header');
+            $html .= self::showTaggedIdPs($t, 'social', true);
+        }
         return $html;
     }
 
@@ -531,7 +536,7 @@ class Disco extends PowerIdPDisco
     protected static function getCssClass($remainIdpsCount)
     {
         if ($remainIdpsCount === 1) {
-            return 'col-md-4 col-md-offset-4';
+            return 'col-md-12 ';
         }
         return 'col-md-6';
     }
@@ -579,6 +584,15 @@ class Disco extends PowerIdPDisco
         </script>';
 
         return $script;
+    }
+
+    public static function getTranslate($t, $module, $file, $key)
+    {
+        $translate = $t->t('{' . $module . ':' . $file . ':' . $key . '}');
+        if (str_starts_with(trim($translate), 'not translated')) {
+            $translate = $t->t('{' . self::DEFAULT_THEME . ':' . $file . ':' . $key . '}');
+        }
+        return $translate;
     }
 
 }

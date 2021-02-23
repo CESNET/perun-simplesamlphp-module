@@ -38,6 +38,8 @@ const CONFIG_FILE_NAME = 'module_perun.php';
 const ADD_INSTITUTION_URL = 'disco.addInstitution.URL';
 const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
 
+const TRANSLATE_MODULE = 'disco.translate_module';
+
 const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
 
 $warningIsOn = $this->data['warningIsOn'];
@@ -53,6 +55,9 @@ $config = null;
 $addInstitutionUrl = '';
 $addInstitutionEmail = '';
 
+$translate_module = 'ceitec';
+
+
 try {
     $config = Configuration::getConfig(CONFIG_FILE_NAME);
 } catch (\Exception $ex) {
@@ -65,14 +70,14 @@ if ($config !== null) {
     } catch (\Exception $ex) {
         Logger::warning('perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file');
     }
-}
 
-if ($config !== null) {
     try {
         $addInstitutionEmail = $config->getString(ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
         Logger::warning('perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file');
     }
+
+    $translate_module = $config->getString(TRANSLATE_MODULE, 'ceitec');
 }
 
 if ($warningIsOn && $warningType === Disco::WARNING_TYPE_ERROR) {
@@ -83,11 +88,11 @@ if (isset($this->data['AuthnContextClassRef'])) {
     $authContextClassRef = $this->data['AuthnContextClassRef'];
 }
 
-$this->data['header'] = $this->t('{perun:disco:header}');
+$this->data['header'] = Disco::getTranslate($this, $translate_module, 'disco', 'header');
+//$this->data['header'] = $this->t('{perun:disco:header}');
 
-# Do not show social IdPs when using addInstitutionApp, show just header Add Institution
 if ($this->isAddInstitutionApp()) {
-    // Translate title in header
+    // Change header for Add institution app
     $this->data['header'] = $this->t('{perun:disco:add_institution}');
 }
 
@@ -114,7 +119,7 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
 
     # Last selection is not null => Firstly show last selection
     if (!empty($this->getPreferredIdp())) {
-        echo '<p class="descriptionp" id="last-used-idp-desc">' . $this->t('{perun:disco:previous_selection}') . '</p>';
+        echo '<p class="discoDescription-left" id="last-used-idp-desc">' . $this->t('{perun:disco:previous_selection}') . '</p>';
         echo '<div id="last-used-idp" class="metalist list-group">';
         echo Disco::showEntry($this, $this->getPreferredIdp(), true);
         echo '</div>';
@@ -126,12 +131,13 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
         echo '<div id="entries" style="display: none">';
     }
 
-    echo '<p class="descriptionp">';
+    echo '<p class="discoDescription-left">';
     echo $this->t('{perun:disco:disco_select_institution}');
     echo '</p>';
 }
 
 if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
+//  Show Inline search
     echo '<div class="inlinesearch">';
     echo '	<form id="idpselectform" action="?" method="get">
 			<input class="inlinesearchf form-control input-lg" placeholder="' .
@@ -141,16 +147,17 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
 		</form>';
     echo '</div>';
 
-
+//   Show all entries
     echo '<div class="metalist list-group" id="list" style="display: none">';
-    foreach ($this->getIdps() as $idpentry) {
+    foreach ($this->getAllIdps() as $idpentry) {
         echo Disco::showEntry($this, $idpentry, false);
     }
     echo '</div>';
 
+//    Show warning about more
     echo '<div id="warning-entries" class="alert alert-secondary">';
-
-    echo '    <h4>' . $this->t('{perun:disco:warning_entries_header_part1}') . ' (<span id="results-cnt">0</span>) ' . $this->t('{perun:disco:warning_entries_header_part2}') . '</h4>';
+    echo '    <h4>' . $this->t('{perun:disco:warning_entries_header}', [ '<COUNT_HTML>' => '<span id="results-cnt">0</span>' ]) . '</h4>';
+//    echo '    <h4>' . $this->t('{perun:disco:warning_entries_header_part1}') . '(<span id="results-cnt">0</span>) ' . $this->t('{perun:disco:warning_entries_header_part2}') . '</h4>';
     echo '    <br/>';
     ?>
         <div class="col">
@@ -164,6 +171,8 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
             </button>
         </div>
     </div>
+
+<!--    Show warning abuut none entries -->
     <div id="no-entries" class="no-idp-found alert alert-secondary">
         <?php
             if ($this->isAddInstitutionApp()) {
@@ -182,8 +191,11 @@ if (!$warningIsOn && $warningType !== Disco::WARNING_TYPE_ERROR) {
         ?>
     </div>
     <?php
-    echo Disco::getOr();
-    echo Disco::showAllTaggedIdPs($this);
+
+//    Show tagged IdPs if not on addInstitutionApp
+    if (!$this->isAddInstitutionApp()) {
+        echo Disco::showAllTaggedIdPs($this, $translate_module);
+    }
 
     echo '<br>';
     echo '<br>';

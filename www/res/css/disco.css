@@ -79,6 +79,11 @@ form#idpselectform input {
     }
 }
 
+.discoDescription-left {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
 .descriptionp {
     text-align: center;
     margin-bottom: 20px;
@@ -162,4 +167,19 @@ form#idpselectform input {
     color: #fff;
     background-color: #6c757d;
     border-color: #6c757d;
+}
+
+.btn-secondary:hover {
+    color: #fff;
+    background-color: #a0a6ac;
+    border-color: #a0a6ac;
+}
+
+#wrap {
+    min-height: 70vh;
+    margin-top: 10em
+}
+
+#header img {
+    width: 250px;
 }

@@ -1,15 +1,11 @@
 {
   "header": {
     "en": "Choose how to log in",
-    "cs": ""
+    "cs": "Vyberte si způsob jak se přihlásit"
   },
   "disco_select_institution": {
     "en": "You can log in using your institutional account or another account you have on the web.",
-    "cs": ""
-  },
-  "disco_select_institution2": {
-    "en": "You can log in using your institutional account or another account you have on the web.TESTEWET ",
-    "cs": ""
+    "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
   },
   "add_institution": {
     "en": "Add your institution",
@@ -40,23 +36,33 @@
     "cs": "Přihlásit se pomocí "
   },
   "type_name_institution": {
-    "en": "Type the name of your institution",
+    "en": "Type the name of your institute or an online account",
     "cs": "Zadejte název instituce"
   },
   "warning": {
     "en": "Warning!",
     "cs": "Varování!"
   },
+  "warning_entries_header": {
+    "en": "Too many (<COUNT_HTML>) entries satisfy your search. Try to specify your query a bit more.",
+    "cs": "Příliš mnoho (<COUNT_HTML>) položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
+  },
   "warning_entries_header_part1": {
     "en": "Too many",
-    "cs": ""
+    "cs": "Příliš mnoho"
   },
   "warning_entries_header_part2": {
     "en": "entries satisfy your search. Try to specify your query a bit more.",
-    "cs": ""
+    "cs": "položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
   },
   "warning_entries_btn": {
     "en": "Display results anyway",
-    "cs": ""
+    "cs": "Zobrazit všechny výsledky"
+  },
+  "preferred_idps_header": {
+    "en": "Select one of preferred IdPs."
+  },
+  "social_idps_header" : {
+    "en": "Select one of social provider."
   }
 }
