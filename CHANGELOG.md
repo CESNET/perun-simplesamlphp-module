@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
 
+#### Added
+- Added extended PerunEntitlements
+
 ## [v4.1.1]
 #### Fixed
 - Fixed bad log message in PerunIdentity in mode USERONLY

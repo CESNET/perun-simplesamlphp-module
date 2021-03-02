@@ -139,6 +139,7 @@ class AdapterRpc extends Adapter
                     new Group(
                         $group['id'],
                         $group['voId'],
+                        $group['uuid'],
                         $group['name'],
                         $uniqueName,
                         $group['description']
@@ -194,6 +195,7 @@ class AdapterRpc extends Adapter
                     new Group(
                         $group['id'],
                         $group['voId'],
+                        $group['uuid'],
                         $group['name'],
                         $uniqueName,
                         $group['description']
@@ -219,6 +221,7 @@ class AdapterRpc extends Adapter
         return new Group(
             $group['id'],
             $group['voId'],
+            $group['uuid'],
             $group['name'],
             $uniqueName,
             $group['description']
@@ -360,6 +363,7 @@ class AdapterRpc extends Adapter
                 array_push($groups, new Group(
                     $usersGroupOnFacility['id'],
                     $usersGroupOnFacility['voId'],
+                    $usersGroupOnFacility['uuid'],
                     $usersGroupOnFacility['name'],
                     $uniqueName,
                     $usersGroupOnFacility['description']

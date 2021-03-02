@@ -10,6 +10,7 @@ class Group implements HasId
 {
     private $id;
     private $voId;
+    private $uuid;
     private $name;
     private $uniqueName;
     private $description;
@@ -22,10 +23,11 @@ class Group implements HasId
      * @param $uniqueName
      * @param $description
      */
-    public function __construct($id, $voId, $name, $uniqueName, $description)
+    public function __construct($id, $voId, $uuid, $name, $uniqueName, $description)
     {
         $this->id = $id;
         $this->voId = $voId;
+        $this->uuid = $uuid;
         $this->name = $name;
         $this->uniqueName = $uniqueName;
         $this->description = $description;
@@ -42,6 +44,14 @@ class Group implements HasId
     public function getVoId()
     {
         return $this->voId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUuid()
+    {
+        return $this->uuid;
     }
 
     /**

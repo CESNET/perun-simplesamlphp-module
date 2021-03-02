@@ -114,13 +114,14 @@ class AdapterLdap extends Adapter
             $group = $this->connector->searchForEntity(
                 $groupDn,
                 '(objectClass=perunGroup)',
-                ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'description']
+                ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
             );
             array_push(
                 $groups,
                 new Group(
                     $group['perunGroupId'][0],
                     $group['perunVoId'][0],
+                    $group['uuid'][0],
                     $group['cn'][0],
                     $group['perunUniqueGroupName'][0],
                     $group['description'][0] ?? ''
@@ -154,13 +155,14 @@ class AdapterLdap extends Adapter
                     $group = $this->connector->searchForEntity(
                         'perunGroupId=' . $groupId . ',perunVoId=' . $resource['perunVoId'][0] . ',' . $this->ldapBase,
                         '(objectClass=perunGroup)',
-                        ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'description']
+                        ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
                     );
                     array_push(
                         $groups,
                         new Group(
                             $group['perunGroupId'][0],
                             $group['perunVoId'][0],
+                            $group['uuid'][0],
                             $group['cn'],
                             $group['perunUniqueGroupName'][0],
                             $group['description'][0] ?? ''
@@ -180,7 +182,7 @@ class AdapterLdap extends Adapter
         $group = $this->connector->searchForEntity(
             'perunVoId=' . $voId . ',' . $this->ldapBase,
             '(&(objectClass=perunGroup)(perunUniqueGroupName=' . $name . '))',
-            ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'description']
+            ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
         );
         if ($group === null) {
             throw new Exception(
@@ -190,6 +192,7 @@ class AdapterLdap extends Adapter
         return new Group(
             $group['perunGroupId'][0],
             $group['perunVoId'][0],
+            $group['uuId'][0],
             $group['cn'][0],
             $group['perunUniqueGroupName'][0],
             $group['description'][0] ?? ''
@@ -404,7 +407,7 @@ class AdapterLdap extends Adapter
         $groups = $this->connector->searchForEntities(
             $this->ldapBase,
             '(&(uniqueMember=perunUserId=' . $userId . ', ou=People,' . $this->ldapBase . ')' . $resourcesString . ')',
-            ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'description']
+            ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
         );
 
         foreach ($groups as $group) {
@@ -413,6 +416,7 @@ class AdapterLdap extends Adapter
                 new Group(
                     $group['perunGroupId'][0],
                     $group['perunVoId'][0],
+                    $group['uuid'][0],
                     $group['cn'][0],
                     $group['perunUniqueGroupName'][0],
                     $group['description'][0] ?? ''
