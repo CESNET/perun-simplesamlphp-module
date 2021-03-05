@@ -4,22 +4,102 @@
  * Script for updating UES in separate thread
  *
  * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
+ * @author Dominik Baranek <baranek@ics.muni.cz>
  */
 
+use Jose\Component\Checker\ClaimCheckerManager;
+use Jose\Component\Checker;
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\KeyManagement\JWKFactory;
+use Jose\Component\Signature\Algorithm\RS512;
+use Jose\Component\Signature\JWSVerifier;
+use Jose\Component\Checker\HeaderCheckerManager;
+use Jose\Component\Checker\AlgorithmChecker;
+use Jose\Component\Signature\JWSTokenSupport;
+use Jose\Component\Signature\Serializer\CompactSerializer;
+use Jose\Component\Signature\Serializer\JWSSerializerManager;
+use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\DatabaseConnector;
+use SimpleSAML\Module\perun\ScriptsUtils;
 
 $adapter = Adapter::getInstance(Adapter::RPC);
+$token = file_get_contents('php://input');
 
-$entityBody = file_get_contents('php://input');
-$body = json_decode($entityBody, true);
+if (empty($token)) {
+    http_response_code(400);
+    exit('The entity body is empty');
+}
 
-$attributesFromIdP = $body['attributes'];
-$attrMap = $body['attrMap'];
-$attrsToConversion = $body['attrsToConversion'];
-$perunUserId = $body['perunUserId'];
+$attributesFromIdP = null;
+$attrMap = null;
+$attrsToConversion = null;
+$perunUserId = null;
+$id = null;
 
 const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def';
+const CONFIG_FILE_NAME = 'keys.php';
+
+try {
+    $config = Configuration::getConfig(CONFIG_FILE_NAME);
+    $keyPub = $config->getString('updateUes');
+
+    $algorithmManager = new AlgorithmManager([new RS512()]);
+    $jwsVerifier = new JWSVerifier($algorithmManager);
+    $jwk = JWKFactory::createFromKeyFile($keyPub);
+
+    $serializerManager = new JWSSerializerManager([new CompactSerializer()]);
+    $jws = $serializerManager->unserialize($token);
+
+    $headerCheckerManager = new HeaderCheckerManager([new AlgorithmChecker(['RS512'])], [new JWSTokenSupport()]);
+    $headerCheckerManager->check($jws, 0);
+
+    $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
+
+    if (!$isVerified) {
+        Logger::error('Perun.updateUes: The token signature is invalid!');
+        http_response_code(401);
+        exit;
+    }
+
+    $claimCheckerManager = new ClaimCheckerManager(
+        [
+            new Checker\IssuedAtChecker(),
+            new Checker\NotBeforeChecker(),
+            new Checker\ExpirationTimeChecker(),
+        ]
+    );
+
+    $claims = json_decode($jws->getPayload(), true);
+    $claimCheckerManager->check($claims);
+
+    $challenge = $claims['challenge'];
+
+    $attributesFromIdP = $claims['data']['attributes'];
+    $attrMap = $claims['data']['attrMap'];
+    $attrsToConversion = $claims['data']['attrsToConversion'];
+    $perunUserId = $claims['data']['perunUserId'];
+    $id = $claims['id'];
+
+    $databaseConnector = new DatabaseConnector();
+
+    $conn = $databaseConnector->getConnection();
+
+    $challengeDb = ScriptsUtils::readChallengeFromDb($conn, $id);
+    $checkAccessSucceeded = ScriptsUtils::checkAccess($conn, $challenge, $challengeDb);
+    $challengeSuccessfullyDeleted = ScriptsUtils::deleteChallengeFromDb($conn, $id);
+
+    $conn->close();
+
+    if (!$checkAccessSucceeded || !$challengeSuccessfullyDeleted) {
+        exit;
+    }
+} catch (Checker\InvalidClaimException | Checker\MissingMandatoryClaimException $ex) {
+    Logger::error('Perun.updateUes: An error occurred when the token was verifying.');
+    http_response_code(400);
+    exit;
+}
 
 try {
     $userExtSource = $adapter->getUserExtSource(

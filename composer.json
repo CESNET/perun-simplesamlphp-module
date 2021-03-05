@@ -29,6 +29,11 @@
         "cesnet/simplesamlphp-module-chartjs": "~2.8.0",
         "symfony/var-exporter": "^5.0",
         "ext-curl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-openssl": "*",
+        "web-token/jwt-key-mgmt": "^2.2",
+        "web-token/jwt-signature": "^2.2",
+        "web-token/jwt-signature-algorithm-rsa": "^2.2",
+        "web-token/jwt-checker": "^2.2"
     }
 }
