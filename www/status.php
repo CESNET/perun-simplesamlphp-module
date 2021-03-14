@@ -1,36 +1,38 @@
 <?php
 
-use SimpleSAML\Module\perun\StatusConnector;
-
-const OK = 'OK';
-const WARNING = 'WARNING';
-const CRITICAL = 'CRITICAL';
-const UNKNOWN = 'UNKNOWN';
 
 const CONFIG_FILE_NAME = 'module_perun.php';
+const STATUS_NAGIOS = 'status_nagios';
 const SHOWN_SERVICES = 'status.shown_services';
 
+const HOST = 'host';
+const PROBE_IDENTIFIER = 'probe_identifier';
+const STATUS = 'status';
+
 $services = [];
+$shownServicesList = [];
 
 $config = SimpleSAML_Configuration::getInstance();
 $perunConfig = SimpleSAML_Configuration::getConfig(CONFIG_FILE_NAME);
 
-$shownServicesList = $perunConfig->getArray(SHOWN_SERVICES, []);
+$params = $perunConfig->getArray(STATUS_NAGIOS, []);
+
+if (isset($params[SHOWN_SERVICES]) && is_array($params[SHOWN_SERVICES])) {
+    $shownServicesList = $params[SHOWN_SERVICES];
+}
 
 $statusConnector = sspmod_perun_StatusConnector::getInstance();
 $services = $statusConnector->getStatus();
 
 $shownServices = [];
 
-
 if (empty($shownServicesList)) {
     $shownServices = $services;
 } else {
-    foreach ($services as $service) {
-        $serviceName = $service['name'];
-        if (in_array($serviceName, array_keys($shownServicesList))) {
-            $service['name'] = $shownServicesList[$serviceName]['name'];
-            $service['description'] = $shownServicesList[$serviceName]['description'];
+    foreach ($shownServicesList as $service) {
+        if (isset($services[$service[HOST]][$service[PROBE_IDENTIFIER]])) {
+            $host = $services[$service[HOST]];
+            $service[STATUS] = $host[$service[PROBE_IDENTIFIER]];
             array_push($shownServices, $service);
         }
     }

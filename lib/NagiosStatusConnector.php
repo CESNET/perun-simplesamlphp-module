@@ -2,7 +2,10 @@
 
 namespace SimpleSAML\Module\perun;
 
-use SimpleSAML\Logger;
+use phpseclib3\Crypt\RSA;
+use phpseclib3\Net\SSH2;
+use SimpleSAML\Error\Exception;
+
 
 /**
  * Class sspmod_perun_NagiosStatusConnector
@@ -11,17 +14,18 @@ use SimpleSAML\Logger;
  */
 class NagiosStatusConnector extends StatusConnector
 {
-    const NAGIOS_URL = 'status.nagios.url';
-    const NAGIOS_CERT_PATH = 'status.nagios.certificate_path';
-    const NAGIOS_CERT_PASSWORD = 'status.nagios.certificate_password';
-    const NAGIOS_CA_PATH = 'status.nagios.ca_path';
-    const NAGIOS_PEER_VERIFY = 'status.nagios.peer_verification';
+    const STATUS_NAGIOS = 'status_nagios';
+    const HOST = 'host';
+    const KEY_PATH = 'key_path';
+    const LOGIN = 'login';
+    const COMMAND = 'command';
 
-    private $url;
-    private $certPath;
-    private $certPassword;
-    private $caPath;
-    private $peerVerification;
+    private $params;
+
+    private $host;
+    private $keyPath;
+    private $login;
+    private $command;
 
     /**
      * NagiosStatusConnector constructor.
@@ -30,55 +34,43 @@ class NagiosStatusConnector extends StatusConnector
     {
         parent::__construct();
 
-        $this->url = $this->configuration->getString(self::NAGIOS_URL, '');
-        $this->certPath = $this->configuration->getString(self::NAGIOS_CERT_PATH, '');
-        $this->certPassword = $this->configuration->getString(self::NAGIOS_CERT_PASSWORD, '');
-        $this->caPath = $this->configuration->getString(self::NAGIOS_CA_PATH, '');
-        $this->peerVerification = $this->configuration->getBoolean(self::NAGIOS_PEER_VERIFY, false);
+        $this->params = $this->configuration->getArray(self::STATUS_NAGIOS, []);
 
-        if (empty($this->url)) {
-            throw new \Exception('Required option \'' . self::NAGIOS_URL . '\' is empty!');
-        } elseif (empty($this->certPath)) {
-            throw new \Exception('Required option \'' . self::NAGIOS_CERT_PATH . '\' is empty!');
-        } elseif (empty($this->caPath)) {
-            throw new \Exception('Required option \'' . self::NAGIOS_CA_PATH . '\' is empty!');
+        if (empty($this->params[self::HOST])) {
+            throw new Exception('Required option \'' . self::HOST . '\' is empty!');
+        } elseif (empty($this->params[self::KEY_PATH])) {
+            throw new Exception('Required option \'' . self::KEY_PATH . '\' is empty!');
+        } elseif (empty($this->params[self::LOGIN])) {
+            throw new Exception('Required option \'' . self::LOGIN . '\' is empty!');
+        } elseif (empty($this->params[self::COMMAND])) {
+            throw new Exception('Required option \'' . self::COMMAND . '\' is empty!');
         }
+
+        $this->host = $this->params[self::HOST];
+        $this->keyPath = $this->params[self::KEY_PATH];
+        $this->login = $this->params[self::LOGIN];
+        $this->command = $this->params[self::COMMAND];
     }
 
 
     public function getStatus()
     {
         $result = [];
-        $serviceStatuses = [];
 
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $this->url);
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, $this->peerVerification);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSLCERT, $this->certPath);
-        curl_setopt($ch, CURLOPT_CAPATH, $this->caPath);
-        curl_setopt($ch, CURLOPT_SSLKEYPASSWD, $this->certPassword);
+        $key = RSA::load(file_get_contents($this->keyPath));
+        $ssh = new SSH2($this->host);
 
-        $response = curl_exec($ch);
-
-        if ($response === false) {
-            Logger::error(curl_error($ch));
+        if (!$ssh->login($this->login, $key)) {
+            throw new Exception('Error durigng ssh connection to \'' . $this->login . '@' . $this->host . '\' !');
         }
 
-        curl_close($ch);
+        $output = $ssh->exec($this->command);
+        $lines = explode("\n", $output);
+        array_pop($lines);
 
-        $jsonResponse = json_decode($response, true);
-
-        if (isset($jsonResponse['status']['service_status'])) {
-            $serviceStatuses = $jsonResponse['status']['service_status'];
-        }
-
-        foreach ($serviceStatuses as $serviceStatus) {
-            $status = [];
-            $status['name'] = $serviceStatus['service_display_name'];
-            $status['status'] = $serviceStatus['status'];
-            array_push($result, $status);
+        foreach ($lines as $line) {
+            $lineParts = explode(";", $line);
+            $result[$lineParts[0]][$lineParts[1]] = $lineParts[2];
         }
 
         return $result;
