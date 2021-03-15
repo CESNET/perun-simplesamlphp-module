@@ -8,6 +8,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
+use SimpleSAML\Module;
 
 /**
  * This class implements a IdP discovery service.
@@ -32,6 +33,10 @@ class Disco extends PowerIdPDisco
     const WARNING_TYPE_INFO = 'INFO';
     const WARNING_TYPE_WARNING = 'WARNING';
     const WARNING_TYPE_ERROR = 'ERROR';
+    const C_HINT_TRANSLATION_KEY = 'hintTranslationKey';
+    const C_HINT_TEXT_ON_KEY = 'hintTextOn';
+    const C_TAGS = 'tags';
+    const C_ENTITY_IDS = 'entityIds';
 
     private $originalsp;
     private $whitelist;
@@ -74,6 +79,25 @@ class Disco extends PowerIdPDisco
         }
     }
 
+    protected static function boxedDesignScript(): string
+    {
+        $script = '<script>' . PHP_EOL;
+        $script .= '   $("#wrap").css("box-shadow", "0 1rem 3rem 0.5rem rgba(0, 0, 0, .15)");' . PHP_EOL;
+        $script .= '</script>';
+        return $script;
+    }
+
+    public static function getScripts(bool $boxed)
+    {
+        $html= '<script type="text/javascript" src="' .
+            Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
+
+        if ($boxed) {
+            $html .= Disco::boxedDesignScript() . PHP_EOL;
+        }
+        return $html;
+    }
+
     /**
      * Handles a request to this discovery service. It is enry point of Discovery service.
      *
@@ -81,7 +105,7 @@ class Disco extends PowerIdPDisco
      */
     public function handleRequest()
     {
-        // test if user has selected an idp or idp can be deremine automatically somehow.
+        // test if user has selected an idp or idp can be determined automatically somehow.
         $this->start();
 
         // no choice possible. Show discovery service page
@@ -321,19 +345,13 @@ class Disco extends PowerIdPDisco
      * @param $idpEntityId
      * @return string url where user should be redirected when he choose idp
      */
-    public static function buildContinueUrl(
-        $entityID,
-        $return,
-        $returnIDParam,
-        $idpEntityId
-    ) {
-        $url = '?' .
+    public static function buildContinueUrl($entityID, $return, $returnIDParam, $idpEntityId): string
+    {
+        return '?' .
             'entityID=' . urlencode($entityID) . '&' .
             'return=' . urlencode($return) . '&' .
             'returnIDParam=' . urlencode($returnIDParam) . '&' .
             'idpentityid=' . urlencode($idpEntityId);
-
-        return $url;
     }
 
     /**
@@ -342,17 +360,12 @@ class Disco extends PowerIdPDisco
      * @param $returnIDParam
      * @return string url where user should be redirected when he choose idp
      */
-    public static function buildContinueUrlWithoutIdPEntityId(
-        $entityID,
-        $return,
-        $returnIDParam
-    ) {
-        $url = '?' .
+    public static function buildContinueUrlWithoutIdPEntityId($entityID, $return, $returnIDParam): string
+    {
+        return '?' .
             'entityID=' . urlencode($entityID) . '&' .
             'return=' . urlencode($return) . '&' .
             'returnIDParam=' . urlencode($returnIDParam);
-
-        return $url;
     }
 
     /**
@@ -380,34 +393,18 @@ class Disco extends PowerIdPDisco
         }
     }
 
-    public static function buildEntry(DiscoTemplate $t, $idp, $favourite = false)
-    {
-
-        $extra = ($favourite ? 'favourite' : '');
-        $html = '<a class="metaentry ' . $extra . ' list-group-item" ' .
-                ' href="' . $t->getContinueUrl($idp['entityid']) . '">';
-
-        $html .= '<strong>' . htmlspecialchars($t->getTranslatedEntityName($idp)) . '</strong>';
-        $html .= '</a>';
-
-        return $html;
-    }
-
     /**
      * @param DiscoTemplate $t
      * @param array $metadata
      * @param bool $favourite
      * @return string html
      */
-    public static function showEntry($t, $metadata, $favourite = false)
+    public static function showEntry(DiscoTemplate $t, $metadata, $favourite = false): string
     {
-
         $extra = ($favourite ? ' favourite' : '');
-        $html = '<a class="metaentry' . $extra . ' list-group-item" href="' .
-                $t->getContinueUrl($metadata['entityid']) . '">';
-
+        $href = $t->getContinueUrl($metadata['entityid']);
+        $html = '<a class="metaentry' . $extra . ' list-group-item" href="' . $href. '">';
         $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
-
         $html .= '</a>';
 
         return $html;
@@ -420,109 +417,105 @@ class Disco extends PowerIdPDisco
      *
      * @return string html
      */
-    public static function showTaggedEntry($t, $metadata, $showSignInWith = false)
+    public static function showTaggedEntry(DiscoTemplate $t, $metadata, $showSignInWith = false): string
     {
-
+        if (!array_key_exists('tags', $metadata)) {
+            return Disco::showEntry($t, $metadata);
+        }
         $bck = 'white';
         if (!empty($metadata['color'])) {
             $bck = $metadata['color'];
         }
 
-        $html = '<a class="metaentry btn btn-block tagged" href="' . $t->getContinueUrl($metadata['entityid']) .
-                '" style="background: ' . $bck . '">';
-
-        $html .= '<img src="' . $metadata['icon'] . '">';
-
+        $href = $t->getContinueUrl($metadata['entityid']);
+        $text = '';
         if (isset($metadata['fullDisplayName'])) {
-            $html .= '<strong>' . $metadata['fullDisplayName'] . '</strong>';
+            $text = $metadata['fullDisplayName'];
         } elseif ($showSignInWith) {
-            $html .= '<strong>' . $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata) .
-                     '</strong>';
+            $text = $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata);
         } else {
-            $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
+            $text .= $t->getTranslatedEntityName($metadata);
         }
-
-        $html .= '</a>';
+        $html = '<a class="metaentry btn btn-block tagged" href="' . $href . '" style="background: ' . $bck . '">';
+        $html .= '<img src="' . $metadata['icon'] . '">' . PHP_EOL;
+        $html .= '<strong>' . $text . '</strong></a>';
 
         return $html;
     }
 
-    public static function getOr($id = NULL)
+    public static function getOr($id = NULL): string
     {
         $or = '';
         if (!is_null($id)) {
-            $or .= '<div class="hrline" id="' . $id . '">';
+            $or .= '<div class="hrline" id="' . $id . '">'  . PHP_EOL;
         } else {
-            $or .= '<div class="hrline">';
+            $or .= '<div class=" hrline">'  . PHP_EOL;
         }
-        $or .= '	<span>or</span>';
+        $or .= '    <span>or</span>' . PHP_EOL;
         $or .= '</div>';
         return $or;
     }
 
-    public static function showAllTaggedIdPs($t, $module)
+    //TODO: add some filtering options from config
+    //TODO: extend not only to tagged but named by entity ID
+    public static function showTaggedIdPs(DiscoTemplate $t, $blockConfig): string
     {
         $html = '';
-        if (!empty($t->getIdPs('preferred'))) {
-            $html .= self::getOr();
-            $html .= self::getTranslate($t, $module, 'disco', 'preferred_idps_header');
-            $html .= self::showTaggedIdPs($t, 'preferred');
+        $idps = [];
+        $tags = $blockConfig[self::C_TAGS];
+        foreach ($tags as $tag) {
+            $idps = array_merge($idps, $t->getIdPs($tag));
         }
-        if (!empty($t->getIdPs('social'))) {
-            $html .= self::getOr();
-            $html .= self::getTranslate($t, $module, 'disco', 'social_idps_header');
-            $html .= self::showTaggedIdPs($t, 'social', true);
+        $entityIds = $blockConfig[self::C_ENTITY_IDS];
+        $allIdps = $t->getAllIdps();
+        foreach ($entityIds as $entityId) {
+            array_push($idps, $allIdps[$entityId]);
         }
-        return $html;
-    }
-
-
-    public static function showTaggedIdPs($t, $tag, $showSignInWith = false)
-    {
-        $html = '';
-        $idps = $t->getIdPs($tag);
         $idpCount = count($idps);
         $counter = 0;
-
+        $textOn = $blockConfig[self::C_HINT_TEXT_ON_KEY];
+        $hintTranslateKey = $blockConfig[self::C_HINT_TRANSLATION_KEY];
         $fullRowCount = floor($idpCount / 3);
+        if ($textOn) {
+            $html .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') . '</p>' . PHP_EOL;
+        }
+        $html .= '<div class="row">' . PHP_EOL;
+
         for ($i = 0; $i < $fullRowCount; $i++) {
-            $html .= '<div class="row">';
             for ($j = 0; $j < 3; $j++) {
-                $html .= '<div class="col-md-4">';
-                $html .= '<div class="metalist list-group">';
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
-                $html .= '</div>';
-                $html .= '</div>';
+                $html .= '    <div class="col-md-4">' . PHP_EOL;
+                $html .= '        <div class="metalist list-group">' . PHP_EOL;
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+                $html .= '        </div>' . PHP_EOL;
+                $html .= '    </div>' . PHP_EOL;
                 $counter++;
             }
-            $html .= '</div>';
         }
 
-        $remainIdpsCount = ($idpCount - ($fullRowCount * 3)) % 3;
-        if ($remainIdpsCount !== 0) {
-            $html .= '<div class="row">';
-            for ($i = 0; $i < $remainIdpsCount; $i++) {
-                $html .= '<div class="' . self::getCssClass($remainIdpsCount) . '">';
-                $html .= '<div class="metalist list-group">';
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $showSignInWith);
-                $html .= '</div>';
-                $html .= '</div>';
+        $remainingIdpsCnt = ($idpCount - ($fullRowCount * 3)) % 3;
+        if ($remainingIdpsCnt !== 0) {
+            for ($i = 0; $i < $remainingIdpsCnt; $i++) {
+                $html .= '    <div class="' . self::getCssClass($remainingIdpsCnt) . '">' . PHP_EOL;
+                $html .= '        <div class="metalist list-group">' . PHP_EOL;
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+                $html .= '        </div>';
+                $html .= '    </div>' . PHP_EOL;;
                 $counter++;
             }
-            $html .= '</div>';
         }
+        $html .= '</div>' . PHP_EOL;
 
         return $html;
     }
 
-    public static function showWarning($warningType, $warningTitle, $warningText)
+    public static function showWarning($warningType, $warningTitle, $warningText): string
     {
         $html = '';
-        if ($warningType === WARNING_TYPE_INFO) {
+        if ($warningType === Disco::WARNING_TYPE_INFO) {
             $html .= '<div class="alert alert-info">';
-        } elseif ($warningType === WARNING_TYPE_WARNING) {
+        } elseif ($warningType === Disco::WARNING_TYPE_WARNING) {
             $html .= '<div class="alert alert-warning">';
-        } elseif ($warningType === WARNING_TYPE_ERROR) {
+        } elseif ($warningType === Disco::WARNING_TYPE_ERROR) {
             $html .='<div class="alert alert-danger">';
         }
         $html .= '<h4> <strong>' . $warningTitle . '</strong> </h4>';
@@ -532,58 +525,63 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-
-    protected static function getCssClass($remainIdpsCount)
+    public static function showInlineSearch(DiscoTemplate $t, $blockConfig, $addInstitutionEmail,
+                                            $addInstitutionUrl): string
+    //TODO: add some filtering options from config
     {
-        if ($remainIdpsCount === 1) {
-            return 'col-md-12 ';
+        $result = '';
+        $allIdps = $t->getAllIdps();
+        $isAddInstitutionApp = $t->isAddInstitutionApp();
+        $textOn = $blockConfig[self::C_HINT_TEXT_ON_KEY];
+        $hintTranslateKey = $blockConfig[self::C_HINT_TRANSLATION_KEY];
+        if ($textOn) {
+            $result .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') .'</p>' . PHP_EOL;
+        }
+        $result .= '<div class="inlinesearch">' . PHP_EOL;
+        $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
+        $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value="" name="query" id="query"
+                               autofocus oninput="$(\'#list\').show();" placeholder="'
+            . $t->t('{perun:disco:type_name_institution}') . '"/>' . PHP_EOL;
+        $result .= '    </form>';
+        # ENTRIES
+        $result .= '    <div class="metalist list-group" id="list" style="display: none">' . PHP_EOL;
+        foreach ($allIdps as $idpentry) {
+            $result .= Disco::showEntry($t, $idpentry) . PHP_EOL;
+        }
+        $result .= '    </div>' . PHP_EOL;
+        # TOO MUCH ENTRIES BLOCK
+        $result .= '    <div id="warning-entries" class="alert alert-info entries-warning-block">' . PHP_EOL;
+        $result .= '        ' . $t->t('{perun:disco:warning_entries_header}',
+                [ '<COUNT_HTML>' => '<span id="results-cnt">0</span>' ]) . PHP_EOL;
+        $result .= '        <div class="col">' . PHP_EOL;
+        $result .= '            <button class="btn btn-block btn-info" id="warning-entries-btn-force-show">';
+        $result .= ' ' . $t->t('{perun:disco:warning_entries_btn}') . '</button>' . PHP_EOL;
+        $result .= '        </div>' . PHP_EOL;
+        $result .= '    </div>' . PHP_EOL;
+        # NO ENTRIES BLOCK
+        $result .= '    <div id="no-entries" class="no-idp-found alert alert-info entries-warning-block">' . PHP_EOL;
+        if ($isAddInstitutionApp) {
+            $result .= '        ' . $t->t('{perun:disco:find_institution_contact}') . ' <a href="mailto:'
+                . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
+                $addInstitutionEmail . '</a>' . PHP_EOL;
+        } else {
+            $result .= '       ' . $t->t('{perun:disco:find_institution_no_entries}') . '<br/>' . PHP_EOL;
+            $result .= '       ' . $t->t('{perun:disco:find_institution_add_text}') .
+                ' <a class="btn btn-info" href="' . $addInstitutionUrl . '">' .
+                $t->t('{perun:disco:add_institution_btn}') . '</a>.' . PHP_EOL;
+        }
+        $result .= '    </div>' . PHP_EOL;
+        $result .= '</div>';
+
+        return $result;
+    }
+
+    protected static function getCssClass($remainingIdpsCnt): string
+    {
+        if ($remainingIdpsCnt === 1) {
+            return 'col-md-12';
         }
         return 'col-md-6';
-    }
-
-    public static function showEntriesScript()
-    {
-        $script = '<script type="text/javascript">
-         $(document).ready(function() {
-             $("#showEntries").click(function() {
-                 $("#last-used-idp").hide();
-                 $("#last-used-idp-desc").hide();
-                 $("#last-used-idp-or").hide();
-                 $("#entries").show();
-                 $("#showEntries").hide();
-             });
-         });
-        </script>';
-        return $script;
-    }
-
-    public static function searchScript()
-    {
-
-        $script = '<script type="text/javascript">
-
-        $(document).ready(function() { 
-            $("#query").liveUpdate("#list");
-        });
-        
-        </script>';
-
-        return $script;
-    }
-
-    public static function setFocus()
-    {
-        $script = '<script type="text/javascript">
-
-        $(document).ready(function() {
-            if ($("#last-used-idp")) {
-                $("#last-used-idp .metaentry").focus();
-            }
-        });
-        
-        </script>';
-
-        return $script;
     }
 
     public static function getTranslate($t, $module, $file, $key)

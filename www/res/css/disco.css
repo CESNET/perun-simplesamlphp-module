@@ -176,10 +176,109 @@ form#idpselectform input {
 }
 
 #wrap {
-    min-height: 70vh;
     margin-top: 10em
 }
 
 #header img {
     width: 250px;
+}
+
+
+html {
+    position:relative;
+    min-height: 100%;
+}
+
+/*Normalize html and body elements,this style is just good to have*/
+html, body {
+    margin:0;
+    padding:0;
+}
+
+.pageContentWrapper {
+    margin-bottom:100px;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height:100px;
+}
+
+@media handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    #header, #languagebar, #footer, .erroricon, .loginicon, .logintext,
+    #regular_remember_username, #regular_remember_me {
+        display: block;
+    }
+}
+
+.hrline {
+    margin-top: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+#wrap {
+    max-width: 40%;
+    padding: 3% 1% 1% 1%;
+    margin-top: 3%;
+
+}
+
+#header img {
+    max-width: 80%;
+}
+
+.login-option-category {
+    margin: 1.5rem 0;
+}
+
+.login-option-category-hint {
+    text-align: center;
+    color: #555;
+}
+
+.login-option-btn {
+    text-align: center !important;
+}
+
+.login-option-btn-icon-img {
+    margin-right: 2px;
+    float: left;
+}
+.add-institution-link {
+    padding: 2px 5px;
+}
+.no-entries-warning-block {
+    padding: 10px; margin-top: 10px; margin-bottom: 10px; display: none;
+}
+#list {
+    display: none;
+}
+#no-entries-btn-force-show {
+    padding: 5px;
+}
+.entries-warning-block {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+#content > .login-option-category:first-of-type {
+    margin-top: 0;
+}
+
+@media handheld, only screen and (max-width: 780px), only screen and (max-device-width: 780px) {
+    #wrap {
+        max-width: 80%;
+        padding-top: 3rem;
+    }
+}
+
+@media handheld, only screen and (max-width: 640px), only screen and (max-device-width: 640px) {
+    #wrap {
+        max-width: 100%;
+        margin-top: 0;
+        padding-top: 4rem;
+    }
 }

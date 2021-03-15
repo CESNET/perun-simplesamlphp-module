@@ -15,7 +15,7 @@ $this->includeAtTemplateBase('includes/header.php');
 if (!empty($this->getPreferredIdp())) {
     echo '<h4>' . $this->t('{perun:perun:disco-tpl_previous-selection}') . '</h4>' .
         '<div class="metalist list-group">' .
-        Disco::buildEntry($this, $this->getPreferredIdp(), true) .
+        Disco::showEntry($this, $this->getPreferredIdp(), true) .
         '</div>' .
         '<p style="text-align: center"> - ' . $this->t('{perun:perun:disco-tpl_or}') . ' - </p>';
 }
@@ -26,7 +26,7 @@ foreach ($this->getTaggedIdps() as $tag => $idplist) {
     echo $tag;
     echo '<div class="metalist list-group" id="list">';
     foreach ($idplist as $idpentry) {
-        echo buildEntry($this, $idpentry);
+        echo Disco::showEntry($this, $idpentry);
     }
     echo '</div>';
 }

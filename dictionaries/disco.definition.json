@@ -11,6 +11,10 @@
     "en": "Add your institution",
     "cs": "Přidat vaši instituci"
   },
+  "add_institution_btn": {
+    "en": "by clicking here",
+    "cs": "kliknutím zde"
+  },
   "find_institution_contact": {
     "en": "Still can't find your institution? Contact us at",
     "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
@@ -28,7 +32,7 @@
     "cs": "Přihlásit se účtem jiné instituce"
   },
   "previous_selection": {
-      "en": "your previous selection",
+      "en": "use your previous selection",
       "cs": "vaše předchozí volba"
   },
   "sign_in_with": {
@@ -47,14 +51,6 @@
     "en": "Too many (<COUNT_HTML>) entries satisfy your search. Try to specify your query a bit more.",
     "cs": "Příliš mnoho (<COUNT_HTML>) položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
   },
-  "warning_entries_header_part1": {
-    "en": "Too many",
-    "cs": "Příliš mnoho"
-  },
-  "warning_entries_header_part2": {
-    "en": "entries satisfy your search. Try to specify your query a bit more.",
-    "cs": "položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
-  },
   "warning_entries_btn": {
     "en": "Display results anyway",
     "cs": "Zobrazit všechny výsledky"
@@ -63,6 +59,14 @@
     "en": "Select one of preferred IdPs."
   },
   "social_idps_header" : {
-    "en": "Select one of social provider."
+    "en": "Select one of social provider.",
+  },
+  "find_institution_no_entries": {
+    "en": "No results available for the given search.",
+    "cs": "Nebyly nalezeny žádne odpovídající záznamy."
+  },
+  "find_institution_add_text": {
+    "en": "Unable to find your institution? Try to add it",
+    "cs": "Nemúžete nalézt vaši organizaci? Zkuste ji přidat"
   }
 }
