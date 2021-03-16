@@ -72,7 +72,7 @@ $(document).ready(function() {
     $("#showEntriesFromDropdown").click(function() {
         $("#dropdown-entries").toggle();
     });
-    if ($("#last-used-idp")) {
+    if ($("#last-used-idp-wrap").length > 0) {
         $('#entries').hide();
         $("#last-used-idp .metaentry").focus();
     }
