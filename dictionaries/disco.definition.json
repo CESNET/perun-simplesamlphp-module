@@ -1,27 +1,7 @@
 {
   "header": {
     "en": "Choose how to log in",
-    "cs": "Vyberte si způsob jak se přihlásit"
-  },
-  "disco_select_institution": {
-    "en": "You can log in using your institutional account or another account you have on the web.",
-    "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
-  },
-  "add_institution": {
-    "en": "Add your institution",
-    "cs": "Přidat vaši instituci"
-  },
-  "add_institution_btn": {
-    "en": "by clicking here",
-    "cs": "kliknutím zde"
-  },
-  "find_institution_contact": {
-    "en": "Still can't find your institution? Contact us at",
-    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
-  },
-  "find_institution_extended": {
-    "en": "Can't find your institution? Select it in extended list and help us!",
-    "cs": "Nemůžete nalézt vaši instituci? Vyberte ji z rozšířeného seznamu institucí a pomožte nám!"
+    "cs": "Vyberte čím se chcete přihlásit"
   },
   "institutional_account": {
     "en": "your institutional account",
@@ -39,34 +19,72 @@
     "en": "Sign in with ",
     "cs": "Přihlásit se pomocí "
   },
-  "type_name_institution": {
-    "en": "Type the name of your institute or an online account",
-    "cs": "Zadejte název instituce"
-  },
   "warning": {
     "en": "Warning!",
     "cs": "Varování!"
   },
-  "warning_entries_header": {
-    "en": "Too many (<COUNT_HTML>) entries satisfy your search. Try to specify your query a bit more.",
+  "preferred_idps_hint": {
+    "en": "Use one of the preferred options",
+    "cs": "Použijte některou z preferovaných možností"
+  },
+  "social_idps_hint" : {
+    "en": "Use one of the social identity providers",
+    "cs": "Použijte některého ze sociálných poskytovatelů identit "
+  },
+
+  "institution_search_hint": {
+    "en": "You can log in using your institutional account or another account you have on the web.",
+    "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
+  },
+
+  "institution_search_input_placeholder": {
+    "en": "Type the name of your institute",
+    "cs": "Zadejte název instituce"
+  },
+  "institution_search_display_too_much_entries_header": {
+    "en": "Too many (<COUNT_HTML>) entries match the given criteria. Try to specify your query a bit more.",
     "cs": "Příliš mnoho (<COUNT_HTML>) položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
   },
-  "warning_entries_btn": {
+  "institution_search_display_too_much_entries_btn": {
     "en": "Display results anyway",
     "cs": "Zobrazit všechny výsledky"
   },
-  "preferred_idps_header": {
-    "en": "Select one of preferred IdPs."
-  },
-  "social_idps_header" : {
-    "en": "Select one of social provider."
-  },
-  "find_institution_no_entries": {
-    "en": "No results available for the given search.",
+  "institution_search_no_entries_header": {
+    "en": "No entries match the given query.",
     "cs": "Nebyly nalezeny žádne odpovídající záznamy."
   },
-  "find_institution_add_text": {
-    "en": "Unable to find your institution? Try to add it",
-    "cs": "Nemúžete nalézt vaši organizaci? Zkuste ji přidat"
+  "institution_search_no_entries_add_institution_text": {
+    "en": "Cannot find your institution? Try to look for it in the list of not yet integrated options",
+    "cs": "Nemúžete nalézt vaši organizaci? Zkuste ji najít v zeznamu dosud neintegrovaných možností"
+  },
+  "institution_search_no_entries_add_institution_btn": {
+    "en": "by clicking here",
+    "cs": "kliknutím zde"
+  },
+
+  "institution_search_hint_bbmri": {
+    "en": "Log in with your academic account.",
+    "cs": "Přihlašte se účtem z akademie"
+  },
+  "preferred_idps_hint_bbmri": {
+    "en": "Log in with a LifeScience Hostel account",
+    "cs": "Přihlašte se vaším účtem v LifeScience Hostel"
+  },
+  "preferred_idps_note_bbmri": {
+    "en": "If you do not have an account, sign up <a href=\"https://perun.bbmri-eric.eu/non/registrar/?vo=lifescience_hostel\">here</a>",
+    "cs": "Jestli nemáte účet, zaregistrujte se zde <a href=\"https://perun.bbmri-eric.eu/non/registrar/?vo=lifescience_hostel\">here</a>"
+  },
+  "social_idps_hint_bbmri" : {
+    "en": "you can log in with your ORCID account",
+    "cs": "se můžete přihlásit vašim ORCID účtem"
+  },
+
+  "add_institution": {
+    "en": "Add your institution",
+    "cs": "Přidat vaši instituci"
+  },
+  "add_institution_no_entries_contact_us": {
+    "en": "Still can't find your institution? Contact us at",
+    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
   }
 }

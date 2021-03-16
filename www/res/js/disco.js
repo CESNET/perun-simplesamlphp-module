@@ -1,12 +1,11 @@
 let forceShow = false;
+
 $.fn.liveUpdate = function(list) {
     list = $(list);
-
     if (list.length) {
-        var rows = list.children('a'),
-            cache = rows.map(function () {
-                return jQuery(this).text().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-            });
+        var rows = list.children('a'), cache = rows.map(function () {
+            return jQuery(this).text().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
+        });
 
         this.keyup(filter).keyup().parents('form').submit(function () {
             return false;
@@ -18,11 +17,11 @@ $.fn.liveUpdate = function(list) {
         const searchTerm = $.trim($(this).val().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
         const scores = [];
         rows.hide();
+        showNoEntriesFound(false);
         if (!searchTerm) {
             forceShow = false;
             return;
         }
-        showNoEntriesFound(false);
         cache.each(function (i) {
             const score = this.score(searchTerm);
             if (score > 0) {
@@ -73,7 +72,6 @@ $(document).ready(function() {
         $("#dropdown-entries").toggle();
     });
     if ($("#last-used-idp-wrap").length > 0) {
-        $('#entries').hide();
         $("#last-used-idp .metaentry").focus();
     }
     $('#warning-entries-btn-force-show').click(function() {
@@ -81,7 +79,6 @@ $(document).ready(function() {
         showWarningTooMuchEntries(false);
         showEntries();
     });
-    $('.entries-warning-block').hide();
 });
 
 function showEntries() {

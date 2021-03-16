@@ -34,7 +34,9 @@ class Disco extends PowerIdPDisco
     const WARNING_TYPE_WARNING = 'WARNING';
     const WARNING_TYPE_ERROR = 'ERROR';
     const C_HINT_TRANSLATION_KEY = 'hintTranslationKey';
-    const C_HINT_TEXT_ON_KEY = 'hintTextOn';
+    const C_NOTE_TRANSLATION_KEY = 'noteTranslationKey';
+    const C_PLACEHOLDER_TRANSLATION_KEY = 'placeholderTranslationKey';
+    const C_TEXT_ON = 'textOn';
     const C_TAGS = 'tags';
     const C_ENTITY_IDS = 'entityIds';
 
@@ -89,9 +91,10 @@ class Disco extends PowerIdPDisco
 
     public static function getScripts(bool $boxed)
     {
-        $html= '<script type="text/javascript" src="' .
+        $html = '<script type="text/javascript" src="' .
             Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
-
+        $html .= '<script type="text/javascript" src="' .
+            Module::getModuleUrl('perun/res/js/disco.js') . '"></script>' . PHP_EOL;
         if ($boxed) {
             $html .= Disco::boxedDesignScript() . PHP_EOL;
         }
@@ -456,8 +459,6 @@ class Disco extends PowerIdPDisco
         return $or;
     }
 
-    //TODO: add some filtering options from config
-    //TODO: extend not only to tagged but named by entity ID
     public static function showTaggedIdPs(DiscoTemplate $t, $blockConfig): string
     {
         $html = '';
@@ -473,10 +474,13 @@ class Disco extends PowerIdPDisco
         }
         $idpCount = count($idps);
         $counter = 0;
-        $textOn = $blockConfig[self::C_HINT_TEXT_ON_KEY];
-        $hintTranslateKey = $blockConfig[self::C_HINT_TRANSLATION_KEY];
+        $textOn = $blockConfig[self::C_TEXT_ON];
+        $hintTranslateKey = array_key_exists(self::C_HINT_TRANSLATION_KEY, $blockConfig) ?
+            $blockConfig[self::C_HINT_TRANSLATION_KEY] : '';
+        $noteTranslateKey = array_key_exists(self::C_NOTE_TRANSLATION_KEY, $blockConfig) ?
+            $blockConfig[self::C_NOTE_TRANSLATION_KEY] : '';
         $fullRowCount = floor($idpCount / 3);
-        if ($textOn) {
+        if ($textOn && strlen(trim($hintTranslateKey)) > 0) {
             $html .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') . '</p>' . PHP_EOL;
         }
         $html .= '<div class="row">' . PHP_EOL;
@@ -504,6 +508,9 @@ class Disco extends PowerIdPDisco
             }
         }
         $html .= '</div>' . PHP_EOL;
+        if ($textOn && strlen(trim($noteTranslateKey)) > 0) {
+            $html .= '<p class="login-option-category-note">'. $t->t('{' . $noteTranslateKey . '}') . '</p>' . PHP_EOL;
+        }
 
         return $html;
     }
@@ -527,13 +534,16 @@ class Disco extends PowerIdPDisco
 
     public static function showInlineSearch(DiscoTemplate $t, $blockConfig, $addInstitutionEmail,
                                             $addInstitutionUrl): string
-    //TODO: add some filtering options from config
     {
         $result = '';
         $allIdps = $t->getAllIdps();
         $isAddInstitutionApp = $t->isAddInstitutionApp();
-        $textOn = $blockConfig[self::C_HINT_TEXT_ON_KEY];
-        $hintTranslateKey = $blockConfig[self::C_HINT_TRANSLATION_KEY];
+        $textOn = $blockConfig[self::C_TEXT_ON];
+        $hintTranslateKey = array_key_exists(self::C_TEXT_ON, $blockConfig) ?
+            $blockConfig[self::C_HINT_TRANSLATION_KEY] : 'perun:disco:institution_search_hint';
+        $placeholderTranslateKey = array_key_exists(self::C_PLACEHOLDER_TRANSLATION_KEY, $blockConfig) ?
+            $blockConfig[self::C_PLACEHOLDER_TRANSLATION_KEY] : 'perun:disco:institution_search_input_placeholder';
+
         if ($textOn) {
             $result .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') .'</p>' . PHP_EOL;
         }
@@ -541,7 +551,7 @@ class Disco extends PowerIdPDisco
         $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
         $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value="" name="query" id="query"
                                autofocus oninput="$(\'#list\').show();" placeholder="'
-            . $t->t('{perun:disco:type_name_institution}') . '"/>' . PHP_EOL;
+            . $t->t('{' . $placeholderTranslateKey . '}') . '"/>' . PHP_EOL;
         $result .= '    </form>';
         # ENTRIES
         $result .= '    <div class="metalist list-group" id="list" style="display: none">' . PHP_EOL;
@@ -551,24 +561,24 @@ class Disco extends PowerIdPDisco
         $result .= '    </div>' . PHP_EOL;
         # TOO MUCH ENTRIES BLOCK
         $result .= '    <div id="warning-entries" class="alert alert-info entries-warning-block">' . PHP_EOL;
-        $result .= '        ' . $t->t('{perun:disco:warning_entries_header}',
+        $result .= '        ' . $t->t('{perun:disco:institution_search_display_too_much_entries_header}',
                 [ '<COUNT_HTML>' => '<span id="results-cnt">0</span>' ]) . PHP_EOL;
         $result .= '        <div class="col">' . PHP_EOL;
         $result .= '            <button class="btn btn-block btn-info" id="warning-entries-btn-force-show">';
-        $result .= ' ' . $t->t('{perun:disco:warning_entries_btn}') . '</button>' . PHP_EOL;
+        $result .= ' ' . $t->t('{perun:disco:institution_search_display_too_much_entries_btn}') . '</button>' . PHP_EOL;
         $result .= '        </div>' . PHP_EOL;
         $result .= '    </div>' . PHP_EOL;
         # NO ENTRIES BLOCK
         $result .= '    <div id="no-entries" class="no-idp-found alert alert-info entries-warning-block">' . PHP_EOL;
         if ($isAddInstitutionApp) {
-            $result .= '        ' . $t->t('{perun:disco:find_institution_contact}') . ' <a href="mailto:'
-                . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
+            $result .= '        ' . $t->t('{perun:disco:institution_search_no_entries_contact_us}') .
+                ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
                 $addInstitutionEmail . '</a>' . PHP_EOL;
         } else {
-            $result .= '       ' . $t->t('{perun:disco:find_institution_no_entries}') . '<br/>' . PHP_EOL;
-            $result .= '       ' . $t->t('{perun:disco:find_institution_add_text}') .
+            $result .= '       ' . $t->t('{perun:disco:institution_search_no_entries_header}') . '<br/>' . PHP_EOL;
+            $result .= '       ' . $t->t('{perun:disco:institution_search_no_entries_add_institution_text}') .
                 ' <a class="btn btn-info" href="' . $addInstitutionUrl . '">' .
-                $t->t('{perun:disco:add_institution_btn}') . '</a>.' . PHP_EOL;
+                $t->t('{perun:disco:institution_search_no_entries_add_institution_btn}') . '</a>.' . PHP_EOL;
         }
         $result .= '    </div>' . PHP_EOL;
         $result .= '</div>';

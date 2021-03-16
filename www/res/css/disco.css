@@ -1,3 +1,13 @@
+html {
+    position:relative;
+    min-height: 100%;
+}
+
+html, body {
+    margin:0;
+    padding:0;
+}
+
 a.metaentry {
     padding: 10px 15px 10px 15px;
 }
@@ -51,7 +61,7 @@ a.tagged:hover, a.tagged:focus {
     color: white;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 0px 10px 30px rgba(0, 0, 0, 0.1) inset;
+    box-shadow: 0 0 10px 30px rgba(0, 0, 0, 0.1) inset;
 }
 
 a.tagged:hover img {
@@ -59,7 +69,7 @@ a.tagged:hover img {
 }
 
 div.metalist {
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 
 form#idpselectform input {
@@ -67,16 +77,6 @@ form#idpselectform input {
     background-position: 10px center;
     padding: 10px 15px 10px 35px;
     height: 46px;
-}
-
-@media screen and (max-width: 950px) {
-    a.metaentryrow .idp-logo {
-        margin-bottom: 10px;
-    }
-
-    #misc .container-fluid .col-xs-12:last-child img {
-        width: 193px;
-    }
 }
 
 .discoDescription-left {
@@ -108,8 +108,8 @@ form#idpselectform input {
 }
 
 .inlinesearch {
-    padding: 0px;
-    margin: 10px 0px 20px 0px;
+    padding: 0;
+    margin: 10px 0 20px 0;
     float: none;
 }
 
@@ -117,7 +117,7 @@ form#idpselectform input {
     margin-left: auto;
     margin-right: auto;
     width: 500px;;
-    border: 0px;
+    border: 0;
     text-align: center;
 }
 
@@ -176,27 +176,13 @@ form#idpselectform input {
 }
 
 #wrap {
-    margin-top: 10em
+    max-width: 40%;
+    padding: 3% 1% 1% 1%;
+    margin-top: 3%;
 }
 
 #header img {
     width: 250px;
-}
-
-
-html {
-    position:relative;
-    min-height: 100%;
-}
-
-/*Normalize html and body elements,this style is just good to have*/
-html, body {
-    margin:0;
-    padding:0;
-}
-
-.pageContentWrapper {
-    margin-bottom:100px;
 }
 
 #footer {
@@ -207,23 +193,9 @@ html, body {
     height:100px;
 }
 
-@media handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
-    #header, #languagebar, #footer, .erroricon, .loginicon, .logintext,
-    #regular_remember_username, #regular_remember_me {
-        display: block;
-    }
-}
-
 .hrline {
     margin-top: 15px !important;
     margin-bottom: 15px !important;
-}
-
-#wrap {
-    max-width: 40%;
-    padding: 3% 1% 1% 1%;
-    margin-top: 3%;
-
 }
 
 #header img {
@@ -234,7 +206,8 @@ html, body {
     margin: 1.5rem 0;
 }
 
-.login-option-category-hint {
+.login-option-category-hint,
+.login-option-category-note {
     text-align: center;
     color: #555;
 }
@@ -247,18 +220,23 @@ html, body {
     margin-right: 2px;
     float: left;
 }
+
 .add-institution-link {
     padding: 2px 5px;
 }
-.no-entries-warning-block {
-    padding: 10px; margin-top: 10px; margin-bottom: 10px; display: none;
-}
+
 #list {
     display: none;
 }
+
+.no-entries-warning-block {
+    padding: 10px; margin-top: 10px; margin-bottom: 10px; display: none;
+}
+
 #no-entries-btn-force-show {
     padding: 5px;
 }
+
 .entries-warning-block {
     padding: 10px;
     margin-top: 10px;
@@ -266,6 +244,16 @@ html, body {
 
 #content > .login-option-category:first-of-type {
     margin-top: 0;
+}
+
+@media screen and (max-width: 950px) {
+    a.metaentryrow .idp-logo {
+        margin-bottom: 10px;
+    }
+
+    #misc .container-fluid .col-xs-12:last-child img {
+        width: 193px;
+    }
 }
 
 @media handheld, only screen and (max-width: 780px), only screen and (max-device-width: 780px) {
@@ -280,5 +268,12 @@ html, body {
         max-width: 100%;
         margin-top: 0;
         padding-top: 4rem;
+    }
+}
+
+@media handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    #header, #languagebar, #footer, .erroricon, .loginicon, .logintext,
+    #regular_remember_username, #regular_remember_me {
+        display: block;
     }
 }

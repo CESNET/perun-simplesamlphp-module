@@ -116,7 +116,7 @@ if ($this->isAddInstitutionApp()) {
     // Change header for Add institution app
     $this->data['header'] = $this->t('{perun:disco:add_institution}');
 } else {
-    $this->data['header'] = Disco::getTranslate($this, $translate_module, 'disco', 'header');
+    $this->data['header'] = $this->t('{perun:disco:header}');
 }
 
 $this->includeAtTemplateBase('includes/header.php');
@@ -184,4 +184,3 @@ echo '</div>' . PHP_EOL;
 
 $this->includeAtTemplateBase('includes/footer.php');
 echo Disco::getScripts($wayfConfig['boxed']) . PHP_EOL;
-echo '<script type="text/javascript" src="' . Module::getModuleUrl('perun/res/js/disco.js') . '"></script>' . PHP_EOL;
