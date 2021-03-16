@@ -473,7 +473,6 @@ class Disco extends PowerIdPDisco
             array_push($idps, $allIdps[$entityId]);
         }
         $idpCount = count($idps);
-        $counter = 0;
         $textOn = $blockConfig[self::C_TEXT_ON];
         $hintTranslateKey = array_key_exists(self::C_HINT_TRANSLATION_KEY, $blockConfig) ?
             $blockConfig[self::C_HINT_TRANSLATION_KEY] : '';
@@ -487,7 +486,7 @@ class Disco extends PowerIdPDisco
         for ($i = 0; $i < $idpCount; $i++) {
             $html .= '    <div class="col-md-12">' . PHP_EOL;
             $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$i]]);
             $html .= '        </div>' . PHP_EOL;
             $html .= '    </div>' . PHP_EOL;
         }
