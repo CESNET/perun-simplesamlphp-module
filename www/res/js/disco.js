@@ -73,6 +73,8 @@ $(document).ready(function() {
     });
     if ($("#last-used-idp-wrap").length > 0) {
         $("#last-used-idp .metaentry").focus();
+    } else {
+        $("#entries").show();
     }
     $('#warning-entries-btn-force-show').click(function() {
         $('#query').trigger('keyup');

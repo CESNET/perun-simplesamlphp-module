@@ -479,34 +479,19 @@ class Disco extends PowerIdPDisco
             $blockConfig[self::C_HINT_TRANSLATION_KEY] : '';
         $noteTranslateKey = array_key_exists(self::C_NOTE_TRANSLATION_KEY, $blockConfig) ?
             $blockConfig[self::C_NOTE_TRANSLATION_KEY] : '';
-        $fullRowCount = floor($idpCount / 3);
         if ($textOn && strlen(trim($hintTranslateKey)) > 0) {
             $html .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') . '</p>' . PHP_EOL;
         }
         $html .= '<div class="row">' . PHP_EOL;
 
-        for ($i = 0; $i < $fullRowCount; $i++) {
-            for ($j = 0; $j < 3; $j++) {
-                $html .= '    <div class="col-md-4">' . PHP_EOL;
-                $html .= '        <div class="metalist list-group">' . PHP_EOL;
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
-                $html .= '        </div>' . PHP_EOL;
-                $html .= '    </div>' . PHP_EOL;
-                $counter++;
-            }
+        for ($i = 0; $i < $idpCount; $i++) {
+            $html .= '    <div class="col-md-12">' . PHP_EOL;
+            $html .= '        <div class="metalist list-group">' . PHP_EOL;
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+            $html .= '        </div>' . PHP_EOL;
+            $html .= '    </div>' . PHP_EOL;
         }
 
-        $remainingIdpsCnt = ($idpCount - ($fullRowCount * 3)) % 3;
-        if ($remainingIdpsCnt !== 0) {
-            for ($i = 0; $i < $remainingIdpsCnt; $i++) {
-                $html .= '    <div class="' . self::getCssClass($remainingIdpsCnt) . '">' . PHP_EOL;
-                $html .= '        <div class="metalist list-group">' . PHP_EOL;
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
-                $html .= '        </div>';
-                $html .= '    </div>' . PHP_EOL;;
-                $counter++;
-            }
-        }
         $html .= '</div>' . PHP_EOL;
         if ($textOn && strlen(trim($noteTranslateKey)) > 0) {
             $html .= '<p class="login-option-category-note">'. $t->t('{' . $noteTranslateKey . '}') . '</p>' . PHP_EOL;
@@ -584,14 +569,6 @@ class Disco extends PowerIdPDisco
         $result .= '</div>';
 
         return $result;
-    }
-
-    protected static function getCssClass($remainingIdpsCnt): string
-    {
-        if ($remainingIdpsCnt === 1) {
-            return 'col-md-12';
-        }
-        return 'col-md-6';
     }
 
     public static function getTranslate($t, $module, $file, $key)
