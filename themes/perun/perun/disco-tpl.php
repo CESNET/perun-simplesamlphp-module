@@ -86,8 +86,6 @@ if ($warningIsOn && $warningType === Disco::WARNING_TYPE_ERROR) {
     echo Disco::showWarning($warningType, $warningTitle, $warningText);
     $this->includeAtTemplateBase('includes/footer.php');
     echo Disco::getScripts($wayfConfig['boxed']) . PHP_EOL;
-    echo '<script type="text/javascript" src="' . Module::getModuleUrl('perun/res/js/disco.js') . '"></script>'
-        . PHP_EOL;
     exit;
 }
 
@@ -130,7 +128,7 @@ if ($warningIsOn) {
 ###
 if ($this->isAddInstitutionApp()) {
     // add institution is suitable only if we display the eduGAIN
-    echo '<div id="entries">';
+    echo '<div id="entries" class="add-institution-entries">';
     foreach ($wayfConfig['blocks'] as $blockConfig) {
         $type = $blockConfig['type'];
         echo '<div class="row login-option-category">' . PHP_EOL;
@@ -155,7 +153,7 @@ if ($this->isAddInstitutionApp()) {
         echo Disco::getOr("last-used-idp-or") . PHP_EOL;
 
         # BUTTON TO DISPLAY ALL OTHER ENTRIES
-        echo '    <div>' . PHP_EOL;
+        echo '    <div id="show-entries-wrap">' . PHP_EOL;
         echo '        <a id="showEntries" class="metaentry btn btn-block btn-default btn-lg" href="#">' .
             $this->t('{perun:disco:sign_with_other_institution}') . '</a>';
         echo '    </div>' . PHP_EOL;

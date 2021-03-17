@@ -89,7 +89,7 @@ class Disco extends PowerIdPDisco
         return $script;
     }
 
-    public static function getScripts(bool $boxed)
+    public static function getScripts(bool $boxed): string
     {
         $html = '<script type="text/javascript" src="' .
             Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
@@ -483,10 +483,53 @@ class Disco extends PowerIdPDisco
         }
         $html .= '<div class="row">' . PHP_EOL;
 
-        for ($i = 0; $i < $idpCount; $i++) {
-            $html .= '    <div class="col-md-12">' . PHP_EOL;
+        //TODO: add stacking next to each other
+        $counter = 0;
+        $fullRows = floor($idpCount / 3);
+        $remainingIdps = $idpCount % 3;
+        for ($i = 0; $i < $fullRows; $i++) {
+            for ($j = 0; $j < 3; $j++) {
+                echo $counter;
+                $html .= '    <div class="col-xs-12 col-md-6 col-lg-4">' . PHP_EOL;
+                $html .= '        <div class="metalist list-group">' . PHP_EOL;
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]]);
+                $html .= '        </div>' . PHP_EOL;
+                $html .= '    </div>' . PHP_EOL;
+            }
+        }
+
+        if ($fullRows > 0 && $remainingIdps == 2) {
+            $html .= '    <div class="col-xs-12 col-md-6 col-lg-4 col-lg-offset-2">' . PHP_EOL;
             $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$i]]);
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]]);
+            $html .= '        </div>' . PHP_EOL;
+            $html .= '    </div>' . PHP_EOL;
+            $html .= '    <div class="col-xs-12 col-md-6 col-lg-4 col-lg-offset-0 col-md-offset-3">' . PHP_EOL;
+            $html .= '        <div class="metalist list-group">' . PHP_EOL;
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+            $html .= '        </div>' . PHP_EOL;
+            $html .= '    </div>' . PHP_EOL;
+        } else if ($fullRows > 0 && $remainingIdps == 1) {
+            $html .= '    <div class="col-xs-12 col-md-6 col-lg-4 col-lg-offset-4">' . PHP_EOL;
+            $html .= '        <div class="metalist list-group">' . PHP_EOL;
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+            $html .= '        </div>' . PHP_EOL;
+            $html .= '    </div>' . PHP_EOL;
+        } else if ($remainingIdps == 2) {
+            $html .= '    <div class="col-xs-12 col-md-6">' . PHP_EOL;
+            $html .= '        <div class="metalist list-group">' . PHP_EOL;
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]]);
+            $html .= '        </div>' . PHP_EOL;
+            $html .= '    </div>' . PHP_EOL;
+            $html .= '    <div class="col-xs-12 col-md-6">' . PHP_EOL;
+            $html .= '        <div class="metalist list-group">' . PHP_EOL;
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
+            $html .= '        </div>' . PHP_EOL;
+            $html .= '    </div>' . PHP_EOL;
+        } else if ($remainingIdps == 1) {
+            $html .= '    <div class="col-lg-12">' . PHP_EOL;
+            $html .= '        <div class="metalist list-group">' . PHP_EOL;
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
             $html .= '        </div>' . PHP_EOL;
             $html .= '    </div>' . PHP_EOL;
         }
@@ -555,7 +598,7 @@ class Disco extends PowerIdPDisco
         # NO ENTRIES BLOCK
         $result .= '    <div id="no-entries" class="no-idp-found alert alert-info entries-warning-block">' . PHP_EOL;
         if ($isAddInstitutionApp) {
-            $result .= '        ' . $t->t('{perun:disco:institution_search_no_entries_contact_us}') .
+            $result .= '        ' . $t->t('{perun:disco:add_institution_no_entries_contact_us}') .
                 ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
                 $addInstitutionEmail . '</a>' . PHP_EOL;
         } else {

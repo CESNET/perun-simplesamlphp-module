@@ -1,5 +1,9 @@
 let forceShow = false;
 
+function setForceShow(val) {
+    forceShow = val;
+}
+
 $.fn.liveUpdate = function(list) {
     list = $(list);
     if (list.length) {
@@ -19,7 +23,7 @@ $.fn.liveUpdate = function(list) {
         rows.hide();
         showNoEntriesFound(false);
         if (!searchTerm) {
-            forceShow = false;
+            setForceShow(false);
             return;
         }
         cache.each(function (i) {
@@ -84,6 +88,6 @@ $(document).ready(function() {
 });
 
 function showEntries() {
-    forceShow = true;
+    setForceShow(true);
     $('#query').trigger('keyup');
 }
