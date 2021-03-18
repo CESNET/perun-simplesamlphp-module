@@ -31,12 +31,10 @@
     "en": "Use one of the social identity providers",
     "cs": "Použijte některého ze sociálných poskytovatelů identit "
   },
-
   "institution_search_hint": {
     "en": "You can log in using your institutional account or another account you have on the web.",
     "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
   },
-
   "institution_search_input_placeholder": {
     "en": "Type the name of your institute",
     "cs": "Zadejte název instituce"
@@ -61,6 +59,14 @@
     "en": "by clicking here",
     "cs": "kliknutím zde"
   },
+  "add_institution": {
+    "en": "Add your institution",
+    "cs": "Přidat vaši instituci"
+  },
+  "add_institution_no_entries_contact_us": {
+    "en": "Still can't find your institution? Contact us at",
+    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
+  },
 
   "institution_search_hint_bbmri": {
     "en": "Log in with your academic account.",
@@ -77,14 +83,5 @@
   "social_idps_hint_bbmri" : {
     "en": "you can log in with your ORCID account",
     "cs": "se můžete přihlásit vašim ORCID účtem"
-  },
-
-  "add_institution": {
-    "en": "Add your institution",
-    "cs": "Přidat vaši instituci"
-  },
-  "add_institution_no_entries_contact_us": {
-    "en": "Still can't find your institution? Contact us at",
-    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
   }
 }

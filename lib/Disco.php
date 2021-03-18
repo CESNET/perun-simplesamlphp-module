@@ -25,26 +25,50 @@ use SimpleSAML\Module;
 class Disco extends PowerIdPDisco
 {
     const CONFIG_FILE_NAME = 'module_perun.php';
-    const PROPNAME_DISABLE_WHITELISTING = 'disco.disableWhitelisting';
-    const PROPNAME_PREFIX = 'disco.removeAuthnContextClassRefPrefix';
+    const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
 
     const DEFAULT_THEME = 'perun';
 
-    const WARNING_TYPE_INFO = 'INFO';
-    const WARNING_TYPE_WARNING = 'WARNING';
-    const WARNING_TYPE_ERROR = 'ERROR';
-    const C_HINT_TRANSLATION_KEY = 'hintTranslationKey';
-    const C_NOTE_TRANSLATION_KEY = 'noteTranslationKey';
-    const C_PLACEHOLDER_TRANSLATION_KEY = 'placeholderTranslationKey';
-    const C_TEXT_ON = 'textOn';
-    const C_TAGS = 'tags';
-    const C_ENTITY_IDS = 'entityIds';
+    # ROOT CONFIGURATION ENTRY
+    const WAYF = 'wayf';
+    # CONFIGURATION ENTRIES
+    const BOXED = 'boxed';
+    # CONFIGURATION ENTRIES IDP BLOCKS
+    const BLOCKS = 'blocks';
+    const BLOCK_TYPE = 'type';
+    const BLOCK_TYPE_INLINESEARCH = "inlinesearch";
+    const BLOCK_TYPE_TAGGED = "tagged";
+    const BLOCK_TEXT_ON = 'textOn';
+    const BLOCK_HINT_TRANSLATION_KEY = 'hintTranslationKey';
+    const BLOCK_NOTE_TRANSLATION_KEY = 'noteTranslationKey';
+    const BLOCK_PLACEHOLDER_TRANSLATION_KEY = 'placeholderTranslationKey';
+    const BLOCK_TAGS = 'tags';
+    const BLOCK_ENTITY_IDS = 'entityIds';
+    # CONFIGURATION ENTRIES ADD INSTITUTION
+    const ADD_INSITUTION = 'addInstitution';
+    const ADD_INSTITUTION_URL = 'url';
+    const ADD_INSTITUTION_EMAIL = 'email';
+    #
+    const TRANSLATE_MODULE = 'translate_module';
+
+
+    const DISABLE_WHITELISTING = 'disableWhitelisting';
+    const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'removeAuthnContextClassRefPrefix';
+    const WARNING_ATTRIBUTES = 'warningAttributes';
+
+    const ORIGINAL_SP = "originalsp";
+    const IDP_LIST = "idplist";
+    const PREFERRED_IDP = "preferredidp";
+    const ENTITY_ID = "entityID";
+    const RETURN = "return";
+    const RETURN_ID_PARAM = "returnIDPAram";
+    const AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
 
     private $originalsp;
     private $whitelist;
     private $greylist;
     private $service;
-    private $authnContextClassRef = [];
+    private array $authnContextClassRef = [];
 
     public function __construct(array $metadataSets, $instance)
     {
@@ -81,28 +105,8 @@ class Disco extends PowerIdPDisco
         }
     }
 
-    protected static function boxedDesignScript(): string
-    {
-        $script = '<script>' . PHP_EOL;
-        $script .= '   $("#wrap").css("box-shadow", "0 1rem 3rem 0.5rem rgba(0, 0, 0, .15)");' . PHP_EOL;
-        $script .= '</script>';
-        return $script;
-    }
-
-    public static function getScripts(bool $boxed): string
-    {
-        $html = '<script type="text/javascript" src="' .
-            Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
-        $html .= '<script type="text/javascript" src="' .
-            Module::getModuleUrl('perun/res/js/disco.js') . '"></script>' . PHP_EOL;
-        if ($boxed) {
-            $html .= Disco::boxedDesignScript() . PHP_EOL;
-        }
-        return $html;
-    }
-
     /**
-     * Handles a request to this discovery service. It is enry point of Discovery service.
+     * Handles a request to this discovery service. It is entry point of Discovery service.
      *
      * The IdP disco parameters should be set before calling this function.
      */
@@ -137,30 +141,23 @@ class Disco extends PowerIdPDisco
             HTTP::redirectTrustedURL($url);
         }
 
+        $warningAttributes = null;
         try {
             $warningInstance = WarningConfiguration::getInstance();
             $warningAttributes = $warningInstance->getWarningAttributes();
-        } catch (Exception $ex) {
-            $warningAttributes = [
-                'warningIsOn' => false,
-                'warningType' => '',
-                'warningTitle' => '',
-                'warningText' => ''
-            ];
+        } catch (Exception) {
+            $warningAttributes = null;
         }
 
         $t = new DiscoTemplate($this->config);
-        $t->data['originalsp'] = $this->originalsp;
-        $t->data['idplist'] = $this->idplistStructured($idpList);
-        $t->data['preferredidp'] = $preferredIdP;
-        $t->data['entityID'] = $this->spEntityId;
-        $t->data['return'] = $this->returnURL;
-        $t->data['returnIDParam'] = $this->returnIdParam;
-        $t->data['AuthnContextClassRef'] = $this->authnContextClassRef;
-        $t->data['warningIsOn'] = $warningAttributes['warningIsOn'];
-        $t->data['warningType'] = $warningAttributes['warningType'];
-        $t->data['warningTitle'] = $warningAttributes['warningTitle'];
-        $t->data['warningText'] = $warningAttributes['warningText'];
+        $t->data[self::ORIGINAL_SP] = $this->originalsp;
+        $t->data[self::IDP_LIST] = $this->idplistStructured($idpList);
+        $t->data[self::PREFERRED_IDP] = $preferredIdP;
+        $t->data[self::ENTITY_ID] = $this->spEntityId;
+        $t->data[self::RETURN] = $this->returnURL;
+        $t->data[self::RETURN_ID_PARAM] = $this->returnIdParam;
+        $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->authnContextClassRef;
+        $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
         $t->show();
     }
 
@@ -174,8 +171,7 @@ class Disco extends PowerIdPDisco
     protected function filterList($list)
     {
         $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $disableWhitelisting
-            = $conf->getBoolean(self::PROPNAME_DISABLE_WHITELISTING, false);
+        $disableWhitelisting = $conf->getBoolean(self::DISABLE_WHITELISTING, false);
 
         if (!isset($this->originalsp['disco.doNotFilterIdps'])
             || !$this->originalsp['disco.doNotFilterIdps']
@@ -378,7 +374,7 @@ class Disco extends PowerIdPDisco
     public function removeAuthContextClassRefWithPrefix(&$state)
     {
         $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $prefix = $conf->getString(self::PROPNAME_PREFIX, null);
+        $prefix = $conf->getString(self::REMOVE_AUTHN_CONTEXT_CLASS_PREFIX, null);
 
         if ($prefix === null) {
             return;
@@ -416,11 +412,11 @@ class Disco extends PowerIdPDisco
     /**
      * @param DiscoTemplate $t
      * @param array $metadata
-     * @param bool $showSignInWith
+     * @param string $class
      *
      * @return string html
      */
-    public static function showTaggedEntry(DiscoTemplate $t, $metadata, $showSignInWith = false): string
+    public static function showTaggedEntry(DiscoTemplate $t, $metadata, $class = ''): string
     {
         if (!array_key_exists('tags', $metadata)) {
             return Disco::showEntry($t, $metadata);
@@ -434,14 +430,19 @@ class Disco extends PowerIdPDisco
         $text = '';
         if (isset($metadata['fullDisplayName'])) {
             $text = $metadata['fullDisplayName'];
-        } elseif ($showSignInWith) {
+        } elseif (isset($metadata['showSignInWith']) && $metadata['showSignInWith']) {
             $text = $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata);
         } else {
             $text .= $t->getTranslatedEntityName($metadata);
         }
-        $html = '<a class="metaentry btn btn-block tagged" href="' . $href . '" style="background: ' . $bck . '">';
-        $html .= '<img src="' . $metadata['icon'] . '">' . PHP_EOL;
-        $html .= '<strong>' . $text . '</strong></a>';
+        $html = '<div class="' . $class . '">' . PHP_EOL;
+        $html .= '    <div class="metalist list-group">' . PHP_EOL;
+        $html .= '        <a class="metaentry btn btn-block tagged" href="' . $href .
+            '" style="background: ' . $bck . '">';
+        $html .= '            <img src="' . $metadata['icon'] . '"><strong>' . $text . '</strong>' . PHP_EOL;
+        $html .= '        </a>';
+        $html .= '    </div>';
+        $html .= '</div>';
 
         return $html;
     }
@@ -463,76 +464,37 @@ class Disco extends PowerIdPDisco
     {
         $html = '';
         $idps = [];
-        $tags = $blockConfig[self::C_TAGS];
+        $tags = $blockConfig[self::BLOCK_TAGS];
         foreach ($tags as $tag) {
             $idps = array_merge($idps, $t->getIdPs($tag));
         }
-        $entityIds = $blockConfig[self::C_ENTITY_IDS];
+        $entityIds = $blockConfig[self::BLOCK_ENTITY_IDS];
         $allIdps = $t->getAllIdps();
         foreach ($entityIds as $entityId) {
             array_push($idps, $allIdps[$entityId]);
         }
         $idpCount = count($idps);
-        $textOn = $blockConfig[self::C_TEXT_ON];
-        $hintTranslateKey = array_key_exists(self::C_HINT_TRANSLATION_KEY, $blockConfig) ?
-            $blockConfig[self::C_HINT_TRANSLATION_KEY] : '';
-        $noteTranslateKey = array_key_exists(self::C_NOTE_TRANSLATION_KEY, $blockConfig) ?
-            $blockConfig[self::C_NOTE_TRANSLATION_KEY] : '';
+        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
+        $hintTranslateKey = array_key_exists(self::BLOCK_HINT_TRANSLATION_KEY, $blockConfig) ?
+            $blockConfig[self::BLOCK_HINT_TRANSLATION_KEY] : '';
+        $noteTranslateKey = array_key_exists(self::BLOCK_NOTE_TRANSLATION_KEY, $blockConfig) ?
+            $blockConfig[self::BLOCK_NOTE_TRANSLATION_KEY] : '';
         if ($textOn && strlen(trim($hintTranslateKey)) > 0) {
             $html .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') . '</p>' . PHP_EOL;
         }
         $html .= '<div class="row">' . PHP_EOL;
 
-        //TODO: add stacking next to each other
         $counter = 0;
         $fullRows = floor($idpCount / 3);
         $remainingIdps = $idpCount % 3;
         for ($i = 0; $i < $fullRows; $i++) {
             for ($j = 0; $j < 3; $j++) {
-                echo $counter;
-                $html .= '    <div class="col-xs-12 col-md-6 col-lg-4">' . PHP_EOL;
-                $html .= '        <div class="metalist list-group">' . PHP_EOL;
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]]);
-                $html .= '        </div>' . PHP_EOL;
-                $html .= '    </div>' . PHP_EOL;
+                $class = 'col-xs-12 col-md-6 col-lg-4';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
             }
         }
 
-        if ($fullRows > 0 && $remainingIdps == 2) {
-            $html .= '    <div class="col-xs-12 col-md-6 col-lg-4 col-lg-offset-2">' . PHP_EOL;
-            $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]]);
-            $html .= '        </div>' . PHP_EOL;
-            $html .= '    </div>' . PHP_EOL;
-            $html .= '    <div class="col-xs-12 col-md-6 col-lg-4 col-lg-offset-0 col-md-offset-3">' . PHP_EOL;
-            $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
-            $html .= '        </div>' . PHP_EOL;
-            $html .= '    </div>' . PHP_EOL;
-        } else if ($fullRows > 0 && $remainingIdps == 1) {
-            $html .= '    <div class="col-xs-12 col-md-6 col-lg-4 col-lg-offset-4">' . PHP_EOL;
-            $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
-            $html .= '        </div>' . PHP_EOL;
-            $html .= '    </div>' . PHP_EOL;
-        } else if ($remainingIdps == 2) {
-            $html .= '    <div class="col-xs-12 col-md-6">' . PHP_EOL;
-            $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]]);
-            $html .= '        </div>' . PHP_EOL;
-            $html .= '    </div>' . PHP_EOL;
-            $html .= '    <div class="col-xs-12 col-md-6">' . PHP_EOL;
-            $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
-            $html .= '        </div>' . PHP_EOL;
-            $html .= '    </div>' . PHP_EOL;
-        } else if ($remainingIdps == 1) {
-            $html .= '    <div class="col-lg-12">' . PHP_EOL;
-            $html .= '        <div class="metalist list-group">' . PHP_EOL;
-            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]]);
-            $html .= '        </div>' . PHP_EOL;
-            $html .= '    </div>' . PHP_EOL;
-        }
+        $html .= Disco::showRemainingTaggedEntries($t, $idps, $counter, $remainingIdps, $fullRows > 0);
 
         $html .= '</div>' . PHP_EOL;
         if ($textOn && strlen(trim($noteTranslateKey)) > 0) {
@@ -542,20 +504,49 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-    public static function showWarning($warningType, $warningTitle, $warningText): string
+    protected static function showRemainingTaggedEntries($t, $idps, $counter, $remainingIdps, $hasFullRows): string
     {
         $html = '';
-        if ($warningType === Disco::WARNING_TYPE_INFO) {
-            $html .= '<div class="alert alert-info">';
-        } elseif ($warningType === Disco::WARNING_TYPE_WARNING) {
-            $html .= '<div class="alert alert-warning">';
-        } elseif ($warningType === Disco::WARNING_TYPE_ERROR) {
-            $html .='<div class="alert alert-danger">';
+        if ($remainingIdps == 0) {
+            return $html;
         }
-        $html .= '<h4> <strong>' . $warningTitle . '</strong> </h4>';
-        $html .= $warningText;
-        $html .= '</div>';
 
+        if ($hasFullRows > 0) {
+            if ($remainingIdps == 2) {
+                $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-2';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
+                $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-0 col-md-offset-3';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
+            } else if ($remainingIdps == 1) {
+                $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-4';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
+                $html .= '</div>' . PHP_EOL;
+            }
+        } else {
+            if ($remainingIdps == 2) {
+                $class = 'col-xs-12 col-md-6';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
+            } else if ($remainingIdps == 1) {
+                $class = 'col-lg-12';
+                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
+            }
+        }
+        return $html;
+    }
+
+    public static function showWarning(WarningConfiguration $warningConf): string
+    {
+        $html = '';
+        $html .= match ($warningConf->getType()) {
+            WarningConfiguration::WARNING_TYPE_INFO => '<div class="alert alert-info">' . PHP_EOL,
+            WarningConfiguration::WARNING_TYPE_WARNING => '<div class="alert alert-warning">' . PHP_EOL,
+            WarningConfiguration::WARNING_TYPE_ERROR => '<div class="alert alert-danger">' . PHP_EOL,
+        };
+
+        $html .= '<h4><strong>' . $warningConf->getTitle() . '</strong></h4>' . PHP_EOL;
+        $html .= $warningConf->getText();
+        $html .= '</div>';
         return $html;
     }
 
@@ -565,11 +556,11 @@ class Disco extends PowerIdPDisco
         $result = '';
         $allIdps = $t->getAllIdps();
         $isAddInstitutionApp = $t->isAddInstitutionApp();
-        $textOn = $blockConfig[self::C_TEXT_ON];
-        $hintTranslateKey = array_key_exists(self::C_TEXT_ON, $blockConfig) ?
-            $blockConfig[self::C_HINT_TRANSLATION_KEY] : 'perun:disco:institution_search_hint';
-        $placeholderTranslateKey = array_key_exists(self::C_PLACEHOLDER_TRANSLATION_KEY, $blockConfig) ?
-            $blockConfig[self::C_PLACEHOLDER_TRANSLATION_KEY] : 'perun:disco:institution_search_input_placeholder';
+        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
+        $hintTranslateKey = array_key_exists(self::BLOCK_TEXT_ON, $blockConfig) ?
+            $blockConfig[self::BLOCK_HINT_TRANSLATION_KEY] : 'perun:disco:institution_search_hint';
+        $placeholderTranslateKey = array_key_exists(self::BLOCK_PLACEHOLDER_TRANSLATION_KEY, $blockConfig) ?
+            $blockConfig[self::BLOCK_PLACEHOLDER_TRANSLATION_KEY] : 'perun:disco:institution_search_input_placeholder';
 
         if ($textOn) {
             $result .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') .'</p>' . PHP_EOL;
@@ -611,6 +602,27 @@ class Disco extends PowerIdPDisco
         $result .= '</div>';
 
         return $result;
+    }
+
+
+    private static function boxedDesignScript(): string
+    {
+        $script = '<script>' . PHP_EOL;
+        $script .= '   $("#wrap").css("box-shadow", "0 1rem 3rem 0.5rem rgba(0, 0, 0, .15)");' . PHP_EOL;
+        $script .= '</script>';
+        return $script;
+    }
+
+    public static function getScripts(bool $boxed): string
+    {
+        $html = '<script type="text/javascript" src="' .
+            Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
+        $html .= '<script type="text/javascript" src="' .
+            Module::getModuleUrl('perun/res/js/disco.js') . '"></script>' . PHP_EOL;
+        if ($boxed) {
+            $html .= Disco::boxedDesignScript() . PHP_EOL;
+        }
+        return $html;
     }
 
     public static function getTranslate($t, $module, $file, $key)

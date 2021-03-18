@@ -7,6 +7,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Module\perun\Disco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Module\perun\DiscoTemplate;
+use SimpleSAML\Module\perun\WarningConfiguration;
 
 /**
  * This is simple example of template for perun Discovery service
@@ -14,15 +15,6 @@ use SimpleSAML\Module\perun\DiscoTemplate;
  * Allow type hinting in IDE
  * @var DiscoTemplate $this
  */
-
-const CONFIG_FILE_NAME = 'module_perun.php';
-
-const ADD_INSTITUTION_URL = 'disco.addInstitution.URL';
-const ADD_INSTITUTION_EMAIL = 'disco.addInstitution.email';
-
-const TRANSLATE_MODULE = 'disco.translate_module';
-
-const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
 
 
 $this->data['jquery'] = ['core' => true, 'ui' => true, 'css' => true];
@@ -33,11 +25,7 @@ $this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" hre
 $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/disco.css') . '" />';
 
-$warningIsOn = $this->data['warningIsOn'];
-$warningType = $this->data['warningType'];
-$warningTitle = $this->data['warningTitle'];
-$warningText = $this->data['warningText'];
-
+$warningAttributes = $this->data[Disco::WARNING_ATTRIBUTES];
 $authContextClassRef = null;
 $idpEntityId = null;
 
@@ -53,52 +41,52 @@ $wayfConfig = [];
 try {
     $config = Configuration::getConfig(CONFIG_FILE_NAME);
 } catch (\Exception $ex) {
-    Logger::warning('perun:disco-tpl: missing or invalid module_perun.php config file');
+    Logger::error('perun:disco-tpl: missing or invalid module_perun.php config file');
+    throw $ex;
 }
 
 if ($config !== null) {
     try {
-        $addInstitutionUrl = $config->getString(ADD_INSTITUTION_URL);
+        $wayfConfig = $config->getArray(Disco::WAYF);
+    } catch (\Exception $ex) {
+        Logger::error("perun:disco-tpl: missing configuration for param '" . Disco::WAYF . "'");
+        throw $ex;
+    }
+    $translate_module = $wayfConfig->getString(Disco::TRANSLATE_MODULE, 'disco');
+    $addInstitution = $wayfConfig->getArray(Disco::ADD_INSITUTION);
+    try {
+        $addInstitutionUrl = $addInstitution->getString(Disco::ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
         Logger::warning('perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file');
     }
 
     try {
-        $addInstitutionEmail = $config->getString(ADD_INSTITUTION_EMAIL);
+        $addInstitutionEmail = $addInstitution->getString(Disco::ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
         Logger::warning('perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file');
-    }
-
-    $translate_module = $config->getString(TRANSLATE_MODULE, 'disco');
-    try {
-        //TOOD: handle loading of config when we decide the final versiongi
-        $wayfConfig = $config->getArray('wayf');
-    } catch (\Exception $ex) {
-        Logger::warning('perun:disco-tpl: missing configuration for "WAYF"');
-        throw $ex;
     }
 }
 
 // IF WARNING ERROR IS ENABLED, DISPLAY IT AND STOP THE USER
-if ($warningIsOn && $warningType === Disco::WARNING_TYPE_ERROR) {
+if ($warningAttributes->isEnabled() && $warningAttributes->getType === WarningConfiguration::WARNING_TYPE_ERROR) {
     $this->data['header'] = $this->t('{perun:disco:warning}');
     $this->includeAtTemplateBase('includes/header.php');
-    echo Disco::showWarning($warningType, $warningTitle, $warningText);
+    echo Disco::showWarning($warningAttributes);
     $this->includeAtTemplateBase('includes/footer.php');
-    echo Disco::getScripts($wayfConfig['boxed']) . PHP_EOL;
+    echo Disco::getScripts($wayfConfig[Disco::BOXED]) . PHP_EOL;
     exit;
 }
 
 // IF IS SET AUTHN CONTEXT CLASS REF, REDIRECT USER TO THE IDP
-if (isset($this->data['AuthnContextClassRef'])) {
-    $authContextClassRef = $this->data['AuthnContextClassRef'];
+if (isset($this->data[Disco::AUTHN_CONTEXT_CLASS_REF])) {
+    $authContextClassRef = $this->data[Disco::AUTHN_CONTEXT_CLASS_REF];
     if ($authContextClassRef !== null) {
         # Check authnContextClassRef and select IdP directly if the correct value is set
         foreach ($authContextClassRef as $value) {
             // VERIFY THE PREFIX IS CORRECT AND WE CAN PERFORM THE REDIRECT
-            $acrStartSubstr = substr($value, 0, strlen(URN_CESNET_PROXYIDP_IDPENTITYID));
-            if ($acrStartSubstr === URN_CESNET_PROXYIDP_IDPENTITYID) {
-                $idpEntityId = substr($value, strlen(URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
+            $acrStartSubstr = substr($value, 0, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID));
+            if ($acrStartSubstr === Disco::URN_CESNET_PROXYIDP_IDPENTITYID) {
+                $idpEntityId = substr($value, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
                 Logger::info('Redirecting to ' . $idpEntityId);
                 $url = $this->getContinueUrl($idpEntityId);
                 HTTP::redirectTrustedURL($url);
@@ -109,7 +97,7 @@ if (isset($this->data['AuthnContextClassRef'])) {
 }
 
 // START DISPLAYING REGULAR WAYF (for users or add-institution)
-// get header based on type
+// get header based on type of app (add inst. or wayf)
 if ($this->isAddInstitutionApp()) {
     // Change header for Add institution app
     $this->data['header'] = $this->t('{perun:disco:add_institution}');
@@ -120,8 +108,8 @@ if ($this->isAddInstitutionApp()) {
 $this->includeAtTemplateBase('includes/header.php');
 
 # IF WE HAVE A WARNING, DISPLAY IT TO THE USER
-if ($warningIsOn) {
-    echo Disco::showWarning($warningType, $warningTitle, $warningText);
+if ($warningAttributes->isEnabled()) {
+    echo Disco::showWarning($warningAttributes);
 }
 ###
 # LETS START DISPLAYING LOGIN OPTIONS
@@ -129,10 +117,10 @@ if ($warningIsOn) {
 if ($this->isAddInstitutionApp()) {
     // add institution is suitable only if we display the eduGAIN
     echo '<div id="entries" class="add-institution-entries">';
-    foreach ($wayfConfig['blocks'] as $blockConfig) {
-        $type = $blockConfig['type'];
+    foreach ($wayfConfig[Disco::BLOCKS] as $blockConfig) {
+        $type = $blockConfig[Disco::BLOCK_TYPE];
         echo '<div class="row login-option-category">' . PHP_EOL;
-        if ($type === 'inlinesearch') {
+        if ($type === Disco::BLOCK_TYPE_INLINESEARCH) {
             echo Disco::showInlineSearch($this, $blockConfig, $addInstitutionEmail, $addInstitutionUrl) . PHP_EOL;
         }
         echo '</div>' . PHP_EOL;
@@ -163,13 +151,13 @@ if ($this->isAddInstitutionApp()) {
     // regular wayf contains all entries
     echo '<div id="entries">';
     $cnt = 1;
-    $blocksCount = count($wayfConfig['blocks']);
-    foreach ($wayfConfig['blocks'] as $blockConfig) {
-        $type = $blockConfig['type'];
+    $blocksCount = count($wayfConfig[Disco::BLOCKS]);
+    foreach ($wayfConfig[Disco:: BLOCKS] as $blockConfig) {
+        $type = $blockConfig[Disco::BLOCK_TYPE];
         echo '<div class="row login-option-category">' . PHP_EOL;
-        if ($type === 'inlinesearch') {
+        if (strtolower($type) === Disco::BLOCK_TYPE_INLINESEARCH) {
             echo Disco::showInlineSearch($this, $blockConfig, $addInstitutionEmail, $addInstitutionUrl) . PHP_EOL;
-        } else if ($type === 'tagged') {
+        } else if (strtolower($type) === Disco::BLOCK_TYPE_TAGGED) {
             echo Disco::showTaggedIdPs($this, $blockConfig) . PHP_EOL;
         }
         if ($cnt++ < $blocksCount) {
@@ -181,4 +169,4 @@ if ($this->isAddInstitutionApp()) {
 echo '</div>' . PHP_EOL;
 
 $this->includeAtTemplateBase('includes/footer.php');
-echo Disco::getScripts($wayfConfig['boxed']) . PHP_EOL;
+echo Disco::getScripts($wayfConfig[Disco::BOXED]) . PHP_EOL;
