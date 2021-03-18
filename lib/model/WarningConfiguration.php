@@ -19,7 +19,6 @@ abstract class WarningConfiguration
     const CONFIG_FILE_NAME = 'module_perun.php';
 
     const WARNING = 'warning';
-    const SOURCE = "source";
     const SOURCE_TYPE_FILE = 'file';
     const SOURCE_TYPE_URL = 'url';
     const SOURCE_TYPE_CONFIG = 'config';
@@ -79,12 +78,11 @@ abstract class WarningConfiguration
     public static function getInstance(): WarningConfiguration
     {
         $configuration = WarningConfiguration::getConfig();
-        $source = strtolower($configuration->getString(self::SOURCE));
-        if ($source === self::SOURCE_TYPE_CONFIG) {
+        if ($configuration->hasValue(self::SOURCE_TYPE_CONFIG)) {
             return new WarningConfigurationConfig();
-        } elseif ($source === self::SOURCE_TYPE_FILE) {
+        } elseif ($configuration->hasValue(self::SOURCE_TYPE_FILE)) {
             return new WarningConfigurationFile();
-        } elseif ($source === self::SOURCE_TYPE_URL) {
+        } elseif ($configuration->hasValue(self::SOURCE_TYPE_URL)) {
             return new WarningConfigurationUrl();
         } else {
             return new WarningConfigurationNone();

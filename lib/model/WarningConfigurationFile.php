@@ -17,7 +17,7 @@ class WarningConfigurationFile extends WarningConfiguration
         $file = null;
         $data = null;
 
-        $config = Configuration::getConfig(WarningConfiguration::CONFIG_FILE_NAME);
+        $config = WarningConfiguration::getConfig();
 
         try {
             $file = $config->getString(WarningConfiguration::SOURCE_TYPE_FILE);

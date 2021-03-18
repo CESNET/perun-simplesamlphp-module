@@ -17,7 +17,7 @@ class WarningConfigurationUrl extends WarningConfiguration
         $url = null;
         $attributes = null;
 
-        $config = Configuration::getConfig(WarningConfiguration::CONFIG_FILE_NAME);
+        $config = WarningConfiguration::getConfig();
 
         try {
             $url = $config->getString(WarningConfiguration::SOURCE_TYPE_URL);

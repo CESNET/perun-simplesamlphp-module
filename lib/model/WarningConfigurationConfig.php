@@ -15,7 +15,7 @@ class WarningConfigurationConfig extends WarningConfiguration
 {
     public function getSourceOfWarningAttributes(): Configuration
     {
-        return WarningConfiguration::getConfig();
+        return WarningConfiguration::getConfig()->getConfigItem(self::SOURCE_TYPE_CONFIG);;;
     }
 
     public function getWarningAttributes(): WarningConfiguration
