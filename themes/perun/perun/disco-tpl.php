@@ -37,7 +37,6 @@ $addInstitutionEmail = '';
 $translate_module = '';
 $wayfConfig = [];
 
-
 //LOAD CONFIG
 try {
     $config = Configuration::getConfig(Disco::CONFIG_FILE_NAME);

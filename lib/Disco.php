@@ -39,19 +39,19 @@ class Disco extends PowerIdPDisco
     const BLOCK_TYPE = 'type';
     const BLOCK_TYPE_INLINESEARCH = "inlinesearch";
     const BLOCK_TYPE_TAGGED = "tagged";
-    const BLOCK_TEXT_ON = 'textOn';
-    const BLOCK_HINT_TRANSLATION_KEY = 'hintTranslationKey';
-    const BLOCK_NOTE_TRANSLATION_KEY = 'noteTranslationKey';
-    const BLOCK_PLACEHOLDER_TRANSLATION_KEY = 'placeholderTranslationKey';
+    const BLOCK_TEXT_ON = 'text_enabled';
+    const BLOCK_HINT_TRANSLATION_KEY = 'hint_translation_key';
+    const BLOCK_NOTE_TRANSLATION_KEY = 'note_translation_key';
+    const BLOCK_PLACEHOLDER_TRANSLATION_KEY = 'placeholder_translation_key';
     const BLOCK_TAGS = 'tags';
-    const BLOCK_ENTITY_IDS = 'entityIds';
+    const BLOCK_ENTITY_IDS = 'entity_ids';
     # CONFIGURATION ENTRIES ADD INSTITUTION
-    const ADD_INSTITUTION = 'addInstitution';
+    const ADD_INSTITUTION = 'add_institution';
     const ADD_INSTITUTION_URL = 'url';
     const ADD_INSTITUTION_EMAIL = 'email';
     const TRANSLATE_MODULE = 'translate_module';
-    const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'removeAuthnContextClassRefPrefix';
-    const DISABLE_WHITELISTING = 'disableWhitelisting';
+    const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'remove_authn_context_class_ref_prefix';
+    const DISABLE_WHITELISTING = 'disable_whitelisting';
 
     # PARAMS AND DATA KEYS
     const ENTITY_ID = "entityID";
@@ -62,6 +62,7 @@ class Disco extends PowerIdPDisco
     const PREFERRED_IDP = "preferredidp";
     const AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
     const WARNING_ATTRIBUTES = 'warningAttributes';
+    const AUTH_ID = 'AuthID';
 
     # METADATA KEYS
     const METADATA_DO_NOT_FILTER_IDPS = 'disco.doNotFilterIdps';
@@ -79,35 +80,36 @@ class Disco extends PowerIdPDisco
     const STATE_SP_METADATA = 'SPMetadata';
     const SAML_REQUESTED_AUTHN_CONTEXT = 'saml:RequestedAuthnContext';
     const STATE_AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
+    const SAML_SP_SSO = 'saml:sp:sso';
 
     private $originalsp;
     private array $authnContextClassRef = [];
 
     public function __construct(array $metadataSets, $instance)
     {
-        if (!array_key_exists('return', $_GET)) {
-            throw new \Exception('Missing parameter: return');
+        if (!array_key_exists(self::RETURN, $_GET)) {
+            throw new \Exception('Missing parameter: ' . self::RETURN);
         } else {
-            $returnURL = HTTP::checkURLAllowed($_GET['return']);
+            $returnURL = HTTP::checkURLAllowed($_GET[self::RETURN]);
         }
 
         parse_str(parse_url($returnURL)['query'], $query);
 
-        if (isset($query['AuthID'])) {
-            $id = explode(":", $query['AuthID'])[0];
-            $state = State::loadState($id, 'saml:sp:sso', true);
+        if (isset($query[self::AUTH_ID])) {
+            $id = explode(":", $query[self::AUTH_ID])[0];
+            $state = State::loadState($id, self::SAML_SP_SSO, true);
 
             if ($state !== null) {
-                if (isset($state['saml:RequestedAuthnContext']['AuthnContextClassRef'])) {
-                    $this->authnContextClassRef = $state['saml:RequestedAuthnContext']['AuthnContextClassRef'];
+                if (isset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF])) {
+                    $this->authnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF];
                     $this->removeAuthContextClassRefWithPrefix($state);
                 }
 
-                $id = State::saveState($state, 'saml:sp:sso');
+                $id = State::saveState($state, self::SAML_SP_SSO);
 
                 $e = explode("=", $returnURL)[0];
                 $newReturnURL = $e . "=" . urlencode($id);
-                $_GET['return'] = $newReturnURL;
+                $_GET[self::RETURN] = $newReturnURL;
             }
         }
 
