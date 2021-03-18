@@ -11,6 +11,10 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added extended PerunEntitlements
 
+#### Fixed
+- Fixed bug in PerunAttributes.php for PARTIAL mode when mapping one Perun attribute to more internal attributes 
+  caused getting attributes from Perun every time.
+
 ## [v4.1.1]
 #### Fixed
 - Fixed bad log message in PerunIdentity in mode USERONLY
