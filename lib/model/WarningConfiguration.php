@@ -1,16 +1,17 @@
 <?php
 
-namespace SimpleSAML\Module\perun;
+namespace SimpleSAML\Module\perun\model;
 
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun\Disco;
 
 
 /**
  * Class WarningConfiguration provides an option to load warning in disco-tpl from different types of sources
  *
- * @package SimpleSAML\Module\perun
+ * @package SimpleSAML\Module\perun\Model
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
 abstract class WarningConfiguration
@@ -33,8 +34,8 @@ abstract class WarningConfiguration
 
     protected bool $enabled = false;
     protected string $type = '';
-    protected string $title = '';
-    protected string $text = '';
+    protected array $title = [];
+    protected array $text = [];
 
     protected array $allowedTypes = [self::WARNING_TYPE_INFO, self::WARNING_TYPE_WARNING, self::WARNING_TYPE_ERROR];
 
@@ -55,26 +56,27 @@ abstract class WarningConfiguration
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getTitle(): string
+    public function getTitle(): array
     {
         return $this->title;
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getText(): string
+    public function getText(): array
     {
         return $this->text;
     }
 
     /**
      * Function returns the instance of WarningConfiguration
-     * @return WarningConfigurationConfig|WarningConfigurationFile|WarningConfigurationUrl
+     * @return WarningConfiguration
+     * @throws Exception
      */
-    public static function getInstance(): WarningConfigurationConfig|WarningConfigurationUrl|WarningConfigurationFile
+    public static function getInstance(): WarningConfiguration
     {
         $configuration = WarningConfiguration::getConfig();
         $source = strtolower($configuration->getString(self::SOURCE));
@@ -85,10 +87,7 @@ abstract class WarningConfiguration
         } elseif ($source === self::SOURCE_TYPE_URL) {
             return new WarningConfigurationUrl();
         } else {
-            Logger::warning("perun:WarningConfiguration: missing or invalid wayf.warning.source in module_perun.php");
-            throw new Exception(
-                "perun:WarningConfiguration: missing or invalid wayf.warning.source in module_perun.php"
-            );
+            return new WarningConfigurationNone();
         }
     }
 

@@ -3,11 +3,10 @@
 use SimpleSAML\Module;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
-use SimpleSAML\Error\Exception;
 use SimpleSAML\Module\perun\Disco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Module\perun\DiscoTemplate;
-use SimpleSAML\Module\perun\WarningConfiguration;
+use SimpleSAML\Module\perun\model\WarningConfiguration;
 
 /**
  * This is simple example of template for perun Discovery service
@@ -26,6 +25,8 @@ $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" hr
     Module::getModuleUrl('perun/res/css/disco.css') . '" />';
 
 $warningAttributes = $this->data[Disco::WARNING_ATTRIBUTES];
+$this->includeInlineTranslation('{perun:disco:warning_title}', $warningAttributes->getTitle());
+$this->includeInlineTranslation('{perun:disco:warning_text}', $warningAttributes->getText());
 $authContextClassRef = null;
 $idpEntityId = null;
 
@@ -39,7 +40,7 @@ $wayfConfig = [];
 
 //LOAD CONFIG
 try {
-    $config = Configuration::getConfig(CONFIG_FILE_NAME);
+    $config = Configuration::getConfig(Disco::CONFIG_FILE_NAME);
 } catch (\Exception $ex) {
     Logger::error('perun:disco-tpl: missing or invalid module_perun.php config file');
     throw $ex;
@@ -47,17 +48,17 @@ try {
 
 if ($config !== null) {
     try {
-        $wayfConfig = $config->getArray(Disco::WAYF);
+        $wayfConfig = $config->getConfigItem(Disco::WAYF);
     } catch (\Exception $ex) {
         Logger::error("perun:disco-tpl: missing configuration for param '" . Disco::WAYF . "'");
         throw $ex;
     }
     $translate_module = $wayfConfig->getString(Disco::TRANSLATE_MODULE, 'disco');
-    $addInstitution = $wayfConfig->getArray(Disco::ADD_INSITUTION);
+    $addInstitution = $wayfConfig->getConfigItem(Disco::ADD_INSTITUTION);
     try {
         $addInstitutionUrl = $addInstitution->getString(Disco::ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
-        Logger::warning('perun:disco-tpl: missing or invalid addInstitution.URL parameter in module_perun.php file');
+        Logger::warning('perun:disco-tpl: missing or  parameter in module_perun.php file');
     }
 
     try {
@@ -71,7 +72,7 @@ if ($config !== null) {
 if ($warningAttributes->isEnabled() && $warningAttributes->getType === WarningConfiguration::WARNING_TYPE_ERROR) {
     $this->data['header'] = $this->t('{perun:disco:warning}');
     $this->includeAtTemplateBase('includes/header.php');
-    echo Disco::showWarning($warningAttributes);
+    echo Disco::showWarning($this, $warningAttributes);
     $this->includeAtTemplateBase('includes/footer.php');
     echo Disco::getScripts($wayfConfig[Disco::BOXED]) . PHP_EOL;
     exit;
@@ -109,7 +110,7 @@ $this->includeAtTemplateBase('includes/header.php');
 
 # IF WE HAVE A WARNING, DISPLAY IT TO THE USER
 if ($warningAttributes->isEnabled()) {
-    echo Disco::showWarning($warningAttributes);
+    echo Disco::showWarning($this, $warningAttributes);
 }
 ###
 # LETS START DISPLAYING LOGIN OPTIONS
@@ -151,8 +152,8 @@ if ($this->isAddInstitutionApp()) {
     // regular wayf contains all entries
     echo '<div id="entries">';
     $cnt = 1;
-    $blocksCount = count($wayfConfig[Disco::BLOCKS]);
-    foreach ($wayfConfig[Disco:: BLOCKS] as $blockConfig) {
+    $blocksCount = count($wayfConfig->getArray(Disco::BLOCKS));
+    foreach ($wayfConfig->getArray(Disco:: BLOCKS) as $blockConfig) {
         $type = $blockConfig[Disco::BLOCK_TYPE];
         echo '<div class="row login-option-category">' . PHP_EOL;
         if (strtolower($type) === Disco::BLOCK_TYPE_INLINESEARCH) {
@@ -169,4 +170,4 @@ if ($this->isAddInstitutionApp()) {
 echo '</div>' . PHP_EOL;
 
 $this->includeAtTemplateBase('includes/footer.php');
-echo Disco::getScripts($wayfConfig[Disco::BOXED]) . PHP_EOL;
+echo Disco::getScripts($wayfConfig->getBoolean(Disco::BOXED, false)) . PHP_EOL;

@@ -1,14 +1,13 @@
 <?php
 
-namespace SimpleSAML\Module\perun;
+namespace SimpleSAML\Module\perun\model;
 
-use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
 
 /**
  * Implementation of WarningConfiguration using json file as the source of warning attributes
- * @package SimpleSAML\Module\perun
+ * @package SimpleSAML\Module\perun\model
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
 class WarningConfigurationFile extends WarningConfiguration
@@ -33,7 +32,7 @@ class WarningConfigurationFile extends WarningConfiguration
             $json_data = file_get_contents($file);
             restore_error_handler();
             $data = json_decode($json_data, true);
-        } catch (\Exception) {
+        } catch (\Exception $ex) {
             Logger::warning(
                 "perun:WarningConfigurationFile: missing or invalid wayf.warning.file parameter in "
                 . self::CONFIG_FILE_NAME
@@ -68,7 +67,7 @@ class WarningConfigurationFile extends WarningConfiguration
                 return $this;
             }
 
-            $this->title = $conf->getString(WarningConfiguration::TITLE, '');
+            $this->title = $conf->getArray(WarningConfiguration::TITLE, []);
             if (empty($this->title)) {
                 $this->enabled = false;
                 Logger::warning(
@@ -78,7 +77,7 @@ class WarningConfigurationFile extends WarningConfiguration
                 return $this;
             }
 
-            $this->text = $conf->getString(WarningConfiguration::TEXT, '');
+            $this->text = $conf->getArray(WarningConfiguration::TEXT, []);
             if (empty($this->text)) {
                 $this->enabled = false;
                 Logger::warning(

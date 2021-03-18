@@ -14,8 +14,14 @@ html, body {
     margin-top: 3%;
 }
 
+#show-entries-wrap {
+    margin-bottom: 5%;
+}
+
 #header img {
-    width: 250px;
+    max-height: 120px;
+    height: 30%;
+    width: auto;
 }
 
 a.metaentry {

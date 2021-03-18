@@ -1,14 +1,13 @@
 <?php
 
-namespace SimpleSAML\Module\perun;
+namespace SimpleSAML\Module\perun\model;
 
-use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
 
 /**
  * Implementation of WarningConfiguration using config file as the source of warning attributes
- * @package SimpleSAML\Module\perun
+ * @package SimpleSAML\Module\perun\model
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
  */
@@ -49,7 +48,7 @@ class WarningConfigurationConfig extends WarningConfiguration
                 $this->type = self::WARNING_TYPE_INFO;
             }
 
-            $this->title = $conf->getString(WarningConfiguration::TITLE, '');
+            $this->title = $conf->getArray(WarningConfiguration::TITLE, []);
             if (empty($this->title)) {
                 $this->enabled = false;
                 Logger::warning(
@@ -59,7 +58,7 @@ class WarningConfigurationConfig extends WarningConfiguration
                 return $this;
             }
 
-            $this->text = $conf->getString(WarningConfiguration::TEXT, '');
+            $this->text = $conf->getArray(WarningConfiguration::TEXT, []);
             if (empty($this->text)) {
                 $this->enabled = false;
                 Logger::warning(

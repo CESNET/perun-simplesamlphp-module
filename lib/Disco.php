@@ -9,6 +9,7 @@ use SimpleSAML\Auth\State;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
+use SimpleSAML\Module\perun\model\WarningConfiguration;
 
 /**
  * This class implements a IdP discovery service.
@@ -45,29 +46,41 @@ class Disco extends PowerIdPDisco
     const BLOCK_TAGS = 'tags';
     const BLOCK_ENTITY_IDS = 'entityIds';
     # CONFIGURATION ENTRIES ADD INSTITUTION
-    const ADD_INSITUTION = 'addInstitution';
+    const ADD_INSTITUTION = 'addInstitution';
     const ADD_INSTITUTION_URL = 'url';
     const ADD_INSTITUTION_EMAIL = 'email';
-    #
     const TRANSLATE_MODULE = 'translate_module';
-
-
-    const DISABLE_WHITELISTING = 'disableWhitelisting';
     const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'removeAuthnContextClassRefPrefix';
-    const WARNING_ATTRIBUTES = 'warningAttributes';
+    const DISABLE_WHITELISTING = 'disableWhitelisting';
 
+    # PARAMS AND DATA KEYS
+    const ENTITY_ID = "entityID";
+    const RETURN = "return";
+    const RETURN_ID_PARAM = "returnIDParam";
     const ORIGINAL_SP = "originalsp";
     const IDP_LIST = "idplist";
     const PREFERRED_IDP = "preferredidp";
-    const ENTITY_ID = "entityID";
-    const RETURN = "return";
-    const RETURN_ID_PARAM = "returnIDPAram";
     const AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
+    const WARNING_ATTRIBUTES = 'warningAttributes';
+
+    # METADATA KEYS
+    const METADATA_DO_NOT_FILTER_IDPS = 'disco.doNotFilterIdps';
+    const METADATA_ADD_INSTITUTION_APP = 'disco.addInstitutionApp';
+    const IDP_ENTITY_ATTRIBUTES = 'EntityAttributes';
+    const IDP_COCO = 'CoCo';
+    const IDP_RAS = 'RaS';
+    const SP_GREYLIST = 'greylist';
+    const IDP_ENTITY_ID = 'entityid';
+    const IDP_COLOR = 'color';
+    const IDP_FULL_DISPLAY_NAME = 'fullDisplayName';
+    const IDP_SHOW_SIGN_IN_WITH = 'showSignInWith';
+
+    # STATE KEYS
+    const STATE_SP_METADATA = 'SPMetadata';
+    const SAML_REQUESTED_AUTHN_CONTEXT = 'saml:RequestedAuthnContext';
+    const STATE_AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
 
     private $originalsp;
-    private $whitelist;
-    private $greylist;
-    private $service;
     private array $authnContextClassRef = [];
 
     public function __construct(array $metadataSets, $instance)
@@ -100,8 +113,8 @@ class Disco extends PowerIdPDisco
 
         parent::__construct($metadataSets, $instance);
 
-        if (isset($state) && isset($state['SPMetadata'])) {
-            $this->originalsp = $state['SPMetadata'];
+        if (isset($state) && isset($state[self::STATE_SP_METADATA])) {
+            $this->originalsp = $state[self::STATE_SP_METADATA];
         }
     }
 
@@ -117,8 +130,8 @@ class Disco extends PowerIdPDisco
 
         // no choice possible. Show discovery service page
         $idpList = $this->getIdPList();
-        if (isset($this->originalsp['disco.addInstitutionApp'])
-            && $this->originalsp['disco.addInstitutionApp'] === true
+        if (isset($this->originalsp[Disco::METADATA_ADD_INSTITUTION_APP])
+            && $this->originalsp[Disco::METADATA_ADD_INSTITUTION_APP] === true
         ) {
             $idpList = $this->filterAddInstitutionList($idpList);
         } else {
@@ -145,7 +158,7 @@ class Disco extends PowerIdPDisco
         try {
             $warningInstance = WarningConfiguration::getInstance();
             $warningAttributes = $warningInstance->getWarningAttributes();
-        } catch (Exception) {
+        } catch (Exception $ex) {
             $warningAttributes = null;
         }
 
@@ -168,13 +181,13 @@ class Disco extends PowerIdPDisco
      * @return array The list in $list after filtering entities.
      * @throws Exception if all IdPs are filtered out and no one left.
      */
-    protected function filterList($list)
+    protected function filterList($list): array
     {
         $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $disableWhitelisting = $conf->getBoolean(self::DISABLE_WHITELISTING, false);
 
-        if (!isset($this->originalsp['disco.doNotFilterIdps'])
-            || !$this->originalsp['disco.doNotFilterIdps']
+        if (!isset($this->originalsp[Disco::METADATA_DO_NOT_FILTER_IDPS])
+            || !$this->originalsp[Disco::METADATA_DO_NOT_FILTER_IDPS]
         ) {
             $list = parent::filterList($list);
             $list = self::doFilter($list, $disableWhitelisting, $this->scopedIDPList);
@@ -201,7 +214,7 @@ class Disco extends PowerIdPDisco
      * @return array The list in $list after filtering entities.
      * @throws Exception In case
      */
-    public static function doFilter($list, $disableWhitelisting = false, $scopedIdPList = [])
+    public static function doFilter(array $list, $disableWhitelisting = false, $scopedIdPList = []): array
     {
         $service = IdpListsService::getInstance();
         $whitelist = $service->getWhitelistEntityIds();
@@ -223,7 +236,7 @@ class Disco extends PowerIdPDisco
      * @return array The list in $list after filtering entities.
      * @throws Exception if all IdPs are filtered out and no one left.
      */
-    protected function filterAddInstitutionList($list)
+    protected function filterAddInstitutionList(array $list): array
     {
         $service = IdpListsService::getInstance();
         $whitelist = $service->getWhitelistEntityIds();
@@ -248,7 +261,7 @@ class Disco extends PowerIdPDisco
      *
      * @return array The list in $list after filtering entities.
      */
-    protected static function scoping($list, $scopedIDPList)
+    protected static function scoping(array $list, array $scopedIDPList): array
     {
         if (!empty($scopedIDPList)) {
             foreach ($list as $entityId => $idp) {
@@ -271,7 +284,7 @@ class Disco extends PowerIdPDisco
      *
      * @return array The list in $list after filtering entities.
      */
-    protected static function whitelisting($list, $whitelist)
+    protected static function whitelisting(array $list, array $whitelist): array
     {
         foreach ($list as $entityId => $idp) {
             $unset = true;
@@ -279,9 +292,9 @@ class Disco extends PowerIdPDisco
             if (in_array($entityId, $whitelist)) {
                 $unset = false;
             }
-            if (isset($idp['EntityAttributes']['http://macedir.org/entity-category-support'])) {
+            if (isset($idp[self::IDP_ENTITY_ATTRIBUTES]['http://macedir.org/entity-category-support'])) {
                 $entityCategorySupport
-                    = $idp['EntityAttributes']['http://macedir.org/entity-category-support'];
+                    = $idp[self::IDP_ENTITY_ATTRIBUTES]['http://macedir.org/entity-category-support'];
                 if (in_array('http://refeds.org/category/research-and-scholarship', $entityCategorySupport)
                 ) {
                     $unset = false;
@@ -291,10 +304,10 @@ class Disco extends PowerIdPDisco
                     $unset = false;
                 }
             }
-            if (isset($idp['CoCo']) and $idp['CoCo'] === true) {
+            if (isset($idp[self::IDP_COCO]) and $idp[self::IDP_COCO] === true) {
                 $unset = false;
             }
-            if (isset($idp['RaS']) and $idp['RaS'] === true) {
+            if (isset($idp[self::IDP_RAS]) and $idp[self::IDP_RAS] === true) {
                 $unset = false;
             }
 
@@ -313,7 +326,7 @@ class Disco extends PowerIdPDisco
      *
      * @return array The list in $list after filtering entities.
      */
-    protected static function greylisting($list, $greylist)
+    protected static function greylisting(array $list, array $greylist): array
     {
         foreach ($list as $entityId => $idp) {
             if (in_array($entityId, $greylist)) {
@@ -327,8 +340,8 @@ class Disco extends PowerIdPDisco
     protected function greylistingPerSP($list, $sp)
     {
         foreach ($list as $entityId => $idp) {
-            if (isset($sp['greylist'])
-                && in_array($entityId, $sp['greylist'])
+            if (isset($sp[self::SP_GREYLIST])
+                && in_array($entityId, $sp[self::SP_GREYLIST])
             ) {
                 unset($list[$entityId]);
             }
@@ -370,6 +383,7 @@ class Disco extends PowerIdPDisco
     /**
      * This method remove all AuthnContextClassRef which start with prefix from configuration
      * @param $state
+     * @throws \Exception
      */
     public function removeAuthContextClassRefWithPrefix(&$state)
     {
@@ -379,7 +393,7 @@ class Disco extends PowerIdPDisco
         if ($prefix === null) {
             return;
         }
-        unset($state['saml:RequestedAuthnContext']['AuthnContextClassRef']);
+        unset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::STATE_AUTHN_CONTEXT_CLASS_REF]);
         $array = [];
         foreach ($this->authnContextClassRef as $value) {
             if (!(substr($value, 0, strlen($prefix)) === $prefix)) {
@@ -387,7 +401,7 @@ class Disco extends PowerIdPDisco
             }
         }
         if (!empty($array)) {
-            $state['saml:RequestedAuthnContext']['AuthnContextClassRef']
+            $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::STATE_AUTHN_CONTEXT_CLASS_REF]
                 = $array;
         }
     }
@@ -398,10 +412,10 @@ class Disco extends PowerIdPDisco
      * @param bool $favourite
      * @return string html
      */
-    public static function showEntry(DiscoTemplate $t, $metadata, $favourite = false): string
+    public static function showEntry(DiscoTemplate $t, array $metadata, $favourite = false): string
     {
         $extra = ($favourite ? ' favourite' : '');
-        $href = $t->getContinueUrl($metadata['entityid']);
+        $href = $t->getContinueUrl($metadata[self::IDP_ENTITY_ID]);
         $html = '<a class="metaentry' . $extra . ' list-group-item" href="' . $href. '">';
         $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
         $html .= '</a>';
@@ -416,21 +430,21 @@ class Disco extends PowerIdPDisco
      *
      * @return string html
      */
-    public static function showTaggedEntry(DiscoTemplate $t, $metadata, $class = ''): string
+    public static function showTaggedEntry(DiscoTemplate $t, array $metadata, $class = ''): string
     {
         if (!array_key_exists('tags', $metadata)) {
             return Disco::showEntry($t, $metadata);
         }
         $bck = 'white';
-        if (!empty($metadata['color'])) {
-            $bck = $metadata['color'];
+        if (!empty($metadata[self::IDP_COLOR])) {
+            $bck = $metadata[self::IDP_COLOR];
         }
 
-        $href = $t->getContinueUrl($metadata['entityid']);
+        $href = $t->getContinueUrl($metadata[self::IDP_ENTITY_ID]);
         $text = '';
-        if (isset($metadata['fullDisplayName'])) {
-            $text = $metadata['fullDisplayName'];
-        } elseif (isset($metadata['showSignInWith']) && $metadata['showSignInWith']) {
+        if (isset($metadata[self::IDP_FULL_DISPLAY_NAME])) {
+            $text = $metadata[self::IDP_FULL_DISPLAY_NAME];
+        } elseif (isset($metadata[self::IDP_SHOW_SIGN_IN_WITH]) && $metadata[self::IDP_SHOW_SIGN_IN_WITH]) {
             $text = $t->t('{perun:disco:sign_in_with}') . $t->getTranslatedEntityName($metadata);
         } else {
             $text .= $t->getTranslatedEntityName($metadata);
@@ -439,7 +453,7 @@ class Disco extends PowerIdPDisco
         $html .= '    <div class="metalist list-group">' . PHP_EOL;
         $html .= '        <a class="metaentry btn btn-block tagged" href="' . $href .
             '" style="background: ' . $bck . '">';
-        $html .= '            <img src="' . $metadata['icon'] . '"><strong>' . $text . '</strong>' . PHP_EOL;
+        $html .= '            <img alt="icon" src="' . $metadata['icon'] . '"><strong>' . $text . '</strong>' . PHP_EOL;
         $html .= '        </a>';
         $html .= '    </div>';
         $html .= '</div>';
@@ -487,9 +501,13 @@ class Disco extends PowerIdPDisco
         $counter = 0;
         $fullRows = floor($idpCount / 3);
         $remainingIdps = $idpCount % 3;
+
+        $class = 'col-xs-12 col-md-6 col-lg-4';
         for ($i = 0; $i < $fullRows; $i++) {
             for ($j = 0; $j < 3; $j++) {
-                $class = 'col-xs-12 col-md-6 col-lg-4';
+                if ($remainingIdps === 0 && $counter === ($idpCount-1)) {
+                    $class .= ' col-md-offset-3 col-lg-offset-0';
+                }
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
             }
         }
@@ -535,17 +553,23 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-    public static function showWarning(WarningConfiguration $warningConf): string
+    public static function showWarning(DiscoTemplate $t, WarningConfiguration $warningConf): string
     {
         $html = '';
-        $html .= match ($warningConf->getType()) {
-            WarningConfiguration::WARNING_TYPE_INFO => '<div class="alert alert-info">' . PHP_EOL,
-            WarningConfiguration::WARNING_TYPE_WARNING => '<div class="alert alert-warning">' . PHP_EOL,
-            WarningConfiguration::WARNING_TYPE_ERROR => '<div class="alert alert-danger">' . PHP_EOL,
-        };
+        switch ($warningConf->getType()) {
+            case WarningConfiguration::WARNING_TYPE_INFO:
+                $html .= '<div class="alert alert-info">' . PHP_EOL;
+                break;
+            case WarningConfiguration::WARNING_TYPE_WARNING:
+                $html .= '<div class="alert alert-warning">' . PHP_EOL;
+                break;
+            case WarningConfiguration::WARNING_TYPE_ERROR:
+                $html .= '<div class="alert alert-danger">' . PHP_EOL;
+                break;
+        }
 
-        $html .= '<h4><strong>' . $warningConf->getTitle() . '</strong></h4>' . PHP_EOL;
-        $html .= $warningConf->getText();
+        $html .= '<h4><strong>' .  $t->t('{perun:disco:warning_title}') . '</strong></h4>' . PHP_EOL;
+        $html .= $t->t('{perun:disco:warning_text}');
         $html .= '</div>';
         return $html;
     }
