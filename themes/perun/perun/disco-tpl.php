@@ -69,7 +69,7 @@ if ($config !== null) {
 }
 
 // IF WARNING ERROR IS ENABLED, DISPLAY IT AND STOP THE USER
-if ($warningAttributes->isEnabled() && $warningAttributes->getType === WarningConfiguration::WARNING_TYPE_ERROR) {
+if ($warningAttributes->isEnabled() && $warningAttributes->getType() === WarningConfiguration::WARNING_TYPE_ERROR) {
     $this->data['header'] = $this->t('{perun:disco:warning}');
     $this->includeAtTemplateBase('includes/header.php');
     echo Disco::showWarning($this, $warningAttributes);
