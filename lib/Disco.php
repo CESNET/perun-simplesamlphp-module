@@ -40,9 +40,10 @@ class Disco extends PowerIdPDisco
     const BLOCK_TYPE_INLINESEARCH = "inlinesearch";
     const BLOCK_TYPE_TAGGED = "tagged";
     const BLOCK_TEXT_ON = 'text_enabled';
-    const BLOCK_HINT_TRANSLATION_KEY = 'hint_translation_key';
-    const BLOCK_NOTE_TRANSLATION_KEY = 'note_translation_key';
-    const BLOCK_PLACEHOLDER_TRANSLATION_KEY = 'placeholder_translation_key';
+    const BLOCK_NAME = 'name';
+    const BLOCK_HINT_TRANSLATION = 'hint_translation';
+    const BLOCK_NOTE_TRANSLATION = 'note_translation';
+    const BLOCK_PLACEHOLDER_TRANSLATE = 'placeholder_translation';
     const BLOCK_TAGS = 'tags';
     const BLOCK_ENTITY_IDS = 'entity_ids';
     # CONFIGURATION ENTRIES ADD INSTITUTION
@@ -490,20 +491,12 @@ class Disco extends PowerIdPDisco
             array_push($idps, $allIdps[$entityId]);
         }
         $idpCount = count($idps);
-        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
-        $hintTranslateKey = array_key_exists(self::BLOCK_HINT_TRANSLATION_KEY, $blockConfig) ?
-            $blockConfig[self::BLOCK_HINT_TRANSLATION_KEY] : '';
-        $noteTranslateKey = array_key_exists(self::BLOCK_NOTE_TRANSLATION_KEY, $blockConfig) ?
-            $blockConfig[self::BLOCK_NOTE_TRANSLATION_KEY] : '';
-        if ($textOn && strlen(trim($hintTranslateKey)) > 0) {
-            $html .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') . '</p>' . PHP_EOL;
-        }
         $html .= '<div class="row">' . PHP_EOL;
+        $html .= Disco::addLoginOptionHint($t, $blockConfig);
 
         $counter = 0;
         $fullRows = floor($idpCount / 3);
         $remainingIdps = $idpCount % 3;
-
         $class = 'col-xs-12 col-md-6 col-lg-4';
         for ($i = 0; $i < $fullRows; $i++) {
             for ($j = 0; $j < 3; $j++) {
@@ -515,13 +508,50 @@ class Disco extends PowerIdPDisco
         }
 
         $html .= Disco::showRemainingTaggedEntries($t, $idps, $counter, $remainingIdps, $fullRows > 0);
-
+        $html .= Disco::addLoginOptionNote($t, $blockConfig);
         $html .= '</div>' . PHP_EOL;
-        if ($textOn && strlen(trim($noteTranslateKey)) > 0) {
-            $html .= '<p class="login-option-category-note">'. $t->t('{' . $noteTranslateKey . '}') . '</p>' . PHP_EOL;
-        }
-
         return $html;
+    }
+
+    private static function addLoginOptionHint(DiscoTemplate $t, $blockConfig, $defaultTranslateKey = ''): string
+    {
+        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
+        $name = $blockConfig[self::BLOCK_NAME];
+        $hintTranslate = array_key_exists(self::BLOCK_HINT_TRANSLATION, $blockConfig) ?
+            $blockConfig[self::BLOCK_HINT_TRANSLATION] : [];
+        $hintTranslateKey = !empty($name) ? '{perun:disco:' . $name . '_hint}' : '';
+        if ($textOn && !empty($hintTranslateKey) && !empty($hintTranslate)) {
+            $t->includeInlineTranslation($hintTranslateKey, $hintTranslate);
+            return '<p class="login-option-category-hint">'. $t->t($hintTranslateKey) . '</p>' . PHP_EOL;
+        } else if ($textOn && !empty($defaultTranslateKey)) {
+            return '<p class="login-option-category-hint">'. $t->t($defaultTranslateKey) . '</p>' . PHP_EOL;
+        }
+        return '';
+    }
+
+    private static function addLoginOptionNote(DiscoTemplate  $t, $blockConfig, $defaultTranslateKey = ''): string
+    {
+        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
+        $name = array_key_exists(self::BLOCK_NAME, $blockConfig) ? $blockConfig[self::BLOCK_NAME] : '';
+        $noteTranslate = array_key_exists(self::BLOCK_NOTE_TRANSLATION, $blockConfig) ?
+            $blockConfig[self::BLOCK_NOTE_TRANSLATION] : [];
+        $noteTranslateKey = !empty($name) ? '{perun:disco:' . $name . '_note}' : '';
+        if ($textOn && !empty($noteTranslateKey) && !empty($noteTranslate)) {
+            $t->includeInlineTranslation($noteTranslateKey, $noteTranslate);
+            return '<p class="login-option-category-note">'. $t->t($noteTranslateKey) . '</p>' . PHP_EOL;
+        } else if ($textOn && !empty($defaultTranslateKey)) {
+            return '<p class="login-option-category-note">'. $t->t($defaultTranslateKey) . '</p>' . PHP_EOL;
+        }
+        return '';
+    }
+
+    private static function getPlaceholderTranslation(DiscoTemplate $t, $blockConfig, $translateKey): string {
+        $translate = array_key_exists(self::BLOCK_PLACEHOLDER_TRANSLATE, $blockConfig) ?
+            $blockConfig[self::BLOCK_PLACEHOLDER_TRANSLATE] : [];
+        if (!empty($translate)) {
+            $t->includeInlineTranslation($translateKey, $translate);
+        }
+        return $translateKey;
     }
 
     protected static function showRemainingTaggedEntries($t, $idps, $counter, $remainingIdps, $hasFullRows): string
@@ -582,20 +612,15 @@ class Disco extends PowerIdPDisco
         $result = '';
         $allIdps = $t->getAllIdps();
         $isAddInstitutionApp = $t->isAddInstitutionApp();
-        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
-        $hintTranslateKey = array_key_exists(self::BLOCK_TEXT_ON, $blockConfig) ?
-            $blockConfig[self::BLOCK_HINT_TRANSLATION_KEY] : 'perun:disco:institution_search_hint';
-        $placeholderTranslateKey = array_key_exists(self::BLOCK_PLACEHOLDER_TRANSLATION_KEY, $blockConfig) ?
-            $blockConfig[self::BLOCK_PLACEHOLDER_TRANSLATION_KEY] : 'perun:disco:institution_search_input_placeholder';
+        $placeholderTranslateKey = Disco::getPlaceholderTranslation($t, $blockConfig,
+            '{perun:disco:institution_search_input_placeholder}');
 
-        if ($textOn) {
-            $result .= '<p class="login-option-category-hint">'. $t->t('{' . $hintTranslateKey . '}') .'</p>' . PHP_EOL;
-        }
+        $result .= Disco::addLoginOptionNote($t, $blockConfig, '{perun:disco:institution_search_hint}');
         $result .= '<div class="inlinesearch">' . PHP_EOL;
         $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
         $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value="" name="query" id="query"
                                autofocus oninput="$(\'#list\').show();" placeholder="'
-            . $t->t('{' . $placeholderTranslateKey . '}') . '"/>' . PHP_EOL;
+            . $t->t($placeholderTranslateKey) . '"/>' . PHP_EOL;
         $result .= '    </form>';
         # ENTRIES
         $result .= '    <div class="metalist list-group" id="list" style="display: none">' . PHP_EOL;
@@ -626,10 +651,10 @@ class Disco extends PowerIdPDisco
         }
         $result .= '    </div>' . PHP_EOL;
         $result .= '</div>';
+        $result .= Disco::addLoginOptionNote($t, $blockConfig, );
 
         return $result;
     }
-
 
     private static function boxedDesignScript(): string
     {
