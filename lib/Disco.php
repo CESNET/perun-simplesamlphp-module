@@ -25,69 +25,71 @@ use SimpleSAML\Module\perun\model\WarningConfiguration;
  */
 class Disco extends PowerIdPDisco
 {
-    const CONFIG_FILE_NAME = 'module_perun.php';
-    const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
+    public const CONFIG_FILE_NAME = 'module_perun.php';
+    public const URN_CESNET_PROXYIDP_IDPENTITYID = 'urn:cesnet:proxyidp:idpentityid:';
 
-    const DEFAULT_THEME = 'perun';
+    public const DEFAULT_THEME = 'perun';
 
     # ROOT CONFIGURATION ENTRY
-    const WAYF = 'wayf';
+    public const WAYF = 'wayf';
     # CONFIGURATION ENTRIES
-    const BOXED = 'boxed';
+    public const BOXED = 'boxed';
     # CONFIGURATION ENTRIES IDP BLOCKS
-    const BLOCKS = 'blocks';
-    const BLOCK_TYPE = 'type';
-    const BLOCK_TYPE_INLINESEARCH = "inlinesearch";
-    const BLOCK_TYPE_TAGGED = "tagged";
-    const BLOCK_TEXT_ON = 'text_enabled';
-    const BLOCK_NAME = 'name';
-    const BLOCK_HINT_TRANSLATION = 'hint_translation';
-    const BLOCK_NOTE_TRANSLATION = 'note_translation';
-    const BLOCK_PLACEHOLDER_TRANSLATE = 'placeholder_translation';
-    const BLOCK_TAGS = 'tags';
-    const BLOCK_ENTITY_IDS = 'entity_ids';
+    public const BLOCKS = 'blocks';
+    public const BLOCK_TYPE = 'type';
+    public const BLOCK_TYPE_INLINESEARCH = "inlinesearch";
+    public const BLOCK_TYPE_TAGGED = "tagged";
+    public const BLOCK_TEXT_ON = 'text_enabled';
+    public const BLOCK_NAME = 'name';
+    public const BLOCK_HINT_TRANSLATION = 'hint_translation';
+    public const BLOCK_NOTE_TRANSLATION = 'note_translation';
+    public const BLOCK_PLACEHOLDER_TRANSLATE = 'placeholder_translation';
+    public const BLOCK_TAGS = 'tags';
+    public const BLOCK_ENTITY_IDS = 'entity_ids';
     # CONFIGURATION ENTRIES ADD INSTITUTION
-    const ADD_INSTITUTION = 'add_institution';
-    const ADD_INSTITUTION_URL = 'url';
-    const ADD_INSTITUTION_EMAIL = 'email';
-    const TRANSLATE_MODULE = 'translate_module';
-    const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'remove_authn_context_class_ref_prefix';
-    const DISABLE_WHITELISTING = 'disable_whitelisting';
+    public const ADD_INSTITUTION = 'add_institution';
+    public const ADD_INSTITUTION_URL = 'url';
+    public const ADD_INSTITUTION_EMAIL = 'email';
+    public const TRANSLATE_MODULE = 'translate_module';
+    public const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'remove_authn_context_class_ref_prefix';
+    public const DISABLE_WHITELISTING = 'disable_whitelisting';
 
     # PARAMS AND DATA KEYS
-    const ENTITY_ID = "entityID";
-    const RETURN = "return";
-    const RETURN_ID_PARAM = "returnIDParam";
-    const ORIGINAL_SP = "originalsp";
-    const IDP_LIST = "idplist";
-    const PREFERRED_IDP = "preferredidp";
-    const AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
-    const WARNING_ATTRIBUTES = 'warningAttributes';
-    const AUTH_ID = 'AuthID';
+    public const ENTITY_ID = "entityID";
+    public const RETURN = "return";
+    public const RETURN_ID_PARAM = "returnIDParam";
+    public const ORIGINAL_SP = "originalsp";
+    public const IDP_LIST = "idplist";
+    public const PREFERRED_IDP = "preferredidp";
+    public const AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
+    public const WARNING_ATTRIBUTES = 'warningAttributes';
+    public const AUTH_ID = 'AuthID';
 
     # METADATA KEYS
-    const METADATA_DO_NOT_FILTER_IDPS = 'disco.doNotFilterIdps';
-    const METADATA_ADD_INSTITUTION_APP = 'disco.addInstitutionApp';
-    const IDP_ENTITY_ATTRIBUTES = 'EntityAttributes';
-    const IDP_COCO = 'CoCo';
-    const IDP_RAS = 'RaS';
-    const SP_GREYLIST = 'greylist';
-    const IDP_ENTITY_ID = 'entityid';
-    const IDP_COLOR = 'color';
-    const IDP_FULL_DISPLAY_NAME = 'fullDisplayName';
-    const IDP_SHOW_SIGN_IN_WITH = 'showSignInWith';
+    public const METADATA_DO_NOT_FILTER_IDPS = 'disco.doNotFilterIdps';
+    public const METADATA_ADD_INSTITUTION_APP = 'disco.addInstitutionApp';
+    public const IDP_ENTITY_ATTRIBUTES = 'EntityAttributes';
+    public const IDP_COCO = 'CoCo';
+    public const IDP_RAS = 'RaS';
+    public const SP_GREYLIST = 'greylist';
+    public const IDP_ENTITY_ID = 'entityid';
+    public const IDP_COLOR = 'color';
+    public const IDP_FULL_DISPLAY_NAME = 'fullDisplayName';
+    public const IDP_SHOW_SIGN_IN_WITH = 'showSignInWith';
 
     # STATE KEYS
-    const STATE_SP_METADATA = 'SPMetadata';
-    const SAML_REQUESTED_AUTHN_CONTEXT = 'saml:RequestedAuthnContext';
-    const STATE_AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
-    const SAML_SP_SSO = 'saml:sp:sso';
+    public const STATE_SP_METADATA = 'SPMetadata';
+    public const SAML_REQUESTED_AUTHN_CONTEXT = 'saml:RequestedAuthnContext';
+    public const STATE_AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
+    public const SAML_SP_SSO = 'saml:sp:sso';
 
     private $originalsp;
     private array $authnContextClassRef = [];
 
-    public function __construct(array $metadataSets, $instance)
-    {
+    public function __construct(
+        array $metadataSets,
+        $instance
+    ) {
         if (!array_key_exists(self::RETURN, $_GET)) {
             throw new \Exception('Missing parameter: ' . self::RETURN);
         } else {
@@ -102,7 +104,8 @@ class Disco extends PowerIdPDisco
 
             if ($state !== null) {
                 if (isset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF])) {
-                    $this->authnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF];
+                    $this->authnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT]
+                        [self::AUTHN_CONTEXT_CLASS_REF];
                     $this->removeAuthContextClassRefWithPrefix($state);
                 }
 
@@ -217,8 +220,11 @@ class Disco extends PowerIdPDisco
      * @return array The list in $list after filtering entities.
      * @throws Exception In case
      */
-    public static function doFilter(array $list, $disableWhitelisting = false, $scopedIdPList = []): array
-    {
+    public static function doFilter(
+        array $list,
+        bool $disableWhitelisting = false,
+        array $scopedIdPList = []
+    ): array {
         $service = IdpListsService::getInstance();
         $whitelist = $service->getWhitelistEntityIds();
         $greylist = $service->getGreylistEntityIds();
@@ -264,8 +270,10 @@ class Disco extends PowerIdPDisco
      *
      * @return array The list in $list after filtering entities.
      */
-    protected static function scoping(array $list, array $scopedIDPList): array
-    {
+    protected static function scoping(
+        array $list,
+        array $scopedIDPList
+    ): array {
         if (!empty($scopedIDPList)) {
             foreach ($list as $entityId => $idp) {
                 if (!in_array($entityId, $scopedIDPList)) {
@@ -287,8 +295,10 @@ class Disco extends PowerIdPDisco
      *
      * @return array The list in $list after filtering entities.
      */
-    protected static function whitelisting(array $list, array $whitelist): array
-    {
+    protected static function whitelisting(
+        array $list,
+        array $whitelist
+    ): array {
         foreach ($list as $entityId => $idp) {
             $unset = true;
 
@@ -329,8 +339,10 @@ class Disco extends PowerIdPDisco
      *
      * @return array The list in $list after filtering entities.
      */
-    protected static function greylisting(array $list, array $greylist): array
-    {
+    protected static function greylisting(
+        array $list,
+        array $greylist
+    ): array {
         foreach ($list as $entityId => $idp) {
             if (in_array($entityId, $greylist)) {
                 unset($list[$entityId]);
@@ -340,8 +352,10 @@ class Disco extends PowerIdPDisco
         return $list;
     }
 
-    protected function greylistingPerSP($list, $sp)
-    {
+    protected function greylistingPerSP(
+        $list,
+        $sp
+    ): array {
         foreach ($list as $entityId => $idp) {
             if (isset($sp[self::SP_GREYLIST])
                 && in_array($entityId, $sp[self::SP_GREYLIST])
@@ -360,8 +374,12 @@ class Disco extends PowerIdPDisco
      * @param $idpEntityId
      * @return string url where user should be redirected when he choose idp
      */
-    public static function buildContinueUrl($entityID, $return, $returnIDParam, $idpEntityId): string
-    {
+    public static function buildContinueUrl(
+        string $entityID,
+        string $return,
+        string $returnIDParam,
+        string $idpEntityId
+    ): string {
         return '?' .
             'entityID=' . urlencode($entityID) . '&' .
             'return=' . urlencode($return) . '&' .
@@ -375,8 +393,11 @@ class Disco extends PowerIdPDisco
      * @param $returnIDParam
      * @return string url where user should be redirected when he choose idp
      */
-    public static function buildContinueUrlWithoutIdPEntityId($entityID, $return, $returnIDParam): string
-    {
+    public static function buildContinueUrlWithoutIdPEntityId(
+        string $entityID,
+        string $return,
+        string $returnIDParam
+    ): string {
         return '?' .
             'entityID=' . urlencode($entityID) . '&' .
             'return=' . urlencode($return) . '&' .
@@ -415,8 +436,11 @@ class Disco extends PowerIdPDisco
      * @param bool $favourite
      * @return string html
      */
-    public static function showEntry(DiscoTemplate $t, array $metadata, $favourite = false): string
-    {
+    public static function showEntry(
+        DiscoTemplate $t,
+        array $metadata,
+        $favourite = false
+    ): string {
         $extra = ($favourite ? ' favourite' : '');
         $href = $t->getContinueUrl($metadata[self::IDP_ENTITY_ID]);
         $html = '<a class="metaentry' . $extra . ' list-group-item" href="' . $href. '">';
@@ -433,8 +457,11 @@ class Disco extends PowerIdPDisco
      *
      * @return string html
      */
-    public static function showTaggedEntry(DiscoTemplate $t, array $metadata, $class = ''): string
-    {
+    public static function showTaggedEntry(
+        DiscoTemplate $t,
+        array $metadata,
+        string $class = ''
+    ): string {
         if (!array_key_exists('tags', $metadata)) {
             return Disco::showEntry($t, $metadata);
         }
@@ -464,7 +491,7 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-    public static function getOr($id = NULL): string
+    public static function getOr($id = null): string
     {
         $or = '';
         if (!is_null($id)) {
@@ -477,8 +504,10 @@ class Disco extends PowerIdPDisco
         return $or;
     }
 
-    public static function showTaggedIdPs(DiscoTemplate $t, $blockConfig): string
-    {
+    public static function showTaggedIdPs(
+        DiscoTemplate $t,
+        array $blockConfig
+    ): string {
         $html = '';
         $idps = [];
         $tags = $blockConfig[self::BLOCK_TAGS];
@@ -513,8 +542,11 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-    private static function addLoginOptionHint(DiscoTemplate $t, $blockConfig, $defaultTranslateKey = ''): string
-    {
+    private static function addLoginOptionHint(
+        DiscoTemplate $t,
+        array $blockConfig,
+        string $defaultTranslateKey = ''
+    ): string {
         $textOn = $blockConfig[self::BLOCK_TEXT_ON];
         $name = $blockConfig[self::BLOCK_NAME];
         $hintTranslate = array_key_exists(self::BLOCK_HINT_TRANSLATION, $blockConfig) ?
@@ -523,14 +555,17 @@ class Disco extends PowerIdPDisco
         if ($textOn && !empty($hintTranslateKey) && !empty($hintTranslate)) {
             $t->includeInlineTranslation($hintTranslateKey, $hintTranslate);
             return '<p class="login-option-category-hint">'. $t->t($hintTranslateKey) . '</p>' . PHP_EOL;
-        } else if ($textOn && !empty($defaultTranslateKey)) {
+        } elseif ($textOn && !empty($defaultTranslateKey)) {
             return '<p class="login-option-category-hint">'. $t->t($defaultTranslateKey) . '</p>' . PHP_EOL;
         }
         return '';
     }
 
-    private static function addLoginOptionNote(DiscoTemplate  $t, $blockConfig, $defaultTranslateKey = ''): string
-    {
+    private static function addLoginOptionNote(
+        DiscoTemplate $t,
+        array $blockConfig,
+        string $defaultTranslateKey = ''
+    ): string {
         $textOn = $blockConfig[self::BLOCK_TEXT_ON];
         $name = array_key_exists(self::BLOCK_NAME, $blockConfig) ? $blockConfig[self::BLOCK_NAME] : '';
         $noteTranslate = array_key_exists(self::BLOCK_NOTE_TRANSLATION, $blockConfig) ?
@@ -539,13 +574,17 @@ class Disco extends PowerIdPDisco
         if ($textOn && !empty($noteTranslateKey) && !empty($noteTranslate)) {
             $t->includeInlineTranslation($noteTranslateKey, $noteTranslate);
             return '<p class="login-option-category-note">'. $t->t($noteTranslateKey) . '</p>' . PHP_EOL;
-        } else if ($textOn && !empty($defaultTranslateKey)) {
+        } elseif ($textOn && !empty($defaultTranslateKey)) {
             return '<p class="login-option-category-note">'. $t->t($defaultTranslateKey) . '</p>' . PHP_EOL;
         }
         return '';
     }
 
-    private static function getPlaceholderTranslation(DiscoTemplate $t, $blockConfig, $translateKey): string {
+    private static function getPlaceholderTranslation(
+        DiscoTemplate $t,
+        array $blockConfig,
+        string $translateKey
+    ): string {
         $translate = array_key_exists(self::BLOCK_PLACEHOLDER_TRANSLATE, $blockConfig) ?
             $blockConfig[self::BLOCK_PLACEHOLDER_TRANSLATE] : [];
         if (!empty($translate)) {
@@ -554,8 +593,13 @@ class Disco extends PowerIdPDisco
         return $translateKey;
     }
 
-    protected static function showRemainingTaggedEntries($t, $idps, $counter, $remainingIdps, $hasFullRows): string
-    {
+    protected static function showRemainingTaggedEntries(
+        DiscoTemplate $t,
+        array $idps,
+        int $counter,
+        int $remainingIdps,
+        bool $hasFullRows
+    ): string {
         $html = '';
         if ($remainingIdps == 0) {
             return $html;
@@ -567,26 +611,26 @@ class Disco extends PowerIdPDisco
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
                 $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-0 col-md-offset-3';
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
-            } else if ($remainingIdps == 1) {
+            } elseif ($remainingIdps == 1) {
                 $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-4';
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
                 $html .= '</div>' . PHP_EOL;
             }
-        } else {
-            if ($remainingIdps == 2) {
-                $class = 'col-xs-12 col-md-6';
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
-            } else if ($remainingIdps == 1) {
-                $class = 'col-lg-12';
-                $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
-            }
+        } elseif ($remainingIdps == 2) {
+            $class = 'col-xs-12 col-md-6';
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
+        } elseif ($remainingIdps == 1) {
+            $class = 'col-lg-12';
+            $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
         }
         return $html;
     }
 
-    public static function showWarning(DiscoTemplate $t, WarningConfiguration $warningConf): string
-    {
+    public static function showWarning(
+        DiscoTemplate $t,
+        WarningConfiguration $warningConf
+    ): string {
         $html = '';
         switch ($warningConf->getType()) {
             case WarningConfiguration::WARNING_TYPE_INFO:
@@ -606,20 +650,26 @@ class Disco extends PowerIdPDisco
         return $html;
     }
 
-    public static function showInlineSearch(DiscoTemplate $t, $blockConfig, $addInstitutionEmail,
-                                            $addInstitutionUrl): string
-    {
+    public static function showInlineSearch(
+        DiscoTemplate $t,
+        array $blockConfig,
+        string $addInstitutionEmail,
+        string $addInstitutionUrl
+    ): string {
         $result = '';
         $allIdps = $t->getAllIdps();
         $isAddInstitutionApp = $t->isAddInstitutionApp();
-        $placeholderTranslateKey = Disco::getPlaceholderTranslation($t, $blockConfig,
-            '{perun:disco:institution_search_input_placeholder}');
+        $placeholderTranslateKey = Disco::getPlaceholderTranslation(
+            $t,
+            $blockConfig,
+            '{perun:disco:institution_search_input_placeholder}'
+        );
 
         $result .= Disco::addLoginOptionNote($t, $blockConfig, '{perun:disco:institution_search_hint}');
         $result .= '<div class="inlinesearch">' . PHP_EOL;
         $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
-        $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value="" name="query" id="query"
-                               autofocus oninput="$(\'#list\').show();" placeholder="'
+        $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value=""
+            name="query" id="query" autofocus oninput="$(\'#list\').show();" placeholder="'
             . $t->t($placeholderTranslateKey) . '"/>' . PHP_EOL;
         $result .= '    </form>';
         # ENTRIES
@@ -630,8 +680,10 @@ class Disco extends PowerIdPDisco
         $result .= '    </div>' . PHP_EOL;
         # TOO MUCH ENTRIES BLOCK
         $result .= '    <div id="warning-entries" class="alert alert-info entries-warning-block">' . PHP_EOL;
-        $result .= '        ' . $t->t('{perun:disco:institution_search_display_too_much_entries_header}',
-                [ '<COUNT_HTML>' => '<span id="results-cnt">0</span>' ]) . PHP_EOL;
+        $result .= '        ' . $t->t(
+            '{perun:disco:institution_search_display_too_much_entries_header}',
+            [ '<COUNT_HTML>' => '<span id="results-cnt">0</span>' ]
+        ) . PHP_EOL;
         $result .= '        <div class="col">' . PHP_EOL;
         $result .= '            <button class="btn btn-block btn-info" id="warning-entries-btn-force-show">';
         $result .= ' ' . $t->t('{perun:disco:institution_search_display_too_much_entries_btn}') . '</button>' . PHP_EOL;
@@ -651,7 +703,7 @@ class Disco extends PowerIdPDisco
         }
         $result .= '    </div>' . PHP_EOL;
         $result .= '</div>';
-        $result .= Disco::addLoginOptionNote($t, $blockConfig, );
+        $result .= Disco::addLoginOptionNote($t, $blockConfig);
 
         return $result;
     }
@@ -675,14 +727,4 @@ class Disco extends PowerIdPDisco
         }
         return $html;
     }
-
-    public static function getTranslate($t, $module, $file, $key)
-    {
-        $translate = $t->t('{' . $module . ':' . $file . ':' . $key . '}');
-        if (str_starts_with(trim($translate), 'not translated')) {
-            $translate = $t->t('{' . self::DEFAULT_THEME . ':' . $file . ':' . $key . '}');
-        }
-        return $translate;
-    }
-
 }

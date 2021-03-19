@@ -3,7 +3,6 @@
 namespace SimpleSAML\Module\perun\model;
 
 use SimpleSAML\Error\Exception;
-use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
 use SimpleSAML\Module\perun\Disco;
 
@@ -16,20 +15,20 @@ use SimpleSAML\Module\perun\Disco;
  */
 abstract class WarningConfiguration
 {
-    const CONFIG_FILE_NAME = 'module_perun.php';
+    public const CONFIG_FILE_NAME = 'module_perun.php';
 
-    const WARNING = 'warning';
-    const SOURCE_TYPE_FILE = 'file';
-    const SOURCE_TYPE_URL = 'url';
-    const SOURCE_TYPE_CONFIG = 'config';
-    const TYPE = 'type';
-    const ENABLED = 'enabled';
-    const TITLE = 'title';
-    const TEXT = 'text';
+    public const WARNING = 'warning';
+    public const SOURCE_TYPE_FILE = 'file';
+    public const SOURCE_TYPE_URL = 'url';
+    public const SOURCE_TYPE_CONFIG = 'config';
+    public const TYPE = 'type';
+    public const ENABLED = 'enabled';
+    public const TITLE = 'title';
+    public const TEXT = 'text';
 
-    const WARNING_TYPE_INFO = 'INFO';
-    const WARNING_TYPE_WARNING = 'WARNING';
-    const WARNING_TYPE_ERROR = 'ERROR';
+    public const WARNING_TYPE_INFO = 'INFO';
+    public const WARNING_TYPE_WARNING = 'WARNING';
+    public const WARNING_TYPE_ERROR = 'ERROR';
 
     protected bool $enabled = false;
     protected string $type = '';
@@ -89,7 +88,8 @@ abstract class WarningConfiguration
         }
     }
 
-    public static function getConfig(): Configuration {
+    public static function getConfig(): Configuration
+    {
         return Configuration::getConfig(self::CONFIG_FILE_NAME)
             ->getConfigItem(Disco::WAYF)
             ->getConfigItem(WarningConfiguration::WARNING);
@@ -104,5 +104,4 @@ abstract class WarningConfiguration
      * @return WarningConfiguration with warning attributes
      */
     abstract public function getWarningAttributes(): WarningConfiguration;
-
 }

@@ -15,7 +15,7 @@ class WarningConfigurationConfig extends WarningConfiguration
 {
     public function getSourceOfWarningAttributes(): Configuration
     {
-        return WarningConfiguration::getConfig()->getConfigItem(self::SOURCE_TYPE_CONFIG);;;
+        return WarningConfiguration::getConfig()->getConfigItem(self::SOURCE_TYPE_CONFIG);
     }
 
     public function getWarningAttributes(): WarningConfiguration
@@ -68,8 +68,6 @@ class WarningConfigurationConfig extends WarningConfiguration
                 return $this;
             }
         }
-
         return $this;
     }
-
 }

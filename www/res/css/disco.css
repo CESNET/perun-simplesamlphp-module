@@ -10,7 +10,7 @@ html, body {
 
 #wrap {
     max-width: 40%;
-    padding: 3% 1% 1% 1%;
+    padding: 3% 1% 1%;
     margin-top: 3%;
 }
 
@@ -111,7 +111,7 @@ form#idpselectform input {
 
 .inlinesearch {
     padding: 0;
-    margin: 10px 0 20px 0;
+    margin: 10px 0 20px;
     float: none;
 }
 

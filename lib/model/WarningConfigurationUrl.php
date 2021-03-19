@@ -90,5 +90,4 @@ class WarningConfigurationUrl extends WarningConfiguration
 
         return $this;
     }
-
 }

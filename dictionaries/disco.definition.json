@@ -66,22 +66,5 @@
   "add_institution_no_entries_contact_us": {
     "en": "Still can't find your institution? Contact us at",
     "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
-  },
-
-  "institution_search_hint_bbmri": {
-    "en": "Log in with your academic account.",
-    "cs": "Přihlašte se účtem z akademie"
-  },
-  "preferred_idps_hint_bbmri": {
-    "en": "Log in with a LifeScience Hostel account",
-    "cs": "Přihlašte se vaším účtem v LifeScience Hostel"
-  },
-  "preferred_idps_note_bbmri": {
-    "en": "If you do not have an account, sign up <a href=\"https://perun.bbmri-eric.eu/non/registrar/?vo=lifescience_hostel\">here</a>",
-    "cs": "Jestli nemáte účet, zaregistrujte se zde <a href=\"https://perun.bbmri-eric.eu/non/registrar/?vo=lifescience_hostel\">here</a>"
-  },
-  "social_idps_hint_bbmri" : {
-    "en": "you can log in with your ORCID account",
-    "cs": "se můžete přihlásit vašim ORCID účtem"
   }
 }

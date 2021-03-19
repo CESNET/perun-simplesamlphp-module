@@ -57,13 +57,15 @@ if ($config !== null) {
     try {
         $addInstitutionUrl = $addInstitution->getString(Disco::ADD_INSTITUTION_URL);
     } catch (\Exception $ex) {
-        Logger::warning('perun:disco-tpl: missing or  parameter in module_perun.php file');
+        Logger::warning('perun:disco-tpl: missing or invalid \'add_institution.url\' ' .
+            'parameter in module_perun.php file');
     }
 
     try {
         $addInstitutionEmail = $addInstitution->getString(Disco::ADD_INSTITUTION_EMAIL);
     } catch (\Exception $ex) {
-        Logger::warning('perun:disco-tpl: missing or invalid addInstitution.email parameter in module_perun.php file');
+        Logger::warning('perun:disco-tpl: missing or invalid \'add_institution.email\' ' .
+            'parameter in module_perun.php file');
     }
 }
 
@@ -157,7 +159,7 @@ if ($this->isAddInstitutionApp()) {
         echo '<div class="row login-option-category">' . PHP_EOL;
         if (strtolower($type) === Disco::BLOCK_TYPE_INLINESEARCH) {
             echo Disco::showInlineSearch($this, $blockConfig, $addInstitutionEmail, $addInstitutionUrl) . PHP_EOL;
-        } else if (strtolower($type) === Disco::BLOCK_TYPE_TAGGED) {
+        } elseif (strtolower($type) === Disco::BLOCK_TYPE_TAGGED) {
             echo Disco::showTaggedIdPs($this, $blockConfig) . PHP_EOL;
         }
         if ($cnt++ < $blocksCount) {

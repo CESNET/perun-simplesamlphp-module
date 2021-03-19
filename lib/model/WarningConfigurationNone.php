@@ -2,7 +2,6 @@
 
 namespace SimpleSAML\Module\perun\model;
 
-use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
 
 /**
@@ -21,5 +20,4 @@ class WarningConfigurationNone extends WarningConfiguration
     {
         return $this;
     }
-
 }
