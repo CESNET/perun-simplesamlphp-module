@@ -138,7 +138,7 @@ class EntitlementUtils
 
     public static function groupEntitlementWithAttributesWrapper($uuid, $groupName, $prefix, $authority)
     {
-        return $prefix . self::GROUP_ATTRIBUTES . ':' . $uuid . '?' . self::DISPLAY_NAME . '=' .
+        return $prefix . self::GROUP_ATTRIBUTES . ':' . $uuid . '?=' . self::DISPLAY_NAME . '=' .
             EntitlementUtils::encodeName($groupName) . '#' . $authority;
     }
 
