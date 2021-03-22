@@ -6,6 +6,9 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added extended PerunEntitlements
 
+#### Fixed
+- Updated query separator in PerunEntitlementExtended.php according to URN scheme
+
 ## [v4.1.1]
 #### Fixed
 - Fixed bad log message in PerunIdentity in mode USERONLY
