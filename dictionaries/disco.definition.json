@@ -52,12 +52,12 @@
     "cs": "Nebyly nalezeny žádne odpovídající záznamy."
   },
   "institution_search_no_entries_add_institution_text": {
-    "en": "Cannot find your institution? Try to look for it in the list of not yet integrated options",
-    "cs": "Nemúžete nalézt vaši organizaci? Zkuste ji najít v zeznamu dosud neintegrovaných možností"
+    "en": "Cannot find your institution? ",
+    "cs": "Nemúžete nalézt vaši organizaci?"
   },
   "institution_search_no_entries_add_institution_btn": {
-    "en": "by clicking here",
-    "cs": "kliknutím zde"
+    "en": "Try to find it in the list of not yet integrated options",
+    "cs": "Zkuste ji najít v seznamu dosud neintegrovaných možností"
   },
   "add_institution": {
     "en": "Add your institution",

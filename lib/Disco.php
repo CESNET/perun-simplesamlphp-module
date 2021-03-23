@@ -31,23 +31,23 @@ class Disco extends PowerIdPDisco
     public const DEFAULT_THEME = 'perun';
 
     # ROOT CONFIGURATION ENTRY
-    public const WAYF = 'wayf';
+    public const WAYF = 'wayf_config';
     # CONFIGURATION ENTRIES
     public const BOXED = 'boxed';
     # CONFIGURATION ENTRIES IDP BLOCKS
-    public const BLOCKS = 'blocks';
-    public const BLOCK_TYPE = 'type';
-    public const BLOCK_TYPE_INLINESEARCH = "inlinesearch";
-    public const BLOCK_TYPE_TAGGED = "tagged";
-    public const BLOCK_TEXT_ON = 'text_enabled';
-    public const BLOCK_NAME = 'name';
-    public const BLOCK_HINT_TRANSLATION = 'hint_translation';
-    public const BLOCK_NOTE_TRANSLATION = 'note_translation';
-    public const BLOCK_PLACEHOLDER_TRANSLATE = 'placeholder_translation';
-    public const BLOCK_TAGS = 'tags';
-    public const BLOCK_ENTITY_IDS = 'entity_ids';
+    public const IDP_BLOCKS = 'idp_blocks_config';
+    public const IDP_BLOCK_TYPE = 'type';
+    public const IDP_BLOCK_TYPE_INLINESEARCH = "inlinesearch";
+    public const IDP_BLOCK_TYPE_TAGGED = "tagged";
+    public const IDP_BLOCK_TEXT_ENABLED = 'text_enabled';
+    public const IDP_BLOCK_NAME = 'name';
+    public const IDP_BLOCK_HINT_TRANSLATION = 'hint_translation';
+    public const IDP_BLOCK_NOTE_TRANSLATION = 'note_translation';
+    public const IDP_BLOCK_PLACEHOLDER_TRANSLATE = 'placeholder_translation';
+    public const IDP_BLOCK_TAGS = 'tags';
+    public const IDP_BLOCK_ENTITY_IDS = 'entity_ids';
     # CONFIGURATION ENTRIES ADD INSTITUTION
-    public const ADD_INSTITUTION = 'add_institution';
+    public const ADD_INSTITUTION = 'add_institution_config';
     public const ADD_INSTITUTION_URL = 'url';
     public const ADD_INSTITUTION_EMAIL = 'email';
     public const TRANSLATE_MODULE = 'translate_module';
@@ -160,6 +160,37 @@ class Disco extends PowerIdPDisco
             HTTP::redirectTrustedURL($url);
         }
 
+        // IF IS SET AUTHN CONTEXT CLASS REF, REDIRECT USER TO THE IDP
+        if (isset($this->authnContextClassRef)) {
+            if ($this->authnContextClassRef !== null) {
+                # Check authnContextClassRef and select IdP directly if the correct value is set
+                foreach ($this->authnContextClassRef as $value) {
+                    // VERIFY THE PREFIX IS CORRECT AND WE CAN PERFORM THE REDIRECT
+                    $acrStartSubstr = substr($value, 0, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID));
+                    if ($acrStartSubstr === Disco::URN_CESNET_PROXYIDP_IDPENTITYID) {
+                        $idpEntityId = substr($value, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
+                        Logger::info('Redirecting to ' . $idpEntityId);
+                        $url = Disco::buildContinueUrl(
+                            $this->spEntityId,
+                            $this->returnURL,
+                            $this->returnIdParam,
+                            $idpEntityId
+                        );
+                        HTTP::redirectTrustedURL($url);
+                    }
+                }
+            }
+        }
+
+        //LOAD CONFIG FOR MODULE PERUN, WHICH CONTAINS WAYF CONFIGURATION
+        $perunModuleConfig = null;
+        try {
+            $perunModuleConfig = Configuration::getConfig(Disco::CONFIG_FILE_NAME);
+        } catch (\Exception $ex) {
+            Logger::error("perun:disco-tpl: missing or invalid '" . self::CONFIG_FILE_NAME . "' config file");
+            throw $ex;
+        }
+
         $warningAttributes = null;
         try {
             $warningInstance = WarningConfiguration::getInstance();
@@ -177,6 +208,7 @@ class Disco extends PowerIdPDisco
         $t->data[self::RETURN_ID_PARAM] = $this->returnIdParam;
         $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->authnContextClassRef;
         $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
+        $t->data[self::WAYF] = $perunModuleConfig->getConfigItem(self::WAYF);
         $t->show();
     }
 
@@ -506,20 +538,23 @@ class Disco extends PowerIdPDisco
 
     public static function showTaggedIdPs(
         DiscoTemplate $t,
-        array $blockConfig
+        Configuration $blockConfig
     ): string {
         $html = '';
         $idps = [];
-        $tags = $blockConfig[self::BLOCK_TAGS];
+        $tags = $blockConfig->getArray(self::IDP_BLOCK_TAGS, []);
         foreach ($tags as $tag) {
             $idps = array_merge($idps, $t->getIdPs($tag));
         }
-        $entityIds = $blockConfig[self::BLOCK_ENTITY_IDS];
+        $entityIds = $blockConfig->getArray(self::IDP_BLOCK_ENTITY_IDS, []  );
         $allIdps = $t->getAllIdps();
         foreach ($entityIds as $entityId) {
             array_push($idps, $allIdps[$entityId]);
         }
         $idpCount = count($idps);
+        if ($idpCount === 0) {
+            return $html;
+        }
         $html .= '<div class="row">' . PHP_EOL;
         $html .= Disco::addLoginOptionHint($t, $blockConfig);
 
@@ -544,13 +579,12 @@ class Disco extends PowerIdPDisco
 
     private static function addLoginOptionHint(
         DiscoTemplate $t,
-        array $blockConfig,
+        Configuration $blockConfig,
         string $defaultTranslateKey = ''
     ): string {
-        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
-        $name = $blockConfig[self::BLOCK_NAME];
-        $hintTranslate = array_key_exists(self::BLOCK_HINT_TRANSLATION, $blockConfig) ?
-            $blockConfig[self::BLOCK_HINT_TRANSLATION] : [];
+        $textOn = $blockConfig->getBoolean(self::IDP_BLOCK_TEXT_ENABLED, false);
+        $name = $blockConfig->getString(self::IDP_BLOCK_NAME, '');
+        $hintTranslate = $blockConfig->getArray(self::IDP_BLOCK_HINT_TRANSLATION, []);
         $hintTranslateKey = !empty($name) ? '{perun:disco:' . $name . '_hint}' : '';
         if ($textOn && !empty($hintTranslateKey) && !empty($hintTranslate)) {
             $t->includeInlineTranslation($hintTranslateKey, $hintTranslate);
@@ -563,13 +597,12 @@ class Disco extends PowerIdPDisco
 
     private static function addLoginOptionNote(
         DiscoTemplate $t,
-        array $blockConfig,
+        Configuration $blockConfig,
         string $defaultTranslateKey = ''
     ): string {
-        $textOn = $blockConfig[self::BLOCK_TEXT_ON];
-        $name = array_key_exists(self::BLOCK_NAME, $blockConfig) ? $blockConfig[self::BLOCK_NAME] : '';
-        $noteTranslate = array_key_exists(self::BLOCK_NOTE_TRANSLATION, $blockConfig) ?
-            $blockConfig[self::BLOCK_NOTE_TRANSLATION] : [];
+        $textOn = $blockConfig->getBoolean(self::IDP_BLOCK_TEXT_ENABLED, false);
+        $name = $blockConfig->getString(self::IDP_BLOCK_NAME, '');
+        $noteTranslate = $blockConfig->getArray(self::IDP_BLOCK_NOTE_TRANSLATION, []);
         $noteTranslateKey = !empty($name) ? '{perun:disco:' . $name . '_note}' : '';
         if ($textOn && !empty($noteTranslateKey) && !empty($noteTranslate)) {
             $t->includeInlineTranslation($noteTranslateKey, $noteTranslate);
@@ -582,11 +615,10 @@ class Disco extends PowerIdPDisco
 
     private static function getPlaceholderTranslation(
         DiscoTemplate $t,
-        array $blockConfig,
+        Configuration $blockConfig,
         string $translateKey
     ): string {
-        $translate = array_key_exists(self::BLOCK_PLACEHOLDER_TRANSLATE, $blockConfig) ?
-            $blockConfig[self::BLOCK_PLACEHOLDER_TRANSLATE] : [];
+        $translate = $blockConfig->getArray(self::IDP_BLOCK_PLACEHOLDER_TRANSLATE, []);
         if (!empty($translate)) {
             $t->includeInlineTranslation($translateKey, $translate);
         }
@@ -652,13 +684,18 @@ class Disco extends PowerIdPDisco
 
     public static function showInlineSearch(
         DiscoTemplate $t,
-        array $blockConfig,
-        string $addInstitutionEmail,
-        string $addInstitutionUrl
+        Configuration $blockConfig,
+        Configuration $addInstitution = null
     ): string {
         $result = '';
         $allIdps = $t->getAllIdps();
         $isAddInstitutionApp = $t->isAddInstitutionApp();
+        $addInstitutionUrl = '';
+        $addInstitutionEmail = '';
+        if ($addInstitution != null) {
+            $addInstitutionUrl = $addInstitution->getString(Disco::ADD_INSTITUTION_URL, '');
+            $addInstitutionEmail = $addInstitution->getString(Disco::ADD_INSTITUTION_EMAIL, '');
+        }
         $placeholderTranslateKey = Disco::getPlaceholderTranslation(
             $t,
             $blockConfig,
@@ -691,15 +728,18 @@ class Disco extends PowerIdPDisco
         $result .= '    </div>' . PHP_EOL;
         # NO ENTRIES BLOCK
         $result .= '    <div id="no-entries" class="no-idp-found alert alert-info entries-warning-block">' . PHP_EOL;
-        if ($isAddInstitutionApp) {
+        if ($isAddInstitutionApp && $addInstitutionEmail !== null) {
             $result .= '        ' . $t->t('{perun:disco:add_institution_no_entries_contact_us}') .
                 ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
                 $addInstitutionEmail . '</a>' . PHP_EOL;
         } else {
-            $result .= '       ' . $t->t('{perun:disco:institution_search_no_entries_header}') . '<br/>' . PHP_EOL;
-            $result .= '       ' . $t->t('{perun:disco:institution_search_no_entries_add_institution_text}') .
-                ' <a class="btn btn-info" href="' . $addInstitutionUrl . '">' .
-                $t->t('{perun:disco:institution_search_no_entries_add_institution_btn}') . '</a>.' . PHP_EOL;
+            $result .= '       ' . $t->t('{perun:disco:institution_search_no_entries_header}');
+            if ($addInstitutionUrl !== null) {
+                $result .= '<br/><br/>' . PHP_EOL;
+                $result .= '       ' .
+                    ' <a class="btn btn-info btn-block" href="' . $addInstitutionUrl . '">' .
+                    $t->t('{perun:disco:institution_search_no_entries_add_institution_text}') . '</a>' . PHP_EOL;
+            }
         }
         $result .= '    </div>' . PHP_EOL;
         $result .= '</div>';

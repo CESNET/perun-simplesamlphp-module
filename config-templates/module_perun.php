@@ -188,7 +188,7 @@ $config = [
      ********************************************
      */
 
-    'wayf' => [
+    'wayf_config' => [
         /**
          * specify if disco module should filter out IdPs which are not whitelisted neither commited to CoCo or RaS.
          * default is false.
@@ -206,7 +206,7 @@ $config = [
         /**
          * Add insitution configuration. The block has to specify email and url
          */
-        'add_institution' => [
+        'add_institution_config' => [
             'url' => 'https://login.elixir-czech.org/add-institution/',
             'email' => 'aai-contact@elixir-europe.org',
         ],
@@ -215,7 +215,7 @@ $config = [
          * The configuration can be loaded from file, url or directly formt his config. All possibilities has to follow
          * the structure under the "config" key.
          */
-        'warning' => [
+        'warning_config' => [
             # IF SOURCE === FILE
 #            'file' => '/etc/perun/simplesamlphp/elixir/config/warning.php',
             # IF SOURCE === URL
@@ -237,7 +237,7 @@ $config = [
         // enable box shaodw around the wrap element
         'boxed' => TRUE,
         // block of IDPs
-        'blocks' => [
+        'idp_blocks_config' => [
             [
                 // type has to be 'inlinesearch' for displaying eduGAIN entries or 'tagged' for custom IDPs
                 'type' => 'inlinesearch',

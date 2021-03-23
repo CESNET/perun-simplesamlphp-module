@@ -17,7 +17,7 @@ abstract class WarningConfiguration
 {
     public const CONFIG_FILE_NAME = 'module_perun.php';
 
-    public const WARNING = 'warning';
+    public const WARNING = 'warning_config';
     public const SOURCE_TYPE_FILE = 'file';
     public const SOURCE_TYPE_URL = 'url';
     public const SOURCE_TYPE_CONFIG = 'config';

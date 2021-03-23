@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+### Changed
+- Refactored Disco page. See the config template for example configuration.
 
 #### Added
 - Added extended PerunEntitlements
