@@ -52,15 +52,17 @@ class NagiosStatusConnector extends StatusConnector
         } elseif (empty($this->command)) {
             throw new Exception('Required option \'' . self::COMMAND . '\' is empty!');
         }
-
     }
-
 
     public function getStatus()
     {
         $result = [];
 
-        $key = RSA::load(file_get_contents($this->keyPath));
+        if (!($key = file_get_contents($this->keyPath))) {
+            throw new Exception('Cannot load ket from path:  \'' . $this->keyPath . '\' !');
+        }
+
+        $key = RSA::load($key);
         $ssh = new SSH2($this->host);
 
         if (!$ssh->login($this->login, $key)) {
