@@ -14,13 +14,11 @@ use SimpleSAML\Error\Exception;
  */
 class NagiosStatusConnector extends StatusConnector
 {
-    const STATUS_NAGIOS = 'status_nagios';
-    const HOST = 'host';
-    const KEY_PATH = 'key_path';
-    const LOGIN = 'login';
-    const COMMAND = 'command';
-
-    private $params;
+    protected const STATUS_NAGIOS = 'status_nagios';
+    protected const HOST = 'host';
+    protected const KEY_PATH = 'key_path';
+    protected const LOGIN = 'login';
+    protected const COMMAND = 'command';
 
     private $host;
     private $keyPath;
@@ -34,22 +32,27 @@ class NagiosStatusConnector extends StatusConnector
     {
         parent::__construct();
 
-        $this->params = $this->configuration->getArray(self::STATUS_NAGIOS, []);
+        $config = $this->configuration->getConfigItem(self::STATUS_NAGIOS, null);
 
-        if (empty($this->params[self::HOST])) {
+        if (is_null($this->host)) {
+            throw new Exception('Property  \'' . self::STATUS_NAGIOS . '\' is missing or invalid!');
+        }
+
+        $this->host = $config->getString(self::HOST, null);
+        $this->keyPath = $config->getString(self::KEY_PATH, null);
+        $this->login = $config->getString(self::LOGIN, null);
+        $this->command = $config->getString(self::COMMAND, null);
+
+        if (empty($this->host)) {
             throw new Exception('Required option \'' . self::HOST . '\' is empty!');
-        } elseif (empty($this->params[self::KEY_PATH])) {
+        } elseif (empty($this->keyPath)) {
             throw new Exception('Required option \'' . self::KEY_PATH . '\' is empty!');
-        } elseif (empty($this->params[self::LOGIN])) {
+        } elseif (empty($this->login)) {
             throw new Exception('Required option \'' . self::LOGIN . '\' is empty!');
-        } elseif (empty($this->params[self::COMMAND])) {
+        } elseif (empty($this->command)) {
             throw new Exception('Required option \'' . self::COMMAND . '\' is empty!');
         }
 
-        $this->host = $this->params[self::HOST];
-        $this->keyPath = $this->params[self::KEY_PATH];
-        $this->login = $this->params[self::LOGIN];
-        $this->command = $this->params[self::COMMAND];
     }
 
 
@@ -61,7 +64,7 @@ class NagiosStatusConnector extends StatusConnector
         $ssh = new SSH2($this->host);
 
         if (!$ssh->login($this->login, $key)) {
-            throw new Exception('Error durigng ssh connection to \'' . $this->login . '@' . $this->host . '\' !');
+            throw new Exception('Error during ssh connection to \'' . $this->login . '@' . $this->host . '\' !');
         }
 
         $output = $ssh->exec($this->command);
