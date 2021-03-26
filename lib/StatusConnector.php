@@ -19,6 +19,9 @@ abstract class StatusConnector
     const CONFIG_FILE_NAME = 'module_perun.php';
     const STATUS_TYPE = 'status.type';
 
+    const OK = 0;
+    const WARNING = 1;
+
     protected $configuration;
 
     /**
@@ -68,11 +71,13 @@ abstract class StatusConnector
      */
     public static function getBadgeByStatus($status)
     {
-        if ($status === OK) {
+        $statusAsInt = intval($status);
+
+        if ($statusAsInt === self::OK) {
             return '<span class="status label label-success">OK</span>';
-        } elseif ($status === WARNING) {
+        } elseif ($statusAsInt === self::WARNING) {
             return '<span class="status label label-warning">WARNING</span>';
-        } elseif ($status === CRITICAL || $status === UNKNOWN) {
+        } else {
             return '<span class="status label label-danger">CRITICAL</span>';
         }
     }

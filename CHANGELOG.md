@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 ### Changed
 - Refactored Disco page. See the config template for example configuration.
 
+#### Changed
+- Obtaining the data from Nagios is done through SSH instead of a certificate and calling an API
+
 #### Added
 - Added extended PerunEntitlements
 
