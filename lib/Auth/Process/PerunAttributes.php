@@ -80,9 +80,15 @@ class PerunAttributes extends ProcessingFilter
         } elseif ($this->mode === self::MODE_PARTIAL) {
             // Check if attribute has some value
             foreach ($this->attrMap as $attrName => $attrValue) {
+                if (empty($attrValue)) {
+                    array_push($attributes, $attrName);
+                    break;
+                }
+
                 if (!is_array($attrValue)) {
                     $attrValue = [$attrValue];
                 }
+
                 foreach ($attrValue as $value) {
                     if (empty($request['Attributes'][$value])) {
                         array_push($attributes, $attrName);
@@ -96,7 +102,11 @@ class PerunAttributes extends ProcessingFilter
             return;
         }
 
-        $this->processAttributes($user, $attributes);
+        $attrs = $this->processAttributes($user, $attributes);
+
+        foreach ($attrs as $attrName => $attrValue) {
+            $request['Attributes'][$attrName] = $attrValue;
+        }
     }
 
     private function hasStringKeys($array): bool
@@ -109,13 +119,14 @@ class PerunAttributes extends ProcessingFilter
 
     /**
      * Method process attributes from Perun system and store them to request
+     * @param $request
      * @param User $user
      * @param array $attributes List of attributes which will be loaded from Perun system
      * @throws Exception
      */
-    private function processAttributes(User $user, array $attributes): void
+    private function processAttributes(User $user, array $attributes): array
     {
-
+        $result = [];
         $attrs = $this->adapter->getUserAttributesValues($user, $attributes);
 
         foreach ($attrs as $attrName => $attrValue) {
@@ -155,10 +166,10 @@ class PerunAttributes extends ProcessingFilter
                 ' is being setted to ssp attributes ' . implode(',', $attrArray));
 
 
-            // write $value to all SP attributes
             foreach ($attrArray as $attribute) {
-                $request['Attributes'][$attribute] = $value;
+                $result[$attribute] = $value;
             }
         }
+        return  $result;
     }
 }
