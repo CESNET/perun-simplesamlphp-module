@@ -1,3 +1,30 @@
+html {
+    position:relative;
+    min-height: 100%;
+}
+
+html, body {
+    margin:0;
+    padding:0;
+}
+
+#wrap {
+    max-width: 40%;
+    padding: 3% 1% 1%;
+    margin-top: 3%;
+    margin-bottom: 110px;
+}
+
+#show-entries-wrap {
+    margin-bottom: 5%;
+}
+
+#header img {
+    max-height: 120px;
+    height: 30%;
+    width: auto;
+}
+
 a.metaentry {
     padding: 10px 15px 10px 15px;
 }
@@ -12,7 +39,7 @@ a.metaentry:focus {
 }
 
 a.metaentry.favourite {
-    background-image: url(../../../../resources/icons/silk/star.png);
+    background-image: none;
     background-position: 10px center;
     padding-left: 35px;
 }
@@ -51,7 +78,7 @@ a.tagged:hover, a.tagged:focus {
     color: white;
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.3);
-    box-shadow: 0px 0px 10px 30px rgba(0, 0, 0, 0.1) inset;
+    box-shadow: 0 0 10px 30px rgba(0, 0, 0, 0.1) inset;
 }
 
 a.tagged:hover img {
@@ -59,7 +86,7 @@ a.tagged:hover img {
 }
 
 div.metalist {
-    margin: 10px 0px;
+    margin: 10px 0;
 }
 
 form#idpselectform input {
@@ -69,28 +96,13 @@ form#idpselectform input {
     height: 46px;
 }
 
-@media screen and (max-width: 950px) {
-    a.metaentryrow .idp-logo {
-        margin-bottom: 10px;
-    }
-
-    #misc .container-fluid .col-xs-12:last-child img {
-        width: 193px;
-    }
-}
-
-.descriptionp {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
 .hrline {
     width: 100%;
     height: 10px;
     border-bottom: 1px solid #F0F0F0;
     text-align: center;
-    margin-top: 20px;
-    margin-bottom: 30px;
+    margin-top: 4%;
+    margin-bottom: 5%;
 }
 
 .hrline span {
@@ -98,28 +110,10 @@ form#idpselectform input {
     padding: 0 20px;
 }
 
-.idp-list {
-    margin-bottom: 16px;
-}
-
 .inlinesearch {
-    padding: 0px;
-    margin: 10px 0px 20px 0px;
+    padding: 0;
+    margin: 10px 0 20px;
     float: none;
-}
-
-.metarowtable {
-    margin-left: auto;
-    margin-right: auto;
-    width: 500px;;
-    border: 0px;
-    text-align: center;
-}
-
-.metarowtable td img {
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .no-idp-found a.btn {
@@ -135,4 +129,127 @@ form#idpselectform input {
 #misc .container-fluid .col-xs-12:last-child img {
     max-height: 42px;
     margin-top: -1px;
+}
+
+#warning-entries {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+#no-entries {
+    padding: 10px;
+    margin-top: 10px;
+    display: none;
+}
+
+#footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+}
+
+#content > .login-option-category:first-of-type {
+    margin-top: 0;
+}
+
+.login-option-category-hint {
+    margin-bottom: 0;
+}
+
+.login-option-category-hint,
+.login-option-category-note {
+    text-align: center;
+    color: #555;
+}
+
+.add-institution-link {
+    padding: 2px 5px;
+}
+
+#list {
+    display: none;
+}
+
+#entries {
+    display: none;
+}
+
+.add-institution-entries {
+    margin-top: 5%;
+    margin-bottom: 10%;
+}
+
+.no-entries-warning-block {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: none;
+}
+
+#warning-entries-btn-force-show {
+    margin-top: .5%;
+    padding: 2px;
+}
+
+.entries-warning-block {
+    padding: 10px;
+    margin-top: 10px;
+}
+
+@media handheld, only screen and (max-width:  1600px), only screen and (max-device-width:  1600px) {
+    #wrap {
+        max-width: 50%;
+    }
+}
+
+@media handheld, only screen and (max-width:  1366px), only screen and (max-device-width:  1366px) {
+    #wrap {
+        max-width: 65%;
+    }
+}
+
+@media handheld, only screen and (max-width: 1024px), only screen and (max-device-width: 1024px) {
+    #wrap {
+        max-width: 75%;
+    }
+}
+
+@media screen and (max-width: 950px) {
+    a.metaentryrow .idp-logo {
+        margin-bottom: 10px;
+    }
+
+    #misc .container-fluid .col-xs-12:last-child img {
+        width: 193px;
+    }
+}
+
+@media handheld, only screen and (max-width: 780px), only screen and (max-device-width: 780px) {
+    #wrap {
+        max-width: 80%;
+    }
+
+    .hrline {
+        margin-top: 10%;
+        margin-bottom: 10%;
+    }
+}
+
+@media handheld, only screen and (max-width: 640px), only screen and (max-device-width: 640px) {
+    #wrap {
+        max-width: 100%;
+        margin-top: 0;
+        padding-top: 4rem;
+    }
+}
+
+@media handheld, only screen and (max-width: 480px), only screen and (max-device-width: 480px) {
+    #header, #languagebar, #footer, .erroricon, .loginicon, .logintext,
+    #regular_remember_username, #regular_remember_me {
+        display: block;
+    }
 }

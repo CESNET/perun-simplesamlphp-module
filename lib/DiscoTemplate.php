@@ -3,6 +3,7 @@
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
+use SimpleSAML\XHTML\Template;
 
 /**
  * This class extends basic SimpleSAML template class. It provides some utils functions used in templates
@@ -12,8 +13,12 @@ use SimpleSAML\Configuration;
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class DiscoTemplate extends \SimpleSAML\XHTML\Template
+class DiscoTemplate extends Template
 {
+
+    const UI_INFO = 'UIInfo';
+    const DISPLAY_NAME = 'DisplayName';
+    const NAME = 'name';
 
     /**
      * sspmod_perun_DiscoTemplate constructor.
@@ -30,22 +35,22 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
     /**
      * @return array metadata of preferred IdP if exists or null if not
      */
-    public function getPreferredIdp()
+    public function getPreferredIdp(): array
     {
-        if (isset($this->data['preferredidp']) && !empty($this->data['preferredidp'])) {
-            return $this->getAllIdps()[$this->data['preferredidp']];
+        if (isset($this->data[Disco::PREFERRED_IDP]) && !empty($this->data[Disco::PREFERRED_IDP])) {
+            return $this->getAllIdps()[$this->data[Disco::PREFERRED_IDP]];
         }
-        return null;
+        return [];
     }
 
     /**
      * @param string $tag desired tag. If not provided 'misc' is used for all untagged idps.
      * @return array list of idp metadatas from declared tag or untagged (misc) idps are returned.
      */
-    public function getIdps($tag = 'misc')
+    public function getIdps($tag = 'misc'): array
     {
-        if (isset($this->data['idplist'][$tag])) {
-            return $this->data['idplist'][$tag];
+        if (isset($this->data[Disco::IDP_LIST][$tag])) {
+            return $this->data[Disco::IDP_LIST][$tag];
         } else {
             return [];
         }
@@ -70,51 +75,53 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
      * note: one idp can be placed in more tags
      *
      */
-    public function getTaggedIdps()
+    public function getTaggedIdps(): array
     {
-        return $this->data['idplist'];
+        return $this->data[Disco::IDP_LIST];
     }
 
     /**
      * @return array list of all idp metadatas ignoring tagging
      */
-    public function getAllIdps()
+    public function getAllIdps(): array
     {
         $allIdps = [];
-        foreach ($this->data['idplist'] as $tag => $idplist) {
+        foreach ($this->data[Disco::IDP_LIST] as $tag => $idplist) {
             $allIdps = array_merge($idplist, $allIdps);
         }
         return $allIdps;
     }
 
     /**
-     * @return bool true if SP has property 'disco.doNotFilterIdps' set to true in its metadata. False otherwise.
+     * @return bool TRUE if SP has property DiscoTemplate::DISCO_DO_NOT_FILTER_IDPS set to true in its metadata.
+     *              FALSE otherwise.
      */
-    public function isOriginalSpNonFilteringIdPs()
+    public function isOriginalSpNonFilteringIdPs(): bool
     {
-        return (isset($this->data['originalsp']['disco.doNotFilterIdps']) &&
-            $this->data['originalsp']['disco.doNotFilterIdps'] === true);
+        return (isset($this->data[Disco::ORIGINAL_SP][Disco::METADATA_DO_NOT_FILTER_IDPS]) &&
+            $this->data[Disco::ORIGINAL_SP][Disco::METADATA_DO_NOT_FILTER_IDPS]);
     }
 
     /**
-     * @return bool true if SP has property 'disco.addInstitutionApp' set to true in its metadata. False otherwise.
+     * @return bool TRUE if SP has property DiscoTemplate::DISCO_ADD_INSTITUTION_APP set to true in its metadata.
+     *              FALSE otherwise.
      */
-    public function isAddInstitutionApp()
+    public function isAddInstitutionApp(): bool
     {
-        return (isset($this->data['originalsp']['disco.addInstitutionApp']) &&
-            $this->data['originalsp']['disco.addInstitutionApp'] === true);
+        return (isset($this->data[Disco::ORIGINAL_SP][Disco::METADATA_ADD_INSTITUTION_APP]) &&
+            $this->data[Disco::ORIGINAL_SP][Disco::METADATA_ADD_INSTITUTION_APP]);
     }
 
     /**
      * @param string $idpEntityId
      * @return string url where user should be redirected when he choose idp
      */
-    public function getContinueUrl($idpEntityId)
+    public function getContinueUrl(string $idpEntityId): string
     {
         return Disco::buildContinueUrl(
-            $this->data['entityID'],
-            $this->data['return'],
-            $this->data['returnIDParam'],
+            $this->data[Disco::ENTITY_ID],
+            $this->data[Disco::RETURN],
+            $this->data[Disco::RETURN_ID_PARAM],
             $idpEntityId
         );
     }
@@ -122,12 +129,12 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
     /**
      * @return string url where user should be redirected when he choose idp
      */
-    public function getContinueUrlWithoutIdPEntityId()
+    public function getContinueUrlWithoutIdPEntityId(): string
     {
         return Disco::buildContinueUrlWithoutIdPEntityId(
-            $this->data['entityID'],
-            $this->data['return'],
-            $this->data['returnIDParam']
+            $this->data[Disco::ENTITY_ID],
+            $this->data[Disco::RETURN],
+            $this->data[Disco::RETURN_ID_PARAM]
         );
     }
 
@@ -135,23 +142,23 @@ class DiscoTemplate extends \SimpleSAML\XHTML\Template
      * @param array $metadata
      * @return string translated name of idp or sp based on its metadata information
      */
-    public function getTranslatedEntityName($metadata)
+    public function getTranslatedEntityName(array $metadata): string
     {
-        if (isset($metadata['UIInfo']['DisplayName'])) {
-            $displayName = $metadata['UIInfo']['DisplayName'];
+        if (isset($metadata[DiscoTemplate::UI_INFO][DiscoTemplate::DISPLAY_NAME])) {
+            $displayName = $metadata[DiscoTemplate::UI_INFO][DiscoTemplate::DISPLAY_NAME];
             assert(is_array($displayName)); // Should always be an array of language code -> translation
             if (!empty($displayName)) {
                 return $this->getTranslation($displayName);
             }
         }
 
-        if (array_key_exists('name', $metadata)) {
-            if (is_array($metadata['name'])) {
-                return $this->getTranslation($metadata['name']);
+        if (array_key_exists(DiscoTemplate::NAME, $metadata)) {
+            if (is_array($metadata[DiscoTemplate::NAME])) {
+                return $this->getTranslation($metadata[DiscoTemplate::NAME]);
             } else {
-                return $metadata['name'];
+                return $metadata[DiscoTemplate::NAME];
             }
         }
-        return $metadata['entityid'];
+        return $metadata[Disco::ENTITY_ID];
     }
 }

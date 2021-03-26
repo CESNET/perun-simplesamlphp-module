@@ -1,15 +1,7 @@
 {
-  "add_institution": {
-    "en": "Add your institution",
-    "cs": "Přidat vaši instituci"
-  },
-  "find_institution_contact": {
-    "en": "Still can't find your institution? Contact us at",
-    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
-  },
-  "find_institution_extended": {
-    "en": "Can't find your institution? Select it in extended list and help us",
-    "cs": "Nemůžete nalézt vaši instituci? Vyberte ji z rozšířeného seznamu institucí a pomožte nám"
+  "header": {
+    "en": "Choose how to log in",
+    "cs": "Vyberte čím se chcete přihlásit"
   },
   "institutional_account": {
     "en": "your institutional account",
@@ -20,19 +12,59 @@
     "cs": "Přihlásit se účtem jiné instituce"
   },
   "previous_selection": {
-      "en": "your previous selection",
+      "en": "use your previous selection",
       "cs": "vaše předchozí volba"
   },
   "sign_in_with": {
     "en": "Sign in with ",
     "cs": "Přihlásit se pomocí "
   },
-  "type_name_institution": {
-    "en": "Type the name of your institution",
-    "cs": "Zadejte název instituce"
-  },
   "warning": {
     "en": "Warning!",
     "cs": "Varování!"
+  },
+  "preferred_idps_hint": {
+    "en": "Use one of the preferred options",
+    "cs": "Použijte některou z preferovaných možností"
+  },
+  "social_idps_hint" : {
+    "en": "Use one of the social identity providers",
+    "cs": "Použijte některého ze sociálných poskytovatelů identit "
+  },
+  "institution_search_hint": {
+    "en": "You can log in using your institutional account or another account you have on the web.",
+    "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
+  },
+  "institution_search_input_placeholder": {
+    "en": "Type the name of your institute",
+    "cs": "Zadejte název instituce"
+  },
+  "institution_search_display_too_much_entries_header": {
+    "en": "Too many (<COUNT_HTML>) entries match the given criteria. Try to specify your query a bit more.",
+    "cs": "Příliš mnoho (<COUNT_HTML>) položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
+  },
+  "institution_search_display_too_much_entries_btn": {
+    "en": "Display results anyway",
+    "cs": "Zobrazit všechny výsledky"
+  },
+  "institution_search_no_entries_header": {
+    "en": "No entries match the given query.",
+    "cs": "Nebyly nalezeny žádne odpovídající záznamy."
+  },
+  "institution_search_no_entries_add_institution_text": {
+    "en": "Cannot find your institution? ",
+    "cs": "Nemúžete nalézt vaši organizaci?"
+  },
+  "institution_search_no_entries_add_institution_btn": {
+    "en": "Try to find it in the list of not yet integrated options",
+    "cs": "Zkuste ji najít v seznamu dosud neintegrovaných možností"
+  },
+  "add_institution": {
+    "en": "Add your institution",
+    "cs": "Přidat vaši instituci"
+  },
+  "add_institution_no_entries_contact_us": {
+    "en": "Still can't find your institution? Contact us at",
+    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
   }
 }

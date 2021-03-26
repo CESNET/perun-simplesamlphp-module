@@ -57,22 +57,10 @@ $config = [
     'entitlementAuthority' => 'authority',
 
     /**
-     * specify if disco module should filter out IdPs which are not whitelisted neither commited to CoCo or RaS.
-     * default is false.
-     */
-    //'disco.disableWhitelisting' => true,
-
-    /**
      * specify which type of IdPListService will be used
      * Expected values: csv, db
      */
     'idpListServiceType' => '',
-
-    /**
-     * Specify prefix for filtering AuthnContextClassRef
-     * All AuthnContextClassRef values starts with this prefix will be removed before the request will be send to IdP
-     */
-    'disco.removeAuthnContextClassRefPrefix' => 'urn:cesnet:proxyidp:',
 
     /**
      *****************************************
@@ -196,49 +184,92 @@ $config = [
 
     /**
      ********************************************
-     * Part of configuration for Warning on DS  *
+     * Part of configuration for DS  *
      ********************************************
      */
 
-    /**
-     * Choose one of allowed sources: CONFIG/FILE/URL
-     * If FILE or URL is chosen, please read the 'warning_file_or_url' file to see how it should look
-     */
-    'disco.warning.source' => '',
-
-    /**
-     * Specify the absolute path to configuration file
-     * REQUIRED ONLY FOR TYPE FILE
-     */
-    'disco.warning.file' => '/etc/simplesamlphp/cesnet/config/warning',
-
-    /**
-     * Specify the url to configuration file
-     * REQUIRED ONLY FOR TYPE URL
-     */
-    'disco.warning.url' => 'url to configuration file',
-
-    /**
-     * When true, the config file is switched on.
-     * REQUIRED ONLY FOR TYPE CONFIG
-     */
-    'disco.warning.isOn' => true,
-
-    /**
-     * Choose one of allowed types: INFO/WARNING/ERROR.
-     * REQUIRED ONLY FOR TYPE CONFIG
-     */
-    'disco.warning.type' => 'INFO',
-
-    /**
-     * Title of the warning. It is possible to use HTML.
-     * REQUIRED ONLY FOR TYPE CONFIG
-     */
-    'disco.warning.title' => '',
-
-    /**
-     * Text of the warning. It is possible to use HTML.
-     * REQUIRED ONLY FOR TYPE CONFIG
-     */
-    'disco.warning.text' => '',
+    'wayf_config' => [
+        /**
+         * specify if disco module should filter out IdPs which are not whitelisted neither commited to CoCo or RaS.
+         * default is false.
+         */
+        'disable_white_listing',
+        /**
+         * Specify translate module
+         */
+        'translate_module' => 'disco',
+        /**
+         * Specify prefix for filtering AuthnContextClassRef
+         * All AuthnContextClassRef values starts with this prefix will be removed before the request will be send to IdP
+         */
+        'remove_authn_context_class_ref_prefix' => 'urn:cesnet:proxyidp:',
+        /**
+         * Add insitution configuration. The block has to specify email and url
+         */
+        'add_institution_config' => [
+            'url' => 'https://login.elixir-czech.org/add-institution/',
+            'email' => 'aai-contact@elixir-europe.org',
+        ],
+        /**
+         * Warning configuration
+         * The configuration can be loaded from file, url or directly formt his config. All possibilities has to follow
+         * the structure under the "config" key.
+         */
+        'warning_config' => [
+            # IF SOURCE === FILE
+#            'file' => '/etc/perun/simplesamlphp/elixir/config/warning.php',
+            # IF SOURCE === URL
+#            'url' => 'https://test.com',
+            # IF SOURCE === CONFIG
+            'config' => [
+                'enabled' => FALSE,
+                'type' => 'INFO',
+                'title' => [
+                    'en' => 'Sample text',
+                    'cs' => 'ukázkový text'
+                ],
+                'text' => [
+                    'en' => 'Sample warning text',
+                    'cs' => 'ukázkový text',
+                ]
+            ],
+        ],
+        // enable box shaodw around the wrap element
+        'boxed' => TRUE,
+        // block of IDPs
+        'idp_blocks_config' => [
+            [
+                // type has to be 'inlinesearch' for displaying eduGAIN entries or 'tagged' for custom IDPs
+                'type' => 'inlinesearch',
+                // name that will be used in some classes and translation keys
+                'name' => 'eduGAIN',
+                //enable displaying of the texts
+                'text_enabled' => TRUE,
+                /* Translation for the hint above the entry. Leave out option to disable it if text_enabled is true
+                'hint_translation' => [
+                    'en' => 'You can log in using your institutional account or another account you have on the web (e.g. Apple).',
+                ],
+                */
+                /* Translation for the placeholder in the search box. Leave out option to disable it if text_enabled is true
+                'placeholder_translation' => [
+                    'en' => 'Type name of your institute or an online account',
+                ],
+                /*
+                /* Translation for the note under the entry. Leave out option to disable it if text_enabled is true
+                'note_translation' => [
+                    'en' => 'Note text',
+                ],
+                 */
+            ],
+            [
+                'type' => 'tagged',
+                'name' => 'social_idps',
+                'text_enabled' => FALSE,
+                //tags to include in the list
+                'tags' => ['social'],
+                // specific IDP entity IDs to include in the list
+                'entityIds' => [],
+            ],
+        ],
+    ],
 ];
