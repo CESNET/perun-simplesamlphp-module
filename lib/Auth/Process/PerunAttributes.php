@@ -2,10 +2,11 @@
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Module\perun\Adapter;
-use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\model\User;
 
 /**
  * Class PerunAttributes
@@ -19,7 +20,7 @@ use SimpleSAML\Logger;
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
-class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
+class PerunAttributes extends ProcessingFilter
 {
     private $attrMap;
     private $interface;
@@ -63,8 +64,6 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        assert(is_array($request));
-
         if (isset($request['perun']['user'])) {
             $user = $request['perun']['user'];
         } else {
@@ -81,16 +80,41 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
         } elseif ($this->mode === self::MODE_PARTIAL) {
             // Check if attribute has some value
             foreach ($this->attrMap as $attrName => $attrValue) {
-                if (isset($request['Attributes'][$attrValue])) {
-                    $attr = $request['Attributes'][$attrValue];
-                    if (empty($attr)) {
+                if (!is_array($attrValue)) {
+                    $attrValue = [$attrValue];
+                }
+                foreach ($attrValue as $value) {
+                    if (empty($request['Attributes'][$value])) {
                         array_push($attributes, $attrName);
+                        break;
                     }
-                } else {
-                    array_push($attributes, $attrName);
                 }
             }
         }
+
+        if (empty($attributes)) {
+            return;
+        }
+
+        $this->processAttributes($user, $attributes);
+    }
+
+    private function hasStringKeys($array): bool
+    {
+        if (!is_array($array)) {
+            return false;
+        }
+        return count(array_filter(array_keys($array), 'is_string')) > 0;
+    }
+
+    /**
+     * Method process attributes from Perun system and store them to request
+     * @param User $user
+     * @param array $attributes List of attributes which will be loaded from Perun system
+     * @throws Exception
+     */
+    private function processAttributes(User $user, array $attributes): void
+    {
 
         $attrs = $this->adapter->getUserAttributesValues($user, $attributes);
 
@@ -136,13 +160,5 @@ class PerunAttributes extends \SimpleSAML\Auth\ProcessingFilter
                 $request['Attributes'][$attribute] = $value;
             }
         }
-    }
-
-    private function hasStringKeys($array)
-    {
-        if (!is_array($array)) {
-            return false;
-        }
-        return count(array_filter(array_keys($array), 'is_string')) > 0;
     }
 }
