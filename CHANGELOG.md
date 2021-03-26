@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v5.0.0]
 #### Added
 - Added extended PerunEntitlements
 
@@ -358,6 +360,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v5.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.0.0
 [v4.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.1.1
 [v4.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.1.0
 [v4.0.4]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v4.0.4
