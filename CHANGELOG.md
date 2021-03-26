@@ -2,14 +2,12 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
-### Changed
-- Refactored Disco page. See the config template for example configuration.
-
-#### Changed
-- Obtaining the data from Nagios is done through SSH instead of a certificate and calling an API
-
 #### Added
 - Added extended PerunEntitlements
+
+### Changed
+- Refactored Disco page. See the config template for example configuration.
+- Obtaining the data from Nagios is done through SSH instead of a certificate and calling an API
 
 #### Fixed
 - Fixed bug in PerunAttributes.php for PARTIAL mode when mapping one Perun attribute to more internal attributes 
