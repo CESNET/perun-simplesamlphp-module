@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Fixed
+- Fixed bad check in NagiosStatusConnector.php
 
 ## [v5.0.0]
 #### Added
