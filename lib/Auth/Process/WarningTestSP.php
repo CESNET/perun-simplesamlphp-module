@@ -4,6 +4,7 @@ namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\State;
 use SimpleSAML\Module;
+use SimpleSAML\Module\perun\model\WarningConfiguration;
 use SimpleSAML\Utils\HTTP;
 
 /**
@@ -21,8 +22,22 @@ class WarningTestSP extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        if (isset($request['SPMetadata']['test.sp']) && $request['SPMetadata']['test.sp'] === true) {
-            $id = State::saveState($request, 'perun:warningTestSP');
+        $warningAttributes = null;
+        try {
+            $warningInstance = WarningConfiguration::getInstance();
+            $warningAttributes = $warningInstance->getWarningAttributes();
+        } catch (Exception $ex) {
+            $warningAttributes = null;
+        }
+
+        if ($warningAttributes -> isEnabled()) {
+            $id = State::saveState($request, 'perun:warning');
+            $url = Module::getModuleURL('perun/warning_page.php');
+            HTTP::redirectTrustedURL($url, ['StateId' => $id]);
+        }
+        elseif (isset($request['SPMetadata']['test.sp']) && $request['SPMetadata']['test.sp'] === true)
+         {
+            $id = State::saveState($request, 'perun:warning');
             $url = Module::getModuleURL('perun/warning_test_sp_page.php');
             HTTP::redirectTrustedURL($url, ['StateId' => $id]);
         }

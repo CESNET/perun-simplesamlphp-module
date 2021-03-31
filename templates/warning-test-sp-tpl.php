@@ -16,7 +16,7 @@ $this->includeAtTemplateBase('includes/header.php');
 
 ?>
 
-    <form method="post" action="<?php echo Module::getModuleURL('perun/warning_test_sp_continue.php'); ?>">
+    <form method="post" action="<?php echo Module::getModuleURL('perun/warning_continue.php'); ?>">
 
         <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>">
         <h3> <?php echo $this->t('{perun:perun:warning-test-sp-tpl_text}') ?> </h3>

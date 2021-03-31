@@ -5,7 +5,7 @@ use SimpleSAML\Configuration;
 use SimpleSAML\XHTML\Template;
 
 $id = $_REQUEST['StateId'];
-$state = State::loadState($id, 'perun:warningTestSP');
+$state = State::loadState($id, 'perun:warning');
 
 $config = Configuration::getInstance();
 

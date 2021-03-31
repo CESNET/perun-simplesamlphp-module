@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 ## [v5.0.0]
 #### Added
 - Added extended PerunEntitlements
+- Show info/warning page before user logs in, if set in config file
 
 ### Changed
 - Refactored Disco page. See the config template for example configuration.
