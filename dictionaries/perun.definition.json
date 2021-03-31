@@ -94,5 +94,13 @@
   "unauthorized-access_redirect_to_registration": {
     "en": "Now you will be redirected to registration to Perun system.",
     "cs": "Nyní budete přesměrování na registraci do systému Perun."
+  },
+  "block-user-tpl_title": {
+    "en": "Access denied",
+    "cs": "Přístup odepřen"
+  },
+  "block-user-tpl_text": {
+    "en": "Your access to the service has been denied due to the value of one of your attributes.",
+    "cs": "Přístup ke službě byl zamítnut z důvodu hodnoty jednoho z Vašich atributů."
   }
 }
