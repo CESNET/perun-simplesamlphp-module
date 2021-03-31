@@ -32,8 +32,10 @@ if ($warningAttributes->getType() !== WarningConfiguration::WARNING_TYPE_ERROR) 
                    class="btn btn-lg btn-primary btn-block">
         </div>
     </form>
-<?php
+
+    <?php
 }
+
 $this->includeAtTemplateBase('includes/footer.php');
 
 
