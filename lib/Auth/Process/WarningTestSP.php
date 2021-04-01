@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Module;
 use SimpleSAML\Utils\HTTP;
@@ -11,8 +12,15 @@ use SimpleSAML\Utils\HTTP;
  *
  * Warns user that he/she is accessing to the testing SP
  */
-class WarningTestSP extends \SimpleSAML\Auth\ProcessingFilter
+class WarningTestSP extends ProcessingFilter
 {
+    public const CONFIG_FILE_NAME = "module_perun.php";
+
+    public const TEST_SP_CONFIG = "warning_test_sp_config";
+    public const TEST_SP_CONFIG_TEXT = "text";
+
+    public const CUSTOM_TEXT_ENABLED = "custom_text_enabled";
+    public const CUSTOM_TEXT_KEY = "{perun:warning_test_sp:custom_text}";
 
     public function __construct($config, $reserved)
     {

@@ -272,4 +272,13 @@ $config = [
             ],
         ],
     ],
+
+    'warning_test_sp_config' => [
+        'text' => [
+            'en' => '<h3>Warning - service in test environment</h3>
+                     <p>Service is in the test environment.<br class="spacer"/>Hit the continue button.</p>',
+            'cs' => '<h3>Varování - testovací služba</h3>
+                     <p>Služba je v testovacím režimu.<br class="spacer"/>Pokračujte zmáčknutím tlačítka.</p>',
+        ],
+    ],
 ];
