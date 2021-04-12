@@ -767,4 +767,87 @@ class Disco extends PowerIdPDisco
         }
         return $html;
     }
+
+    protected function getSelectedIdP(): ?string
+    {
+        if (array_key_exists('aarc_idp_hint', $_GET)) {
+            $parts = explode('?', urldecode($_GET['aarc_idp_hint']), 2);
+
+            if (!empty($parts[1])) {
+                $_GET['aarc_idp_hint'] = urlencode(explode('=', $parts[1], 2)[1]);
+            } else {
+                unset($_GET['aarc_idp_hint']);
+            }
+
+            return $this->validateIdP($parts[0]);
+        }
+
+        /* Parameter set from the Extended IdP Metadata Discovery Service Protocol, indicating that the user prefers
+         * this IdP.
+         */
+        if (!empty($this->setIdPentityID)) {
+            return $this->validateIdP($this->setIdPentityID);
+        }
+
+        // user has clicked on a link, or selected the IdP from a drop-down list
+        if (array_key_exists('idpentityid', $_GET)) {
+            return $this->validateIdP($_GET['idpentityid']);
+        }
+
+        /* Search for the IdP selection from the form used by the links view. This form uses a name which equals
+         * idp_<entityid>, so we search for that.
+         *
+         * Unfortunately, php replaces periods in the name with underscores, and there is no reliable way to get them
+         * back. Therefore we do some quick and dirty parsing of the query string.
+         */
+        $qstr = $_SERVER['QUERY_STRING'];
+        $matches = [];
+        if (preg_match('/(?:^|&)idp_([^=]+)=/', $qstr, $matches)) {
+            return $this->validateIdP(urldecode($matches[1]));
+        }
+
+        // no IdP chosen
+        return null;
+    }
+
+    /**
+     * Check if an IdP is set or if the request is passive, and redirect accordingly.
+     *
+     */
+    protected function start(): void
+    {
+        $httpUtils = new HTTP();
+        $idp = $this->getTargetIdP();
+        if ($idp !== null) {
+            $extDiscoveryStorage = $this->config->getString('idpdisco.extDiscoveryStorage', null);
+            if ($extDiscoveryStorage !== null) {
+                $this->log('Choice made [' . $idp . '] (Forwarding to external discovery storage)');
+                $httpUtils->redirectTrustedURL($extDiscoveryStorage, [
+                    'entityID'      => $this->spEntityId,
+                    'IdPentityID'   => $idp,
+                    'returnIDParam' => $this->returnIdParam,
+                    'isPassive'     => 'true',
+                    'return'        => $this->returnURL
+                ]);
+            } else {
+                $this->log(
+                    'Choice made [' . $idp . '] (Redirecting the user back. returnIDParam='
+                    . $this->returnIdParam . ')'
+                );
+                if (!empty($_GET['aarc_idp_hint'])) {
+                    $httpUtils->redirectTrustedURL($this->returnURL, [
+                        $this->returnIdParam => $idp,
+                        'aarc_idp_hint' => $_GET['aarc_idp_hint']
+                    ]);
+                } else {
+                    $httpUtils->redirectTrustedURL($this->returnURL, [$this->returnIdParam => $idp]);
+                }
+            }
+        }
+
+        if ($this->isPassive) {
+            $this->log('Choice not made. (Redirecting the user back without answer)');
+            $httpUtils->redirectTrustedURL($this->returnURL);
+        }
+    }
 }
