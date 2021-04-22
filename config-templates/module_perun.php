@@ -193,7 +193,7 @@ $config = [
          * specify if disco module should filter out IdPs which are not whitelisted neither commited to CoCo or RaS.
          * default is false.
          */
-        'disable_white_listing',
+        'disable_white_listing' => false,
         /**
          * Specify translate module
          */
@@ -202,7 +202,7 @@ $config = [
          * Specify prefix for filtering AuthnContextClassRef
          * All AuthnContextClassRef values starts with this prefix will be removed before the request will be send to IdP
          */
-        'remove_authn_context_class_ref_prefix' => 'urn:cesnet:proxyidp:',
+        'remove_authn_context_class_ref_prefixes' => ['urn:cesnet:proxyidp:'],
         /**
          * Add insitution configuration. The block has to specify email and url
          */
@@ -210,9 +210,10 @@ $config = [
             'url' => 'https://login.elixir-czech.org/add-institution/',
             'email' => 'aai-contact@elixir-europe.org',
         ],
+        'proxy_sp_entity_id' => 'entity_id_of_proxy_sp',
         /**
          * Warning configuration
-         * The configuration can be loaded from file, url or directly formt his config. All possibilities has to follow
+         * The configuration can be loaded from file, url or directly from this config. All possibilities has to follow
          * the structure under the "config" key.
          */
         'warning_config' => [

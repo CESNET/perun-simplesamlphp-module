@@ -34,6 +34,10 @@ class Disco extends PowerIdPDisco
     public const WAYF = 'wayf_config';
     # CONFIGURATION ENTRIES
     public const BOXED = 'boxed';
+    public const TRANSLATE_MODULE = 'translate_module';
+    public const REMOVE_AUTHN_CONTEXT_CLASS_PREFIXES = 'remove_authn_context_class_ref_prefixes';
+    public const DISABLE_WHITELISTING = 'disable_whitelisting';
+    public const PROXY_SP_ENTITY_ID = 'proxy_sp_entity_id';
     # CONFIGURATION ENTRIES IDP BLOCKS
     public const IDP_BLOCKS = 'idp_blocks_config';
     public const IDP_BLOCK_TYPE = 'type';
@@ -50,9 +54,6 @@ class Disco extends PowerIdPDisco
     public const ADD_INSTITUTION = 'add_institution_config';
     public const ADD_INSTITUTION_URL = 'url';
     public const ADD_INSTITUTION_EMAIL = 'email';
-    public const TRANSLATE_MODULE = 'translate_module';
-    public const REMOVE_AUTHN_CONTEXT_CLASS_PREFIX = 'remove_authn_context_class_ref_prefix';
-    public const DISABLE_WHITELISTING = 'disable_whitelisting';
 
     # PARAMS AND DATA KEYS
     public const ENTITY_ID = "entityID";
@@ -84,12 +85,23 @@ class Disco extends PowerIdPDisco
     public const SAML_SP_SSO = 'saml:sp:sso';
 
     private $originalsp;
-    private array $authnContextClassRef = [];
+    private array $originalAuthnContextClassRef = [];
+    private $wayfConfiguration;
+    private $perunModuleConfiguration;
 
     public function __construct(
         array $metadataSets,
         $instance
     ) {
+        //LOAD CONFIG FOR MODULE PERUN, WHICH CONTAINS WAYF CONFIGURATION
+        try {
+            $this->perunModuleConfiguration = Configuration::getConfig(Disco::CONFIG_FILE_NAME);
+            $this->wayfConfiguration = $this->perunModuleConfiguration->getConfigItem(self::WAYF);
+        } catch (\Exception $ex) {
+            Logger::error("perun:disco-tpl: missing or invalid '" . self::CONFIG_FILE_NAME . "' config file");
+            throw $ex;
+        }
+
         if (!array_key_exists(self::RETURN, $_GET)) {
             throw new \Exception('Missing parameter: ' . self::RETURN);
         } else {
@@ -104,7 +116,7 @@ class Disco extends PowerIdPDisco
 
             if ($state !== null) {
                 if (isset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF])) {
-                    $this->authnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT]
+                    $this->originalAuthnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT]
                         [self::AUTHN_CONTEXT_CLASS_REF];
                     $this->removeAuthContextClassRefWithPrefix($state);
                 }
@@ -143,9 +155,6 @@ class Disco extends PowerIdPDisco
         } else {
             $idpList = $this->filterList($idpList);
         }
-        $preferredIdP = $this->getRecommendedIdP();
-        $preferredIdP = array_key_exists($preferredIdP, $idpList)
-            ? $preferredIdP : null;
 
         if (sizeof($idpList) === 1) {
             $idp = array_keys($idpList)[0];
@@ -160,15 +169,21 @@ class Disco extends PowerIdPDisco
             HTTP::redirectTrustedURL($url);
         }
 
+        $preferredIdP = $this->getRecommendedIdP();
+        $preferredIdP = array_key_exists($preferredIdP, $idpList) ? $preferredIdP : null;
+
         // IF IS SET AUTHN CONTEXT CLASS REF, REDIRECT USER TO THE IDP
-        if (isset($this->authnContextClassRef)) {
-            if ($this->authnContextClassRef !== null) {
+        if (isset($this->originalAuthnContextClassRef)) {
+            if ($this->originalAuthnContextClassRef !== null) {
                 # Check authnContextClassRef and select IdP directly if the correct value is set
-                foreach ($this->authnContextClassRef as $value) {
+                foreach ($this->originalAuthnContextClassRef as $value) {
                     // VERIFY THE PREFIX IS CORRECT AND WE CAN PERFORM THE REDIRECT
                     $acrStartSubstr = substr($value, 0, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID));
                     if ($acrStartSubstr === Disco::URN_CESNET_PROXYIDP_IDPENTITYID) {
                         $idpEntityId = substr($value, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
+                        if ($idpEntityId === $this->wayfConfiguration->getString(self::PROXY_SP_ENTITY_ID, '')) {
+                            continue;
+                        }
                         Logger::info('Redirecting to ' . $idpEntityId);
                         $url = Disco::buildContinueUrl(
                             $this->spEntityId,
@@ -180,15 +195,6 @@ class Disco extends PowerIdPDisco
                     }
                 }
             }
-        }
-
-        //LOAD CONFIG FOR MODULE PERUN, WHICH CONTAINS WAYF CONFIGURATION
-        $perunModuleConfig = null;
-        try {
-            $perunModuleConfig = Configuration::getConfig(Disco::CONFIG_FILE_NAME);
-        } catch (\Exception $ex) {
-            Logger::error("perun:disco-tpl: missing or invalid '" . self::CONFIG_FILE_NAME . "' config file");
-            throw $ex;
         }
 
         $warningAttributes = null;
@@ -206,9 +212,9 @@ class Disco extends PowerIdPDisco
         $t->data[self::ENTITY_ID] = $this->spEntityId;
         $t->data[self::RETURN] = $this->returnURL;
         $t->data[self::RETURN_ID_PARAM] = $this->returnIdParam;
-        $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->authnContextClassRef;
+        $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->originalAuthnContextClassRef;
         $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
-        $t->data[self::WAYF] = $perunModuleConfig->getConfigItem(self::WAYF);
+        $t->data[self::WAYF] = $this->perunModuleConfiguration;
         $t->show();
     }
 
@@ -221,8 +227,7 @@ class Disco extends PowerIdPDisco
      */
     protected function filterList($list): array
     {
-        $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $disableWhitelisting = $conf->getBoolean(self::DISABLE_WHITELISTING, false);
+        $disableWhitelisting = $this->wayfConfiguration->getBoolean(self::DISABLE_WHITELISTING, false);
 
         if (!isset($this->originalsp[Disco::METADATA_DO_NOT_FILTER_IDPS])
             || !$this->originalsp[Disco::METADATA_DO_NOT_FILTER_IDPS]
@@ -443,22 +448,22 @@ class Disco extends PowerIdPDisco
      */
     public function removeAuthContextClassRefWithPrefix(&$state)
     {
-        $conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
-        $prefix = $conf->getString(self::REMOVE_AUTHN_CONTEXT_CLASS_PREFIX, null);
+        $prefixes = $this->wayfConfiguration->getArray(self::REMOVE_AUTHN_CONTEXT_CLASS_PREFIXES, []);
 
-        if ($prefix === null) {
+        if (empty($prefixes)) {
             return;
         }
         unset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::STATE_AUTHN_CONTEXT_CLASS_REF]);
-        $array = [];
-        foreach ($this->authnContextClassRef as $value) {
-            if (!(substr($value, 0, strlen($prefix)) === $prefix)) {
-                array_push($array, $value);
+        $filteredAcrs = [];
+        foreach ($this->originalAuthnContextClassRef as $acr) {
+            foreach ($prefixes as $prefix) {
+                if (!(substr($acr, 0, strlen($prefix)) === $prefix)) {
+                    array_push($filteredAcrs, $acr);
+                }
             }
         }
-        if (!empty($array)) {
-            $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::STATE_AUTHN_CONTEXT_CLASS_REF]
-                = $array;
+        if (!empty($filteredAcrs)) {
+            $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::STATE_AUTHN_CONTEXT_CLASS_REF] = $filteredAcrs;
         }
     }
 
