@@ -53,13 +53,12 @@ class EntitlementUtils
         return $result;
     }
 
-    public static function getCapabilities(&$request, $adapter, $prefix, $authority)
+    public static function getCapabilities(&$request, $adapter, $prefix, $authority, $spEntityId)
     {
         $resourceCapabilities = [];
         $facilityCapabilities = [];
         $capabilitiesResult = [];
 
-        $spEntityId = self::getSpEntityId($request);
         try {
             $resourceCapabilities = $adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
             $facilityCapabilities = $adapter->getFacilityCapabilities($spEntityId);
@@ -142,7 +141,7 @@ class EntitlementUtils
             EntitlementUtils::encodeName($groupName) . '#' . $authority;
     }
 
-    private static function getSpEntityId(&$request)
+    public static function getSpEntityId(&$request)
     {
         if (isset($request['SPMetadata']['entityid'])) {
             return $request['SPMetadata']['entityid'];

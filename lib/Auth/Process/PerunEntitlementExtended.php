@@ -28,6 +28,7 @@ class PerunEntitlementExtended extends ProcessingFilter
     const ENTITLEMENTAUTHORITY_ATTR = 'entitlementAuthority';
     const GROUPNAMEAARC_ATTR = 'groupNameAARC';
     const INTERFACE_PROPNAME = 'interface';
+    const ENTITY_ID = 'entityID';
 
     private $outputAttrName;
     private $releaseForwardedEntitlement;
@@ -36,6 +37,7 @@ class PerunEntitlementExtended extends ProcessingFilter
     private $entitlementAuthority;
     private $groupNameAARC;
     private $adapter;
+    private $entityId;
 
     public function __construct($config, $reserved)
     {
@@ -62,6 +64,8 @@ class PerunEntitlementExtended extends ProcessingFilter
             $this->groupNameAARC ? Configuration::REQUIRED_OPTION : ''
         );
 
+        $this->entityId = $modulePerunConfiguration->getString(self::ENTITY_ID, null);
+
         $interface = $configuration->getValueValidate(
             self::INTERFACE_PROPNAME,
             [Adapter::RPC, Adapter::LDAP],
@@ -76,6 +80,10 @@ class PerunEntitlementExtended extends ProcessingFilter
         $capabilities = [];
         $forwardedEduPersonEntitlement = [];
 
+        if ($this->entityId === null) {
+            $this->entityId = EntitlementUtils::getSpEntityId($request);
+        }
+
         if (isset($request['perun']['groups'])) {
             $eduPersonEntitlementExtended = $this->getEduPersonEntitlementExtended($request);
 
@@ -83,7 +91,8 @@ class PerunEntitlementExtended extends ProcessingFilter
                 $request,
                 $this->adapter,
                 $this->entitlementPrefix,
-                $this->entitlementAuthority
+                $this->entitlementAuthority,
+                $this->entityId
             );
         } else {
             Logger::debug(
