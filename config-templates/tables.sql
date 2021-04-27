@@ -14,3 +14,13 @@ CREATE TABLE greyList (
 	INDEX (entityId),
 	PRIMARY KEY (entityId)
 );
+
+CREATE TABLE scriptChallenges (
+    id VARCHAR(255) NOT NULL,
+    challenge VARCHAR(255) NOT NULL,
+    script VARCHAR(255) NOT NULL,
+    date DATETIME NOT NULL DEFAULT current_timestamp,
+    PRIMARY KEY (id)
+);
+
+CREATE INDEX idx_date on scriptChallenges (date);
