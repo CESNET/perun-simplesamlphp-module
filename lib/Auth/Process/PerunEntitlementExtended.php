@@ -5,7 +5,7 @@ namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Configuration;
-use \SimpleSAML\Auth\ProcessingFilter;
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\EntitlementUtils;
@@ -64,7 +64,7 @@ class PerunEntitlementExtended extends ProcessingFilter
             $this->groupNameAARC ? Configuration::REQUIRED_OPTION : ''
         );
 
-        $this->entityId = $modulePerunConfiguration->getString(self::ENTITY_ID, null);
+        $this->entityId = $configuration->getString(self::ENTITY_ID, null);
 
         $interface = $configuration->getValueValidate(
             self::INTERFACE_PROPNAME,
