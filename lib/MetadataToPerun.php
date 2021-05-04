@@ -99,7 +99,7 @@ class MetadataToPerun
         $this->addXmlAttributes($metadata, $facility);
 
         foreach ($this->transformers as $transformer) {
-            $attrs = array_filter(array_intersect_key($facility, array_flip($transformer['attributes'])));
+            $attrs = array_intersect_key($facility, array_flip($transformer['attributes']));
             if (!empty($attrs)) {
                 $newAttrs = $transformer['instance']->transform($attrs);
                 $facility = array_merge($facility, $newAttrs);
