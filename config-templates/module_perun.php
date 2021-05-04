@@ -190,7 +190,7 @@ $config = [
 
     'wayf_config' => [
         /**
-         * specify if disco module should filter out IdPs which are not whitelisted neither commited to CoCo or RaS.
+         * specify if disco module should filter out IdPs which are not whitelisted neither committed to CoCo or RaS.
          * default is false.
          */
         'disable_white_listing' => false,
@@ -210,7 +210,6 @@ $config = [
             'url' => 'https://login.elixir-czech.org/add-institution/',
             'email' => 'aai-contact@elixir-europe.org',
         ],
-        'proxy_sp_entity_id' => 'entity_id_of_proxy_sp',
         /**
          * Warning configuration
          * The configuration can be loaded from file, url or directly from this config. All possibilities has to follow

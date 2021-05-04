@@ -37,7 +37,6 @@ class Disco extends PowerIdPDisco
     public const TRANSLATE_MODULE = 'translate_module';
     public const REMOVE_AUTHN_CONTEXT_CLASS_PREFIXES = 'remove_authn_context_class_ref_prefixes';
     public const DISABLE_WHITELISTING = 'disable_whitelisting';
-    public const PROXY_SP_ENTITY_ID = 'proxy_sp_entity_id';
     # CONFIGURATION ENTRIES IDP BLOCKS
     public const IDP_BLOCKS = 'idp_blocks_config';
     public const IDP_BLOCK_TYPE = 'type';
@@ -89,6 +88,8 @@ class Disco extends PowerIdPDisco
     private $wayfConfiguration;
     private $perunModuleConfiguration;
 
+    private $stateId;
+
     public function __construct(
         array $metadataSets,
         $instance
@@ -122,7 +123,7 @@ class Disco extends PowerIdPDisco
                 }
 
                 $id = State::saveState($state, self::SAML_SP_SSO);
-
+                $this->stateId = $id;
                 $e = explode("=", $returnURL)[0];
                 $newReturnURL = $e . "=" . urlencode($id);
                 $_GET[self::RETURN] = $newReturnURL;
@@ -175,13 +176,18 @@ class Disco extends PowerIdPDisco
         // IF IS SET AUTHN CONTEXT CLASS REF, REDIRECT USER TO THE IDP
         if (isset($this->originalAuthnContextClassRef)) {
             if ($this->originalAuthnContextClassRef !== null) {
+                $state = State::loadState($this->stateId, self::SAML_SP_SSO, true);
+                $proxyIdpEntityId = null;
+                if (isset($state['IdPMetadata']['entityid'])) {
+                    $proxyIdpEntityId = $state['IdPMetadata']['entityid'];
+                }
                 # Check authnContextClassRef and select IdP directly if the correct value is set
                 foreach ($this->originalAuthnContextClassRef as $value) {
                     // VERIFY THE PREFIX IS CORRECT AND WE CAN PERFORM THE REDIRECT
                     $acrStartSubstr = substr($value, 0, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID));
                     if ($acrStartSubstr === Disco::URN_CESNET_PROXYIDP_IDPENTITYID) {
                         $idpEntityId = substr($value, strlen(Disco::URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
-                        if ($idpEntityId === $this->wayfConfiguration->getString(self::PROXY_SP_ENTITY_ID, '')) {
+                        if ($idpEntityId === $proxyIdpEntityId) {
                             continue;
                         }
                         Logger::info('Redirecting to ' . $idpEntityId);
@@ -214,7 +220,7 @@ class Disco extends PowerIdPDisco
         $t->data[self::RETURN_ID_PARAM] = $this->returnIdParam;
         $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->originalAuthnContextClassRef;
         $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
-        $t->data[self::WAYF] = $this->perunModuleConfiguration;
+        $t->data[self::WAYF] = $this->wayfConfiguration;
         $t->show();
     }
 
