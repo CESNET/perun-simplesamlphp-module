@@ -25,6 +25,11 @@ try {
 if ($perunModuleConfig != null) {
     $testSpWarningConfig = $perunModuleConfig->getConfigItem(WarningTestSP::TEST_SP_CONFIG, null);
     if ($testSpWarningConfig != null) {
+        $header = $testSpWarningConfig->getArray(WarningTestSP::TEST_SP_CONFIG_HEADER, []);
+        if (!empty($header)) {
+            $t->includeInlineTranslation(WarningTestSP::CUSTOM_HEADER_KEY, $header);
+            $t->data[WarningTestSP::CUSTOM_HEADER_ENABLED] = true;
+        }
         $text = $testSpWarningConfig->getArray(WarningTestSP::TEST_SP_CONFIG_TEXT, []);
         if (!empty($text)) {
             $t->includeInlineTranslation(WarningTestSP::CUSTOM_TEXT_KEY, $text);

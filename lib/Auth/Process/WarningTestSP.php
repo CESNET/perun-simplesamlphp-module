@@ -18,8 +18,11 @@ class WarningTestSP extends ProcessingFilter
 
     public const TEST_SP_CONFIG = "warning_test_sp_config";
     public const TEST_SP_CONFIG_TEXT = "text";
+    public const TEST_SP_CONFIG_HEADER = "header";
 
+    public const CUSTOM_HEADER_ENABLED = "custom_header_enabled";
     public const CUSTOM_TEXT_ENABLED = "custom_text_enabled";
+    public const CUSTOM_HEADER_KEY = "{perun:warning_test_sp:custom_header}";
     public const CUSTOM_TEXT_KEY = "{perun:warning_test_sp:custom_text}";
 
     public function __construct($config, $reserved)
