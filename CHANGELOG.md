@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+#### Added
+- Added possibility to add custom texts to the TEST_SP warning page.
+
 #### Fixed
 - Fixed bad check in NagiosStatusConnector.php
 
