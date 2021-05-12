@@ -21,8 +21,7 @@ use Jose\Component\Signature\Serializer\JWSSerializerManager;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\Adapter;
-use SimpleSAML\Module\perun\DatabaseConnector;
-use SimpleSAML\Module\perun\ScriptsUtils;
+use SimpleSAML\Module\perun\ChallengeManager;
 
 $adapter = Adapter::getInstance(Adapter::RPC);
 $token = file_get_contents('php://input');
@@ -82,15 +81,11 @@ try {
     $perunUserId = $claims['data']['perunUserId'];
     $id = $claims['id'];
 
-    $databaseConnector = new DatabaseConnector();
+    $challengeManager = new ChallengeManager();
 
-    $conn = $databaseConnector->getConnection();
-
-    $challengeDb = ScriptsUtils::readChallengeFromDb($conn, $id);
-    $checkAccessSucceeded = ScriptsUtils::checkAccess($conn, $challenge, $challengeDb);
-    $challengeSuccessfullyDeleted = ScriptsUtils::deleteChallengeFromDb($conn, $id);
-
-    $conn->close();
+    $challengeDb = $challengeManager->readChallengeFromDb($id);
+    $checkAccessSucceeded = $challengeManager->checkAccess($challenge, $challengeDb);
+    $challengeSuccessfullyDeleted = $challengeManager->deleteChallengeFromDb($id);
 
     if (!$checkAccessSucceeded || !$challengeSuccessfullyDeleted) {
         exit;
