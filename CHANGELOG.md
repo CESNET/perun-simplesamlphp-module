@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added possibility to add custom texts to the TEST_SP warning page.
 
+#### Changed
+- Use translation  for privacy policy document block on consent screen from module Perun
+
 #### Fixed
 - Fixed bad check in NagiosStatusConnector.php
 
@@ -12,7 +15,7 @@ All notable changes to this project will be documented in this file.
 #### Added
 - Added extended PerunEntitlements
 
-### Changed
+#### Changed
 - Refactored Disco page. See the config template for example configuration.
 - Obtaining the data from Nagios is done through SSH instead of a certificate and calling an API
 

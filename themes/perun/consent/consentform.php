@@ -96,7 +96,7 @@ if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
 }
 
 if ($this->data['sppp'] !== false) {
-    echo "<p>" . htmlspecialchars($this->t('{consent:consent:consent_privacypolicy}')) . " ";
+    echo "<p>" . htmlspecialchars($this->t('{perun:consent:consent_privacypolicy}')) . " ";
     echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . "</a>";
     echo "</p>";
 }
