@@ -34,5 +34,9 @@
   "displayname": {
     "en": "Person's name",
     "cs": "Jméno uživatele"
+  },
+  "consent_privacypolicy": {
+    "en": "Privacy policy for the service",
+    "cs": "Zásady zpracování osobních údajů"
   }
 }
