@@ -42,6 +42,21 @@ Example how to enable filter IdPAttribute:
 'OrganizationName:en' => 'idp_organizationName' means that the $IdPMetadata['Organization']['en'] will be save into 
 $request['Attributes']['idp_organizationName']
 
+## EnsureVoMember
+
+Example how to configure filter EnsureVoMember:
+
+```php
+31 => array(
+    'class' => 'perun:EnsureVoMember',
+    'triggerAttr' => 'triggerAttr',
+    'voDefsAttr' => 'voDefsAttr',
+    'loginURL' => 'https://www.loginUrl.com',
+    'registrarURL' => 'https://www.registrarUrl.com',
+    'interface' => 'ldap',
+),
+```
+
 ## PerunEntitlement
 
 Example how to enable/configure filter PerunEntitlement:
