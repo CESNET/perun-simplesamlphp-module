@@ -2,6 +2,8 @@
 
 namespace SimpleSAML\Module\perun;
 
+use SimpleSAML\Module\perun\databaseCommand\IdpListsServiceDbCmd;
+
 /**
  * Implementation of IdpListsService using DB
  *
@@ -9,25 +11,31 @@ namespace SimpleSAML\Module\perun;
  */
 class IdpListsServiceDB extends IdpListsService
 {
+    private $idpListServiceDbCmd;
+
+    public function __construct()
+    {
+        $this->idpListServiceDbCmd = new IdpListsServiceDbCmd();
+    }
 
     public function getWhitelist()
     {
-        return DatabaseCommand::getAllIdps(DatabaseCommand::WHITELIST);
+        return $this->idpListServiceDbCmd->getAllIdps($this->idpListServiceDbCmd::WHITELIST);
     }
 
     public function getGreylist()
     {
-        return DatabaseCommand::getAllIdps(DatabaseCommand::GREYLIST);
+        return $this->idpListServiceDbCmd->getAllIdps($this->idpListServiceDbCmd::GREYLIST);
     }
 
     public function getWhitelistEntityIds()
     {
-        return DatabaseCommand::getAllEntityIds(DatabaseCommand::WHITELIST);
+        return $this->idpListServiceDbCmd->getAllEntityIds($this->idpListServiceDbCmd::WHITELIST);
     }
 
     public function getGreylistEntityIds()
     {
-        return DatabaseCommand::getAllEntityIds(DatabaseCommand::GREYLIST);
+        return $this->idpListServiceDbCmd->getAllEntityIds($this->idpListServiceDbCmd::GREYLIST);
     }
 
     public function isWhitelisted($entityID)
@@ -43,9 +51,9 @@ class IdpListsServiceDB extends IdpListsService
     public function whitelistIdp($entityID, $reason = null)
     {
         if (!$this->isWhitelisted($entityID)) {
-            DatabaseCommand::insertTolist(DatabaseCommand::WHITELIST, $entityID, $reason);
+            $this->idpListServiceDbCmd->insertToList($this->idpListServiceDbCmd::WHITELIST, $entityID, $reason);
             if ($this->isGreylisted($entityID)) {
-                DatabaseCommand::deleteFromList(DatabaseCommand::GREYLIST, $entityID);
+                $this->idpListServiceDbCmd->deleteFromList($this->idpListServiceDbCmd::GREYLIST, $entityID);
             }
         }
     }

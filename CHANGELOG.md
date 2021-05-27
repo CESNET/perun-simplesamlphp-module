@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 
 #### Changed
 - Use translation  for privacy policy document block on consent screen from module Perun
+- Connection to the database obtained through the SimpleSAML Database class
 
 #### Fixed
 - Fixed bad check in NagiosStatusConnector.php

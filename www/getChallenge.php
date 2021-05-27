@@ -1,8 +1,7 @@
 <?php
 
-use SimpleSAML\Module\perun\DatabaseConnector;
 use SimpleSAML\Logger;
-use SimpleSAML\Module\perun\ScriptsUtils;
+use SimpleSAML\Module\perun\ChallengeManager;
 
 $entityBody = file_get_contents('php://input');
 $body = json_decode($entityBody, true);
@@ -39,10 +38,8 @@ try {
     exit;
 }
 
-$databaseConnector = new DatabaseConnector();
-$conn = $databaseConnector->getConnection();
-$generateChallengeSucceeded = ScriptsUtils::generateChallenge($conn, $challenge, $id, $scriptName);
-$conn->close();
+$challengeManager = new ChallengeManager();
+$generateChallengeSucceeded = $challengeManager->insertChallenge($challenge, $id, $scriptName);
 
 if (!$generateChallengeSucceeded) {
     exit;
