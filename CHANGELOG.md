@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
  
 ## [Unreleased]
+
+## [v5.1.0]
 #### Added
 - Added possibility to add custom texts to the TEST_SP warning page.
 
