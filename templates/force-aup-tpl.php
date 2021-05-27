@@ -33,8 +33,9 @@ $this->includeAtTemplateBase('includes/header.php');
         <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>">
 
         <div class="form-group">
-            <input type="submit" value="<?php echo $this->t('{perun:perun:force-aup-tpl_agree}'); ?>"
-                   class="btn btn-lg btn-primary btn-block">
+            <button type="submit" class="btn btn-lg btn-primary btn-block">
+                <span><?php echo $this->t('{perun:perun:force-aup-tpl_agree}'); ?></span>
+            </button>
         </div>
     </form>
 
