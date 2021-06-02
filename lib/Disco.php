@@ -123,6 +123,7 @@ class Disco extends PowerIdPDisco
                     if (isset($state['IdPMetadata']['entityid'])) {
                         $this->proxyIdpEntityId = $state['IdPMetadata']['entityid'];
                     }
+                    State::saveState($state, self::SAML_SP_SSO);
                 }
                 $e = explode("=", $returnURL)[0];
                 $newReturnURL = $e . "=" . urlencode($id);
@@ -457,10 +458,16 @@ class Disco extends PowerIdPDisco
         unset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::STATE_AUTHN_CONTEXT_CLASS_REF]);
         $filteredAcrs = [];
         foreach ($this->originalAuthnContextClassRef as $acr) {
+            $acr = trim($acr);
+            $retain = true;
             foreach ($prefixes as $prefix) {
-                if (!(substr($acr, 0, strlen($prefix)) === $prefix)) {
-                    array_push($filteredAcrs, $acr);
+                if (substr($acr, 0, strlen($prefix)) === $prefix) {
+                    $retain = false;
+                    break;
                 }
+            }
+            if ($retain) {
+                array_push($filteredAcrs, $acr);
             }
         }
         if (!empty($filteredAcrs)) {
