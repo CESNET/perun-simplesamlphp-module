@@ -2,6 +2,7 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+- Added possibility to use a callable for entityID parameter in PerunEntitlement(Extended)
 
 ## [v5.1.1]
 #### Fixed
