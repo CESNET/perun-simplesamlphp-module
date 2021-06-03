@@ -64,7 +64,7 @@ class PerunEntitlementExtended extends ProcessingFilter
             $this->groupNameAARC ? Configuration::REQUIRED_OPTION : ''
         );
 
-        $this->entityId = $configuration->getString(self::ENTITY_ID, null);
+        $this->entityId = $configuration->getValue(self::ENTITY_ID, null);
 
         $interface = $configuration->getValueValidate(
             self::INTERFACE_PROPNAME,
@@ -82,6 +82,13 @@ class PerunEntitlementExtended extends ProcessingFilter
 
         if ($this->entityId === null) {
             $this->entityId = EntitlementUtils::getSpEntityId($request);
+        } elseif (is_callable($this->entityId)) {
+            $this->entityId = call_user_func($this->entityId, $request);
+        } elseif (!is_string($this->entityId)) {
+            throw new Exception(
+                'perun:PerunEntitlement: invalid configuration option entityID. ' .
+                'It must be a string or a callable.'
+            );
         }
 
         if (isset($request['perun']['groups'])) {

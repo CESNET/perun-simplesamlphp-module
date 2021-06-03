@@ -54,6 +54,7 @@ Example how to enable/configure filter PerunEntitlement:
     # forwarded entitlement are released by default
     #'releaseForwardedEntitlement' => false, OPTIONAL
     'forwardedEduPersonEntitlement' => 'eduPersonEntitlement',
+    #'entityID' => function($request){return empty($request["saml:RequesterID"]) ? $request["SPMetadata"]["entityid"] : $request["saml:RequesterID"][0];},
 ),
 ```
 
@@ -69,6 +70,7 @@ Example how to enable/configure filter PerunEntitlement:
     # forwarded entitlement are released by default
     #'releaseForwardedEntitlement' => false, OPTIONAL
     'forwardedEduPersonEntitlement' => 'eduPersonEntitlement',
+    #'entityID' => function($request){return empty($request["saml:RequesterID"]) ? $request["SPMetadata"]["entityid"] : $request["saml:RequesterID"][0];},
 ),
 ```
 
