@@ -65,7 +65,7 @@ class EndpointIndexMap extends AttributeTransformer
                     $result[$binding] = [];
                 }
 
-                $result[$binding][$endpoint['index'] - 1] = $endpoint['Location'];
+                $result[$binding][$endpoint['index']] = $endpoint['Location'];
             }
             if ($keepIndexes) {
                 $result = array_map(function ($endpoints) {
