@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [v5.2.0]
+#### Added
 - Added possibility to use a callable for entityID parameter in PerunEntitlement(Extended)
 
 ## [v5.1.1]
@@ -376,6 +379,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v5.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.2.0
 [v5.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.1.1
 [v5.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.1.0
 [v5.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.0.0
