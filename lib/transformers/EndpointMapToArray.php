@@ -68,7 +68,8 @@ class EndpointMapToArray extends AttributeTransformer
         // if all endpoints use the default binding and there are no spaces
         if (count($endpointMap) === 1 && isset($endpointMap[$this->defaultBinding])
             && strpos(
-                $endpointMap[$this->defaultBinding], self::MAPLIST_SEPARATOR . self::MAPLIST_SEPARATOR
+                $endpointMap[$this->defaultBinding],
+                self::MAPLIST_SEPARATOR . self::MAPLIST_SEPARATOR
             ) === false) {
             $result = explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]);
             return count($result) === 1 ? $result[0] : $result;
