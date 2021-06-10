@@ -38,20 +38,29 @@ $perunUserId = null;
 $id = null;
 
 const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def';
-const CONFIG_FILE_NAME = 'keys.php';
+const CONFIG_FILE_NAME = 'challenges_config.php';
 
 try {
     $config = Configuration::getConfig(CONFIG_FILE_NAME);
     $keyPub = $config->getString('updateUes');
+    $signatureAlg = $config->getString('signatureAlg', 'RS512');
 
-    $algorithmManager = new AlgorithmManager([new RS512()]);
+    $algorithmManager = new AlgorithmManager(
+        [
+            ChallengeManager::getAlgorithm('Signature\\Algorithm', $signatureAlg)
+        ]
+    );
     $jwsVerifier = new JWSVerifier($algorithmManager);
     $jwk = JWKFactory::createFromKeyFile($keyPub);
 
     $serializerManager = new JWSSerializerManager([new CompactSerializer()]);
     $jws = $serializerManager->unserialize($token);
 
-    $headerCheckerManager = new HeaderCheckerManager([new AlgorithmChecker(['RS512'])], [new JWSTokenSupport()]);
+    $headerCheckerManager = new HeaderCheckerManager(
+        [new AlgorithmChecker([$signatureAlg])],
+        [new JWSTokenSupport()]
+    );
+
     $headerCheckerManager->check($jws, 0);
 
     $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
