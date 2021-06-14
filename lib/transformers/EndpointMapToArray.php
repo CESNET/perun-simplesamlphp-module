@@ -17,7 +17,7 @@ class EndpointMapToArray extends AttributeTransformer
 
     const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
-    const INDEX_MIN = 1;
+    const INDEX_MIN = 0;
 
     private $defaultBinding;
 
