@@ -443,6 +443,24 @@ class AdapterLdap extends Adapter
         return Member::VALID;
     }
 
+    public function isUserInVo($user, $voShortName)
+    {
+        if (empty($user->getId())) {
+            throw new Exception('userId is empty');
+        }
+        if (empty($voShortName)) {
+            throw new Exception('voShortName is empty');
+        }
+
+        $vo = $this->getVoByShortName($voShortName);
+        if ($vo === null) {
+            Logger::debug('isUserInVo - No VO found, returning false');
+            return false;
+        }
+
+        return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
+    }
+
     public function getResourceCapabilities($entityId, $userGroups)
     {
         $facility = $this->getFacilityByEntityId($entityId);

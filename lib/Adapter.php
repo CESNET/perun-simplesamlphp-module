@@ -196,6 +196,13 @@ abstract class Adapter
     abstract public function getMemberStatusByUserAndVo($user, $vo);
 
     /**
+     * @param User $user
+     * @param string $voShortName
+     * @return boolean
+     */
+    abstract public function isUserInVo($user, $voShortName);
+
+    /**
      * @param $entityId int entityId
      * @param $userGroups array of groups where user belongs to
      * @return array of resource capabilities
