@@ -261,6 +261,9 @@ $config = [
                 'entityIds' => [],
             ],
         ],
+        'display_sp_name' => false,
+        // interface needed just in case of display_sp_name => true
+        'interface' => 'rpc',
     ],
 
     'warning_test_sp_config' => [

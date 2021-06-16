@@ -390,6 +390,26 @@ class AdapterRpc extends Adapter
         return new Facility($perunAttr[0]['id'], $perunAttr[0]['name'], $perunAttr[0]['description'], $spEntityId);
     }
 
+    public function getFacilityByClientId($clientId)
+    {
+        $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
+            'attributeName' => 'urn:perun:facility:attribute-def:def:OIDCClientID',
+            'attributeValue' => $clientId,
+        ]);
+
+        if (empty($perunAttr)) {
+            Logger::warning('perun:AdapterRpc: No facility with clientId \'' . $clientId . '\' found.');
+            return null;
+        }
+
+        if (count($perunAttr) > 1) {
+            Logger::warning('perun:AdapterRpc: There is more than one facility with clientId \'' . $clientId . '.');
+            return null;
+        }
+
+        return new Facility($perunAttr[0]['id'], $perunAttr[0]['name'], $perunAttr[0]['description'], $clientId);
+    }
+
     /**
      * Returns member by User and Vo
      *

@@ -307,6 +307,29 @@ class AdapterLdap extends Adapter
         return $facility;
     }
 
+    public function getFacilityByClientId($clientId)
+    {
+        $ldapResult = $this->connector->searchForEntity(
+            $this->ldapBase,
+            '(&(objectClass=perunFacility)(OIDCClientID=' . $clientId . '))',
+            [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
+        );
+
+        if (empty($ldapResult)) {
+            Logger::warning('perun:AdapterLdap: No facility with clientId \'' . $clientId . '\' found.');
+            return null;
+        }
+
+        $facility = new Facility(
+            $ldapResult[self::PERUN_FACILITY_ID][0],
+            $ldapResult[self::CN][0],
+            $ldapResult[self::DESCRIPTION][0],
+            $clientId
+        );
+
+        return $facility;
+    }
+
     public function getEntitylessAttribute($attrName)
     {
         return $this->fallbackAdapter->getEntitylessAttribute($attrName);

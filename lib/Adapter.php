@@ -132,6 +132,12 @@ abstract class Adapter
     abstract public function getFacilityByEntityId($spEntityId);
 
     /**
+     * @param string $clientId
+     * @return Facility facility
+     */
+    abstract public function getFacilityByClientId($clientId);
+
+    /**
      * @param string $spEntityId entity id of the sp
      * @param int $userId
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
