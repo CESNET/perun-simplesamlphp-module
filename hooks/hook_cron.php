@@ -9,7 +9,7 @@ use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
  * @param array &$croninfo  Output
  * @author Dominik Baranek <baranek@ics.muni.cz>
  */
-function challenges_hook_cron(&$croninfo)
+function perun_hook_cron(&$croninfo)
 {
     if ($croninfo['tag'] !== 'hourly') {
         Logger::debug('cron [perun]: Skipping cron in cron tag [' . $croninfo['tag'] . '] ');

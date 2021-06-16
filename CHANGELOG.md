@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 #### Fixed
 - Detailed endpoint format when spaced in EndpointMapToArray 
 - Revert change to INDEX_MIN in EndpointMapToArray
+- Rename the hook correctly to naming convention
 
 ## [v5.2.0]
 #### Added
