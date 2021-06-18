@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+#### Changed
+- Security improvements in script calls
+
 #### Fixed
 - Detailed endpoint format when spaced in EndpointMapToArray 
 - Revert change to INDEX_MIN in EndpointMapToArray

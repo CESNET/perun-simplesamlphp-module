@@ -1,5 +1,6 @@
 <?php
 
+use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\ChallengeManager;
 
@@ -12,7 +13,7 @@ if ($body === false) {
     exit;
 }
 
-if (empty($body['id'] || strlen($body['id']) > 30 || !ctype_print($body['id']))) {
+if (empty($body['id']) || strlen($body['id']) > 30 || !ctype_print($body['id'])) {
     Logger::error('Perun.getChallenge: Invalid id');
     http_response_code(400);
     exit;
@@ -24,14 +25,19 @@ if (empty($body['scriptName']) || strlen($body['scriptName']) > 255 || !ctype_pr
     exit;
 }
 
+const CONFIG_FILE_NAME = 'challenges_config.php';
+const HASH_ALG = 'hashAlg';
+const CHALLENGE_LENGTH = 'challengeLength';
+
 $id = $body['id'];
 $scriptName = $body['scriptName'];
 
-const RANDOM_BYTES_LENGTH = 32;
-const TABLE_NAME = 'scriptChallenges';
+$config = Configuration::getConfig(CONFIG_FILE_NAME);
+$hashAlg = $config->getString(HASH_ALG, 'sha512');
+$challengeLength = $config->getInteger(CHALLENGE_LENGTH, 32);
 
 try {
-    $challenge = hash('sha256', random_bytes(RANDOM_BYTES_LENGTH));
+    $challenge = hash($hashAlg, random_bytes($challengeLength));
 } catch (Exception $ex) {
     Logger::error('Perun.getChallenge: Error while generating a challenge');
     http_response_code(500);

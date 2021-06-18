@@ -76,4 +76,13 @@ class ChallengeManager
 
         return true;
     }
+
+    public static function getAlgorithm($path, $className)
+    {
+        $classPath = sprintf('Jose\\Component\\%s\\%s', $path, $className);
+        if (! class_exists($classPath)) {
+            throw new \Exception('Invalid algorithm specified: ' . $classPath);
+        }
+        return new $classPath();
+    }
 }

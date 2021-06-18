@@ -11,6 +11,7 @@ use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
+use SimpleSAML\Module\perun\ChallengeManager;
 use SimpleSAML\Module\perun\UpdateUESThread;
 
 /**
@@ -26,6 +27,7 @@ class UpdateUserExtSource extends ProcessingFilter
     private $attrMap;
     private $attrsToConversion;
     private $pathToKey;
+    private $signatureAlg;
 
     const SCRIPT_NAME = 'updateUes';
 
@@ -51,6 +53,12 @@ class UpdateUserExtSource extends ProcessingFilter
             $this->attrsToConversion = (array)$config['arrayToStringConversion'];
         } else {
             $this->attrsToConversion = [];
+        }
+
+        if (isset($config['signatureAlg'])) {
+            $this->signatureAlg = (array)$config['signatureAlg'];
+        } else {
+            $this->signatureAlg = 'RS512';
         }
 
         $this->attrMap = (array)$config['attrMap'];
@@ -81,7 +89,11 @@ class UpdateUserExtSource extends ProcessingFilter
         }
 
         $jwk = JWKFactory::createFromKeyFile($this->pathToKey);
-        $algorithmManager = new AlgorithmManager([new RS512()]);
+        $algorithmManager = new AlgorithmManager(
+            [
+                ChallengeManager::getAlgorithm('Signature\\Algorithm', $this->signatureAlg)
+            ]
+        );
         $jwsBuilder = new JWSBuilder($algorithmManager);
 
         $data = [
@@ -103,7 +115,7 @@ class UpdateUserExtSource extends ProcessingFilter
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => 'RS512'])
+            ->addSignature($jwk, ['alg' => $this->signatureAlg])
             ->build();
 
         $serializer = new CompactSerializer();
