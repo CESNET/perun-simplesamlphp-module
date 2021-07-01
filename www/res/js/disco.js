@@ -1,93 +1,57 @@
-let forceShow = false;
-
-function setForceShow(val) {
-    forceShow = val;
-}
-
-$.fn.liveUpdate = function(list) {
-    list = $(list);
-    if (list.length) {
-        var rows = list.children('a'), cache = rows.map(function () {
-            return jQuery(this).text().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "");
-        });
-
-        this.keyup(filter).keyup().parents('form').submit(function () {
-            return false;
-        });
-    }
-    return this;
-
-    function filter() {
-        const searchTerm = $.trim($(this).val().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ""));
-        const scores = [];
-        rows.hide();
-        showNoEntriesFound(false);
-        if (!searchTerm) {
-            setForceShow(false);
-            return;
-        }
-        cache.each(function (i) {
-            const score = this.score(searchTerm);
-            if (score > 0) {
-                scores.push([score, i]);
-            }
-        });
-        if (scores.length === 0) {
-            showNoEntriesFound(true);
-        } else if (!forceShow && scores.length > 7) {
-            showWarningTooMuchEntries(true, scores.length + 1);
-        } else {
-            $.each(
-                scores.sort(
-                    function(a, b) { return b[0] - a[0];}),
-                function() {$(rows[this[1]]).show();
-                });
-        }
-    }
-};
-
-function showWarningTooMuchEntries(show, cnt = 0) {
+function hideAll () {
+    $("#list").hide();
     $('#no-entries').hide();
-    if (show) {
-        $('#warning-entries').show();
-    } else {
-        $('#warning-entries').hide();
-    }
-    $('#results-cnt').text(cnt);
-}
-
-function showNoEntriesFound(show) {
     $('#warning-entries').hide();
-    if (show) {
-        $('#no-entries').show();
-    } else {
-        $('#no-entries').hide();
-    }
 }
 
 $(document).ready(function() {
-    $("#query").liveUpdate("#list");
-    $("#showEntries").click(function() {
-        $("#last-used-idp-wrap").hide();
-        $("#entries").show();
-        $("#showEntries").hide();
-    });
-    $("#showEntriesFromDropdown").click(function() {
-        $("#dropdown-entries").toggle();
-    });
     if ($("#last-used-idp-wrap").length > 0) {
         $("#last-used-idp .metaentry").focus();
     } else {
         $("#entries").show();
     }
-    $('#warning-entries-btn-force-show').click(function() {
-        $('#query').trigger('keyup');
-        showWarningTooMuchEntries(false);
-        showEntries();
+
+    let forceShow = false
+    $('#query').keyup(function() {
+        const filter = $(this).val().trim().toLowerCase();
+        if (!filter) {
+            hideAll();
+            forceShow = false;
+        } else {
+            let matches = [];
+            $('#list a').each(function () {
+                if ($(this).attr('data-search').indexOf(filter) >= 0) {
+                    matches.push(this);
+                } else {
+                    $(this).hide();
+                }
+            });
+            if (matches.length <= 0) {
+                $('#no-entries').show();
+                $('#warning-entries').hide();
+            } else {
+                $("#list").show();
+                $('#results-cnt').text(matches.length);
+                $('#no-entries').hide();
+                if (matches.length > 10 && !forceShow) {
+                    matches.forEach(m => {
+                        $(m).hide();
+                    });
+                    $('#warning-entries').show();
+                } else {
+                    $('#warning-entries').hide();
+                    matches.forEach(m => {
+                        $(m).show();
+                    });
+                }
+            }
+        }
+    });
+
+    $('#warning-entries-btn-force-show').click(function(event) {
+        event.preventDefault();
+        forceShow = true;
+        $('#warning-entries').hide();
+        $('#query').trigger('keyup').focus();
     });
 });
-
-function showEntries() {
-    setForceShow(true);
-    $('#query').trigger('keyup');
-}
