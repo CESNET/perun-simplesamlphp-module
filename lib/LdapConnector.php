@@ -111,7 +111,7 @@ class LdapConnector
         }
 
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
-        
+
         // Enable TLS, if needed
         if ($this->enableTLS && stripos($this->hostname, "ldaps:") === false) {
             if (!@ldap_start_tls($conn)) {
@@ -142,7 +142,7 @@ class LdapConnector
         ldap_close($conn);
 
         Logger::debug('sspmod_perun_LdapConnector.search - search query proceeded in ' . $responseTime . 'ms. ' .
-            'Query base: ' . $base . ', filter: ' . $filter . ', response: ' . var_export($entries, true));
+            'Query base: ' . $base . ', filter: ' . $filter . ', response: ' . json_encode($entries));
 
         return $entries;
     }

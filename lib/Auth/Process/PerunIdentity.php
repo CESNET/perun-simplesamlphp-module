@@ -574,10 +574,10 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
         $vos = $this->getVosByFacilityVoShortNames();
         foreach ($vos as $vo) {
-            Logger::debug('Vo:' . print_r($vo, true));
+            Logger::debug('Vo:' . json_encode($vo));
             try {
                 $member = $this->rpcAdapter->getMemberByUser($user, $vo);
-                Logger::debug('Member:' . print_r($member, true));
+                Logger::debug('Member:' . json_encode($member));
                 array_push($members, $member);
             } catch (\Exception $exception) {
                 array_push($vosForRegistration, $vo);
@@ -597,7 +597,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 array_push($vosForRegistration, $vo);
             }
         }
-        Logger::debug('VOs for registration:  ' . print_r($vosForRegistration, true));
+        Logger::debug('VOs for registration:  ' . json_encode($vosForRegistration));
         return $vosForRegistration;
     }
 

@@ -390,7 +390,7 @@ class AdapterLdap extends Adapter
             '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $id . ',' . $this->ldapBase . '))',
             ['perunResourceId']
         );
-        Logger::debug('Resources - ' . var_export($resources, true));
+        Logger::debug('Resources - ' . json_encode($resources));
 
         if ($resources === null) {
             throw new Exception(
@@ -424,7 +424,7 @@ class AdapterLdap extends Adapter
             );
         }
         $resultGroups = $this->removeDuplicateEntities($resultGroups);
-        Logger::debug('Groups - ' . var_export($resultGroups, true));
+        Logger::debug('Groups - ' . json_encode($resultGroups));
         return $resultGroups;
     }
 

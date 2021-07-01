@@ -6,6 +6,7 @@ All notable changes to this project will be documented in this file.
 - Detailed endpoint format when spaced in EndpointMapToArray 
 - Revert change to INDEX_MIN in EndpointMapToArray
 - Rename the hook correctly to naming convention
+- Each log has just one line output
 
 ## [v5.2.0]
 #### Added
