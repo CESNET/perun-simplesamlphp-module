@@ -801,17 +801,15 @@ class Disco extends PowerIdPDisco
         } else {
             $return = [ $array ];
         }
-
         return $return;
     }
 
     private static function constructSearchData($idpMetadata): string
     {
         $res = '';
+        $dataSearchKeys = [];
         if (!empty($idpMetadata['UIInfo'])) {
-            $newEl = array_merge($idpMetadata['UIInfo']);
-            unset($idpMetadata['UIInfo']);
-            $idpMetadata = array_merge($idpMetadata, $newEl);
+            $idpMetadata = array_merge($idpMetadata, $idpMetadata['UIInfo']);
         }
 
         $keys = ['entityid', 'OrganizationName', 'OrganizationDisplayName',
@@ -819,9 +817,10 @@ class Disco extends PowerIdPDisco
 
         foreach ($keys as $key) {
             if (!empty($idpMetadata[$key])) {
-                $res .= (' ' . implode(' ', self::arrayFlatten($idpMetadata[$key])));
+                $dataSearchKeys = arra($dataSearchKeys, self::arrayFlatten($idpMetadata[$key]));
             }
         }
+        $res .= (' ' . implode(' ', $dataSearchKeys));
 
         return strtolower(str_replace('"', '', $res));
     }
