@@ -205,7 +205,7 @@ class ForceAup extends ProcessingFilter
             $newAups = [];
         }
 
-        Logger::debug('perun:ForceAup - NewAups: ' . print_r($newAups, true));
+        Logger::debug('perun:ForceAup - NewAups: ' . json_encode($newAups));
 
         if (!empty($newAups)) {
             $request[self::UID_ATTR] = $this->uidAttr;
