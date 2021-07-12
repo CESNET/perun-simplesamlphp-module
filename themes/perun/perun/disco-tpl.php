@@ -22,6 +22,7 @@ $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" hr
     Module::getModuleUrl('perun/res/css/disco.css') . '" />';
 
 $wayfConfig = $this->data[Disco::WAYF];
+$spName = $this->data[Disco::NAME];
 
 $translateModule = $wayfConfig->getString(Disco::TRANSLATE_MODULE, 'disco');
 $addInstitutionConfig = $wayfConfig->getConfigItem(Disco::ADD_INSTITUTION, null);
@@ -47,7 +48,7 @@ if ($this->isAddInstitutionApp()) {
     // Change header for Add institution app
     $this->data['header'] = $this->t('{perun:disco:add_institution}');
 } else {
-    $this->data['header'] = $this->t('{perun:disco:header}');
+    $this->data['header'] = $this->t('{perun:disco:header}') . ' ' . $spName;
 }
 
 $this->includeAtTemplateBase('includes/header.php');

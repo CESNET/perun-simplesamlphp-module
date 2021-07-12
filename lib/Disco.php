@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Module\perun;
 
+use SimpleSAML\Locale\Translate;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Error\Exception;
@@ -82,11 +83,13 @@ class Disco extends PowerIdPDisco
     public const SAML_REQUESTED_AUTHN_CONTEXT = 'saml:RequestedAuthnContext';
     public const STATE_AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
     public const SAML_SP_SSO = 'saml:sp:sso';
+    public const NAME = 'name';
 
     private $originalsp;
     private array $originalAuthnContextClassRef = [];
     private $wayfConfiguration;
     private $perunModuleConfiguration;
+    private $spName;
 
     private $proxyIdpEntityId;
 
@@ -114,6 +117,9 @@ class Disco extends PowerIdPDisco
         if (isset($query[self::AUTH_ID])) {
             $id = explode(":", $query[self::AUTH_ID])[0];
             $state = State::loadState($id, self::SAML_SP_SSO, true);
+
+            $translate = new Translate(Configuration::getInstance());
+            $this->spName = $translate->getPreferredTranslation($state[self::STATE_SP_METADATA][self::NAME]);
 
             if ($state !== null) {
                 if (isset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF])) {
@@ -217,6 +223,7 @@ class Disco extends PowerIdPDisco
         $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->originalAuthnContextClassRef;
         $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
         $t->data[self::WAYF] = $this->wayfConfiguration;
+        $t->data[self::NAME] = $this->spName;
         $t->show();
     }
 

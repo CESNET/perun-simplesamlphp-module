@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+# Added
+- WAYF now displays a name of the service
+
 #### Fixed
 - Detailed endpoint format when spaced in EndpointMapToArray 
 - Revert change to INDEX_MIN in EndpointMapToArray
