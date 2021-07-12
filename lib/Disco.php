@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Module\perun;
 
+use Normalizer;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Error\Exception;
@@ -793,13 +794,13 @@ class Disco extends PowerIdPDisco
         if (is_array($array)) {
             foreach ($array as $key => $value) {
                 if (is_array($value)) {
-                    $return = array_merge($return, self::arrayFlatten($value));
+                    $return = [ ...$return, ...self::arrayFlatten($value)];
                 } else {
-                    $return[$key] = $value;
+                    $return = [ ...$return, $value];
                 }
             }
         } else {
-            $return = [ $array ];
+            $return = [$array];
         }
         return $return;
     }
@@ -817,11 +818,11 @@ class Disco extends PowerIdPDisco
 
         foreach ($keys as $key) {
             if (!empty($idpMetadata[$key])) {
-                $dataSearchKeys = arra($dataSearchKeys, self::arrayFlatten($idpMetadata[$key]));
+                $dataSearchKeys = [...$dataSearchKeys, ...self::arrayFlatten($idpMetadata[$key])];
             }
         }
         $res .= (' ' . implode(' ', $dataSearchKeys));
 
-        return strtolower(str_replace('"', '', $res));
+        return strtolower(str_replace('"', '', iconv('UTF-8', 'US-ASCII//TRANSLIT', $res)));
     }
 }

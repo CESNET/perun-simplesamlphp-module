@@ -11,9 +11,15 @@ $(document).ready(function() {
         $("#entries").show();
     }
 
+    $("#showEntries").click(function() {
+        $("#last-used-idp-wrap").hide();
+        $("#entries").show();
+        $("#showEntries").hide();
+    });
+
     let forceShow = false
     $('#query').keyup(function() {
-        const filter = $(this).val().trim().toLowerCase();
+        const filter = $(this).val().trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "")
         if (!filter) {
             hideAll();
             forceShow = false;
