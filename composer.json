@@ -32,6 +32,7 @@
         "ext-curl": "*",
         "ext-json": "*",
         "ext-openssl": "*",
+        "ext-iconv": "*",
         "web-token/jwt-key-mgmt": "^2.2",
         "web-token/jwt-signature": "^2.2",
         "web-token/jwt-signature-algorithm-rsa": "^2.2",

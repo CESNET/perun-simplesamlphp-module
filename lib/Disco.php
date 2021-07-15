@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Module\perun;
 
+use Normalizer;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\Error\Exception;
@@ -486,9 +487,11 @@ class Disco extends PowerIdPDisco
         array $metadata,
         $favourite = false
     ): string {
+        $searchData = htmlspecialchars(self::constructSearchData($metadata));
         $extra = ($favourite ? ' favourite' : '');
         $href = $t->getContinueUrl($metadata[self::IDP_ENTITY_ID]);
-        $html = '<a class="metaentry' . $extra . ' list-group-item" href="' . $href. '">';
+        $html = '<a class="metaentry' . $extra .
+            ' list-group-item" data-search="' . $searchData . '" href="' . $href. '">';
         $html .= '<strong>' . $t->getTranslatedEntityName($metadata) . '</strong>';
         $html .= '</a>';
 
@@ -773,11 +776,53 @@ class Disco extends PowerIdPDisco
     {
         $html = '<script type="text/javascript" src="' .
             Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
+
+        $html .= '<script type="text/javascript" src="' .
+            Module::getModuleUrl('perun/res/js/jquery.livesearch.js') . '"></script>' . PHP_EOL;
+
         $html .= '<script type="text/javascript" src="' .
             Module::getModuleUrl('perun/res/js/disco.js') . '"></script>' . PHP_EOL;
         if ($boxed) {
             $html .= Disco::boxedDesignScript() . PHP_EOL;
         }
         return $html;
+    }
+
+    private static function arrayFlatten($array): array
+    {
+        $return = [];
+        if (is_array($array)) {
+            foreach ($array as $key => $value) {
+                if (is_array($value)) {
+                    $return = [ ...$return, ...self::arrayFlatten($value)];
+                } else {
+                    $return = [ ...$return, $value];
+                }
+            }
+        } else {
+            $return = [$array];
+        }
+        return $return;
+    }
+
+    private static function constructSearchData($idpMetadata): string
+    {
+        $res = '';
+        $dataSearchKeys = [];
+        if (!empty($idpMetadata['UIInfo'])) {
+            $idpMetadata = array_merge($idpMetadata, $idpMetadata['UIInfo']);
+        }
+
+        $keys = ['entityid', 'OrganizationName', 'OrganizationDisplayName',
+            'name', 'url', 'OrganizationURL', 'scope', 'DisplayName'];
+
+        foreach ($keys as $key) {
+            if (!empty($idpMetadata[$key])) {
+                $dataSearchKeys = [...$dataSearchKeys, ...self::arrayFlatten($idpMetadata[$key])];
+            }
+        }
+        $res .= (' ' . implode(' ', $dataSearchKeys));
+
+        return strtolower(str_replace('"', '', iconv('UTF-8', 'US-ASCII//TRANSLIT', $res)));
     }
 }
