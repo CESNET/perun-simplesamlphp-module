@@ -7,18 +7,6 @@
  * @author Dominik Baranek <baranek@ics.muni.cz>
  */
 
-use Jose\Component\Checker\ClaimCheckerManager;
-use Jose\Component\Checker;
-use Jose\Component\Core\AlgorithmManager;
-use Jose\Component\KeyManagement\JWKFactory;
-use Jose\Component\Signature\Algorithm\RS512;
-use Jose\Component\Signature\JWSVerifier;
-use Jose\Component\Checker\HeaderCheckerManager;
-use Jose\Component\Checker\AlgorithmChecker;
-use Jose\Component\Signature\JWSTokenSupport;
-use Jose\Component\Signature\Serializer\CompactSerializer;
-use Jose\Component\Signature\Serializer\JWSSerializerManager;
-use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\ChallengeManager;
@@ -38,68 +26,17 @@ $perunUserId = null;
 $id = null;
 
 const UES_ATTR_NMS = 'urn:perun:ues:attribute-def:def';
-const CONFIG_FILE_NAME = 'challenges_config.php';
 
 try {
-    $config = Configuration::getConfig(CONFIG_FILE_NAME);
-    $keyPub = $config->getString('updateUes');
-    $signatureAlg = $config->getString('signatureAlg', 'RS512');
-
-    $algorithmManager = new AlgorithmManager(
-        [
-            ChallengeManager::getAlgorithm('Signature\\Algorithm', $signatureAlg)
-        ]
-    );
-    $jwsVerifier = new JWSVerifier($algorithmManager);
-    $jwk = JWKFactory::createFromKeyFile($keyPub);
-
-    $serializerManager = new JWSSerializerManager([new CompactSerializer()]);
-    $jws = $serializerManager->unserialize($token);
-
-    $headerCheckerManager = new HeaderCheckerManager(
-        [new AlgorithmChecker([$signatureAlg])],
-        [new JWSTokenSupport()]
-    );
-
-    $headerCheckerManager->check($jws, 0);
-
-    $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
-
-    if (!$isVerified) {
-        Logger::error('Perun.updateUes: The token signature is invalid!');
-        http_response_code(401);
-        exit;
-    }
-
-    $claimCheckerManager = new ClaimCheckerManager(
-        [
-            new Checker\IssuedAtChecker(),
-            new Checker\NotBeforeChecker(),
-            new Checker\ExpirationTimeChecker(),
-        ]
-    );
-
-    $claims = json_decode($jws->getPayload(), true);
-    $claimCheckerManager->check($claims);
-
-    $challenge = $claims['challenge'];
+    $challengeManager = new ChallengeManager();
+    $claims = $challengeManager->decodeToken($token);
 
     $attributesFromIdP = $claims['data']['attributes'];
     $attrMap = $claims['data']['attrMap'];
     $attrsToConversion = $claims['data']['attrsToConversion'];
     $perunUserId = $claims['data']['perunUserId'];
     $id = $claims['id'];
-
-    $challengeManager = new ChallengeManager();
-
-    $challengeDb = $challengeManager->readChallengeFromDb($id);
-    $checkAccessSucceeded = $challengeManager->checkAccess($challenge, $challengeDb);
-    $challengeSuccessfullyDeleted = $challengeManager->deleteChallengeFromDb($id);
-
-    if (!$checkAccessSucceeded || !$challengeSuccessfullyDeleted) {
-        exit;
-    }
-} catch (Checker\InvalidClaimException | Checker\MissingMandatoryClaimException $ex) {
+} catch (Exception $ex) {
     Logger::error('Perun.updateUes: An error occurred when the token was verifying.');
     http_response_code(400);
     exit;
