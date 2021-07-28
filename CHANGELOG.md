@@ -4,6 +4,7 @@ All notable changes to this project will be documented in this file.
 ## [Unreleased]
 #### Changed
 - Improve WAYF searching by localized name and domain
+- Implemented filter EnsureVoMember
 
 #### Fixed
 - Detailed endpoint format when spaced in EndpointMapToArray 

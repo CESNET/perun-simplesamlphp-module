@@ -423,21 +423,51 @@ class AdapterRpc extends Adapter
         return new Member($member['id'], $member['voId'], $member['status']);
     }
 
+    public function isUserInVo($user, $voShortName)
+    {
+        if (empty($user->getId())) {
+            throw new Exception('userId is empty');
+        }
+        if (empty($voShortName)) {
+            throw new Exception('voShortName is empty');
+        }
+
+        $vo = $this->getVoByShortName($voShortName);
+        if ($vo === null) {
+            Logger::debug('isUserInVo - No VO found, returning false');
+            return false;
+        }
+
+        return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
+    }
+
     /**
-     * Returns true if group has registration form, false otherwise
-     * @param Group $group
+     * Returns true if entity has registration form, false otherwise
+     * @param $entityId
+     * @param $entityName
      * @return bool
      */
-    public function hasRegistrationForm($group)
+    public function hasRegistrationForm($entityId, $entityName)
     {
         try {
             $this->connector->get('registrarManager', 'getApplicationForm', [
-                'group' => $group->getId(),
+                $entityName => $entityId,
             ]);
             return true;
         } catch (\Exception $exception) {
             return false;
         }
+    }
+
+    public function hasRegistrationFormByVoShortName($voShortName)
+    {
+        $vo = $this->getVoByShortName($voShortName);
+
+        if (empty($vo)) {
+            return false;
+        }
+
+        return $this->hasRegistrationForm($vo->getId(), 'vo');
     }
 
     public function searchFacilitiesByAttributeValue($attribute)
