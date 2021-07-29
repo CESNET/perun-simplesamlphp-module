@@ -5,6 +5,7 @@ All notable changes to this project will be documented in this file.
 #### Changed
 - Improve WAYF searching by localized name and domain
 - Implemented filter EnsureVoMember
+- Security improvements in script calls
 
 #### Fixed
 - Detailed endpoint format when spaced in EndpointMapToArray 
