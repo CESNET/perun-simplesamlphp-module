@@ -1,7 +1,7 @@
 # perun-simplesamlphp-module
 [![Latest Stable Version](https://poser.pugx.org/cesnet/simplesamlphp-module-perun/v/stable)](https://packagist.org/packages/cesnet/simplesamlphp-module-perun)
 [![Latest Unstable Version](https://poser.pugx.org/cesnet/simplesamlphp-module-perun/v/unstable)](https://packagist.org/packages/cesnet/simplesamlphp-module-perun)
-[![Build and CI](https://github.com/cesnet/simplesamlphp-module-perun/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/cesnet/simplesamlphp-module-perun/actions/workflows/build_and_check.yml)
+[![CI](https://github.com/CESNET/perun-simplesamlphp-module/actions/workflows/build_and_check.yml/badge.svg)](https://github.com/CESNET/perun-simplesamlphp-module/actions/workflows/build_and_check.yml)
 [![License](https://poser.pugx.org/cesnet/simplesamlphp-module-perun/license)](https://packagist.org/packages/cesnet/simplesamlphp-module-perun)
 
 Module which allows simpleSAMLphp to get data from Perun.
