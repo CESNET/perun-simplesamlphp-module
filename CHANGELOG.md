@@ -2,6 +2,8 @@
 All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
+
+## [v6.0.0]
 #### Changed
 - Improve WAYF searching by localized name and domain
 - Implemented filter EnsureVoMember
@@ -389,6 +391,7 @@ when storing one Perun attribute to more SAML attribute
 ## [v1.0.0]
 
 [Unreleased]: https://github.com/CESNET/perun-simplesamlphp-module/tree/master
+[v6.0.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v6.0.0
 [v5.2.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.2.0
 [v5.1.1]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.1.1
 [v5.1.0]: https://github.com/CESNET/perun-simplesamlphp-module/tree/v5.1.0
