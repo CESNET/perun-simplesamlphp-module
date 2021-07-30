@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -10,13 +12,14 @@ use SimpleSAML\Module\perun\SingularAttributeTransformer;
 
 /**
  * Performs replacements. Based on SSP built in core:AttributeAlter authentication processing filter.
+ *
  * @see https://simplesamlphp.org/docs/stable/core:authproc_attributealter
  */
 class AttributeAlter extends SingularAttributeTransformer
 {
-    const ATTRIBUTES_KEY = 'Attributes';
+    public const ATTRIBUTES_KEY = 'Attributes';
 
-    const SUBJECT = 'subject';
+    public const SUBJECT = 'subject';
 
     private $config;
 
@@ -39,7 +42,12 @@ class AttributeAlter extends SingularAttributeTransformer
         $config = array_merge([], $this->configArray);
         $config['subject'] = self::SUBJECT;
         $filter = new \SimpleSAML\Module\core\Auth\Process\AttributeAlter($config, null);
-        $request = [self::ATTRIBUTES_KEY => [self::SUBJECT => $values]];
+        $request = [
+            self::ATTRIBUTES_KEY => [
+                self::SUBJECT => $values,
+
+            ],
+        ];
         $filter->process($request);
         return $request[self::ATTRIBUTES_KEY][self::SUBJECT] ?? null;
     }
@@ -62,20 +70,16 @@ class AttributeAlter extends SingularAttributeTransformer
                     $description
                 );
             }
-                return sprintf(
-                    'if (%s) matches %s then %s else (%s)',
-                    $description,
-                    $this->config->getString('pattern'),
-                    '$0',
-                    $description
-                );
-        }
-        if ($this->config->getString('pattern') === '/^/') {
             return sprintf(
-                'prepend %s to (%s)',
-                $this->config->getString('replacement'),
+                'if (%s) matches %s then %s else (%s)',
+                $description,
+                $this->config->getString('pattern'),
+                '$0',
                 $description
             );
+        }
+        if ($this->config->getString('pattern') === '/^/') {
+            return sprintf('prepend %s to (%s)', $this->config->getString('replacement'), $description);
         }
         return sprintf(
             'replace %s with %s in (%s)',

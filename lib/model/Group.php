@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
 /**
@@ -9,14 +11,20 @@ namespace SimpleSAML\Module\perun\model;
 class Group implements HasId
 {
     private $id;
+
     private $voId;
+
     private $uuid;
+
     private $name;
+
     private $uniqueName;
+
     private $description;
 
     /**
      * Group constructor.
+     *
      * @param $id
      * @param $voId
      * @param $name

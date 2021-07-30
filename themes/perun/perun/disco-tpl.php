@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use SimpleSAML\Module;
 use SimpleSAML\Module\perun\Disco;
 use SimpleSAML\Module\perun\DiscoTemplate;
@@ -9,11 +11,16 @@ use SimpleSAML\Module\perun\model\WarningConfiguration;
  * This is simple example of template for perun Discovery service
  *
  * Allow type hinting in IDE
+ *
  * @var DiscoTemplate $this
  */
 
 
-$this->data['jquery'] = ['core' => true, 'ui' => true, 'css' => true];
+$this->data['jquery'] = [
+    'core' => true,
+    'ui' => true,
+    'css' => true,
+];
 
 $this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
     Module::getModuleUrl('discopower/assets/css/disco.css') . '" />';
@@ -77,7 +84,7 @@ if ($this->isAddInstitutionApp()) {
 } else {
     # CHECK IF WE HAVE PREVIOUS SELECTION, IF YES, DISPLAY IT
     # Last selection is not null => Firstly show last selection
-    if (!empty($this->getPreferredIdp())) {
+    if (! empty($this->getPreferredIdp())) {
         # ENTRY FOR PREVIOUS SELECTION
         echo '<div id="last-used-idp-wrap">' . PHP_EOL;
         echo '    <p class="discoDescription-left" id="last-used-idp-desc">'
@@ -87,7 +94,7 @@ if ($this->isAddInstitutionApp()) {
         echo '    </div>' . PHP_EOL;
 
         # OR TEXT
-        echo Disco::getOr("last-used-idp-or") . PHP_EOL;
+        echo Disco::getOr('last-used-idp-or') . PHP_EOL;
 
         # BUTTON TO DISPLAY ALL OTHER ENTRIES
         echo '    <div id="show-entries-wrap">' . PHP_EOL;

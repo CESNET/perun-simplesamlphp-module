@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\databaseCommand;
 
 use PDO;
@@ -11,11 +13,15 @@ use SimpleSAML\Logger;
  */
 class IdpListsServiceDbCmd extends DatabaseCommand
 {
-    const WHITELIST = 'whiteList';
-    const GREYLIST = 'greyList';
-    const ENTITY_ID_COLUMN = 'entityId';
-    const REASON_COLUMN = 'reason';
-    const LOG_PREFIX = 'perun:IdpListsServiceDbCmd: ';
+    public const WHITELIST = 'whiteList';
+
+    public const GREYLIST = 'greyList';
+
+    public const ENTITY_ID_COLUMN = 'entityId';
+
+    public const REASON_COLUMN = 'reason';
+
+    public const LOG_PREFIX = 'perun:IdpListsServiceDbCmd: ';
 
     public function __construct()
     {
@@ -24,6 +30,7 @@ class IdpListsServiceDbCmd extends DatabaseCommand
 
     /**
      * Function returns array of all IdPs in whitelist/greylist
+     *
      * @param string $tableName 'whitelist' or 'greylist'
      * @return array of all IdPs, every IdP is represents as array
      */
@@ -42,11 +49,13 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $query = 'SELECT * FROM ' . $table;
         $params = [];
 
-        return $this->read($query, $params)->fetchAll(PDO::FETCH_ASSOC);
+        return $this->read($query, $params)
+            ->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
      * Function returns array of all entityId in whitelist/greylist
+     *
      * @param string $tableName 'whitelist' or 'greylist'
      * @return array of entityIds
      */
@@ -65,11 +74,13 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $query = 'SELECT ' . self::ENTITY_ID_COLUMN . ' FROM ' . $table;
         $params = [];
 
-        return $this->read($query, $params)->fetchAll(PDO::FETCH_COLUMN);
+        return $this->read($query, $params)
+            ->fetchAll(PDO::FETCH_COLUMN);
     }
 
     /**
      * Function inserts the line into table with $tableName
+     *
      * @param string $tableName 'whitelist' or 'greylist'
      * @param string $entityId
      * @param string $reason
@@ -92,16 +103,17 @@ class IdpListsServiceDbCmd extends DatabaseCommand
 
         $params = [
             self::ENTITY_ID_COLUMN => $entityId,
-            self::REASON_COLUMN => $reason
+            self::REASON_COLUMN => $reason,
         ];
 
-        if (!$this->write($query, $params)) {
+        if (! $this->write($query, $params)) {
             Logger::error(self::LOG_PREFIX . 'Error while inserting into the database.');
         }
     }
 
     /**
      * Function deletes the line from table with $tableName and $entityID
+     *
      * @param string $tableName 'whitelist' or 'greylist'
      * @param string $entityId
      */
@@ -120,10 +132,10 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $query = 'DELETE FROM ' . $table . ' WHERE ' . self::ENTITY_ID_COLUMN . ' = :' . self::ENTITY_ID_COLUMN;
 
         $params = [
-            self::ENTITY_ID_COLUMN => $entityId
+            self::ENTITY_ID_COLUMN => $entityId,
         ];
 
-        if (!$this->write($query, $params)) {
+        if (! $this->write($query, $params)) {
             Logger::error(self::LOG_PREFIX . 'Error while deleting from the database.');
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -15,39 +17,39 @@ use SimpleSAML\Module\perun\model\Facility;
  */
 class MetadataToPerun
 {
-    const ENTITY_ID = 'entityID';
+    public const ENTITY_ID = 'entityID';
 
-    const SERVICE_NAME = 'serviceName';
+    public const SERVICE_NAME = 'serviceName';
 
-    const SERVICE_DESCRIPTION = 'serviceDescription';
+    public const SERVICE_DESCRIPTION = 'serviceDescription';
 
-    const ORGANIZATION_NAME = 'organizationName';
+    public const ORGANIZATION_NAME = 'organizationName';
 
-    const ORGANIZATION_DESCRIPTION = 'organizationDescription';
+    public const ORGANIZATION_DESCRIPTION = 'organizationDescription';
 
-    const PROXY_IDENTIFIER = 'proxyIdentifier';
+    public const PROXY_IDENTIFIER = 'proxyIdentifier';
 
-    const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
+    public const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
 
-    const PERUN_MASTER_PROXY_IDENTIFIER_ATTR_NAME = 'perunMasterProxyIdentifierAttr';
+    public const PERUN_MASTER_PROXY_IDENTIFIER_ATTR_NAME = 'perunMasterProxyIdentifierAttr';
 
-    const PERUN_IS_SAML_FACILITY_ATTR_NAME = 'perunIsSamlFacilityAttr';
+    public const PERUN_IS_SAML_FACILITY_ATTR_NAME = 'perunIsSamlFacilityAttr';
 
-    const FLATFILE_ATTRIBUTES = 'flatfile2internal';
+    public const FLATFILE_ATTRIBUTES = 'flatfile2internal';
 
-    const XML_ATTRIBUTES = 'xml2internal';
+    public const XML_ATTRIBUTES = 'xml2internal';
 
-    const PERUN_ATTRIBUTES = 'internal2perun';
+    public const PERUN_ATTRIBUTES = 'internal2perun';
 
-    const TRANSFORMERS = 'importTransformers';
+    public const TRANSFORMERS = 'importTransformers';
 
-    const METADATA_SET = 'saml20-sp-remote';
+    public const METADATA_SET = 'saml20-sp-remote';
 
-    const NAMESPACE_SEPARATOR = ':';
+    public const NAMESPACE_SEPARATOR = ':';
 
-    const XPATH_LANG = 'ancestor-or-self::*[attribute::xml:lang][1]/@xml:lang';
+    public const XPATH_LANG = 'ancestor-or-self::*[attribute::xml:lang][1]/@xml:lang';
 
-    const ENTITY_ID_REMOVE = [
+    public const ENTITY_ID_REMOVE = [
         '~^https?://~',
         '~(_sp)?_shibboleth$~',
         '~_shibboleth_sp$~',
@@ -82,12 +84,16 @@ class MetadataToPerun
         $this->transformers = array_map(function ($transformer) {
             $class = $transformer['class'];
             $t = new $class(Configuration::loadFromArray($transformer['config'] ?? []));
-            return ['instance' => $t, 'attributes' => $transformer['attributes']];
+            return [
+                'instance' => $t,
+                'attributes' => $transformer['attributes'],
+            ];
         }, $this->transformers);
     }
 
     /**
      * Convert SSP metadata array to Perun facility array.
+     *
      * @return array facility or null if a transformer deleted entityID
      * @see \SimpleSAML\Module\perun\AttributeTransformer
      */
@@ -100,10 +106,10 @@ class MetadataToPerun
 
         foreach ($this->transformers as $transformer) {
             $attrs = array_intersect_key($facility, array_flip($transformer['attributes']));
-            if (!empty($attrs)) {
+            if (! empty($attrs)) {
                 $newAttrs = $transformer['instance']->transform($attrs);
                 $facility = array_merge($facility, $newAttrs);
-                if (!isset($facility[self::ENTITY_ID]) || $facility[self::ENTITY_ID] === null) {
+                if (! isset($facility[self::ENTITY_ID]) || $facility[self::ENTITY_ID] === null) {
                     return null;
                 }
             }
@@ -114,23 +120,30 @@ class MetadataToPerun
 
     /**
      * Load XML metadata file and get SPs.
+     *
      * @return array metadata
      * @see getFacilitiesFrom()
      */
     public function getFacilitiesFromXml(string $filename)
     {
-        return $this->getFacilitiesFrom(['type' => 'xml', 'file' => $filename]);
+        return $this->getFacilitiesFrom([
+            'type' => 'xml',
+            'file' => $filename,
+        ]);
     }
 
     /**
      * Load flatfile metadata and get SPs.
+     *
      * @param string $directory
      * @return array metadata
      * @see getFacilitiesFrom()
      */
     public function getFacilitiesFromFlatfile(string $directory = null)
     {
-        $config = ['type' => 'flatfile'];
+        $config = [
+            'type' => 'flatfile',
+        ];
         if ($directory !== null) {
             $config['directory'] = $directory;
         }
@@ -139,6 +152,7 @@ class MetadataToPerun
 
     /**
      * Load metadata and get SPs. See MetaDataStorageSource and subclasses for details.
+     *
      * @param array $config - config for MetaDataStorageSource::getSource (type, file, directory...)
      * @return array metadata
      * @see https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Metadata/MetaDataStorageSource.php
@@ -152,6 +166,7 @@ class MetadataToPerun
 
     /**
      * Create facility in Perun and set its attributes based on the facility array.
+     *
      * @param array $info - facility array
      * @return boolean true on success
      */
@@ -187,7 +202,7 @@ class MetadataToPerun
                 $internalName = $this->perunAttributes[$perunName];
                 $value = $info[$internalName] ?? null;
                 if ($value !== null) {
-                    if (!is_array($value) && substr($attribute['type'], -4) === 'List') {
+                    if (! is_array($value) && substr($attribute['type'], -4) === 'List') {
                         $value = [$value];
                     }
                     $attributes[$i]['value'] = $value;
@@ -208,6 +223,7 @@ class MetadataToPerun
 
     /**
      * Convert XML metadata file to facilities in Perun.
+     *
      * @param string $filename
      */
     public function convertXml($filename)
@@ -255,7 +271,7 @@ class MetadataToPerun
                             throw new \Exception('Did not find corresponding number of keys using xpath ' . $index);
                         }
                         $result = array_combine(array_map('strval', $indexes), array_map('strval', $result));
-                        // TODO: multiple keys same
+                    // TODO: multiple keys same
                     } else {
                         $result = array_map('strval', $result);
                     }
@@ -331,19 +347,21 @@ class MetadataToPerun
 
     private function createFacility(array $info)
     {
-        $facility = ['facility' => [
-            'name' => self::generateFacilityName($info),
-            'description' => self::stringOrEnglishOrAny(
-                $info[self::SERVICE_DESCRIPTION] ?? $info[self::ORGANIZATION_DESCRIPTION] ?? ''
-            ),
-        ]];
+        $facility = [
+            'facility' => [
+                'name' => self::generateFacilityName($info),
+                'description' => self::stringOrEnglishOrAny(
+                    $info[self::SERVICE_DESCRIPTION] ?? $info[self::ORGANIZATION_DESCRIPTION] ?? ''
+                ),
+            ],
+        ];
         return $this->adapter->createFacility($facility);
     }
 
     private static function getNestedAttribute(array $array, array $indexes)
     {
         foreach ($indexes as $index) {
-            if (!isset($array[$index])) {
+            if (! isset($array[$index])) {
                 return null;
             }
             $array = $array[$index];

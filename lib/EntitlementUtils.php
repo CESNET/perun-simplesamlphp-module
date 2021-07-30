@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun;
 
@@ -15,16 +16,17 @@ use SimpleSAML\Logger;
  */
 class EntitlementUtils
 {
-    const GROUP = 'group';
-    const GROUP_ATTRIBUTES = 'groupAttributes';
-    const DISPLAY_NAME = 'displayName';
+    public const GROUP = 'group';
 
+    public const GROUP_ATTRIBUTES = 'groupAttributes';
+
+    public const DISPLAY_NAME = 'displayName';
 
     public static function getForwardedEduPersonEntitlement(&$request, $adapter, $forwardedEduPersonEntitlement)
     {
         $result = [];
 
-        if (!isset($request['perun']['user'])) {
+        if (! isset($request['perun']['user'])) {
             Logger::debug(
                 'perun:EntitlementUtils: Object Perun User is not specified.' .
                 '=> Skipping getting forwardedEntitlement.'
@@ -46,7 +48,7 @@ class EntitlementUtils
             );
         }
 
-        if (!empty($forwardedEduPersonEntitlementMap)) {
+        if (! empty($forwardedEduPersonEntitlementMap)) {
             $result = array_values($forwardedEduPersonEntitlementMap)[0];
         }
 
@@ -114,7 +116,7 @@ class EntitlementUtils
             '=' => '%3D',
             '@' => '%40',
             ':' => '%3A',
-            '+' => '%2B'
+            '+' => '%2B',
         ];
 
         $name = array_map('rawurlencode', explode(':', $name));
@@ -132,22 +134,21 @@ class EntitlementUtils
     public static function groupEntitlementWrapper($uuid, $prefix, $authority)
     {
         return $prefix . self::GROUP . ':' .
-            EntitlementUtils::encodeName($uuid) . '#' . $authority;
+            self::encodeName($uuid) . '#' . $authority;
     }
 
     public static function groupEntitlementWithAttributesWrapper($uuid, $groupName, $prefix, $authority)
     {
         return $prefix . self::GROUP_ATTRIBUTES . ':' . $uuid . '?=' . self::DISPLAY_NAME . '=' .
-            EntitlementUtils::encodeName($groupName) . '#' . $authority;
+            self::encodeName($groupName) . '#' . $authority;
     }
 
     public static function getSpEntityId(&$request)
     {
         if (isset($request['SPMetadata']['entityid'])) {
             return $request['SPMetadata']['entityid'];
-        } else {
-            throw new Exception('perun:EntitlementUtils: Cannot find entityID of remote SP. ' .
-                'hint: Do you have this filter in IdP context?');
         }
+        throw new Exception('perun:EntitlementUtils: Cannot find entityID of remote SP. ' .
+                'hint: Do you have this filter in IdP context?');
     }
 }

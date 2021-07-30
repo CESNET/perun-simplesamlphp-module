@@ -1,22 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
 /**
- * Created by PhpStorm.
- * User: pavel
- * Date: 9.4.18
- * Time: 9:43
+ * Created by PhpStorm. User: pavel Date: 9.4.18 Time: 9:43
  */
 class Facility implements HasId
 {
     private $id;
+
     private $name;
+
     private $description;
+
     private $entityId;
 
     /**
      * Facility constructor.
+     *
      * @param int $id
      * @param string $name
      * @param string $description

@@ -1,19 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 /**
- * Filter simply remove all attributes from requests. It is meant to use because We do not want to pass
- * any attributes directly from IdP. Rather fetch all from Perun.
- * Because the attributes should not depends on IdP which user currently used.
+ * Filter simply remove all attributes from requests. It is meant to use because We do not want to pass any attributes
+ * directly from IdP. Rather fetch all from Perun. Because the attributes should not depends on IdP which user currently
+ * used.
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
 {
-
-    const FILTER_ATTRIBUTE_LIST = 'filterAttributeList';
+    public const FILTER_ATTRIBUTE_LIST = 'filterAttributeList';
 
     private $filterAttributeList = [];
 
@@ -33,7 +34,7 @@ class RemoveAllAttributes extends \SimpleSAML\Auth\ProcessingFilter
         $attributes = [];
 
         foreach ($request['Attributes'] as $attributeKey => $attributeValue) {
-            if (in_array($attributeKey, $this->filterAttributeList)) {
+            if (in_array($attributeKey, $this->filterAttributeList, true)) {
                 $attributes[$attributeKey] = $attributeValue;
             }
         }

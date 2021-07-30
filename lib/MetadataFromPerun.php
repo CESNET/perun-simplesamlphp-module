@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Vyskocil
  * @author Pavel Brousek <brousek@ics.muni.cz>
@@ -12,21 +14,21 @@ use Symfony\Component\VarExporter\VarExporter;
 
 class MetadataFromPerun
 {
-    const CONFIG_FILE_NAME = 'module_perun_getMetadata.php';
+    public const CONFIG_FILE_NAME = 'module_perun_getMetadata.php';
 
-    const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
+    public const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'perunProxyIdentifierAttr';
 
-    const PERUN_PROXY_ENTITY_ID_ATTR_NAME = 'perunProxyEntityIDAttr';
+    public const PERUN_PROXY_ENTITY_ID_ATTR_NAME = 'perunProxyEntityIDAttr';
 
-    const PROXY_IDENTIFIER = 'proxyIdentifier';
+    public const PROXY_IDENTIFIER = 'proxyIdentifier';
 
-    const ABSOLUTE_FILE_NAME = 'absoluteFileName';
+    public const ABSOLUTE_FILE_NAME = 'absoluteFileName';
 
-    const ATTRIBUTES_DEFINITIONS = 'attributesDefinitions';
+    public const ATTRIBUTES_DEFINITIONS = 'attributesDefinitions';
 
-    const FACILITY_ATTRIBUTES = 'facilityAttributes';
+    public const FACILITY_ATTRIBUTES = 'facilityAttributes';
 
-    const TRANSFORMERS = 'exportTransformers';
+    public const TRANSFORMERS = 'exportTransformers';
 
     private $perunProxyEntityIDAttr;
 
@@ -36,9 +38,6 @@ class MetadataFromPerun
 
     private $conf;
 
-    /**
-     * The constructor.
-     */
     public function __construct()
     {
         $this->conf = Configuration::getConfig(self::CONFIG_FILE_NAME);
@@ -53,7 +52,7 @@ class MetadataFromPerun
     public function getMetadata($facility)
     {
         if (
-            !isset($facility[self::FACILITY_ATTRIBUTES][$this->perunProxyEntityIDAttr]) ||
+            ! isset($facility[self::FACILITY_ATTRIBUTES][$this->perunProxyEntityIDAttr]) ||
             empty($facility[self::FACILITY_ATTRIBUTES][$this->perunProxyEntityIDAttr]['value'])
         ) {
             return null;
@@ -68,7 +67,7 @@ class MetadataFromPerun
                     $keys = explode('>', $metadataAttrName);
                     while (count($keys) > 1) {
                         $key = array_shift($keys);
-                        if (!isset($target[$key])) {
+                        if (! isset($target[$key])) {
                             $target[$key] = [];
                         }
                         $target = &$target[$key];
@@ -82,7 +81,7 @@ class MetadataFromPerun
             $class = $transformer['class'];
             $t = new $class(Configuration::loadFromArray($transformer['config']));
             $attrs = array_intersect_key($metadata, array_flip($transformer['attributes']));
-            if (!empty($attrs)) {
+            if (! empty($attrs)) {
                 $newAttrs = $t->transform($attrs);
                 $metadata = array_merge($metadata, $newAttrs);
             }
@@ -92,7 +91,9 @@ class MetadataFromPerun
             return $value !== null;
         });
 
-        return [$id => $metadata];
+        return [
+            $id => $metadata,
+        ];
     }
 
     /**
@@ -109,6 +110,7 @@ class MetadataFromPerun
 
     /**
      * Get metadata in the flatfile format for all facilities.
+     *
      * @uses SimpleSAML\Module\perun\MetadataFromPerun::metadataToFlatfile
      * @uses SimpleSAML\Module\perun\MetadataFromPerun::getAllMetadata
      */
@@ -119,6 +121,7 @@ class MetadataFromPerun
 
     /**
      * Generate array with metadata.
+     *
      * @see https://github.com/simplesamlphp/simplesamlphp/blob/master/www/admin/metadata-converter.php
      */
     public static function metadataToFlatfile($metadata)
@@ -133,6 +136,7 @@ class MetadataFromPerun
 
     /**
      * Save content in the configured file and force its download.
+     *
      * @param string $content
      */
     public function saveAndDownload($content)
@@ -193,7 +197,7 @@ class MetadataFromPerun
             foreach ($attributes as $attribute) {
                 $facilityAttributes[$attribute['name']] = $attribute;
             }
-            if (!empty($facilityAttributes[$this->perunProxyEntityIDAttr]['value'])) {
+            if (! empty($facilityAttributes[$this->perunProxyEntityIDAttr]['value'])) {
                 $facilitiesWithAttributes[$facility->getId()] = [
                     'facility' => $facility,
                     self::FACILITY_ATTRIBUTES => $facilityAttributes,

@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
 /**
- * Filter checks whether UID attribute contains @ which means there is a scope.
- * If not then it gets UID, compute hash and construct new eduPersonPrincipalName
- * which consists of [prefix]_[hash(uid)]@[schacHomeOrganization]
+ * Filter checks whether UID attribute contains @ which means there is a scope. If not then it gets UID, compute hash
+ * and construct new eduPersonPrincipalName which consists of [prefix]_[hash(uid)]@[schacHomeOrganization]
  *
  * @author Michal Prochazka <michalp@ics.muni.cz>
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
@@ -18,6 +19,7 @@ use SimpleSAML\Logger;
 class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 {
     private $uidsAttr;
+
     private $prefix;
 
     public function __construct($config, $reserved)
@@ -26,19 +28,15 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
 
         assert(is_array($config));
 
-        if (!isset($config['uidsAttr'])) {
-            throw new Exception(
-                'perun:ProcessTargetedID: missing mandatory configuration option \'uidsAttr\'.'
-            );
+        if (! isset($config['uidsAttr'])) {
+            throw new Exception('perun:ProcessTargetedID: missing mandatory configuration option \'uidsAttr\'.');
         }
-        if (!isset($config['prefix'])) {
-            throw new Exception(
-                'perun:ProcessTargetedID: missing mandatory configuration option \'prefix\'.'
-            );
+        if (! isset($config['prefix'])) {
+            throw new Exception('perun:ProcessTargetedID: missing mandatory configuration option \'prefix\'.');
         }
 
         $this->uidsAttr = $config['uidsAttr'];
-        $this->prefix = (string)$config['prefix'];
+        $this->prefix = (string) $config['prefix'];
     }
 
     public function process(&$request)
@@ -46,7 +44,7 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
         assert(is_array($request));
 
         # Iterate through provided attributes and simply get first value
-        $uid = "";
+        $uid = '';
         foreach ($this->uidsAttr as $uidAttr) {
             if (isset($request['Attributes'][$uidAttr][0])) {
                 $uid = $request['Attributes'][$uidAttr][0];

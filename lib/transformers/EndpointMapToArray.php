@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -13,11 +15,11 @@ use SimpleSAML\Module\perun\AttributeTransformer;
  */
 class EndpointMapToArray extends AttributeTransformer
 {
-    const MAPLIST_SEPARATOR = ',';
+    public const MAPLIST_SEPARATOR = ',';
 
-    const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
+    public const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
-    const INDEX_MIN = 0;
+    public const INDEX_MIN = 0;
 
     private $defaultBinding;
 
@@ -54,7 +56,7 @@ class EndpointMapToArray extends AttributeTransformer
      */
     private function getEndpointsArray($endpointMap)
     {
-        if (empty(array_filter($endpointMap)) || !is_array($endpointMap)) {
+        if (empty(array_filter($endpointMap)) || ! is_array($endpointMap)) {
             return null;
         }
 

@@ -1,18 +1,30 @@
 <?php
 
-namespace SimpleSAML\Module\perun\databaseCommand;
+declare(strict_types=1);
 
-use SimpleSAML\Logger;
+namespace SimpleSAML\Module\perun\databaseCommand;
 
 /**
  * @author Dominik Baranek <baranek@ics.muni.cz>
  */
 class ChallengesDbCmd extends DatabaseCommand
 {
+    public const ID_COLUMN = 'id';
+
+    public const CHALLENGE_COLUMN = 'challenge';
+
+    public const SCRIPT_COLUMN = 'script';
+
+    public const DATE_COLUMN = 'date';
+
     private const CHALLENGES_TABLE_NAME = 'scriptChallenges';
+
     private const ID_COLUMN = 'id';
+
     private const CHALLENGE_COLUMN = 'challenge';
+
     private const SCRIPT_COLUMN = 'script';
+
     private const DATE_COLUMN = 'date';
 
     public function __construct()
@@ -29,7 +41,7 @@ class ChallengesDbCmd extends DatabaseCommand
         $params = [
             self::ID_COLUMN => $id,
             self::CHALLENGE_COLUMN => $challenge,
-            self::SCRIPT_COLUMN => $scriptName
+            self::SCRIPT_COLUMN => $scriptName,
         ];
 
         return $this->write($query, $params);
@@ -38,14 +50,15 @@ class ChallengesDbCmd extends DatabaseCommand
     public function readChallenge($id, $scriptName)
     {
         $query = 'SELECT challenge FROM ' . self::CHALLENGES_TABLE_NAME . ' WHERE ' .
-            self::ID_COLUMN . ' = :' . self::ID_COLUMN . ' AND ' . self::SCRIPT_COLUMN  . ' = :' . self::SCRIPT_COLUMN ;
+            self::ID_COLUMN . ' = :' . self::ID_COLUMN . ' AND ' . self::SCRIPT_COLUMN . ' = :' . self::SCRIPT_COLUMN;
 
         $params = [
             self::ID_COLUMN => $id,
-            self::SCRIPT_COLUMN => $scriptName
+            self::SCRIPT_COLUMN => $scriptName,
         ];
 
-        return $this->read($query, $params)->fetchColumn();
+        return $this->read($query, $params)
+            ->fetchColumn();
     }
 
     public function deleteChallenge($id): bool
@@ -53,7 +66,7 @@ class ChallengesDbCmd extends DatabaseCommand
         $query = 'DELETE FROM ' . self::CHALLENGES_TABLE_NAME . ' WHERE ' . self::ID_COLUMN . ' = :' . self::ID_COLUMN;
 
         $params = [
-            self::ID_COLUMN => $id
+            self::ID_COLUMN => $id,
         ];
 
         return $this->write($query, $params);

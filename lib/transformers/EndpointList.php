@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -13,7 +15,7 @@ use SimpleSAML\Module\perun\SingularAttributeTransformer;
  */
 class EndpointList extends SingularAttributeTransformer
 {
-    const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
+    public const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
     private $binding;
 
@@ -37,7 +39,7 @@ class EndpointList extends SingularAttributeTransformer
         if (empty($endpoints)) {
             return null;
         }
-        if (!is_array($endpoints)) {
+        if (! is_array($endpoints)) {
             return [$endpoints];
         }
         $result = [];

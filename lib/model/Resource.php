@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
 /**
@@ -8,12 +10,16 @@ namespace SimpleSAML\Module\perun\model;
 class Resource implements HasId
 {
     private $id;
+
     private $voId;
+
     private $facilityId;
+
     private $name;
 
     /**
      * Resource constructor.
+     *
      * @param $id
      * @param $voId
      * @param $facilityId

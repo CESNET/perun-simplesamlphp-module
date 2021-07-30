@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\databaseCommand;
 
 use SimpleSAML\Configuration;
@@ -7,16 +9,21 @@ use SimpleSAML\Configuration;
 class DatabaseConfig
 {
     private const CONFIG_FILE_NAME = 'module_perun.php';
+
     private const DATABASE = 'database';
+
     private const STORE = 'store';
 
     private const WHITELIST_TABLE_NAME = 'whiteListTableName';
+
     private const GREYLIST_TABLE_NAME = 'greyListTableName';
 
     private $config;
+
     private $store;
 
     private $whitelistTableName;
+
     private $greyListTableName;
 
     private static $instance = null;

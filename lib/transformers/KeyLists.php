@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -57,7 +59,7 @@ class KeyLists extends AttributeTransformer
             $attributes[$internal] = [];
         }
         foreach ($keys as $key) {
-            if ($key['type'] === 'X509Certificate' && !empty($key['X509Certificate'])) {
+            if ($key['type'] === 'X509Certificate' && ! empty($key['X509Certificate'])) {
                 foreach ($this->purpose2internal as $purpose => $internal) {
                     if ($key[$purpose]) {
                         $attributes[$internal][] = $key['X509Certificate'];

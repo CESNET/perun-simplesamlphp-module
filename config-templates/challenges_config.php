@@ -1,6 +1,8 @@
 <?php
 
-$config = array(
+declare(strict_types=1);
+
+$config = [
     /**
      * Path to public key
      */
@@ -25,4 +27,4 @@ $config = array(
      * Challenge length
      */
     'challengeLength' => 64,
-);
+];

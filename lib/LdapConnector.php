@@ -1,40 +1,36 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
-use SimpleSAML\Logger;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
 
 /**
- * Provides interface to get info from Perun Ldap.
- * Configuration file 'module_perun.php' should be placed in default config folder of SimpleSAMLphp.
- * Example of file is in config-template folder.
+ * Provides interface to get info from Perun Ldap. Configuration file 'module_perun.php' should be placed in default
+ * config folder of SimpleSAMLphp. Example of file is in config-template folder.
  *
- * Example Usage:
- *
- *
- *    $user = new LdapConnector(ldapHostname, $ldapUser, $ldapPassword)->searchForEntity(
- *        "ou=People,
- *        dc=perun,
- *        dc=cesnet,
- *        dc=cz",
- *        "(eduPersonPrincipalNames=$uid)",
- *        ["perunUserId", "displayName", "cn", "preferredMail", "mail"]
- *    );
+ * Example Usage: $user = new LdapConnector(ldapHostname, $ldapUser, $ldapPassword)->searchForEntity( "ou=People,
+ * dc=perun, dc=cesnet, dc=cz", "(eduPersonPrincipalNames=$uid)", ["perunUserId", "displayName", "cn", "preferredMail",
+ * "mail"] );
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class LdapConnector
 {
-
     private $hostname;
+
     private $user;
+
     private $password;
+
     private $enableTLS;
 
     /**
      * LdapConnector constructor.
+     *
      * @param $hostname
      * @param $user
      * @param $password
@@ -57,7 +53,6 @@ class LdapConnector
      */
     public function searchForEntity($base, $filter, $attrNames = null)
     {
-
         $entries = self::search($base, $filter, $attrNames);
 
         if (empty($entries)) {
@@ -87,7 +82,6 @@ class LdapConnector
      */
     public function searchForEntities($base, $filter, $attrNames = null)
     {
-
         $entries = self::search($base, $filter, $attrNames);
 
         if (empty($entries)) {
@@ -101,10 +95,8 @@ class LdapConnector
         return $entries;
     }
 
-
     protected function search($base, $filter, $attributes = null)
     {
-
         $conn = ldap_connect($this->hostname);
         if ($conn === false) {
             throw new Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
@@ -113,8 +105,8 @@ class LdapConnector
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 
         // Enable TLS, if needed
-        if ($this->enableTLS && stripos($this->hostname, "ldaps:") === false) {
-            if (!@ldap_start_tls($conn)) {
+        if ($this->enableTLS && stripos($this->hostname, 'ldaps:') === false) {
+            if (! @ldap_start_tls($conn)) {
                 throw new Exception('Unable to force TLS on Perun LDAP');
             }
         }
@@ -149,12 +141,12 @@ class LdapConnector
 
     /**
      * remove unnecessary meta information from entry (e.g. 'count' field) and simplify entry structure
-     * @param $entry
+     *
+     * @param $conn
      * @return array associative array where key is attr name and value is array of attr values.
      */
     private static function getSimplifiedEntries($conn, $resultId)
     {
-
         $entries = [];
 
         $entryId = ldap_first_entry($conn, $resultId);

@@ -1,9 +1,11 @@
 <?php
 
-use \SimpleSAML\Module\perun\AdapterRpc;
-use SimpleSAML\Auth\State;
+declare(strict_types=1);
+
 use SimpleSAML\Auth\ProcessingChain;
+use SimpleSAML\Auth\State;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\AdapterRpc;
 use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\Module\perun\model\User;
 
@@ -11,9 +13,7 @@ $id = $_REQUEST['StateId'];
 $state = State::loadState($id, 'perun:forceAup');
 $rpcAdapter = new AdapterRpc();
 $rpcConnector = $rpcAdapter->getConnector();
-/**
- * @var User $user
- */
+/** @var User $user */
 $user = $state['perun']['user'];
 
 try {
@@ -28,7 +28,7 @@ try {
 }
 
 foreach ($state['newAups'] as $key => $newAup) {
-    if (!($userAups === null) && array_key_exists($key, $userAups)) {
+    if (! ($userAups === null) && array_key_exists($key, $userAups)) {
         $userAupList = json_decode($userAups[$key]);
     } else {
         $userAupList = [];

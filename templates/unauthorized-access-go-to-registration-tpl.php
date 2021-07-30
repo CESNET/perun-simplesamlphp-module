@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use SimpleSAML\Module;
 use SimpleSAML\Utils\HTTP;
@@ -8,10 +8,11 @@ use SimpleSAML\XHTML\Template;
  * Template for inform user that he/she will be redirected to registration
  *
  * Allow type hinting in IDE
+ *
  * @var Template $this
  */
 
-$this->data['header'] = "";
+$this->data['header'] = '';
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/perun_identity_go_to_registration.css') . '" />';
 
@@ -34,9 +35,9 @@ if (isset($_POST['continueToRegistration'])) {
 $this->includeAtTemplateBase('includes/header.php');
 
 $header = $this->t('{perun:perun:go-to-registration_header1}');
-if (!empty($serviceName) && !empty($informationURL)) {
+if (! empty($serviceName) && ! empty($informationURL)) {
     $header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
-} elseif (!empty($serviceName)) {
+} elseif (! empty($serviceName)) {
     $header .= $serviceName;
 }
 $header .= $this->t('{perun:perun:go-to-registration_header2}');

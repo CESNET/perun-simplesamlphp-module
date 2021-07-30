@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
@@ -8,12 +10,16 @@ use SimpleSAML\Logger;
 
 class LoginInfo extends ProcessingFilter
 {
-    const ATTRS = 'attrs';
-    const SOURCE_IDP_ATTR = 'sourceIdPAttr';
-    const SOURCE_IDENTIFIER_ATTR = 'sourceIdentifierAttr';
+    public const ATTRS = 'attrs';
+
+    public const SOURCE_IDP_ATTR = 'sourceIdPAttr';
+
+    public const SOURCE_IDENTIFIER_ATTR = 'sourceIdentifierAttr';
 
     private $attrs;
+
     private $sourceIdpAttr;
+
     private $sourceIdentifierAttr;
 
     public function __construct($config, $reserved)
@@ -36,7 +42,7 @@ class LoginInfo extends ProcessingFilter
             $finalString .= 'ID: ' . $user->getId() . ', ';
         }
 
-        if (!empty($this->attrs)) {
+        if (! empty($this->attrs)) {
             $finalString .= 'identifiers: [';
 
             foreach ($this->attrs as $attr) {
@@ -50,9 +56,9 @@ class LoginInfo extends ProcessingFilter
 
         $finalString .= 'service: ' . $spEntityId;
 
-        if (!empty($this->sourceIdentifierAttr) && isset($request['Attributes'][$this->sourceIdentifierAttr][0])) {
+        if (! empty($this->sourceIdentifierAttr) && isset($request['Attributes'][$this->sourceIdentifierAttr][0])) {
             $finalString .= ', external identity: ' . $request['Attributes'][$this->sourceIdentifierAttr][0];
-            if (!empty($this->sourceIdpAttr) && isset($request['Attributes'][$this->sourceIdpAttr][0])) {
+            if (! empty($this->sourceIdpAttr) && isset($request['Attributes'][$this->sourceIdpAttr][0])) {
                 $finalString .= ' from ' . $request['Attributes'][$this->sourceIdpAttr][0];
             }
         }

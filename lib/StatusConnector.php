@@ -1,32 +1,31 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 
 /**
- * Abstract class sspmod_perun_StatusConnector
- * specify interface to get status information about some components
+ * Abstract class sspmod_perun_StatusConnector specify interface to get status information about some components
  *
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 abstract class StatusConnector
 {
+    public const NAGIOS = 'NAGIOS';
 
-    const NAGIOS = 'NAGIOS';
+    public const CONFIG_FILE_NAME = 'module_perun.php';
 
-    const CONFIG_FILE_NAME = 'module_perun.php';
-    const STATUS_TYPE = 'status.type';
+    public const STATUS_TYPE = 'status.type';
 
-    const OK = 0;
-    const WARNING = 1;
+    public const OK = 0;
+
+    public const WARNING = 1;
 
     protected $configuration;
 
-    /**
-     * StatusConnector constructor.
-     */
     public function __construct()
     {
         $this->configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
@@ -42,22 +41,16 @@ abstract class StatusConnector
         $statusType = $configuration->getString(self::STATUS_TYPE, 'NAGIOS');
         if ($statusType === self::NAGIOS) {
             return new NagiosStatusConnector();
-        } else {
-            throw new Exception(
-                'Unknown StatusConnector type in option \'' . self::STATUS_TYPE . '\'. Only ' .
-                self::NAGIOS . ' type available now!'
-            );
         }
+        throw new Exception(
+            'Unknown StatusConnector type in option \'' . self::STATUS_TYPE . '\'. Only ' .
+                self::NAGIOS . ' type available now!'
+        );
     }
 
     /**
-     * Returns list of components with statuses in this format:
-     * [
-     *      [
-     *          'name' => 'Component name',
-     *          'status' => 'Component status'
-     *      ],
-     * ],
+     * Returns list of components with statuses in this format: [ [ 'name' => 'Component name', 'status' => 'Component
+     * status' ], ],
      *
      * @return array
      */
@@ -65,7 +58,8 @@ abstract class StatusConnector
 
     /**
      * Returns the HTML code with correct class
-     * @param $status String Status of services
+     *
+     * @param string $status Status of services
      *
      * @return string
      */
@@ -77,8 +71,7 @@ abstract class StatusConnector
             return '<span class="status label label-success">OK</span>';
         } elseif ($statusAsInt === self::WARNING) {
             return '<span class="status label label-warning">WARNING</span>';
-        } else {
-            return '<span class="status label label-danger">CRITICAL</span>';
         }
+        return '<span class="status label label-danger">CRITICAL</span>';
     }
 }

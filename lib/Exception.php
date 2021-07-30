@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 /**
@@ -12,11 +14,14 @@ namespace SimpleSAML\Module\perun;
 class Exception extends \SimpleSAML\Error\Exception
 {
     private $id;
+
     private $name;
+
     // note that field $message is inherited
 
     /**
      * Perun_Exception constructor.
+     *
      * @param string $id
      * @param string $name
      * @param string $message

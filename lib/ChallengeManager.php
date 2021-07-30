@@ -1,43 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
-use SimpleSAML\Configuration;
-use SimpleSAML\Logger;
-use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
-use SimpleSAML\Error\Exception;
-use Jose\Component\KeyManagement\JWKFactory;
-use Jose\Component\Core\AlgorithmManager;
-use Jose\Component\Signature\JWSBuilder;
-use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Checker\AlgorithmChecker;
 use Jose\Component\Checker\ClaimCheckerManager;
 use Jose\Component\Checker\HeaderCheckerManager;
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\Core\AlgorithmManager;
+use Jose\Component\KeyManagement\JWKFactory;
+use Jose\Component\KeyManagement\JWKFactory;
+use Jose\Component\Signature\JWSBuilder;
+use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\JWSTokenSupport;
 use Jose\Component\Signature\JWSVerifier;
+use Jose\Component\Signature\Serializer\CompactSerializer;
+use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Signature\Serializer\JWSSerializerManager;
-use Jose\Component\Checker;
+use SimpleSAML\Configuration;
+use SimpleSAML\Configuration;
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
+use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
 
 class ChallengeManager
 {
-    const LOG_PREFIX = 'Perun:ChallengeManager: ';
+    public const LOG_PREFIX = 'Perun:ChallengeManager: ';
 
-    const CONFIG_FILE_NAME = 'challenges_config.php';
-    const HASH_ALG = 'hashAlg';
-    const SIG_ALG = 'sigAlg';
-    const CHALLENGE_LENGTH = 'challengeLength';
-    const PUB_KEY = 'pubKey';
-    const PRIV_KEY = 'privKey';
+    public const CONFIG_FILE_NAME = 'challenges_config.php';
+
+    public const HASH_ALG = 'hashAlg';
+
+    public const SIG_ALG = 'sigAlg';
+
+    public const CHALLENGE_LENGTH = 'challengeLength';
+
+    public const PUB_KEY = 'pubKey';
+
+    public const PRIV_KEY = 'privKey';
 
     private $challengeDbCmd;
 
     private $sigAlg;
+
     private $hashAlg;
+
     private $challengeLength;
 
     private $privKey;
-    private $pubKey;
 
+    private $pubKey;
 
     public function __construct()
     {
@@ -56,7 +71,7 @@ class ChallengeManager
 
         if (empty($id) ||
             empty($scriptName) ||
-            !$this->challengeDbCmd->insertChallenge($challenge, $id, $scriptName)) {
+            ! $this->challengeDbCmd->insertChallenge($challenge, $id, $scriptName)) {
             throw new Exception('ChallengeManager.generateChallenge: Error while storing a challenge to DB.');
         }
         return $challenge;
@@ -71,11 +86,7 @@ class ChallengeManager
         }
 
         $jwk = JWKFactory::createFromKeyFile($this->privKey);
-        $algorithmManager = new AlgorithmManager(
-            [
-                self::getAlgorithm('Signature\\Algorithm', $this->sigAlg)
-            ]
-        );
+        $algorithmManager = new AlgorithmManager([self::getAlgorithm('Signature\\Algorithm', $this->sigAlg)]);
         $jwsBuilder = new JWSBuilder($algorithmManager);
         $payload = json_encode([
             'iat' => time(),
@@ -84,13 +95,15 @@ class ChallengeManager
             'challenge' => $challenge,
             'id' => $id,
             'scriptName' => $scriptName,
-            'data' => $data
+            'data' => $data,
         ]);
 
         $jws = $jwsBuilder
             ->create()
             ->withPayload($payload)
-            ->addSignature($jwk, ['alg' => $this->sigAlg])
+            ->addSignature($jwk, [
+                'alg' => $this->sigAlg,
+            ])
             ->build();
 
         $serializer = new CompactSerializer();
@@ -101,11 +114,7 @@ class ChallengeManager
 
     public function decodeToken($token)
     {
-        $algorithmManager = new AlgorithmManager(
-            [
-                self::getAlgorithm('Signature\\Algorithm', $this->sigAlg)
-            ]
-        );
+        $algorithmManager = new AlgorithmManager([self::getAlgorithm('Signature\\Algorithm', $this->sigAlg)]);
         $jwsVerifier = new JWSVerifier($algorithmManager);
         $jwk = JWKFactory::createFromKeyFile($this->pubKey);
 
@@ -121,16 +130,12 @@ class ChallengeManager
 
         $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
 
-        if (!$isVerified) {
+        if (! $isVerified) {
             throw new Exception('ChallengeManager.decodeToken: The token signature is invalid!');
         }
 
         $claimCheckerManager = new ClaimCheckerManager(
-            [
-                new Checker\IssuedAtChecker(),
-                new Checker\NotBeforeChecker(),
-                new Checker\ExpirationTimeChecker(),
-            ]
+            [new Checker\IssuedAtChecker(), new Checker\NotBeforeChecker(), new Checker\ExpirationTimeChecker()]
         );
         $claims = json_decode($jws->getPayload(), true);
 
@@ -140,14 +145,14 @@ class ChallengeManager
         $id = $claims['id'];
         $scriptName = $claims['scriptName'];
 
-        $challengeManager = new ChallengeManager();
+        $challengeManager = new self();
 
         $challengeDb = $challengeManager->readChallengeFromDb($id, $scriptName);
 
         $checkAccessSucceeded = self::checkAccess($challenge, $challengeDb);
         $challengeSuccessfullyDeleted = $challengeManager->deleteChallengeFromDb($id);
 
-        if (!$checkAccessSucceeded || !$challengeSuccessfullyDeleted) {
+        if (! $checkAccessSucceeded || ! $challengeSuccessfullyDeleted) {
             exit;
         }
 
@@ -169,7 +174,7 @@ class ChallengeManager
             return false;
         }
 
-        if (!hash_equals($challengeDb, $challenge)) {
+        if (! hash_equals($challengeDb, $challenge)) {
             Logger::error(self::LOG_PREFIX . 'Hashes are not equal.');
             return false;
         }
@@ -183,7 +188,7 @@ class ChallengeManager
             return false;
         }
 
-        if (!$this->challengeDbCmd->deleteChallenge($id)) {
+        if (! $this->challengeDbCmd->deleteChallenge($id)) {
             Logger::error(self::LOG_PREFIX . 'Error while deleting challenge from the database.');
             return false;
         }

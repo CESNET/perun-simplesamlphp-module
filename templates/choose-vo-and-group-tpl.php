@@ -1,16 +1,17 @@
-<?php
+<?php declare(strict_types=1);
 
-use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
 use SimpleSAML\Module;
-use SimpleSAML\Utils\HTTP;
-use SimpleSAML\XHTML\Template;
+use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
 use SimpleSAML\Module\perun\model\Group;
 use SimpleSAML\Module\perun\model\Vo;
+use SimpleSAML\Utils\HTTP;
+use SimpleSAML\XHTML\Template;
 
 /**
  * This is simple example of template where user can choose where they want to register to access the requested service
  *
  * Allow type hinting in IDE
+ *
  * @var Template $this
  * @var Group[] $groups ;
  * @var Vo $vo
@@ -34,7 +35,7 @@ if ($spMetadata['InformationURL']['en']) {
     $informationURL = $spMetadata['InformationURL']['en'];
 }
 
-$this->data['header'] = "";
+$this->data['header'] = '';
 
 $this->includeAtTemplateBase('includes/header.php');
 
@@ -42,7 +43,9 @@ if (isset($_POST['selectedGroup'])) {
     $params = [];
     $vo = explode(':', $_POST['selectedGroup'], 2)[0];
     $group = explode(':', $_POST['selectedGroup'], 2)[1];
-    $callback = Module::getModuleURL('perun/perun_identity_callback.php', ['stateId' => $stateId]);
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', [
+        'stateId' => $stateId,
+    ]);
 
     $params['vo'] = $vo;
 
@@ -57,9 +60,9 @@ if (isset($_POST['selectedGroup'])) {
 }
 
 $header = $this->t('{perun:perun:choose-vo-and-group-tpl_header-part1}');
-if (!empty($serviceName) && !empty($informationURL)) {
+if (! empty($serviceName) && ! empty($informationURL)) {
     $header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
-} elseif (!empty($serviceName)) {
+} elseif (! empty($serviceName)) {
     $header .= $serviceName;
 }
 $header .= $this->t('{perun:perun:choose-vo-and-group-tpl_header-part2}');

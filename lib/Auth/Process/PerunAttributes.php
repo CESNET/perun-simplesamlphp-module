@@ -1,18 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
-use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\model\User;
 
 /**
  * Class PerunAttributes
  *
- * This filter fetches user attributes by its names listed as keys of attrMap config property
- * and set them as Attributes values to keys specified as attrMap values. Old values of Attributes are replaced.
+ * This filter fetches user attributes by its names listed as keys of attrMap config property and set them as Attributes
+ * values to keys specified as attrMap values. Old values of Attributes are replaced.
  *
  * It strongly relays on PerunIdentity filter to obtain perun user id. Configure it before this filter properly.
  *
@@ -22,12 +24,16 @@ use SimpleSAML\Module\perun\model\User;
  */
 class PerunAttributes extends ProcessingFilter
 {
+    public const MODE_FULL = 'FULL';
+
+    public const MODE_PARTIAL = 'PARTIAL';
+
     private $attrMap;
+
     private $interface;
+
     private $mode;
 
-    const MODE_FULL = 'FULL';
-    const MODE_PARTIAL = 'PARTIAL';
     /**
      * @var Adapter
      */
@@ -39,24 +45,22 @@ class PerunAttributes extends ProcessingFilter
 
         assert(is_array($config));
 
-        if (!isset($config['attrMap'])) {
-            throw new Exception(
-                'perun:PerunAttributes: missing mandatory configuration option \'attrMap\'.'
-            );
+        if (! isset($config['attrMap'])) {
+            throw new Exception('perun:PerunAttributes: missing mandatory configuration option \'attrMap\'.');
         }
-        if (!isset($config['interface'])) {
+        if (! isset($config['interface'])) {
             $config['interface'] = Adapter::RPC;
         }
 
-        if (!isset($config['mode'])) {
+        if (! isset($config['mode'])) {
             $config['mode'] = self::MODE_FULL;
         }
 
-        $this->interface = (string)$config['interface'];
-        $this->mode = (string)$config['mode'];
-        $this->attrMap = (array)$config['attrMap'];
+        $this->interface = (string) $config['interface'];
+        $this->mode = (string) $config['mode'];
+        $this->attrMap = (array) $config['attrMap'];
 
-        if (!in_array($this->mode, [self::MODE_FULL, self::MODE_PARTIAL])) {
+        if (! in_array($this->mode, [self::MODE_FULL, self::MODE_PARTIAL], true)) {
             $this->mode = self::MODE_FULL;
         }
         $this->adapter = Adapter::getInstance($this->interface);
@@ -85,7 +89,7 @@ class PerunAttributes extends ProcessingFilter
                     break;
                 }
 
-                if (!is_array($attrValue)) {
+                if (! is_array($attrValue)) {
                     $attrValue = [$attrValue];
                 }
 
@@ -111,7 +115,7 @@ class PerunAttributes extends ProcessingFilter
 
     private function hasStringKeys($array): bool
     {
-        if (!is_array($array)) {
+        if (! is_array($array)) {
             return false;
         }
         return count(array_filter(array_keys($array), 'is_string')) > 0;
@@ -119,8 +123,8 @@ class PerunAttributes extends ProcessingFilter
 
     /**
      * Method process attributes from Perun system and store them to request
-     * @param $request
-     * @param User $user
+     *
+     * @param $user
      * @param array $attributes List of attributes which will be loaded from Perun system
      * @throws Exception
      */
@@ -165,11 +169,10 @@ class PerunAttributes extends ProcessingFilter
                 'Value ' . implode(',', $value) .
                 ' is being setted to ssp attributes ' . implode(',', $attrArray));
 
-
             foreach ($attrArray as $attribute) {
                 $result[$attribute] = $value;
             }
         }
-        return  $result;
+        return $result;
     }
 }

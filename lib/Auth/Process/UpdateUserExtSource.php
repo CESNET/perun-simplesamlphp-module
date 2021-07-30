@@ -1,12 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Module;
 use SimpleSAML\Module\perun\ChallengeManager;
-use SimpleSAML\Module\perun\UpdateUESThread;
 
 /**
  * Class sspmod_perun_Auth_Process_UpdateUserExtSource
@@ -18,10 +19,11 @@ use SimpleSAML\Module\perun\UpdateUESThread;
  */
 class UpdateUserExtSource extends ProcessingFilter
 {
-    private $attrMap;
-    private $attrsToConversion;
+    public const SCRIPT_NAME = 'updateUes';
 
-    const SCRIPT_NAME = 'updateUes';
+    private $attrMap;
+
+    private $attrsToConversion;
 
     public function __construct($config, $reserved)
     {
@@ -29,31 +31,29 @@ class UpdateUserExtSource extends ProcessingFilter
 
         assert(is_array($config));
 
-        if (!isset($config['attrMap'])) {
-            throw new Exception(
-                'perun:UpdateUserExtSource: missing mandatory configuration option \'attrMap\'.'
-            );
+        if (! isset($config['attrMap'])) {
+            throw new Exception('perun:UpdateUserExtSource: missing mandatory configuration option \'attrMap\'.');
         }
 
         if (isset($config['arrayToStringConversion'])) {
-            $this->attrsToConversion = (array)$config['arrayToStringConversion'];
+            $this->attrsToConversion = (array) $config['arrayToStringConversion'];
         } else {
             $this->attrsToConversion = [];
         }
 
-        $this->attrMap = (array)$config['attrMap'];
+        $this->attrMap = (array) $config['attrMap'];
     }
 
     public function process(&$request)
     {
-        $id = uniqid("", true);
+        $id = uniqid('', true);
 
         $challengeManager = new ChallengeManager();
         $data = [
             'attributes' => $request['Attributes'],
             'attrMap' => $this->attrMap,
             'attrsToConversion' => $this->attrsToConversion,
-            'perunUserId' => $request['perun']['user']->getId()
+            'perunUserId' => $request['perun']['user']->getId(),
         ];
         $token = $challengeManager->generateToken($id, self::SCRIPT_NAME, $data);
 

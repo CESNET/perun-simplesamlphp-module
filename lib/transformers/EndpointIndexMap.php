@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -13,9 +15,9 @@ use SimpleSAML\Module\perun\AttributeTransformer;
  */
 class EndpointIndexMap extends AttributeTransformer
 {
-    const MAPLIST_SEPARATOR = ',';
+    public const MAPLIST_SEPARATOR = ',';
 
-    const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
+    public const BINDING_PREFIX = 'urn:oasis:names:tc:SAML:2.0:bindings:';
 
     private $defaultBinding;
 
@@ -27,7 +29,7 @@ class EndpointIndexMap extends AttributeTransformer
     public function __construct(\SimpleSAML\Configuration $config)
     {
         $this->defaultBinding = $config->getString('defaultBinding');
-        $this->fullNames = !$config->getBoolean('shortNames', false);
+        $this->fullNames = ! $config->getBoolean('shortNames', false);
     }
 
     /**
@@ -52,16 +54,18 @@ class EndpointIndexMap extends AttributeTransformer
         if (empty($endpoints)) {
             $result = null;
         } else {
-            if (!is_array($endpoints)) {
-                $endpoints = [['Location' => $endpoints]];
+            if (! is_array($endpoints)) {
+                $endpoints = [[
+                    'Location' => $endpoints,
+                ]];
             }
             $result = [];
             foreach ($endpoints as $endpoint) {
                 $binding = $endpoint['Binding'] ?: $this->defaultBinding;
-                if (!$this->fullNames) {
+                if (! $this->fullNames) {
                     $binding = str_replace(self::BINDING_PREFIX, '', $binding);
                 }
-                if (!isset($result[$binding])) {
+                if (! isset($result[$binding])) {
                     $result[$binding] = [];
                 }
 

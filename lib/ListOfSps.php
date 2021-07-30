@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 class ListOfSps
@@ -34,7 +37,7 @@ class ListOfSps
             return $name;
         }
 
-        return "<a class='customLink' href='" . htmlspecialchars($loginURL) . "'>" . htmlspecialchars($name) . "</a>";
+        return "<a class='customLink' href='" . htmlspecialchars($loginURL) . "'>" . htmlspecialchars($name) . '</a>';
     }
 
     public static function printAttributeValue($type, $value)
@@ -81,11 +84,10 @@ class ListOfSps
             default:
                 $string = '';
         }
-        if (!empty($string)) {
+        if (! empty($string)) {
             return '<td class="' . self::getClass($type) . '">' . $string . '</td>';
-        } else {
-            return '<td/>';
         }
+        return '<td/>';
     }
 
     public static function getPreferredTranslation($translations, $language = 'en')

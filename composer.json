@@ -25,7 +25,6 @@
     "require": {
         "simplesamlphp/simplesamlphp": "~1.17",
         "simplesamlphp/composer-module-installer": "~1.0",
-        "cesnet/simplesamlphp-module-perunauthorize": "~2.0",
         "cesnet/simplesamlphp-module-chartjs": "~2.8.0",
         "symfony/var-exporter": "^5.0",
         "phpseclib/phpseclib": "~3.0",
@@ -37,5 +36,8 @@
         "web-token/jwt-signature": "^2.2",
         "web-token/jwt-signature-algorithm-rsa": "^2.2",
         "web-token/jwt-checker": "^2.2"
+    },
+    "require-dev": {
+        "symplify/easy-coding-standard": "^9.2"
     }
 }

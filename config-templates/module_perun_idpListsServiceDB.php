@@ -1,12 +1,14 @@
 <?php
+
+declare(strict_types=1);
+
 /**
- * This is example configuration for connection to database with whitelist/greylist
- * Copy this file to default config directory and edit the properties.
+ * This is example configuration for connection to database with whitelist/greylist Copy this file to default config
+ * directory and edit the properties.
  *
  * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 $config = [
-
     /*
      * Fill the serverName
      */
@@ -74,5 +76,4 @@ $config = [
      * If your SQL Server used encrypted connections, you must fill this option.
      */
     'ssl_ca_path' => '/etc/ssl',
-
 ];

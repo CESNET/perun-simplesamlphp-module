@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
 /**
@@ -8,10 +10,12 @@ namespace SimpleSAML\Module\perun\model;
 class User implements HasId
 {
     private $id;
+
     private $name;
 
     /**
      * User constructor.
+     *
      * @param int $id
      * @param string $name
      */

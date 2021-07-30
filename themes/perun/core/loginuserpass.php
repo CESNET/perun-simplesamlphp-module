@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 $this->data['header'] = $this->t('{login:user_pass_header}');
 
@@ -19,18 +19,16 @@ if ($this->data['errorcode'] !== null) {
         <strong>
             <?php
             echo htmlspecialchars($this->t(
-                '{errors:title_' . $this->data['errorcode'] . '}',
-                $this->data['errorparams']
-            ));
-            ?>
+        '{errors:title_' . $this->data['errorcode'] . '}',
+        $this->data['errorparams']
+    )); ?>
         </strong>
 
         <?php
         echo htmlspecialchars($this->t(
-            '{errors:descr_' . $this->data['errorcode'] . '}',
-            $this->data['errorparams']
-        ));
-        ?>
+        '{errors:descr_' . $this->data['errorcode'] . '}',
+        $this->data['errorparams']
+    )); ?>
     </div>
 
     <?php
@@ -49,7 +47,7 @@ if ($this->data['errorcode'] !== null) {
                 <input id="username" <?php echo ($this->data['forceUsername']) ? 'disabled="disabled"' : ''; ?>
                        type="text" name="username" class="form-control"
                     <?php
-                    if (!$this->data['forceUsername']) {
+                    if (! $this->data['forceUsername']) {
                         echo 'tabindex="1"';
                     }
                     ?> value="<?php echo htmlspecialchars($this->data['username']); ?>"/>
@@ -64,9 +62,8 @@ if ($this->data['errorcode'] !== null) {
         </div>
 
         <?php
-        if ($this->data['rememberUsernameEnabled'] && !$this->data['forceUsername']) {
-            // display the "remember my username" checkbox
-            ?>
+        if ($this->data['rememberUsernameEnabled'] && ! $this->data['forceUsername']) {
+            // display the "remember my username" checkbox?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <div class="checkbox">
@@ -85,8 +82,7 @@ if ($this->data['errorcode'] !== null) {
 
         <?php
         if ($this->data['rememberMeEnabled']) {
-            // display the remember me checkbox (keep me logged in)
-            ?>
+            // display the remember me checkbox (keep me logged in)?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <div class="checkbox">
@@ -118,22 +114,21 @@ if ($this->data['errorcode'] !== null) {
                             $selectedOrg = null;
                         }
 
-                        foreach ($this->data['organizations'] as $orgId => $orgDesc) {
-                            if (is_array($orgDesc)) {
-                                $orgDesc = $this->t($orgDesc);
-                            }
+            foreach ($this->data['organizations'] as $orgId => $orgDesc) {
+                if (is_array($orgDesc)) {
+                    $orgDesc = $this->t($orgDesc);
+                }
 
-                            if ($orgId === $selectedOrg) {
-                                $selected = 'selected="selected" ';
-                            } else {
-                                $selected = '';
-                            }
+                if ($orgId === $selectedOrg) {
+                    $selected = 'selected="selected" ';
+                } else {
+                    $selected = '';
+                }
 
-                            echo '<option ' .
+                echo '<option ' .
                                 $selected . 'value="' . htmlspecialchars($orgId) . '">' . htmlspecialchars($orgDesc) .
                                 '</option>';
-                        }
-                        ?>
+            } ?>
                     </select>
                 </div>
             </div>
@@ -153,17 +148,16 @@ if ($this->data['errorcode'] !== null) {
 
         <?php
         foreach ($this->data['stateparams'] as $name => $value) {
-            echo(
-                '<input type="hidden" name="' . htmlspecialchars($name) .
+            echo '<input type="hidden" name="' . htmlspecialchars($name) .
                 '" value="' . htmlspecialchars($value) . '" />'
-            );
+            ;
         }
         ?>
     </form>
 
 <?php
 
-if (!empty($this->data['links'])) {
+if (! empty($this->data['links'])) {
     echo '<ul class="links" style="margin-top: 2em">';
     foreach ($this->data['links'] as $l) {
         echo '<li>' .

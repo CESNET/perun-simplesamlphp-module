@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use SimpleSAML\Module\perun\Disco;
 use SimpleSAML\Module\perun\DiscoTemplate;
 
@@ -7,12 +9,13 @@ use SimpleSAML\Module\perun\DiscoTemplate;
  * This is simple example of template for perun Discovery service
  *
  * Allow type hinting in IDE
+ *
  * @var DiscoTemplate $this
  */
 
 $this->includeAtTemplateBase('includes/header.php');
 
-if (!empty($this->getPreferredIdp())) {
+if (! empty($this->getPreferredIdp())) {
     echo '<h4>' . $this->t('{perun:perun:disco-tpl_previous-selection}') . '</h4>' .
         '<div class="metalist list-group">' .
         Disco::showEntry($this, $this->getPreferredIdp(), true) .

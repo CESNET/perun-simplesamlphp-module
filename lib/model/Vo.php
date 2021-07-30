@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
 /**
@@ -8,11 +10,14 @@ namespace SimpleSAML\Module\perun\model;
 class Vo implements HasId
 {
     private $id;
+
     private $name;
+
     private $shortName;
 
     /**
      * Vo constructor.
+     *
      * @param int $id
      * @param string $name
      * @param string $shortName

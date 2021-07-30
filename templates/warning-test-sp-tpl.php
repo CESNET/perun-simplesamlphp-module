@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use SimpleSAML\Module;
 use SimpleSAML\XHTML\Template;
@@ -7,6 +7,7 @@ use SimpleSAML\XHTML\Template;
  * Template for warn user that he/she is accessing test SP
  *
  * Allow type hinting in IDE
+ *
  * @var Template $this
  */
 

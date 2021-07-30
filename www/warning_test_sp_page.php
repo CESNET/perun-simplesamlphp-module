@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use SimpleSAML\Auth\State;
 use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
@@ -22,16 +24,16 @@ try {
     Logger::warning("perun:warning_test_sp_page: missing or invalid '" .
         WarningTestSP::CONFIG_FILE_NAME . "' config file");
 }
-if ($perunModuleConfig != null) {
+if ($perunModuleConfig !== null) {
     $testSpWarningConfig = $perunModuleConfig->getConfigItem(WarningTestSP::TEST_SP_CONFIG, null);
-    if ($testSpWarningConfig != null) {
+    if ($testSpWarningConfig !== null) {
         $header = $testSpWarningConfig->getArray(WarningTestSP::TEST_SP_CONFIG_HEADER, []);
-        if (!empty($header)) {
+        if (! empty($header)) {
             $t->includeInlineTranslation(WarningTestSP::CUSTOM_HEADER_KEY, $header);
             $t->data[WarningTestSP::CUSTOM_HEADER_ENABLED] = true;
         }
         $text = $testSpWarningConfig->getArray(WarningTestSP::TEST_SP_CONFIG_TEXT, []);
-        if (!empty($text)) {
+        if (! empty($text)) {
             $t->includeInlineTranslation(WarningTestSP::CUSTOM_TEXT_KEY, $text);
             $t->data[WarningTestSP::CUSTOM_TEXT_ENABLED] = true;
         }

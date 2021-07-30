@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Script for updating UES in separate thread
  *
@@ -50,7 +52,7 @@ try {
     if ($userExtSource === null) {
         throw new Exception(
             'perun/www/updateUes.php: there is no UserExtSource with ExtSource ' .
-            $attributesFromIdP['sourceIdPEntityID'][0] . " and Login " .
+            $attributesFromIdP['sourceIdPEntityID'][0] . ' and Login ' .
             $attributesFromIdP['sourceIdPEppn'][0]
         );
     }
@@ -62,26 +64,23 @@ try {
     }
 
     if ($attributesFromPerun === null) {
-        throw new Exception(
-            'perun/www/updateUes.php: getting attributes was not successful.'
-        );
+        throw new Exception('perun/www/updateUes.php: getting attributes was not successful.');
     }
 
     $attributesToUpdate = [];
 
     foreach ($attributesFromPerun as $attribute) {
-
         $attrName = $attribute['name'];
 
         if (isset($attrMap[$attrName], $attributesFromIdP[$attrMap[$attrName]])) {
             $attr = $attributesFromIdP[$attrMap[$attrName]];
 
-            if (in_array($attrName, $attrsToConversion)) {
+            if (in_array($attrName, $attrsToConversion, true)) {
                 $arrayAsString = [''];
                 foreach ($attr as $value) {
                     $arrayAsString[0] .= $value . ';';
                 }
-                if (!empty($arrayAsString[0])) {
+                if (! empty($arrayAsString[0])) {
                     $arrayAsString[0] = substr($arrayAsString[0], 0, -1);
                 }
                 $attr = $arrayAsString;
@@ -94,9 +93,7 @@ try {
             } elseif (strpos($attribute['type'], 'Array') || strpos($attribute['type'], 'Map')) {
                 $valueFromIdP = $attr;
             } else {
-                throw new Exception(
-                    'perun/www/updateUes.php: unsupported type of attribute.'
-                );
+                throw new Exception('perun/www/updateUes.php: unsupported type of attribute.');
             }
             if ($valueFromIdP !== $attribute['value']) {
                 $attribute['value'] = $valueFromIdP;
@@ -107,9 +104,9 @@ try {
     }
 
     $attributesToUpdateFinal = [];
-    if (!empty($attributesToUpdate)) {
+    if (! empty($attributesToUpdate)) {
         foreach ($attributesToUpdate as $attribute) {
-            $attribute['name'] = UES_ATTR_NMS . ":" . $attribute['friendlyName'];
+            $attribute['name'] = UES_ATTR_NMS . ':' . $attribute['friendlyName'];
             array_push($attributesToUpdateFinal, $attribute);
         }
         $adapter->setUserExtSourceAttributes($userExtSource['id'], $attributesToUpdateFinal);

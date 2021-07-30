@@ -1,12 +1,14 @@
 <?php
 
-use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
-use SimpleSAML\Module\perun\AdapterRpc;
-use SimpleSAML\Module\perun\Adapter;
-use SimpleSAML\Module;
+declare(strict_types=1);
+
 use SimpleSAML\Configuration;
-use SimpleSAML\XHTML\Template;
+use SimpleSAML\Module;
+use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\AdapterRpc;
+use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
 use SimpleSAML\Utils\HTTP;
+use SimpleSAML\XHTML\Template;
 
 /**
  * This page let user select one group and redirect him to a url where he can register to group.
@@ -29,10 +31,10 @@ $vosForRegistration = [];
 $groupsForRegistration = [];
 
 foreach ($spGroups as $group) {
-    if (in_array($group->getVoId(), $vosIdForRegistration)) {
+    if (in_array($group->getVoId(), $vosIdForRegistration, true)) {
         if ($group->getName() === 'members' || $rpcAdapter->hasRegistrationForm($group->getId(), 'group')) {
             $vo = $adapter->getVoById($group->getVoId());
-            if (!isset($vosForRegistration[$vo->getShortName()])) {
+            if (! isset($vosForRegistration[$vo->getShortName()])) {
                 $vosForRegistration[$vo->getShortName()] = $vo;
             }
             array_push($groupsForRegistration, $group);
@@ -46,7 +48,9 @@ if (empty($groupsForRegistration)) {
     $params = [];
     $vo = explode(':', $groupsForRegistration[0]->getUniqueName(), 2)[0];
     $group = $groupsForRegistration[0]->getName()[0];
-    $callback = Module::getModuleURL('perun/perun_identity_callback.php', ['stateId' => $stateId]);
+    $callback = Module::getModuleURL('perun/perun_identity_callback.php', [
+        'stateId' => $stateId,
+    ]);
 
     $params['vo'] = $vo;
 
@@ -63,7 +67,7 @@ if (empty($groupsForRegistration)) {
         'StateId' => $stateId,
         'SPMetadata' => $_REQUEST['SPMetadata'],
         'registerUrL' => $registerUrlBase,
-        'params' => $params
+        'params' => $params,
     ]);
 }
 

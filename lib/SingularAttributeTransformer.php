@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -21,6 +23,7 @@ abstract class SingularAttributeTransformer
 
     /**
      * Transform one attribute. The output is saved into the source attribute.
+     *
      * @param $value
      */
     abstract public function singleTransform($value);
@@ -35,6 +38,7 @@ abstract class SingularAttributeTransformer
 
     /**
      * Get human readable description of the transformation performed on one attribute.
+     *
      * @param string $description current description
      */
     abstract public function singleDescription(string $description);

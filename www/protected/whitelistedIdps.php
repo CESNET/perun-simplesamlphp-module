@@ -1,18 +1,18 @@
 <?php
 
-use SimpleSAML\Module\perun\IdpListsService;
+declare(strict_types=1);
+
 use SimpleSAML\Metadata\MetaDataStorageHandler;
+use SimpleSAML\Module\perun\IdpListsService;
 use SimpleSAML\Module\perun\Whitelisting;
 
 /**
  * List all whitelisted IdPs.
  *
- * Returns list of service in format:
- * IdP Name^IdP EnityID\n
+ * Returns list of service in format: IdP Name^IdP EnityID\n
  *
- * Author: Michal Prochazka <michalp@ics.muni.cz>
- * Author: Ondrej Velisek <ondrejvelisek@gmail.com>
- * Author: Pavel Vyskocil <vyskocilpavel@muni.cz>
+ * Author: Michal Prochazka <michalp@ics.muni.cz> Author: Ondrej Velisek <ondrejvelisek@gmail.com> Author: Pavel
+ * Vyskocil <vyskocilpavel@muni.cz>
  *
  * TODO: Use standardized format (JSON)
  */

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
@@ -17,30 +19,31 @@ use SimpleSAML\Module\perun\model\Vo;
  * Class sspmod_perun_AdapterRpc
  *
  * Perun adapter which uses Perun RPC interface
+ *
  * @author Michal Prochazka <michalp@ics.muni.cz>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class AdapterRpc extends Adapter
 {
-    const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
+    public const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
 
-    const RPC_URL = 'rpc.url';
+    public const RPC_URL = 'rpc.url';
 
-    const RPC_USER = 'rpc.username';
+    public const RPC_USER = 'rpc.username';
 
-    const RPC_PASSWORD = 'rpc.password';
+    public const RPC_PASSWORD = 'rpc.password';
 
-    const RPC_SERIALIZER = 'rpc.serializer';
+    public const RPC_SERIALIZER = 'rpc.serializer';
 
-    const TYPE_INTEGER = 'java.lang.Integer';
+    public const TYPE_INTEGER = 'java.lang.Integer';
 
-    const TYPE_BOOLEAN = 'java.lang.Boolean';
+    public const TYPE_BOOLEAN = 'java.lang.Boolean';
 
-    const TYPE_STRING = 'java.lang.String';
+    public const TYPE_STRING = 'java.lang.String';
 
-    const TYPE_ARRAY = 'java.util.ArrayList';
+    public const TYPE_ARRAY = 'java.util.ArrayList';
 
-    const TYPE_MAP = 'java.util.LinkedHashMap';
+    public const TYPE_MAP = 'java.util.LinkedHashMap';
 
     protected $connector;
 
@@ -80,19 +83,19 @@ class AdapterRpc extends Adapter
                 ]);
 
                 $name = '';
-                if (!empty($user['titleBefore'])) {
+                if (! empty($user['titleBefore'])) {
                     $name .= $user['titleBefore'] . ' ';
                 }
-                if (!empty($user['titleBefore'])) {
+                if (! empty($user['titleBefore'])) {
                     $name .= $user['firstName'] . ' ';
                 }
-                if (!empty($user['titleBefore'])) {
+                if (! empty($user['titleBefore'])) {
                     $name .= $user['middleName'] . ' ';
                 }
-                if (!empty($user['titleBefore'])) {
+                if (! empty($user['titleBefore'])) {
                     $name .= $user['lastName'];
                 }
-                if (!empty($user['titleBefore'])) {
+                if (! empty($user['titleBefore'])) {
                     $name .= ' ' . $user['titleAfter'];
                 }
 
@@ -104,7 +107,7 @@ class AdapterRpc extends Adapter
                     // Because use of original/source entityID as extSourceName
                     continue;
                 }
-                    throw $e;
+                throw $e;
             }
         }
 
@@ -169,12 +172,7 @@ class AdapterRpc extends Adapter
         foreach ($perunAttrs as $perunAttr) {
             array_push(
                 $resources,
-                new Resource(
-                    $perunAttr['id'],
-                    $perunAttr['voId'],
-                    $perunAttr['facilityId'],
-                    $perunAttr['name']
-                )
+                new Resource($perunAttr['id'], $perunAttr['voId'], $perunAttr['facilityId'], $perunAttr['name'])
             );
         }
 
@@ -277,7 +275,7 @@ class AdapterRpc extends Adapter
             'attrName' => AttributeUtils::getAttrName($attrName, self::RPC),
         ]);
 
-        if (!isset($perunAttrValues[0]['id'])) {
+        if (! isset($perunAttrValues[0]['id'])) {
             return $attributes;
         }
         $attrId = $perunAttrValues[0]['id'];
@@ -381,9 +379,7 @@ class AdapterRpc extends Adapter
         ]);
 
         if (empty($perunAttr)) {
-            Logger::warning(
-                'perun:AdapterRpc: No facility with entityID \'' . $spEntityId . '\' found.'
-            );
+            Logger::warning('perun:AdapterRpc: No facility with entityID \'' . $spEntityId . '\' found.');
             return null;
         }
 
@@ -394,16 +390,12 @@ class AdapterRpc extends Adapter
             return null;
         }
 
-        return new Facility(
-            $perunAttr[0]['id'],
-            $perunAttr[0]['name'],
-            $perunAttr[0]['description'],
-            $spEntityId
-        );
+        return new Facility($perunAttr[0]['id'], $perunAttr[0]['name'], $perunAttr[0]['description'], $spEntityId);
     }
 
     /**
      * Returns member by User and Vo
+     *
      * @param User $user
      * @param Vo $vo
      * @return Member
@@ -443,6 +435,7 @@ class AdapterRpc extends Adapter
 
     /**
      * Returns true if entity has registration form, false otherwise
+     *
      * @param $entityId
      * @param $entityName
      * @return bool
@@ -479,12 +472,7 @@ class AdapterRpc extends Adapter
         foreach ($perunAttrs as $perunAttr) {
             array_push(
                 $facilities,
-                new Facility(
-                    $perunAttr['id'],
-                    $perunAttr['name'],
-                    $perunAttr['description'],
-                    null
-                )
+                new Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], null)
             );
         }
         return $facilities;
@@ -613,7 +601,7 @@ class AdapterRpc extends Adapter
 
         $facilityCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
             'facility' => $facility->getId(),
-            'attributeName' => 'urn:perun:facility:attribute-def:def:capabilities'
+            'attributeName' => 'urn:perun:facility:attribute-def:def:capabilities',
         ])['value'];
 
         if (empty($facilityCapabilities)) {
@@ -653,7 +641,7 @@ class AdapterRpc extends Adapter
                 'displayName' => $perunAttr['displayName'],
                 'type' => $perunAttr['type'],
                 'value' => $perunAttr['value'],
-                'friendlyName' => $perunAttr['friendlyName']
+                'friendlyName' => $perunAttr['friendlyName'],
             ];
         }
 

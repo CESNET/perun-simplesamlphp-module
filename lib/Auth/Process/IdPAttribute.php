@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Error\Exception;
@@ -22,13 +24,11 @@ class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
 
         assert(is_array($config));
 
-        if (!isset($config['attrMap'])) {
-            throw new Exception(
-                'perun:IdPAttribute: missing mandatory configuration option \'attrMap\'.'
-            );
+        if (! isset($config['attrMap'])) {
+            throw new Exception('perun:IdPAttribute: missing mandatory configuration option \'attrMap\'.');
         }
 
-        $this->attrMap = (array)$config['attrMap'];
+        $this->attrMap = (array) $config['attrMap'];
     }
 
     public function process(&$request)
@@ -42,23 +42,23 @@ class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
             $attributeNames = preg_split('/:/', $attributeKey);
             $key = array_shift($attributeNames);
 
-            if (!isset($sourceIdpMeta[$key])) {
+            if (! isset($sourceIdpMeta[$key])) {
                 continue;
             }
             $value = $sourceIdpMeta[$key];
 
             foreach ($attributeNames as $attributeName) {
-                if (!isset($value[$attributeName])) {
+                if (! isset($value[$attributeName])) {
                     continue;
                 }
                 $value = $value[$attributeName];
             }
 
-            if (!is_array($value)) {
+            if (! is_array($value)) {
                 $value = [$value];
             }
 
-            if (!empty($value)) {
+            if (! empty($value)) {
                 $request['Attributes'][$attributeValue] = $value;
             }
         }

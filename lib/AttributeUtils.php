@@ -1,18 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
+use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
-use SimpleSAML\Configuration;
 
 class AttributeUtils
 {
-    const CONFIG_FILE_NAME = 'perun_attributes.php';
-    const INTERNAL_ATTR_NAME = 'internalAttrName';
-    const TYPE = 'type';
-    const LDAP = 'ldap';
-    const RPC = 'rpc';
+    public const CONFIG_FILE_NAME = 'perun_attributes.php';
+
+    public const INTERNAL_ATTR_NAME = 'internalAttrName';
+
+    public const TYPE = 'type';
+
+    public const LDAP = 'ldap';
+
+    public const RPC = 'rpc';
 
     public static function getLdapAttrName($internalAttrName)
     {
@@ -76,7 +82,7 @@ class AttributeUtils
                 if (array_key_exists($interface, $attrArray)) {
                     $resultArray[$attrArray[$interface]] = [
                         self::INTERNAL_ATTR_NAME => $internalAttrName,
-                        self::TYPE => $attrArray[self::TYPE]
+                        self::TYPE => $attrArray[self::TYPE],
                     ];
                 }
             } catch (\Exception $ex) {
@@ -122,9 +128,7 @@ class AttributeUtils
         }
 
         if ($perunAttributesConfig === null) {
-            throw new Exception(
-                'perun:AttributeUtils: missing or invalid perun_attributes.php config file'
-            );
+            throw new Exception('perun:AttributeUtils: missing or invalid perun_attributes.php config file');
         }
 
         return $perunAttributesConfig;

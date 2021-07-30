@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Utils\Random;
 
 /**
  * Class Consent
+ *
  * @package SimpleSAML\Module\perun
  *
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
@@ -31,44 +34,44 @@ class Consent
             if (preg_match('/^child_/', $nameraw)) {
                 // insert child table
                 throw new Exception('Unsupported');
-            } else {
-                // insert values directly
-                $str .= "\n" . '<li>'
+            }
+            // insert values directly
+            $str .= "\n" . '<li>'
                         . '<div class="row"><div class="col-sm-' . $labelCol
                         . '"><h2 class="perun-attrname h4">'
-                        . htmlspecialchars(str_replace("domovksé", "domovské", $name)) . '</h2></div>';
+                        . htmlspecialchars(str_replace('domovksé', 'domovské', $name)) . '</h2></div>';
 
-                $str .= '<div class="perun-attrcontainer col-sm-' . (12 - $labelCol) . '">';
-                $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
-                if ($isHidden) {
-                    $hiddenId = Random::generateID();
-                    $str .= '<span class="perun-attrvalue hidden" id="hidden_' . $hiddenId . '">';
-                } else {
-                    $str .= '<span class="perun-attrvalue">';
+            $str .= '<div class="perun-attrcontainer col-sm-' . (12 - $labelCol) . '">';
+            $isHidden = in_array($nameraw, $t->data['hiddenAttributes'], true);
+            if ($isHidden) {
+                $hiddenId = Random::generateID();
+                $str .= '<span class="perun-attrvalue hidden" id="hidden_' . $hiddenId . '">';
+            } else {
+                $str .= '<span class="perun-attrvalue">';
+            }
+
+            if (count($value) > 0) {
+                $str .= '<ul class="perun-attrlist">';
+                foreach ($value as $listitem) {
+                    $str .= '<li>' . self::presentAttributesPhotoOrValue($nameraw, $listitem) . '</li>';
                 }
+                $str .= '</ul>';
+            }
+            $str .= '</span>';
 
-                if (count($value) > 0) {
-                    $str .= '<ul class="perun-attrlist">';
-                    foreach ($value as $listitem) {
-                        $str .= '<li>' . self::presentAttributesPhotoOrValue($nameraw, $listitem) . '</li>';
-                    }
-                    $str .= '</ul>';
-                }
-                $str .= '</span>';
+            if ($isHidden) {
+                $str .= '<div class="perun-attrvalue consent_showattribute" id="visible_' . $hiddenId . '">';
+                $str .= '&#8230; ';
+                $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_';
+                $str .= $hiddenId;
+                $str .= '\'); SimpleSAML_hide(\'visible_' . $hiddenId . '\');">';
+                $str .= $t->t('{consent:consent:show_attribute}');
+                $str .= '</a>';
+                $str .= '</div>';
+            }
 
-                if ($isHidden) {
-                    $str .= '<div class="perun-attrvalue consent_showattribute" id="visible_' . $hiddenId . '">';
-                    $str .= '&#8230; ';
-                    $str .= '<a class="consent_showattributelink" href="javascript:SimpleSAML_show(\'hidden_';
-                    $str .= $hiddenId;
-                    $str .= '\'); SimpleSAML_hide(\'visible_' . $hiddenId . '\');">';
-                    $str .= $t->t('{consent:consent:show_attribute}');
-                    $str .= '</a>';
-                    $str .= '</div>';
-                }
-
-                $str .= '</div><!-- .perun-attrcontainer --></div><!-- .row --></li>';
-            }       // end else: not child table
+            $str .= '</div><!-- .perun-attrcontainer --></div><!-- .row --></li>';
+            // end else: not child table
         }   // end foreach
         $str .= isset($attributes) ? '</ul>' : '';
         return $str;
@@ -78,8 +81,7 @@ class Consent
     {
         if ($nameraw === 'jpegPhoto') {
             return '<img src="data:image/jpeg;base64,' . htmlspecialchars($listitem) . '" alt="User photo" />';
-        } else {
-            return htmlspecialchars($listitem);
         }
+        return htmlspecialchars($listitem);
     }
 }

@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use SimpleSAML\Module;
 
@@ -6,6 +6,7 @@ use SimpleSAML\Module;
  * This is simple example of template where user has to accept usage policy
  *
  * Allow type hinting in IDE
+ *
  * @var SimpleSAML\XHTML\Template $this
  */
 $newAups = $this->data['newAups'];

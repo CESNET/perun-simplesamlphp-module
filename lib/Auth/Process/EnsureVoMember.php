@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
@@ -13,18 +15,28 @@ use SimpleSAML\Utils\HTTP;
 
 class EnsureVoMember extends ProcessingFilter
 {
-    const ENSURE_VO_MEMBER = 'ensureVoMember';
-    const TRIGGER_ATTR = 'triggerAttr';
-    const VO_DEFS_ATTR = 'voDefsAttr';
-    const LOGIN_URL = 'loginURL';
-    const REGISTRAR_URL = 'registrarURL';
-    const INTERFACE_PROPNAME = 'interface';
-    const RPC = 'rpc';
+    public const ENSURE_VO_MEMBER = 'ensureVoMember';
+
+    public const TRIGGER_ATTR = 'triggerAttr';
+
+    public const VO_DEFS_ATTR = 'voDefsAttr';
+
+    public const LOGIN_URL = 'loginURL';
+
+    public const REGISTRAR_URL = 'registrarURL';
+
+    public const INTERFACE_PROPNAME = 'interface';
+
+    public const RPC = 'rpc';
 
     private $triggerAttr;
+
     private $voDefsAttr;
+
     private $adapter;
+
     private $loginUrlAttr;
+
     private $registrarUrl;
 
     public function __construct($config, $reserved)
@@ -32,13 +44,13 @@ class EnsureVoMember extends ProcessingFilter
         parent::__construct($config, $reserved);
         $config = Configuration::loadFromArray($config);
 
-        if (is_null($config)) {
+        if ($config === null) {
             throw new Exception(
                 'perun:EnsureVoMember: Property  \'' . self::ENSURE_VO_MEMBER . '\' is missing or invalid!'
             );
         }
 
-        $this->triggerAttr = $config->getString(self::TRIGGER_ATTR, "");
+        $this->triggerAttr = $config->getString(self::TRIGGER_ATTR, '');
 
         if (empty($this->triggerAttr)) {
             throw new Exception(
@@ -46,7 +58,7 @@ class EnsureVoMember extends ProcessingFilter
             );
         }
 
-        $this->voDefsAttr = $config->getString(self::VO_DEFS_ATTR, "");
+        $this->voDefsAttr = $config->getString(self::VO_DEFS_ATTR, '');
 
         if (empty($this->voDefsAttr)) {
             throw new Exception(
@@ -120,8 +132,8 @@ class EnsureVoMember extends ProcessingFilter
 
     private function redirect($request, $loginUrl, $voShortName)
     {
-        if (!empty($voShortName) &&
-            !empty($this->registrarUrl) &&
+        if (! empty($voShortName) &&
+            ! empty($this->registrarUrl) &&
             $this->adapter->hasRegistrationFormByVoShortName($voShortName)
         ) {
             $this->redirectToRegistration($loginUrl, $voShortName);
@@ -137,7 +149,7 @@ class EnsureVoMember extends ProcessingFilter
             [
                 'vo' => $voShortName,
                 'targetnew' => $loginUrl,
-                'targetexisting' => $loginUrl
+                'targetexisting' => $loginUrl,
             ]
         );
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -29,7 +31,7 @@ class KeyListsToArray extends AttributeTransformer
     public function __construct(\SimpleSAML\Configuration $config)
     {
         $this->purposes = $config->getArray('purposes');
-        $this->removeSource = !$config->getBoolean('keepSource', true);
+        $this->removeSource = ! $config->getBoolean('keepSource', true);
         $this->purposesValues = array_values($this->purposes);
         $this->outputCertData = $config->getString('outputCertData', '');
         $this->outputKeys = $config->getString('outputKeys', 'keys');
@@ -46,10 +48,10 @@ class KeyListsToArray extends AttributeTransformer
             if ($this->removeSource) {
                 $result[$attribute] = null;
             }
-            if (!empty($value) && isset($this->purposes[$attribute])) {
+            if (! empty($value) && isset($this->purposes[$attribute])) {
                 $purpose = $this->purposes[$attribute];
                 foreach ($value as $key) {
-                    if (!isset($keys[$key])) {
+                    if (! isset($keys[$key])) {
                         $keys[$key] = array_fill_keys($this->purposesValues, false);
                     }
                     $keys[$key][$purpose] = true;
@@ -62,13 +64,17 @@ class KeyListsToArray extends AttributeTransformer
         }
         // one key for everything (certData)
         if (
-            !empty($this->outputCertData) && count($keys) === 1
+            ! empty($this->outputCertData) && count($keys) === 1
             && count(array_filter(current($keys))) === count($this->purposes)
         ) {
-            return array_merge($result, [$this->outputCertData => key($keys)]);
+            return array_merge($result, [
+                $this->outputCertData => key($keys),
+            ]);
         }
         // keys array
-        return array_merge($result, [$this->outputKeys => self::formatKeys($keys)]);
+        return array_merge($result, [
+            $this->outputKeys => self::formatKeys($keys),
+        ]);
     }
 
     private static function formatKeys(array $keys)

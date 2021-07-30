@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -33,7 +35,7 @@ class EmailList extends SingularAttributeTransformer
             if (
                 isset($contact['contactType'])
                 && (empty($this->types) || in_array($contact['contactType'], $this->types, true))
-                && !empty($contact['emailAddress'])
+                && ! empty($contact['emailAddress'])
             ) {
                 $result[] = is_array($contact['emailAddress']) ? $contact['emailAddress'][0] : $contact['emailAddress'];
             }

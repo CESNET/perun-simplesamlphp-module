@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 $this->data['header'] = $this->t('errorreport_header');
 $this->includeAtTemplateBase('includes/header.php');

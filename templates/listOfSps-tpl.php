@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use SimpleSAML\Module;
 use SimpleSAML\Module\perun\ListOfSps;
@@ -96,11 +96,11 @@ $this->includeAtTemplateBase('includes/header.php');
                         <th><?php echo $this->t('{perun:listOfSps:authenticate_protocol}') ?></th>
                         <?php
                         foreach ($attributesToShow as $attr) {
-                            if (!empty($samlServices)) {
+                            if (! empty($samlServices)) {
                                 echo "<th class='" . ListOfSps::getClass(
                                     array_values($samlServices)[0]['facilityAttributes'][$attr]['type']
                                 ) . "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
-                                . "</th>";
+                                . '</th>';
                             }
                         }
                         ?>
@@ -110,7 +110,7 @@ $this->includeAtTemplateBase('includes/header.php');
                     <?php
                     foreach ($allServices as $service) {
                         if (empty($service['showOnServiceList']['value']) ||
-                            !($service['showOnServiceList']['value'])
+                            ! ($service['showOnServiceList']['value'])
                         ) {
                             continue;
                         }
@@ -129,7 +129,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         foreach ($attributesToShow as $attr) {
                             $type = $service['facilityAttributes'][$attr]['type'];
                             $value = $service['facilityAttributes'][$attr]['value'];
-                            if ($value !== null && in_array($attr, $this->data['multilingualAttributes'])) {
+                            if ($value !== null && in_array($attr, $this->data['multilingualAttributes'], true)) {
                                 $type = 'java.lang.String';
                                 $value = ListOfSps::getPreferredTranslation($value, $this->getLanguage());
                             }
@@ -150,6 +150,6 @@ $this->includeAtTemplateBase('includes/footer.php');
 
 ?>
 
-<script src="<?php echo htmlspecialchars(Module::getModuleURL('chartjs/Chart.bundle.min.js'));?>"></script>
+<script src="<?php echo htmlspecialchars(Module::getModuleURL('chartjs/Chart.bundle.min.js')); ?>"></script>
 
-<script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/listOfSps.js'));?>"></script>
+<script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/listOfSps.js')); ?>"></script>

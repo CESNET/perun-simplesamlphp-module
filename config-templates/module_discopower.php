@@ -1,10 +1,12 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Configuration for the DiscoPower module.
  */
 
 $config = [
-
     // Which tab should be set as default. 0 is the first tab
     'defaulttab' => 0,
 
@@ -41,5 +43,4 @@ $config = [
      * Example: 'cdc.lifetime' => 180*24*60*60, // 180 days
      */
     'cdc.lifetime' => null,
-
 ];

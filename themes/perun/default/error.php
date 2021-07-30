@@ -1,14 +1,14 @@
-<?php
+<?php declare(strict_types=1);
 
 use SimpleSAML\Module;
 
 $this->data['header'] = '<i class="glyphicon glyphicon-exclamation-sign text-danger"></i> ' .
     $this->t($this->data['dictTitle']);
 
-$this->data['head'] = <<<EOF
+$this->data['head'] = <<<CODE_SAMPLE
 <meta name="robots" content="noindex, nofollow" />
 <meta name="googlebot" content="noarchive, nofollow" />
-EOF;
+CODE_SAMPLE;
 
 $this->data['head'] .= '<script src="' . Module::getModuleUrl('perun/res/js/jquery.js') . '" ></script>';
 $this->data['head'] .= '<script src="' . Module::getModuleUrl('perun/res/bootstrap/js/bootstrap.min.js') .

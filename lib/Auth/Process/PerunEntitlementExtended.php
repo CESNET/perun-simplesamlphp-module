@@ -1,42 +1,58 @@
 <?php
 
+declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
-use SimpleSAML\Error\Exception;
-use SimpleSAML\Configuration;
 use SimpleSAML\Auth\ProcessingFilter;
-use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Configuration;
+use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\EntitlementUtils;
 
 /**
  * Class PerunEntitlementExtended
  *
- * This filter joins extended version of eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities
- * and facility capabilities
+ * This filter joins extended version of eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities and
+ * facility capabilities
  *
  * @author Dominik Baránek <baranek@ics.muni.cz>
  */
 class PerunEntitlementExtended extends ProcessingFilter
 {
-    const CONFIG_FILE_NAME = 'module_perun.php';
-    const OUTPUT_ATTR_NAME = 'outputAttrName';
-    const RELEASE_FORWARDED_ENTITLEMENT = 'releaseForwardedEntitlement';
-    const FORWARDED_EDU_PERSON_ENTITLEMENT = 'forwardedEduPersonEntitlement';
-    const ENTITLEMENTPREFIX_ATTR = 'entitlementPrefix';
-    const ENTITLEMENTAUTHORITY_ATTR = 'entitlementAuthority';
-    const GROUPNAMEAARC_ATTR = 'groupNameAARC';
-    const INTERFACE_PROPNAME = 'interface';
-    const ENTITY_ID = 'entityID';
+    public const CONFIG_FILE_NAME = 'module_perun.php';
+
+    public const OUTPUT_ATTR_NAME = 'outputAttrName';
+
+    public const RELEASE_FORWARDED_ENTITLEMENT = 'releaseForwardedEntitlement';
+
+    public const FORWARDED_EDU_PERSON_ENTITLEMENT = 'forwardedEduPersonEntitlement';
+
+    public const ENTITLEMENTPREFIX_ATTR = 'entitlementPrefix';
+
+    public const ENTITLEMENTAUTHORITY_ATTR = 'entitlementAuthority';
+
+    public const GROUPNAMEAARC_ATTR = 'groupNameAARC';
+
+    public const INTERFACE_PROPNAME = 'interface';
+
+    public const ENTITY_ID = 'entityID';
 
     private $outputAttrName;
+
     private $releaseForwardedEntitlement;
+
     private $forwardedEduPersonEntitlement;
+
     private $entitlementPrefix;
+
     private $entitlementAuthority;
+
     private $groupNameAARC;
+
     private $adapter;
+
     private $entityId;
 
     public function __construct($config, $reserved)
@@ -84,7 +100,7 @@ class PerunEntitlementExtended extends ProcessingFilter
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);
-        } elseif (!is_string($this->entityId)) {
+        } elseif (! is_string($this->entityId)) {
             throw new Exception(
                 'perun:PerunEntitlement: invalid configuration option entityID. ' .
                 'It must be a string or a callable.'

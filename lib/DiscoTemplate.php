@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
 use SimpleSAML\XHTML\Template;
 
 /**
- * This class extends basic SimpleSAML template class. It provides some utils functions used in templates
- * specific for Discovery services so template do not have to access directly $this->data field.
+ * This class extends basic SimpleSAML template class. It provides some utils functions used in templates specific for
+ * Discovery services so template do not have to access directly $this->data field.
  *
  * Here should NOT be defined any view specific methods.
  *
@@ -15,13 +17,15 @@ use SimpleSAML\XHTML\Template;
  */
 class DiscoTemplate extends Template
 {
+    public const UI_INFO = 'UIInfo';
 
-    const UI_INFO = 'UIInfo';
-    const DISPLAY_NAME = 'DisplayName';
-    const NAME = 'name';
+    public const DISPLAY_NAME = 'DisplayName';
+
+    public const NAME = 'name';
 
     /**
      * sspmod_perun_DiscoTemplate constructor.
+     *
      * @param Configuration $configuration of SimpleSAMLphp
      */
     public function __construct(Configuration $configuration)
@@ -37,7 +41,7 @@ class DiscoTemplate extends Template
      */
     public function getPreferredIdp(): array
     {
-        if (isset($this->data[Disco::PREFERRED_IDP]) && !empty($this->data[Disco::PREFERRED_IDP])) {
+        if (isset($this->data[Disco::PREFERRED_IDP]) && ! empty($this->data[Disco::PREFERRED_IDP])) {
             return $this->getAllIdps()[$this->data[Disco::PREFERRED_IDP]];
         }
         return [];
@@ -51,9 +55,8 @@ class DiscoTemplate extends Template
     {
         if (isset($this->data[Disco::IDP_LIST][$tag])) {
             return $this->data[Disco::IDP_LIST][$tag];
-        } else {
-            return [];
         }
+        return [];
     }
 
     /**
@@ -73,7 +76,6 @@ class DiscoTemplate extends Template
      * ]
      *
      * note: one idp can be placed in more tags
-     *
      */
     public function getTaggedIdps(): array
     {
@@ -98,8 +100,8 @@ class DiscoTemplate extends Template
      */
     public function isOriginalSpNonFilteringIdPs(): bool
     {
-        return (isset($this->data[Disco::ORIGINAL_SP][Disco::METADATA_DO_NOT_FILTER_IDPS]) &&
-            $this->data[Disco::ORIGINAL_SP][Disco::METADATA_DO_NOT_FILTER_IDPS]);
+        return isset($this->data[Disco::ORIGINAL_SP][Disco::METADATA_DO_NOT_FILTER_IDPS]) &&
+            $this->data[Disco::ORIGINAL_SP][Disco::METADATA_DO_NOT_FILTER_IDPS];
     }
 
     /**
@@ -108,12 +110,11 @@ class DiscoTemplate extends Template
      */
     public function isAddInstitutionApp(): bool
     {
-        return (isset($this->data[Disco::ORIGINAL_SP][Disco::METADATA_ADD_INSTITUTION_APP]) &&
-            $this->data[Disco::ORIGINAL_SP][Disco::METADATA_ADD_INSTITUTION_APP]);
+        return isset($this->data[Disco::ORIGINAL_SP][Disco::METADATA_ADD_INSTITUTION_APP]) &&
+            $this->data[Disco::ORIGINAL_SP][Disco::METADATA_ADD_INSTITUTION_APP];
     }
 
     /**
-     * @param string $idpEntityId
      * @return string url where user should be redirected when he choose idp
      */
     public function getContinueUrl(string $idpEntityId): string
@@ -139,25 +140,23 @@ class DiscoTemplate extends Template
     }
 
     /**
-     * @param array $metadata
      * @return string translated name of idp or sp based on its metadata information
      */
     public function getTranslatedEntityName(array $metadata): string
     {
-        if (isset($metadata[DiscoTemplate::UI_INFO][DiscoTemplate::DISPLAY_NAME])) {
-            $displayName = $metadata[DiscoTemplate::UI_INFO][DiscoTemplate::DISPLAY_NAME];
+        if (isset($metadata[self::UI_INFO][self::DISPLAY_NAME])) {
+            $displayName = $metadata[self::UI_INFO][self::DISPLAY_NAME];
             assert(is_array($displayName)); // Should always be an array of language code -> translation
-            if (!empty($displayName)) {
+            if (! empty($displayName)) {
                 return $this->getTranslation($displayName);
             }
         }
 
-        if (array_key_exists(DiscoTemplate::NAME, $metadata)) {
-            if (is_array($metadata[DiscoTemplate::NAME])) {
-                return $this->getTranslation($metadata[DiscoTemplate::NAME]);
-            } else {
-                return $metadata[DiscoTemplate::NAME];
+        if (array_key_exists(self::NAME, $metadata)) {
+            if (is_array($metadata[self::NAME])) {
+                return $this->getTranslation($metadata[self::NAME]);
             }
+            return $metadata[self::NAME];
         }
         return $metadata[Disco::ENTITY_ID];
     }

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
-use SimpleSAML\Utils\Config;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Utils\Config;
 
 /**
- * Implementation of IdpListsService using in simple csv files.
- * first column is timestamp, second entityid and third reason
+ * Implementation of IdpListsService using in simple csv files. first column is timestamp, second entityid and third
+ * reason
  *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
@@ -15,11 +17,9 @@ use SimpleSAML\Error\Exception;
 class IdpListsServiceCsv extends IdpListsService
 {
     private $whitelistFile;
+
     private $greylistFile;
 
-    /**
-     * sspmod_perun_IdpListsServiceCsv constructor.
-     */
     public function __construct()
     {
         $dir = Config::getConfigDir();
@@ -29,12 +29,12 @@ class IdpListsServiceCsv extends IdpListsService
 
     public function isWhitelisted($entityID)
     {
-        return in_array($this->getWhitelistEntityIds(), $entityID);
+        return in_array($this->getWhitelistEntityIds(), $entityID, true);
     }
 
     public function isGreylisted($entityID)
     {
-        return in_array($this->getGreylistEntityIds(), $entityID);
+        return in_array($this->getGreylistEntityIds(), $entityID, true);
     }
 
     public function whitelistIdp($entityID, $reason = null)
@@ -116,7 +116,7 @@ class IdpListsServiceCsv extends IdpListsService
 
         $resultList = [];
 
-        if (!file_exists($list)) {
+        if (! file_exists($list)) {
             return $resultList;
         }
 
@@ -124,10 +124,10 @@ class IdpListsServiceCsv extends IdpListsService
         if (flock($f, LOCK_SH)) {
             while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
                 if ($all) {
-                    if (!in_array($idp, $resultList)) {
+                    if (! in_array($idp, $resultList, true)) {
                         array_push($resultList, $idp);
                     }
-                } elseif (!in_array($idp['entityid'], $resultList)) {
+                } elseif (! in_array($idp['entityid'], $resultList, true)) {
                     array_push($resultList, $idp['entityid']);
                 }
             }
@@ -146,7 +146,7 @@ class IdpListsServiceCsv extends IdpListsService
 
     private function arrayToIdp($csv)
     {
-        if (!is_array($csv)) {
+        if (! is_array($csv)) {
             return false;
         }
 

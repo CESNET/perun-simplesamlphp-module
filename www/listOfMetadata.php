@@ -1,7 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 use SimpleSAML\Metadata\MetaDataStorageHandler;
-use \SimpleSAML\Module\perun\Disco;
+use SimpleSAML\Module\perun\Disco;
 
 $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 

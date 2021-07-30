@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use SimpleSAML\Module\perun\MetadataToPerun;
 
 $config = [
@@ -56,22 +58,24 @@ $config = [
     ],
 
     /**
-     * Transform attributes after retrieving from Perun (during export).
-     * Array of arrays with string class (of the transformer),
-     * array attributes (which are transformed)
-     * and array config (passed to the transformer).
-     * The transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
+     * Transform attributes after retrieving from Perun (during export). Array of arrays with string class (of the
+     * transformer), array attributes (which are transformed) and array config (passed to the transformer). The
+     * transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
      */
     'exportTransformers' => [
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
             'attributes' => ['AssertionConsumerService'],
-            'config' => ['defaultBinding' => 'HTTP-POST'],
+            'config' => [
+                'defaultBinding' => 'HTTP-POST',
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMapToArray',
             'attributes' => ['SingleLogoutService'],
-            'config' => ['defaultBinding' => 'HTTP-Redirect'],
+            'config' => [
+                'defaultBinding' => 'HTTP-Redirect',
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\LogicalNot',
@@ -81,13 +85,18 @@ $config = [
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\LogicalAnd',
             'attributes' => ['encryptionCert', 'assertion.encryption'],
-            'config' => ['output' => 'assertion.encryption'],
+            'config' => [
+                'output' => 'assertion.encryption',
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\KeyListsToArray',
             'attributes' => ['signingCert', 'encryptionCert'],
             'config' => [
-                'purposes' => ['signingCert' => 'signing', 'encryptionCert' => 'encryption'],
+                'purposes' => [
+                    'signingCert' => 'signing',
+                    'encryptionCert' => 'encryption',
+                ],
                 'outputKeys' => 'keys',
                 'outputCertData' => 'certData',
                 'keepSource' => false,
@@ -96,8 +105,8 @@ $config = [
     ],
 
     /**
-     * Attribute map used for extracting info during import from the entity descriptor XML.
-     * Map of internal name => Xpath selector string or Xpath selector in array if array should be extracted
+     * Attribute map used for extracting info during import from the entity descriptor XML. Map of internal name =>
+     * Xpath selector string or Xpath selector in array if array should be extracted
      */
     'xml2internal' => [
         'CoCo' => 'boolean(//*[local-name() = "EntityAttributes"]/*[@Name = "http://macedir.org/entity-category"]/'
@@ -120,18 +129,18 @@ $config = [
         'spOrganizationURL' => '//*[local-name() = "Organization"]/*[local-name() = "OrganizationURL"]',
         'nameIDFormat' => ['//*[local-name() = "NameIDFormat"]'],
         'signingCert' => ['//*[local-name() = "KeyDescriptor" and (not(@use) or @use="signing")]'
-            . '//*[local-name() = "X509Certificate"]'],
+            . '//*[local-name() = "X509Certificate"]', ],
         'encryptionCert' => ['//*[local-name() = "KeyDescriptor" and (not(@use) or @use="encryption")]'
-            . '//*[local-name() = "X509Certificate"]'],
+            . '//*[local-name() = "X509Certificate"]', ],
         'spAdminContact' => ['//*[local-name() = "ContactPerson" and (@contactType="technical"'
-            . ' or @contactType="administrative")]/*[local-name() = "EmailAddress"]'],
+            . ' or @contactType="administrative")]/*[local-name() = "EmailAddress"]', ],
         'spSupportContact' => ['//*[local-name() = "ContactPerson" and (@contactType="support")]'
-            . '/*[local-name() = "EmailAddress"]'],
+            . '/*[local-name() = "EmailAddress"]', ],
     ],
 
     /**
-     * Attribute map used for extracting info during import from the SSP array.
-     * Map of internal name => flatfile name (nesting by dots) or array of indexes for multiple sources
+     * Attribute map used for extracting info during import from the SSP array. Map of internal name => flatfile name
+     * (nesting by dots) or array of indexes for multiple sources
      */
     'flatfile2internal' => [
         MetadataToPerun::ENTITY_ID => 'entityid',
@@ -151,8 +160,8 @@ $config = [
     ],
 
     /**
-     * Attribute map used for storing extracted info in Perun during import.
-     * Map of name in Perun => internal name (from xml2internal and flatfile2internal).
+     * Attribute map used for storing extracted info in Perun during import. Map of name in Perun => internal name (from
+     * xml2internal and flatfile2internal).
      */
     'internal2perun' => [
         'urn:perun:facility:attribute-def:def:CoCo' => 'CoCo',
@@ -179,37 +188,49 @@ $config = [
     ],
 
     /**
-     * Transform attributes before storing in Perun (during import).
-     * Array of arrays with string class (of the transformer),
-     * array attributes (which are transformed)
-     * and array config (passed to the transformer).
-     * The transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
+     * Transform attributes before storing in Perun (during import). Array of arrays with string class (of the
+     * transformer), array attributes (which are transformed) and array config (passed to the transformer). The
+     * transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
      */
     'importTransformers' => [
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMap',
             'attributes' => ['assertionConsumerService'],
-            'config' => ['defaultBinding' => 'HTTP-POST'],
+            'config' => [
+                'defaultBinding' => 'HTTP-POST',
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EndpointMap',
             'attributes' => ['singleLogoutService'],
-            'config' => ['defaultBinding' => 'HTTP-Redirect'],
+            'config' => [
+                'defaultBinding' => 'HTTP-Redirect',
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\KeyLists',
             'attributes' => ['keys'],
-            'config' => ['purpose2internal' => ['signing' => 'signingCert', 'encryption' => 'encryptionCert']],
+            'config' => [
+                'purpose2internal' => [
+                    'signing' => 'signingCert',
+                    'encryption' => 'encryptionCert',
+
+                ],
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EmailList',
             'attributes' => ['spAdminContact'],
-            'config' => ['types' => ['administrative', 'technical']],
+            'config' => [
+                'types' => ['administrative', 'technical'],
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\EmailList',
             'attributes' => ['spSupportContact'],
-            'config' => ['types' => ['support']],
+            'config' => [
+                'types' => ['support'],
+            ],
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\ShibbolethAttributeFilter',
@@ -222,8 +243,7 @@ $config = [
                 'ignore.attributes' => [
                     'programme', 'field', 'national', 'degree', 'isTeacher', 'principal', 'encTest',
                 ],
-                'ignore.entityIDs' => [
-                ],
+                'ignore.entityIDs' => [],
                 'entityCategories' => [
                     'http://www.geant.net/uri/dataprotection-code-of-conduct/v1' => [
                         'cn',
@@ -252,15 +272,8 @@ $config = [
                         'tcsSchacHomeOrg',
                         'transientId',
                     ],
-                    'http://eduid.cz/uri/sp-group/clarin' => [
-                        'eduPersonTargetedID',
-                        'cn',
-                        'mail',
-                        'o',
-                    ],
-                    'http://eduid.cz/uri/group/mefanet' => [
-                        'mefanet',
-                    ],
+                    'http://eduid.cz/uri/sp-group/clarin' => ['eduPersonTargetedID', 'cn', 'mail', 'o'],
+                    'http://eduid.cz/uri/group/mefanet' => ['mefanet'],
                 ],
                 'file' => __DIR__ . '/attribute-filter.xml',
                 //'xml' => '...',
@@ -302,13 +315,8 @@ $config = [
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\FlatMap',
-            'attributes' => [
-                'serviceName',
-                'serviceDescription',
-                'organizationName',
-                'spInformationURL',
-                'spOrganizationURL',
-            ],
+            'attributes'
+=> ['serviceName', 'serviceDescription', 'organizationName', 'spInformationURL', 'spOrganizationURL'],
         ],
     ],
 ];

@@ -1,22 +1,24 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
-use SimpleSAML\Module\perun\model\User;
-use SimpleSAML\Module\perun\model\Group;
-use SimpleSAML\Module\perun\model\Vo;
-use SimpleSAML\Module\perun\model\Facility;
-use SimpleSAML\Module\perun\model\HasId;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\model\Facility;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\HasId;
+use SimpleSAML\Module\perun\model\User;
+use SimpleSAML\Module\perun\model\Vo;
 
 /**
- * Interface sspmod_perun_Adapter
- * specify interface to get information from Perun.
+ * Interface sspmod_perun_Adapter specify interface to get information from Perun.
  */
 abstract class Adapter
 {
-    const RPC = 'rpc';
-    const LDAP = 'ldap';
+    public const RPC = 'rpc';
+
+    public const LDAP = 'ldap';
 
     /**
      * @var RpcConnector | LdapConnector
@@ -39,11 +41,8 @@ abstract class Adapter
             return new AdapterRpc();
         } elseif ($interface === self::LDAP) {
             return new AdapterLdap();
-        } else {
-            throw new Exception(
-                'Unknown perun interface. Hint: try ' . self::RPC . ' or ' . self::LDAP
-            );
         }
+        throw new Exception('Unknown perun interface. Hint: try ' . self::RPC . ' or ' . self::LDAP);
     }
 
     /**
@@ -151,40 +150,40 @@ abstract class Adapter
 
     /**
      * @param Facility $facility
-     * @param $attrNames array string $attrNames
+     * @param array $attrNames string $attrNames
      * @return array of attribute name -> attribute
      */
     abstract public function getFacilityAttributes($facility, $attrNames);
 
     /**
      * @param Facility $facility
-     * @param $attributes array of internal attribute names
+     * @param array $attributes of internal attribute names
      * @return array of attribute name -> attribute value
      */
     abstract public function getFacilityAttributesValues($facility, $attributes);
 
     /**
-     * @param $extSourceName string name of ext source
-     * @param $extSourceLogin string login
+     * @param string $extSourceName name of ext source
+     * @param string $extSourceLogin login
      * @return array user ext source
      */
     abstract public function getUserExtSource($extSourceName, $extSourceLogin);
 
     /**
-     * @param $userExtSource array ext source
+     * @param array $userExtSource ext source
      */
     abstract public function updateUserExtSourceLastAccess($userExtSource);
 
     /**
-     * @param $userExtSourceId int userExtSourceId
-     * @param $attributes array attributes
+     * @param int $userExtSourceId userExtSourceId
+     * @param array $attributes attributes
      * @return array attributes
      */
     abstract public function getUserExtSourceAttributes($userExtSourceId, $attributes);
 
     /**
-     * @param $userExtSourceId int userExtSourceId
-     * @param $attributes array attributes
+     * @param int $userExtSourceId userExtSourceId
+     * @param array $attributes attributes
      */
     abstract public function setUserExtSourceAttributes($userExtSourceId, $attributes);
 
@@ -203,14 +202,14 @@ abstract class Adapter
     abstract public function isUserInVo($user, $voShortName);
 
     /**
-     * @param $entityId int entityId
-     * @param $userGroups array of groups where user belongs to
+     * @param int $entityId entityId
+     * @param array $userGroups of groups where user belongs to
      * @return array of resource capabilities
      */
     abstract public function getResourceCapabilities($entityId, $userGroups);
 
     /**
-     * @param $entityId int entityId
+     * @param int $entityId entityId
      * @return array of facility capabilities
      */
     abstract public function getFacilityCapabilities($entityId);
@@ -224,7 +223,7 @@ abstract class Adapter
         $removed = [];
         $ids = [];
         foreach ($entities as $entity) {
-            if (!in_array($entity->getId(), $ids)) {
+            if (! in_array($entity->getId(), $ids, true)) {
                 array_push($ids, $entity->getId());
                 array_push($removed, $entity);
             }

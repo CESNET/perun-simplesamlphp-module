@@ -1,5 +1,6 @@
 <?php
 
+declare(strict_types=1);
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 const STATUS_NAGIOS = 'status_nagios';

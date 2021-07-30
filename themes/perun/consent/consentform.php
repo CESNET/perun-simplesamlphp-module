@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 
 use SimpleSAML\Module;
 use SimpleSAML\Module\perun\Consent;
@@ -29,7 +29,7 @@ assert(is_array($this->data['attributes']));
 assert(is_array($this->data['hiddenAttributes']));
 assert($this->data['sppp'] === false || is_string($this->data['sppp']));
 
-if (!isset($this->data['label-col'])) {
+if (! isset($this->data['label-col'])) {
     $this->data['label-col'] = 5;
 }
 
@@ -67,10 +67,13 @@ $attributes = $this->data['attributes'];
 
 $this->data['header'] = $this->t(
     '{perun:consent:consent_attributes_header}',
-    ['SPNAME' => $dstName, 'IDPNAME' => $srcName]
+    [
+        'SPNAME' => $dstName,
+        'IDPNAME' => $srcName,
+    ]
 );
 
-if (!isset($this->data['head'])) {
+if (! isset($this->data['head'])) {
     $this->data['head'] = '';
 }
 $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
@@ -85,20 +88,15 @@ if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
         '{consent:consent:consent_purpose}',
         [
             'SPNAME' => $dstName,
-            'SPDESC' => $this->getTranslation(
-                Arrays::arrayize(
-                    $this->data['dstMetadata']['descr_purpose'],
-                    'en'
-                )
-            ),
+            'SPDESC' => $this->getTranslation(Arrays::arrayize($this->data['dstMetadata']['descr_purpose'], 'en')),
         ]
     );
 }
 
 if ($this->data['sppp'] !== false) {
-    echo "<p>" . htmlspecialchars($this->t('{perun:consent:consent_privacypolicy}')) . " ";
-    echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . "</a>";
-    echo "</p>";
+    echo '<p>' . htmlspecialchars($this->t('{perun:consent:consent_privacypolicy}')) . ' ';
+    echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . '</a>';
+    echo '</p>';
 }
 
 echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-col']);
@@ -143,8 +141,8 @@ echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-
 
                 <?php
                 foreach ($this->data['noData'] as $name => $value) {
-                    echo('<input type="hidden" name="' . htmlspecialchars($name) .
-                        '" value="' . htmlspecialchars($value) . '" />');
+                    echo '<input type="hidden" name="' . htmlspecialchars($name) .
+                        '" value="' . htmlspecialchars($value) . '" />';
                 }
                 ?>
                 <button type="submit" class="btn btn-lg btn-default btn-block  btn-no" name="no" id="nobutton">

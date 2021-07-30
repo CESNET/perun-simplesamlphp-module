@@ -1,11 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use phpseclib3\Crypt\RSA;
 use phpseclib3\Net\SSH2;
 use SimpleSAML\Error\Exception;
-
 
 /**
  * Class sspmod_perun_NagiosStatusConnector
@@ -15,26 +16,30 @@ use SimpleSAML\Error\Exception;
 class NagiosStatusConnector extends StatusConnector
 {
     protected const STATUS_NAGIOS = 'status_nagios';
+
     protected const HOST = 'host';
+
     protected const KEY_PATH = 'key_path';
+
     protected const LOGIN = 'login';
+
     protected const COMMAND = 'command';
 
     private $host;
+
     private $keyPath;
+
     private $login;
+
     private $command;
 
-    /**
-     * NagiosStatusConnector constructor.
-     */
     public function __construct()
     {
         parent::__construct();
 
         $config = $this->configuration->getConfigItem(self::STATUS_NAGIOS, null);
 
-        if (is_null($config)) {
+        if ($config === null) {
             throw new Exception('Property  \'' . self::STATUS_NAGIOS . '\' is missing or invalid!');
         }
 
@@ -58,14 +63,14 @@ class NagiosStatusConnector extends StatusConnector
     {
         $result = [];
 
-        if (!($key = file_get_contents($this->keyPath))) {
+        if (! ($key = file_get_contents($this->keyPath))) {
             throw new Exception('Cannot load ket from path:  \'' . $this->keyPath . '\' !');
         }
 
         $key = RSA::load($key);
         $ssh = new SSH2($this->host);
 
-        if (!$ssh->login($this->login, $key)) {
+        if (! $ssh->login($this->login, $key)) {
             throw new Exception('Error during ssh connection to \'' . $this->login . '@' . $this->host . '\' !');
         }
 
@@ -74,7 +79,7 @@ class NagiosStatusConnector extends StatusConnector
         array_pop($lines);
 
         foreach ($lines as $line) {
-            $lineParts = explode(";", $line);
+            $lineParts = explode(';', $line);
             $result[$lineParts[0]][$lineParts[1]] = $lineParts[2];
         }
 

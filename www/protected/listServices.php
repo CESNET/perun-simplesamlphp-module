@@ -1,16 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 use SimpleSAML\Metadata\MetaDataStorageHandler;
 
 /**
- * List all services from the saml20-sp-remote metadata which have enabled consent.
- * Internal services do not have consent enabled.
+ * List all services from the saml20-sp-remote metadata which have enabled consent. Internal services do not have
+ * consent enabled.
  *
- * Returns list of service in format:
- * Name|Description|Organization name|Privacy policy URL|Code of conduct|Information URL\n
+ * Returns list of service in format: Name|Description|Organization name|Privacy policy URL|Code of conduct|Information
+ * URL\n
  *
- * Author: Michal Prochazka <michalp@ics.muni.cz>
- * Author: Ondrej Velisek <ondrejvelisek@gmail.com>
+ * Author: Michal Prochazka <michalp@ics.muni.cz> Author: Ondrej Velisek <ondrejvelisek@gmail.com>
  *
  * TODO: Use standardized format (JSON)
  */

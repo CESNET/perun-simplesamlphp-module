@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
 /**
@@ -7,18 +9,25 @@ namespace SimpleSAML\Module\perun\model;
  */
 class Member implements HasId
 {
-    const VALID = 'VALID';
-    const INVALID = 'INVALID';
-    const EXPIRED = 'EXPIRED';
-    const SUSPENDED = 'SUSPENDED';
-    const DISABLED = 'DISABLED';
+    public const VALID = 'VALID';
+
+    public const INVALID = 'INVALID';
+
+    public const EXPIRED = 'EXPIRED';
+
+    public const SUSPENDED = 'SUSPENDED';
+
+    public const DISABLED = 'DISABLED';
 
     private $id;
+
     private $voId;
+
     private $status;
 
     /**
      * Member constructor.
+     *
      * @param $id
      * @param $voId
      * @param $status

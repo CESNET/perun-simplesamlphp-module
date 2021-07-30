@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types=1);
+
 /**
  * Template of page, which showing status of used components
  *
@@ -10,7 +13,7 @@ use SimpleSAML\Module\perun\StatusConnector;
 $config = SimpleSAML_Configuration::getInstance();
 $instanceName = $config->getString('instance_name', '');
 
-$this->data['header'] = $instanceName . ' ' .  $this->t('{perun:status:aai}') . ' ' . $this->t('{perun:status:header}');
+$this->data['header'] = $instanceName . ' ' . $this->t('{perun:status:aai}') . ' ' . $this->t('{perun:status:header}');
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
                       SimpleSAML\Module::getModuleUrl('perun/res/css/status.css') . '" />';
 
@@ -18,14 +21,14 @@ $services = $this->data['services'];
 
 $this->includeAtTemplateBase('includes/header.php');
 
-echo '<p>' . $this->t('{perun:status:text}') . ' ' .  $instanceName . ' ' .  $this->t('{perun:status:aai}') . '.</p>';
+echo '<p>' . $this->t('{perun:status:text}') . ' ' . $instanceName . ' ' . $this->t('{perun:status:aai}') . '.</p>';
 
 echo '<div class="services">';
 
 foreach ($services as $service) {
     echo '<div class="row service">';
     echo '<h3>' . $service['name'] . StatusConnector::getBadgeByStatus($service['status']) . ' </h3>';
-    if (isset($service['description']) && !empty($service['description'])) {
+    if (isset($service['description']) && ! empty($service['description'])) {
         echo '<p><span class="glyphicon glyphicon-info-sign"></span> ' . $service['description'] . '</p>';
     }
     echo '</div>';

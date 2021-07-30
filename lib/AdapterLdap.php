@@ -1,50 +1,68 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;
-use SimpleSAML\Module\perun\model\User;
-use SimpleSAML\Module\perun\model\Group;
-use SimpleSAML\Module\perun\model\Vo;
-use SimpleSAML\Module\perun\model\Member;
-use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module\perun;
+use SimpleSAML\Module\perun\model\Facility;
+use SimpleSAML\Module\perun\model\Group;
+use SimpleSAML\Module\perun\model\Member;
+use SimpleSAML\Module\perun\model\User;
+use SimpleSAML\Module\perun\model\Vo;
 
 /**
  * Class AdapterLdap
  *
- * Configuration file should be placed in default config folder of SimpleSAMLphp.
- * Example of file is in config-template folder.
+ * Configuration file should be placed in default config folder of SimpleSAMLphp. Example of file is in config-template
+ * folder.
  *
  * Perun adapter which uses Perun LDAP interface
+ *
  * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  * @author Michal Prochazka <michalp@ics.muni.cz>
  * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class AdapterLdap extends Adapter
 {
-    const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
-    const LDAP_HOSTNAME = 'ldap.hostname';
-    const LDAP_USER = 'ldap.username';
-    const LDAP_PASSWORD = 'ldap.password';
-    const LDAP_BASE = 'ldap.base';
-    const LDAP_TLS = 'ldap.enable_tls';
-    const PERUN_FACILITY_ID = 'perunFacilityId';
-    const CN = 'cn';
-    const DESCRIPTION = 'description';
-    const CAPABILITIES = 'capabilities';
-    const ASSIGNED_GROUP_ID = 'assignedGroupId';
-    const TYPE_BOOL = 'bool';
-    const TYPE_MAP = 'map';
-    const INTERNAL_ATTR_NAME = 'internalAttrName';
-    const TYPE = 'type';
+    public const DEFAULT_CONFIG_FILE_NAME = 'module_perun.php';
 
-    private $ldapBase;
-    private $fallbackAdapter;
+    public const LDAP_HOSTNAME = 'ldap.hostname';
+
+    public const LDAP_USER = 'ldap.username';
+
+    public const LDAP_PASSWORD = 'ldap.password';
+
+    public const LDAP_BASE = 'ldap.base';
+
+    public const LDAP_TLS = 'ldap.enable_tls';
+
+    public const PERUN_FACILITY_ID = 'perunFacilityId';
+
+    public const CN = 'cn';
+
+    public const DESCRIPTION = 'description';
+
+    public const CAPABILITIES = 'capabilities';
+
+    public const ASSIGNED_GROUP_ID = 'assignedGroupId';
+
+    public const TYPE_BOOL = 'bool';
+
+    public const TYPE_MAP = 'map';
+
+    public const INTERNAL_ATTR_NAME = 'internalAttrName';
+
+    public const TYPE = 'type';
 
     protected $connector;
+
+    private $ldapBase;
+
+    private $fallbackAdapter;
 
     public function __construct($configFileName = null)
     {
@@ -274,9 +292,7 @@ class AdapterLdap extends Adapter
         );
 
         if (empty($ldapResult)) {
-            Logger::warning(
-                'perun:AdapterLdap: No facility with entityID \'' . $spEntityId . '\' found.'
-            );
+            Logger::warning('perun:AdapterLdap: No facility with entityID \'' . $spEntityId . '\' found.');
             return null;
         }
 
@@ -393,9 +409,7 @@ class AdapterLdap extends Adapter
         Logger::debug('Resources - ' . json_encode($resources));
 
         if ($resources === null) {
-            throw new Exception(
-                'Service with spEntityId: ' . $spEntityId . ' hasn\'t assigned any resource.'
-            );
+            throw new Exception('Service with spEntityId: ' . $spEntityId . ' hasn\'t assigned any resource.');
         }
         $resourcesString = '(|';
         foreach ($resources as $resource) {
@@ -486,13 +500,13 @@ class AdapterLdap extends Adapter
         $resourceCapabilities = [];
         foreach ($resources as $resource) {
             if (
-                !array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
-                !array_key_exists(self::CAPABILITIES, $resource)
+                ! array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
+                ! array_key_exists(self::CAPABILITIES, $resource)
             ) {
                 continue;
             }
             foreach ($resource[self::ASSIGNED_GROUP_ID] as $groupId) {
-                if (in_array($groupId, $userGroupsIds)) {
+                if (in_array($groupId, $userGroupsIds, true)) {
                     foreach ($resource[self::CAPABILITIES] as $resourceCapability) {
                         array_push($resourceCapabilities, $resourceCapability);
                     }
@@ -521,16 +535,18 @@ class AdapterLdap extends Adapter
 
     private function setAttrValue($attrsNameTypeMap, $attrsFromLdap, $attr)
     {
-        if (!array_key_exists($attr, $attrsFromLdap) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
+        if (! array_key_exists($attr, $attrsFromLdap) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
             return false;
-        } elseif (!array_key_exists($attr, $attrsFromLdap) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
+        } elseif (! array_key_exists(
+            $attr,
+            $attrsFromLdap
+        ) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
             return [];
         } elseif (array_key_exists($attr, $attrsFromLdap) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
             return $attrsFromLdap[$attr];
         } elseif (array_key_exists($attr, $attrsFromLdap)) {
             return $attrsFromLdap[$attr][0];
-        } else {
-            return null;
         }
+        return null;
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -18,7 +20,7 @@ class LogicalNot extends SingularAttributeTransformer
      */
     public function singleTransform($value)
     {
-        return !$value;
+        return ! $value;
     }
 
     /**

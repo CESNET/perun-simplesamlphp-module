@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * @author Pavel Brousek <brousek@ics.muni.cz>
  */
@@ -13,7 +15,7 @@ use SimpleSAML\Module\perun\AttributeTransformer;
  */
 class ShibbolethAttributeFilter extends AttributeTransformer
 {
-    const DENIED_ATTRIBUTE_PREFIX = '-';
+    public const DENIED_ATTRIBUTE_PREFIX = '-';
 
     private $ignoreAttributes;
 
@@ -75,11 +77,13 @@ class ShibbolethAttributeFilter extends AttributeTransformer
 
         $releasedAttributes = $this->getReleasedAttributes($entityId, $entityCategories);
         if ($releasedAttributes === null) {
-            return [$this->entityIdAttribute => null];
+            return [
+                $this->entityIdAttribute => null,
+            ];
         }
 
         $missingRequiredAttributes = array_diff($attributes[$this->attributesAttribute] ?? [], $releasedAttributes);
-        if (!empty($missingRequiredAttributes)) {
+        if (! empty($missingRequiredAttributes)) {
             $message = 'Missing required attributes ' . implode(',', $missingRequiredAttributes);
             if ($this->throwOnMismatch) {
                 self::error($message);
@@ -88,8 +92,10 @@ class ShibbolethAttributeFilter extends AttributeTransformer
             }
         }
 
-        $result = [$this->attributesAttribute => $releasedAttributes];
-        if ($this->tagsAttribute !== null && !empty($this->tags[$entityId])) {
+        $result = [
+            $this->attributesAttribute => $releasedAttributes,
+        ];
+        if ($this->tagsAttribute !== null && ! empty($this->tags[$entityId])) {
             $result[$this->tagsAttribute] = $this->tags[$entityId];
         }
         return $result;
@@ -198,7 +204,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $arr = array_unique(array_merge($attributes, $this->getDefaultAttributes($entityCategories)));
         $arr = array_filter($arr, function ($attr) use ($attributes) {
             return substr($attr, 0, strlen(self::DENIED_ATTRIBUTE_PREFIX)) !== self::DENIED_ATTRIBUTE_PREFIX
-                && !in_array(self::DENIED_ATTRIBUTE_PREFIX . $attr, $attributes, true);
+                && ! in_array(self::DENIED_ATTRIBUTE_PREFIX . $attr, $attributes, true);
         });
         sort($arr);
         return $arr;
@@ -239,7 +245,8 @@ class ShibbolethAttributeFilter extends AttributeTransformer
             return;
         }
         foreach ($rule->PermitValueRule as $valueRule) {
-            $type = $valueRule->attributes('xsi', true)->type;
+            $type = $valueRule->attributes('xsi', true)
+                ->type;
             switch ($type) {
                 case 'basic:ANY':
                     $array[] = $attrName;
@@ -252,7 +259,8 @@ class ShibbolethAttributeFilter extends AttributeTransformer
             }
         }
         foreach ($rule->DenyValueRule as $valueRule) {
-            $type = $valueRule->attributes('xsi', true)->type;
+            $type = $valueRule->attributes('xsi', true)
+                ->type;
             switch ($type) {
                 case 'basic:ANY':
                     $array[] = self::DENIED_ATTRIBUTE_PREFIX . $attrName;

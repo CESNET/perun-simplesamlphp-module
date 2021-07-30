@@ -1,42 +1,59 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
-use SimpleSAML\Error\Exception;
-use SimpleSAML\Configuration;
 use SimpleSAML\Auth\ProcessingFilter;
-use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Configuration;
+use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
+use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\EntitlementUtils;
 
 /**
  * Class PerunEntitlement
  *
- * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities
- * and facility capabilities
+ * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities and facility
+ * capabilities
  *
  * @author Dominik Baránek <baranek@ics.muni.cz>
  * @author Pavel Vyskočil <Pavel.Vyskocil@cesnet.cz>
  */
 class PerunEntitlement extends ProcessingFilter
 {
-    const CONFIG_FILE_NAME = 'module_perun.php';
-    const EDU_PERSON_ENTITLEMENT = 'eduPersonEntitlement';
-    const RELEASE_FORWARDED_ENTITLEMENT = 'releaseForwardedEntitlement';
-    const FORWARDED_EDU_PERSON_ENTITLEMENT = 'forwardedEduPersonEntitlement';
-    const ENTITLEMENTPREFIX_ATTR = 'entitlementPrefix';
-    const ENTITLEMENTAUTHORITY_ATTR = 'entitlementAuthority';
-    const GROUPNAMEAARC_ATTR = 'groupNameAARC';
-    const INTERFACE_PROPNAME = 'interface';
-    const ENTITY_ID = 'entityID';
+    public const CONFIG_FILE_NAME = 'module_perun.php';
+
+    public const EDU_PERSON_ENTITLEMENT = 'eduPersonEntitlement';
+
+    public const RELEASE_FORWARDED_ENTITLEMENT = 'releaseForwardedEntitlement';
+
+    public const FORWARDED_EDU_PERSON_ENTITLEMENT = 'forwardedEduPersonEntitlement';
+
+    public const ENTITLEMENTPREFIX_ATTR = 'entitlementPrefix';
+
+    public const ENTITLEMENTAUTHORITY_ATTR = 'entitlementAuthority';
+
+    public const GROUPNAMEAARC_ATTR = 'groupNameAARC';
+
+    public const INTERFACE_PROPNAME = 'interface';
+
+    public const ENTITY_ID = 'entityID';
 
     private $eduPersonEntitlement;
+
     private $releaseForwardedEntitlement;
+
     private $forwardedEduPersonEntitlement;
+
     private $entitlementPrefix;
+
     private $entitlementAuthority;
+
     private $groupNameAARC;
+
     private $adapter;
+
     private $entityId;
 
     public function __construct($config, $reserved)
@@ -84,7 +101,7 @@ class PerunEntitlement extends ProcessingFilter
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);
-        } elseif (!is_string($this->entityId)) {
+        } elseif (! is_string($this->entityId)) {
             throw new Exception(
                 'perun:PerunEntitlement: invalid configuration option entityID. ' .
                 'It must be a string or a callable.'
@@ -122,6 +139,35 @@ class PerunEntitlement extends ProcessingFilter
         ));
     }
 
+    /**
+     * This method translates given name of group based on associative array 'groupMapping' in SP metadata.
+     *
+     * @param $request
+     * @param string $groupName
+     * @return string translated group name
+     */
+    protected function mapGroupName($request, $groupName)
+    {
+        if (
+            isset($request['SPMetadata']['groupMapping']) &&
+            isset($request['SPMetadata']['groupMapping'][$groupName])) {
+            Logger::debug(
+                'Mapping ' . $groupName . ' to ' . $request['SPMetadata']['groupMapping'][$groupName] .
+                ' for SP ' . $this->entityId
+            );
+            return $request['SPMetadata']['groupMapping'][$groupName];
+        } elseif (isset($request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR])) {
+            Logger::debug(
+                'EntitlementPrefix overridden by a SP ' . $this->entityId .
+                ' to ' . $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR]
+            );
+            return $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR] . $groupName;
+        }
+        # No mapping defined, so just put groupNamePrefix in front of the group
+        Logger::debug('No mapping found for group ' . $groupName . ' for SP ' . $this->entityId);
+        return $this->entitlementPrefix . 'group:' . $groupName;
+    }
+
     private function getEduPersonEntitlement(&$request)
     {
         $eduPersonEntitlement = [];
@@ -157,36 +203,5 @@ class PerunEntitlement extends ProcessingFilter
         return $this->entitlementPrefix . 'group:' .
             implode(':', EntitlementUtils::encodeEntitlement($groupName)) .
             '#' . $this->entitlementAuthority;
-    }
-
-    /**
-     * This method translates given name of group based on associative array 'groupMapping' in SP metadata.
-     * @param $request
-     * @param string $groupName
-     * @return string translated group name
-     */
-    protected function mapGroupName($request, $groupName)
-    {
-        if (
-            isset($request['SPMetadata']['groupMapping']) &&
-            isset($request['SPMetadata']['groupMapping'][$groupName])) {
-            Logger::debug(
-                'Mapping ' . $groupName . ' to ' . $request['SPMetadata']['groupMapping'][$groupName] .
-                ' for SP ' . $this->entityId
-            );
-            return $request['SPMetadata']['groupMapping'][$groupName];
-        } elseif (isset($request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR])) {
-            Logger::debug(
-                'EntitlementPrefix overridden by a SP ' . $this->entityId .
-                ' to ' . $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR]
-            );
-            return $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR] . $groupName;
-        } else {
-            # No mapping defined, so just put groupNamePrefix in front of the group
-            Logger::debug(
-                'No mapping found for group ' . $groupName . ' for SP ' . $this->entityId
-            );
-            return $this->entitlementPrefix . 'group:' . $groupName;
-        }
     }
 }

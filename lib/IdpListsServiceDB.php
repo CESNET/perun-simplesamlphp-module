@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Module\perun\databaseCommand\IdpListsServiceDbCmd;
@@ -40,17 +42,17 @@ class IdpListsServiceDB extends IdpListsService
 
     public function isWhitelisted($entityID)
     {
-        return in_array($entityID, $this->getWhitelistEntityIds());
+        return in_array($entityID, $this->getWhitelistEntityIds(), true);
     }
 
     public function isGreylisted($entityID)
     {
-        return in_array($entityID, $this->getGreylistEntityIds());
+        return in_array($entityID, $this->getGreylistEntityIds(), true);
     }
 
     public function whitelistIdp($entityID, $reason = null)
     {
-        if (!$this->isWhitelisted($entityID)) {
+        if (! $this->isWhitelisted($entityID)) {
             $this->idpListServiceDbCmd->insertToList($this->idpListServiceDbCmd::WHITELIST, $entityID, $reason);
             if ($this->isGreylisted($entityID)) {
                 $this->idpListServiceDbCmd->deleteFromList($this->idpListServiceDbCmd::GREYLIST, $entityID);

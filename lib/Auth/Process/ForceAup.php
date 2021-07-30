@@ -1,27 +1,28 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
+use SimpleSAML\Auth\State;
 use SimpleSAML\Error\Exception;
+use SimpleSAML\Logger;
+use SimpleSAML\Module;
 use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\model;
-use SimpleSAML\Logger;
-use SimpleSAML\Auth\State;
-use SimpleSAML\Module;
 use SimpleSAML\Utils\HTTP;
-use SimpleSAML\Configuration;
 
 /**
  * Class ForceAup
  *
- * This filter check if user has attribute 'perunForceAttr' in perun set if so, it forces user to accept
- * usage policy specify in 'aupUrl' and unset 'perunForceAttr' and move the value to 'perunAupAttr'.
- * So attribute defined in 'perunAupAttr' is array which stores values defined in 'perunForceAttr' which means user
- * accept these versions of AUP.
+ * This filter check if user has attribute 'perunForceAttr' in perun set if so, it forces user to accept usage policy
+ * specify in 'aupUrl' and unset 'perunForceAttr' and move the value to 'perunAupAttr'. So attribute defined in
+ * 'perunAupAttr' is array which stores values defined in 'perunForceAttr' which means user accept these versions of
+ * AUP.
  *
- * If you want to force user to accept usage policy, set 'perunForceAttr' to string specifying version of new policy
- * and let user authenticate.
+ * If you want to force user to accept usage policy, set 'perunForceAttr' to string specifying version of new policy and
+ * let user authenticate.
  *
  * It uses Perun RPC. Configure it properly in config/module_perun.php.
  *
@@ -29,20 +30,30 @@ use SimpleSAML\Configuration;
  */
 class ForceAup extends ProcessingFilter
 {
+    public const UID_ATTR = 'uidAttr';
 
-    const UID_ATTR = 'uidAttr';
-    const INTERFACE_PROPNAME = 'interface';
-    const PERUN_AUPS_ATTR = 'perunAupsAttr';
-    const PERUN_USER_AUP_ATTR = 'perunUserAupAttr';
-    const PERUN_VO_AUP_ATTR = 'perunVoAupAttr';
-    const PERUN_FACILITY_REQ_AUPS_ATTR = 'perunFacilityReqAupsAttr';
-    const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'perunFacilityVoShortNamesAttr';
+    public const INTERFACE_PROPNAME = 'interface';
+
+    public const PERUN_AUPS_ATTR = 'perunAupsAttr';
+
+    public const PERUN_USER_AUP_ATTR = 'perunUserAupAttr';
+
+    public const PERUN_VO_AUP_ATTR = 'perunVoAupAttr';
+
+    public const PERUN_FACILITY_REQ_AUPS_ATTR = 'perunFacilityReqAupsAttr';
+
+    public const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'perunFacilityVoShortNamesAttr';
 
     private $uidAttr;
+
     private $perunAupsAttr;
+
     private $perunUserAupAttr;
+
     private $perunVoAupAttr;
+
     private $perunFacilityReqAupsAttr;
+
     private $perunFacilityVoShortNames;
 
     /**
@@ -54,39 +65,39 @@ class ForceAup extends ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        if (!isset($config[self::UID_ATTR])) {
+        if (! isset($config[self::UID_ATTR])) {
             throw new Exception(
                 'perun:ForceAup: missing mandatory configuration option \'' . self::UID_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_AUPS_ATTR])) {
+        if (! isset($config[self::PERUN_AUPS_ATTR])) {
             throw new Exception(
                 'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_AUPS_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_USER_AUP_ATTR])) {
+        if (! isset($config[self::PERUN_USER_AUP_ATTR])) {
             throw new Exception(
                 'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_USER_AUP_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_VO_AUP_ATTR])) {
+        if (! isset($config[self::PERUN_VO_AUP_ATTR])) {
             throw new Exception(
                 'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::INTERFACE_PROPNAME])) {
+        if (! isset($config[self::INTERFACE_PROPNAME])) {
             $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
         }
 
-        $this->uidAttr = (string)$config[self::UID_ATTR];
-        $this->perunAupsAttr = (string)$config[self::PERUN_AUPS_ATTR];
-        $this->perunUserAupAttr = (string)$config[self::PERUN_USER_AUP_ATTR];
-        $this->perunVoAupAttr = (string)$config[self::PERUN_VO_AUP_ATTR];
-        $interface = (string)$config[self::INTERFACE_PROPNAME];
+        $this->uidAttr = (string) $config[self::UID_ATTR];
+        $this->perunAupsAttr = (string) $config[self::PERUN_AUPS_ATTR];
+        $this->perunUserAupAttr = (string) $config[self::PERUN_USER_AUP_ATTR];
+        $this->perunVoAupAttr = (string) $config[self::PERUN_VO_AUP_ATTR];
+        $interface = (string) $config[self::INTERFACE_PROPNAME];
         $this->adapter = Adapter::getInstance($interface);
 
-        $this->perunFacilityReqAupsAttr = (string)$config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
-        $this->perunFacilityVoShortNames = (string)$config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
+        $this->perunFacilityReqAupsAttr = (string) $config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
+        $this->perunFacilityVoShortNames = (string) $config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
     }
 
     /**
@@ -97,7 +108,9 @@ class ForceAup extends ProcessingFilter
         assert(is_array($request));
 
         if (isset($request['perun']['user'])) {
-            /** allow IDE hint whisperer
+            /**
+             * allow IDE hint whisperer
+             *
              * @var model\User $user
              */
             $user = $request['perun']['user'];
@@ -166,7 +179,7 @@ class ForceAup extends ProcessingFilter
 
             $newAups = [];
 
-            if (!empty($perunAups)) {
+            if (! empty($perunAups)) {
                 foreach ($requiredAups as $requiredAup) {
                     $aups = json_decode($perunAups[$requiredAup]);
                     $latest_aup = $this->getLatestAup($aups);
@@ -183,7 +196,7 @@ class ForceAup extends ProcessingFilter
                 }
             }
 
-            if (!empty($voAups)) {
+            if (! empty($voAups)) {
                 foreach ($voAups as $voShortName => $voAup) {
                     $voAupsList = json_decode($voAup);
                     $latest_aup = $this->getLatestAup($voAupsList);
@@ -207,13 +220,15 @@ class ForceAup extends ProcessingFilter
 
         Logger::debug('perun:ForceAup - NewAups: ' . json_encode($newAups));
 
-        if (!empty($newAups)) {
+        if (! empty($newAups)) {
             $request[self::UID_ATTR] = $this->uidAttr;
             $request[self::PERUN_USER_AUP_ATTR] = $this->perunUserAupAttr;
             $request['newAups'] = $newAups;
             $id = State::saveState($request, 'perun:forceAup');
             $url = Module::getModuleURL('perun/force_aup_page.php');
-            HTTP::redirectTrustedURL($url, ['StateId' => $id]);
+            HTTP::redirectTrustedURL($url, [
+                'StateId' => $id,
+            ]);
         }
     }
 

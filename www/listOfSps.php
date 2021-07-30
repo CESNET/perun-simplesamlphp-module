@@ -1,10 +1,12 @@
 <?php
 
-use SimpleSAML\Module\perun\AdapterRpc;
+declare(strict_types=1);
+
 use SimpleSAML\Configuration;
+use SimpleSAML\Error\Exception;
+use SimpleSAML\Module\perun\AdapterRpc;
 use SimpleSAML\Module\perun\AttributeUtils;
 use SimpleSAML\XHTML\Template;
-use SimpleSAML\Error\Exception;
 
 const CONFIG_FILE_NAME = 'module_perun.php';
 const PROXY_IDENTIFIER = 'listOfSps.proxyIdentifier';
@@ -25,10 +27,7 @@ $conf = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $proxyIdentifier = $conf->getString(PROXY_IDENTIFIER);
 if (empty($proxyIdentifier)) {
-    throw new Exception(
-        'perun:listOfSps: missing mandatory config option \'' . PROXY_IDENTIFIER
-        . '\'.'
-    );
+    throw new Exception('perun:listOfSps: missing mandatory config option \'' . PROXY_IDENTIFIER . '\'.');
 }
 
 $perunProxyIdentifierAttr = AttributeUtils::getAttrName(
@@ -44,10 +43,7 @@ if (empty($perunProxyIdentifierAttr)) {
 
 $attributesDefinitions = $conf->getArray(ATTRIBUTES_DEFINITIONS);
 if (empty($attributesDefinitions)) {
-    throw new Exception(
-        'perun:listOfSps: missing mandatory config option \''
-        . ATTRIBUTES_DEFINITIONS . '\'.'
-    );
+    throw new Exception('perun:listOfSps: missing mandatory config option \'' . ATTRIBUTES_DEFINITIONS . '\'.');
 }
 $multilingualAttributes = $conf->getArray(MULTILINGUAL_ATTRIBUTES, []);
 $attributesDefinitions = array_merge(
@@ -94,16 +90,16 @@ $attrNames = [];
 
 array_push($attrNames, $perunSaml2EntityIdAttr);
 array_push($attrNames, $perunServiceNameAttr);
-if (!empty($perunOidcClientIdAttr)) {
+if (! empty($perunOidcClientIdAttr)) {
     array_push($attrNames, $perunOidcClientIdAttr);
 }
-if (!empty($perunLoginURLAttr)) {
+if (! empty($perunLoginURLAttr)) {
     array_push($attrNames, $perunLoginURLAttr);
 }
-if (!empty($perunTestSpAttr)) {
+if (! empty($perunTestSpAttr)) {
     array_push($attrNames, $perunTestSpAttr);
 }
-if (!empty($perunShowOnServiceListAttr)) {
+if (! empty($perunShowOnServiceListAttr)) {
     array_push($attrNames, $perunShowOnServiceListAttr);
 }
 foreach ($attributesDefinitions as $attributeDefinition) {
@@ -121,26 +117,26 @@ foreach ($facilities as $facility) {
     foreach ($attributes as $attribute) {
         $facilityAttributes[$attribute['name']] = $attribute;
     }
-    if (!empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
+    if (! empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
         $samlServices[$facility->getId()] = [
             'facility' => $facility,
             'name' => $facilityAttributes[$perunServiceNameAttr],
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
-            'facilityAttributes' => $facilityAttributes
+            'facilityAttributes' => $facilityAttributes,
         ];
         if ($facilityAttributes[$perunTestSpAttr]['value']) {
             $samlTestServicesCount++;
         }
     }
 
-    if ($showOIDCServices && !empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
+    if ($showOIDCServices && ! empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
         $oidcServices[$facility->getId()] = [
             'facility' => $facility,
             'name' => $facilityAttributes[$perunServiceNameAttr],
             'loginURL' => $facilityAttributes[$perunLoginURLAttr],
             'showOnServiceList' => $facilityAttributes[$perunShowOnServiceListAttr],
-            'facilityAttributes' => $facilityAttributes
+            'facilityAttributes' => $facilityAttributes,
         ];
         if ($facilityAttributes[$perunTestSpAttr]['value']) {
             $oidcTestServicesCount++;

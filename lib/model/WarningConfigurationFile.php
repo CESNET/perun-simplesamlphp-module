@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\model;
 
-use SimpleSAML\Logger;
 use SimpleSAML\Configuration;
+use SimpleSAML\Logger;
 
 /**
  * Implementation of WarningConfiguration using json file as the source of warning attributes
+ *
  * @package SimpleSAML\Module\perun\model
  * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
@@ -24,8 +27,8 @@ class WarningConfigurationFile extends WarningConfiguration
 
             set_error_handler(function () {
                 Logger::warning(
-                    "perun:WarningConfigurationFile: " .
-                    "missing or invalid wayf.warning.file parameter in " . self::CONFIG_FILE_NAME
+                    'perun:WarningConfigurationFile: ' .
+                    'missing or invalid wayf.warning.file parameter in ' . self::CONFIG_FILE_NAME
                 );
             });
 
@@ -34,7 +37,7 @@ class WarningConfigurationFile extends WarningConfiguration
             $data = json_decode($json_data, true);
         } catch (\Exception $ex) {
             Logger::warning(
-                "perun:WarningConfigurationFile: missing or invalid wayf.warning.file parameter in "
+                'perun:WarningConfigurationFile: missing or invalid wayf.warning.file parameter in '
                 . self::CONFIG_FILE_NAME
             );
         }
@@ -53,7 +56,7 @@ class WarningConfigurationFile extends WarningConfiguration
         if ($this->enabled) {
             if ($conf->hasValue(WarningConfiguration::TYPE)) {
                 $this->type = $conf->getString(WarningConfiguration::TYPE, self::WARNING_TYPE_INFO);
-                if (!in_array($this->type, $this->allowedTypes)) {
+                if (! in_array($this->type, $this->allowedTypes, true)) {
                     Logger::info("perun:WarningConfigurationFile: '" . self::TYPE
                         . "' has invalid value, value set to " . self::WARNING_TYPE_INFO);
                     $this->type = self::WARNING_TYPE_INFO;
@@ -61,7 +64,7 @@ class WarningConfigurationFile extends WarningConfiguration
             } else {
                 $this->enabled = false;
                 Logger::warning(
-                    "perun:WarningConfigurationFile: " .
+                    'perun:WarningConfigurationFile: ' .
                     "missing or invalid '" . self::TYPE . "' parameter in file with warning configuration"
                 );
                 return $this;
@@ -71,7 +74,7 @@ class WarningConfigurationFile extends WarningConfiguration
             if (empty($this->title)) {
                 $this->enabled = false;
                 Logger::warning(
-                    "perun:WarningConfigurationFile: " .
+                    'perun:WarningConfigurationFile: ' .
                     "missing or invalid '" . self::TITLE . "' parameter in file with warning configuration"
                 );
                 return $this;
@@ -81,7 +84,7 @@ class WarningConfigurationFile extends WarningConfiguration
             if (empty($this->text)) {
                 $this->enabled = false;
                 Logger::warning(
-                    "perun:WarningConfigurationFile: " .
+                    'perun:WarningConfigurationFile: ' .
                     "missing or invalid '" . self::TEXT . "' parameter in file with warning configuration"
                 );
                 return $this;

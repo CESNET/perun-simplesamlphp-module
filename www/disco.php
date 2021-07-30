@@ -1,7 +1,9 @@
 <?php
 
-use \SimpleSAML\Module\perun\Disco;
+declare(strict_types=1);
+
 use SimpleSAML\Error\Error;
+use SimpleSAML\Module\perun\Disco;
 
 try {
     $discoHandler = new Disco(['saml20-idp-remote'], 'poweridpdisco');

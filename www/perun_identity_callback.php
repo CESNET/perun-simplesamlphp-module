@@ -1,8 +1,10 @@
 <?php
 
-use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
-use SimpleSAML\Auth\State;
+declare(strict_types=1);
+
 use SimpleSAML\Auth\ProcessingChain;
+use SimpleSAML\Auth\State;
+use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
 
 /**
  * See sspmod_perun_Auth_Process_PerunIdentity for mor information.
