@@ -52,7 +52,12 @@ class AdapterLdap extends Adapter
 
     public const TYPE_BOOL = 'bool';
 
+    public const TYPE_ARRAY = 'array';
+
+    //TODO: remove in future major release and replace with self::TYPE_ARRAY
     public const TYPE_MAP = 'map';
+
+    public const TYPE_DICTIONARY = 'dictionary';
 
     public const INTERNAL_ATTR_NAME = 'internalAttrName';
 
@@ -272,7 +277,7 @@ class AdapterLdap extends Adapter
 
         foreach (array_keys($attrTypeMap) as $attrName) {
             $attributesValues[$attrTypeMap[$attrName][self::INTERNAL_ATTR_NAME]] =
-                $this->setAttrValue($attrTypeMap, $perunAttrs[0], $attrName);
+                $this->resolveAttrValue($attrTypeMap, $perunAttrs[0], $attrName);
         }
 
         return $attributesValues;
@@ -330,7 +335,7 @@ class AdapterLdap extends Adapter
 
         foreach (array_keys($attrTypeMap) as $attrName) {
             $attributesValues[$attrTypeMap[$attrName][self::INTERNAL_ATTR_NAME]] =
-                $this->setAttrValue($attrTypeMap, $perunAttrs[0], $attrName);
+                $this->resolveAttrValue($attrTypeMap, $perunAttrs[0], $attrName);
         }
 
         return $attributesValues;
@@ -365,7 +370,7 @@ class AdapterLdap extends Adapter
 
         foreach (array_keys($attrTypeMap) as $attrName) {
             $attributesValues[$attrTypeMap[$attrName][self::INTERNAL_ATTR_NAME]] =
-                $this->setAttrValue($attrTypeMap, $perunAttrs[0], $attrName);
+                $this->resolveAttrValue($attrTypeMap, $perunAttrs[0], $attrName);
         }
 
         return $attributesValues;
@@ -533,20 +538,34 @@ class AdapterLdap extends Adapter
         return $facilityCapabilities['capabilities'];
     }
 
-    private function setAttrValue($attrsNameTypeMap, $attrsFromLdap, $attr)
+    private function resolveAttrValue($attrsNameTypeMap, $attrsFromLdap, $attr)
     {
-        if (! array_key_exists($attr, $attrsFromLdap) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
-            return false;
-        } elseif (! array_key_exists(
-            $attr,
-            $attrsFromLdap
-        ) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
-            return [];
-        } elseif (array_key_exists($attr, $attrsFromLdap) && $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
-            return $attrsFromLdap[$attr];
-        } elseif (array_key_exists($attr, $attrsFromLdap)) {
+        if (! array_key_exists($attr, $attrsFromLdap)) {
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
+                return false;
+            } elseif ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP
+                || $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY
+            ) {
+                return [];
+            }
+        } else {
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
+                return $attrsFromLdap[$attr];
+            } elseif ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY) {
+                return $this->convertToMap($attrsFromLdap[$attr]);
+            }
             return $attrsFromLdap[$attr][0];
         }
         return null;
+    }
+
+    private function convertToMap($attrValue)
+    {
+        $result = [];
+        foreach ($attrValue as $sub) {
+            list($key, $value) = explode('=', $sub, 2);
+            $result[$key] = $value;
+        }
+        return $result;
     }
 }
