@@ -8,22 +8,15 @@ use Jose\Component\Checker\AlgorithmChecker;
 use Jose\Component\Checker\ClaimCheckerManager;
 use Jose\Component\Checker\HeaderCheckerManager;
 use Jose\Component\Core\AlgorithmManager;
-use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
-use Jose\Component\KeyManagement\JWKFactory;
-use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\JWSBuilder;
 use Jose\Component\Signature\JWSTokenSupport;
 use Jose\Component\Signature\JWSVerifier;
 use Jose\Component\Signature\Serializer\CompactSerializer;
-use Jose\Component\Signature\Serializer\CompactSerializer;
 use Jose\Component\Signature\Serializer\JWSSerializerManager;
-use SimpleSAML\Configuration;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
-use SimpleSAML\Logger;
-use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
 use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
 
 class ChallengeManager
