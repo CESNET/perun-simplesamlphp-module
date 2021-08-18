@@ -1,3 +1,10 @@
+## [6.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.2...v6.0.3) (2021-08-18)
+
+
+### Bug Fixes
+
+* fix duplicate lines in challenges ([360db1a](https://github.com/CESNET/perun-simplesamlphp-module/commit/360db1adf6b9bd1d00e0edc72ebaf2ee41961dc4))
+
 ## [6.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.1...v6.0.2) (2021-08-18)
 
 
