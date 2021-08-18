@@ -44,6 +44,8 @@ class ForceAup extends ProcessingFilter
 
     public const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'perunFacilityVoShortNamesAttr';
 
+    private const DATETIME_FORMAT = 'Y-m-d';
+
     private $uidAttr;
 
     private $perunAupsAttr;
@@ -52,7 +54,7 @@ class ForceAup extends ProcessingFilter
 
     private $perunVoAupAttr;
 
-    private $perunFacilityReqAupsAttr;
+    private $perunFacilityRequestedAupsAttr;
 
     private $perunFacilityVoShortNames;
 
@@ -70,9 +72,10 @@ class ForceAup extends ProcessingFilter
                 'perun:ForceAup: missing mandatory configuration option \'' . self::UID_ATTR . '\'.'
             );
         }
-        if (! isset($config[self::PERUN_AUPS_ATTR])) {
+        if (! isset($config[self::PERUN_AUPS_ATTR]) && ! isset($config[self::PERUN_VO_AUP_ATTR])) {
             throw new Exception(
-                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_AUPS_ATTR . '\'.'
+                'perun:ForceAup: missing at least one of mandatory configuration options \''
+                . self::PERUN_AUPS_ATTR . '\' or \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
         }
         if (! isset($config[self::PERUN_USER_AUP_ATTR])) {
@@ -80,23 +83,20 @@ class ForceAup extends ProcessingFilter
                 'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_USER_AUP_ATTR . '\'.'
             );
         }
-        if (! isset($config[self::PERUN_VO_AUP_ATTR])) {
-            throw new Exception(
-                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_VO_AUP_ATTR . '\'.'
-            );
-        }
         if (! isset($config[self::INTERFACE_PROPNAME])) {
             $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
         }
 
         $this->uidAttr = (string) $config[self::UID_ATTR];
-        $this->perunAupsAttr = (string) $config[self::PERUN_AUPS_ATTR];
+        $this->perunAupsAttr = isset($config[self::PERUN_AUPS_ATTR]) ?
+            (string) $config[self::PERUN_AUPS_ATTR] : null;
+        $this->perunVoAupAttr = isset($config[self::PERUN_VO_AUP_ATTR]) ?
+            (string) $config[self::PERUN_VO_AUP_ATTR] : null;
         $this->perunUserAupAttr = (string) $config[self::PERUN_USER_AUP_ATTR];
-        $this->perunVoAupAttr = (string) $config[self::PERUN_VO_AUP_ATTR];
         $interface = (string) $config[self::INTERFACE_PROPNAME];
         $this->adapter = Adapter::getInstance($interface);
 
-        $this->perunFacilityReqAupsAttr = (string) $config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
+        $this->perunFacilityRequestedAupsAttr = (string) $config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
         $this->perunFacilityVoShortNames = (string) $config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
     }
 
@@ -129,18 +129,18 @@ class ForceAup extends ProcessingFilter
                 return;
             }
 
-            $requiredAups = [];
+            $requestedAups = [];
             $voShortNames = [];
 
             $facilityAttrValues = $this->adapter->getFacilityAttributesValues(
                 $facility,
-                [$this->perunFacilityReqAupsAttr, $this->perunFacilityVoShortNames]
+                [$this->perunFacilityRequestedAupsAttr, $this->perunFacilityVoShortNames]
             );
 
-            if (isset($this->perunFacilityReqAupsAttr, $facilityAttrValues) &&
-                is_array($facilityAttrValues[$this->perunFacilityReqAupsAttr])) {
-                foreach (array_values($facilityAttrValues[$this->perunFacilityReqAupsAttr]) as $facilityAup) {
-                    array_push($requiredAups, $facilityAup);
+            if (isset($this->perunFacilityRequestedAupsAttr, $facilityAttrValues) &&
+                is_array($facilityAttrValues[$this->perunFacilityRequestedAupsAttr])) {
+                foreach (array_values($facilityAttrValues[$this->perunFacilityRequestedAupsAttr]) as $facilityAup) {
+                    array_push($requestedAups, $facilityAup);
                 }
             }
 
@@ -151,19 +151,12 @@ class ForceAup extends ProcessingFilter
                 }
             }
 
-            if (empty($requiredAups) && empty($voShortNames)) {
+            if (empty($requestedAups) && empty($voShortNames)) {
                 Logger::debug(
-                    'Perun.ForceAup - No required Aups for facility with EntityId: ' .
+                    'Perun.ForceAup - No AUPs to be approved have been requested by facility with EntityId: ' .
                     $request['SPMetadata']['entityid']
                 );
                 return;
-            }
-
-            $perunAupsAttr = $this->adapter->getEntitylessAttribute($this->perunAupsAttr);
-
-            $perunAups = [];
-            foreach ($perunAupsAttr as $key => $attr) {
-                $perunAups[$key] = $attr['value'];
             }
 
             $userAups = $this->adapter->getUserAttributesValues(
@@ -175,55 +168,21 @@ class ForceAup extends ProcessingFilter
                 $userAups = [];
             }
 
+            $perunAups = $this->getPerunAups();
             $voAups = $this->getVoAups($voShortNames);
 
-            $newAups = [];
-
-            if (! empty($perunAups)) {
-                foreach ($requiredAups as $requiredAup) {
-                    $aups = json_decode($perunAups[$requiredAup]);
-                    $latest_aup = $this->getLatestAup($aups);
-
-                    if (array_key_exists($requiredAup, $userAups)) {
-                        $userAupsList = json_decode($userAups[$requiredAup]);
-                        $userLatestAup = $this->getLatestAup($userAupsList);
-
-                        if ($latest_aup->date === $userLatestAup->date) {
-                            continue;
-                        }
-                    }
-                    $newAups[$requiredAup] = $latest_aup;
-                }
-            }
-
-            if (! empty($voAups)) {
-                foreach ($voAups as $voShortName => $voAup) {
-                    $voAupsList = json_decode($voAup);
-                    $latest_aup = $this->getLatestAup($voAupsList);
-
-                    if (array_key_exists($voShortName, $userAups)) {
-                        $userAupsList = json_decode($userAups[$voShortName]);
-                        $userLatestAup = $this->getLatestAup($userAupsList);
-
-                        if ($latest_aup->date === $userLatestAup->date) {
-                            continue;
-                        }
-                    }
-
-                    $newAups[$voShortName] = $latest_aup;
-                }
-            }
+            $aupsToBeApproved = $this->getAupsToBeApproved($perunAups, $voAups, $requestedAups, $userAups);
         } catch (\Exception $ex) {
             Logger::warning('perun:ForceAup - ' . $ex->getMessage());
-            $newAups = [];
+            $aupsToBeApproved = [];
         }
 
-        Logger::debug('perun:ForceAup - NewAups: ' . json_encode($newAups));
+        Logger::debug('perun:ForceAup - NewAups: ' . json_encode($aupsToBeApproved));
 
-        if (! empty($newAups)) {
+        if (! empty($aupsToBeApproved)) {
             $request[self::UID_ATTR] = $this->uidAttr;
             $request[self::PERUN_USER_AUP_ATTR] = $this->perunUserAupAttr;
-            $request['newAups'] = $newAups;
+            $request['newAups'] = $aupsToBeApproved;
             $id = State::saveState($request, 'perun:forceAup');
             $url = Module::getModuleURL('perun/force_aup_page.php');
             HTTP::redirectTrustedURL($url, [
@@ -236,22 +195,25 @@ class ForceAup extends ProcessingFilter
      * @param array $aups
      * @return aup with the latest date
      */
-    public function getLatestAup(&$aups)
+    public function getLatestAup($aups)
     {
-        $latest_aup = $aups[0];
+        $latestAup = $aups[0];
+        $latestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $latestAup->date);
         foreach ($aups as $aup) {
-            if (new \DateTime($latest_aup->date) < new \DateTime($aup->date)) {
-                $latest_aup = $aup;
+            $aupDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $aup->date);
+            if ($latestDate < $aupDate) {
+                $latestAup = $aup;
+                $latestDate = $aupDate;
             }
         }
-        return $latest_aup;
+        return $latestAup;
     }
 
     /**
      * @param string[] $voShortNames
      * @return array
      */
-    public function getVoAups(&$voShortNames)
+    public function getVoAups($voShortNames)
     {
         $vos = [];
         foreach ($voShortNames as $voShortName) {
@@ -270,5 +232,76 @@ class ForceAup extends ProcessingFilter
         }
 
         return $voAups;
+    }
+
+    private function getPerunAups()
+    {
+        $perunAupsAttr = [];
+        if ($this->perunAupsAttr !== null) {
+            $perunAupsAttr = $this->adapter->getEntitylessAttribute($this->perunAupsAttr);
+        }
+
+        $perunAups = [];
+        foreach ($perunAupsAttr as $key => $attr) {
+            $perunAups[$key] = $attr['value'];
+        }
+        return $perunAups;
+    }
+
+    private function getAupsToBeApproved($perunAups, $voAups, $requestedAups, $userAups)
+    {
+        $perunAupsToBeApproved = [];
+        if (! empty($perunAups)) {
+            $perunAupsToBeApproved = $this->fillAupsToBeApproved($requestedAups, $perunAups, $userAups);
+        }
+
+        $voAupsToBeApproved = [];
+        if (! empty($voAups)) {
+            $voAupsToBeApproved = $this->fillAupsToBeApproved($requestedAups, $voAups, $userAups);
+        }
+        return $this->mergeAupsToBeApproved($perunAupsToBeApproved, $voAupsToBeApproved);
+    }
+
+    private function fillAupsToBeApproved($requestedAups, $aups, $userApprovedAups)
+    {
+        $aupsToBeApproved = [];
+        foreach ($requestedAups as $requestedAup) {
+            $decodedAups = json_decode($aups[$requestedAup]);
+            $latestAup = $this->getLatestAup($decodedAups);
+
+            if (array_key_exists($requestedAup, $userApprovedAups)) {
+                $userAupsList = json_decode($userApprovedAups[$requestedAup]);
+                $userLatestAup = $this->getLatestAup($userAupsList);
+                $latestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $latestAup->date);
+                $userLatestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $userLatestAup->date);
+                if ($userLatestDate >= $latestDate) {
+                    continue;
+                }
+            }
+            $aupsToBeApproved[$requestedAup] = $latestAup;
+        }
+        return $aupsToBeApproved;
+    }
+
+    private function mergeAupsToBeApproved(array $perunAupsToBeApproved, array $voAupsToBeApproved)
+    {
+        $resultAups = $perunAupsToBeApproved;
+        foreach ($voAupsToBeApproved as $aupKey => $voAup) {
+            if (array_key_exists($aupKey, $resultAups)) {
+                $voLatestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $voAup->date);
+                $perunLatestDate = \DateTime::createFromFormat(
+                    self::DATETIME_FORMAT,
+                    $perunAupsToBeApproved[$aupKey]->date
+                );
+                if ($voLatestDate >= $perunLatestDate) {
+                    $resultAups[$aupKey] = $voLatestDate;
+                } else {
+                    $resultAups[$aupKey] = $perunLatestDate;
+                }
+            } else {
+                $resultAups[$aupKey] = $voAup;
+            }
+        }
+        return $resultAups;
     }
 }
