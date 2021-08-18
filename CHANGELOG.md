@@ -1,3 +1,11 @@
+## [6.0.5](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.4...v6.0.5) (2021-08-18)
+
+
+### Bug Fixes
+
+* 🐛 fix not checking for key existence in aups ([00cf0f0](https://github.com/CESNET/perun-simplesamlphp-module/commit/00cf0f0b53b1f4828cf12208976124a06a72bafa))
+* 🐛 refactored AUPs DateTime treatment in ForceAup ([5130dfc](https://github.com/CESNET/perun-simplesamlphp-module/commit/5130dfc37b4f6bb847ee09d0f7ae57ffb8809477))
+
 ## [6.0.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.3...v6.0.4) (2021-08-18)
 
 
