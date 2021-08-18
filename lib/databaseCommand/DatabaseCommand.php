@@ -28,6 +28,10 @@ abstract class DatabaseCommand
 
     protected function write($query, $params): bool
     {
-        return $this->conn->write($query, $params);
+        $response = $this->conn->write($query, $params);
+        if (is_int($response)) {
+            return true;
+        }
+        return false;
     }
 }
