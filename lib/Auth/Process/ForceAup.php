@@ -266,6 +266,10 @@ class ForceAup extends ProcessingFilter
     {
         $aupsToBeApproved = [];
         foreach ($requestedAups as $requestedAup) {
+            $aupsInJson = $aups[$requestedAup];
+            if (empty($aupsInJson)) {
+                continue;
+            }
             $decodedAups = json_decode($aups[$requestedAup]);
             $latestAup = $this->getLatestAup($decodedAups);
 
