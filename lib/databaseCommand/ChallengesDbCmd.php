@@ -9,14 +9,6 @@ namespace SimpleSAML\Module\perun\databaseCommand;
  */
 class ChallengesDbCmd extends DatabaseCommand
 {
-    public const ID_COLUMN = 'id';
-
-    public const CHALLENGE_COLUMN = 'challenge';
-
-    public const SCRIPT_COLUMN = 'script';
-
-    public const DATE_COLUMN = 'date';
-
     private const CHALLENGES_TABLE_NAME = 'scriptChallenges';
 
     private const ID_COLUMN = 'id';
