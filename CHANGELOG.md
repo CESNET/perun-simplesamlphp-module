@@ -1,3 +1,10 @@
+## [6.0.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.3...v6.0.4) (2021-08-18)
+
+
+### Bug Fixes
+
+* fix bad return type in DatabaseCommand ([95328ba](https://github.com/CESNET/perun-simplesamlphp-module/commit/95328bab777f595683342aa77141a3b1e6bb7d10))
+
 ## [6.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.2...v6.0.3) (2021-08-18)
 
 
