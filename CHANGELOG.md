@@ -1,3 +1,10 @@
+## [6.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.1...v6.0.2) (2021-08-18)
+
+
+### Bug Fixes
+
+* Refactor ForcAup filter ([7ef157e](https://github.com/CESNET/perun-simplesamlphp-module/commit/7ef157e6023db9afdfde455e4331970ce9c2f9a8))
+
 ## [6.0.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.0...v6.0.1) (2021-08-10)
 
 
