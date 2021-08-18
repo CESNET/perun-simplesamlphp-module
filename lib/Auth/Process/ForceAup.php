@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use DateTime;
 use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Error\Exception;
@@ -197,10 +198,13 @@ class ForceAup extends ProcessingFilter
      */
     public function getLatestAup($aups)
     {
+        if (empty($aups)) {
+            return null;
+        }
         $latestAup = $aups[0];
-        $latestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $latestAup->date);
+        $latestDate = self::parseDateTime($latestAup->date);
         foreach ($aups as $aup) {
-            $aupDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $aup->date);
+            $aupDate = self::parseDateTime($aup->date);
             if ($latestDate < $aupDate) {
                 $latestAup = $aup;
                 $latestDate = $aupDate;
@@ -266,16 +270,25 @@ class ForceAup extends ProcessingFilter
     {
         $aupsToBeApproved = [];
         foreach ($requestedAups as $requestedAup) {
-            $decodedAups = json_decode($aups[$requestedAup]);
+            $aupsInJson = $aups[$requestedAup];
+            if (empty($aupsInJson)) {
+                continue;
+            }
+            $decodedAups = json_decode($aupsInJson);
             $latestAup = $this->getLatestAup($decodedAups);
+            if ($latestAup === null) {
+                continue;
+            }
 
-            if (array_key_exists($requestedAup, $userApprovedAups)) {
+            if (! empty($userApprovedAups[$requestedAup])) {
                 $userAupsList = json_decode($userApprovedAups[$requestedAup]);
                 $userLatestAup = $this->getLatestAup($userAupsList);
-                $latestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $latestAup->date);
-                $userLatestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $userLatestAup->date);
-                if ($userLatestDate >= $latestDate) {
-                    continue;
+                if ($userLatestAup !== null) {
+                    $latestDate = self::parseDateTime($latestAup->date);
+                    $userLatestDate = self::parseDateTime($userLatestAup->date);
+                    if ($userLatestDate >= $latestDate) {
+                        continue;
+                    }
                 }
             }
             $aupsToBeApproved[$requestedAup] = $latestAup;
@@ -288,11 +301,8 @@ class ForceAup extends ProcessingFilter
         $resultAups = $perunAupsToBeApproved;
         foreach ($voAupsToBeApproved as $aupKey => $voAup) {
             if (array_key_exists($aupKey, $resultAups)) {
-                $voLatestDate = \DateTime::createFromFormat(self::DATETIME_FORMAT, $voAup->date);
-                $perunLatestDate = \DateTime::createFromFormat(
-                    self::DATETIME_FORMAT,
-                    $perunAupsToBeApproved[$aupKey]->date
-                );
+                $voLatestDate = self::parseDateTime($voAup->date);
+                $perunLatestDate = self::parseDateTime($perunAupsToBeApproved[$aupKey]->date);
                 if ($voLatestDate >= $perunLatestDate) {
                     $resultAups[$aupKey] = $voLatestDate;
                 } else {
@@ -303,5 +313,22 @@ class ForceAup extends ProcessingFilter
             }
         }
         return $resultAups;
+    }
+
+    /**
+     * Parses datetime with format set in self::DATETIME_FORMAT. If parsing fails, value passed in $default will be
+     * returned (or null if not provided)
+     *
+     * @param string $date to be parsed using self::DATETIME_FORMAT format
+     * @param DateTime|null $default (optional) value to be returned in case of error
+     * @return DateTime parsed datetime, or default value (null if not provided)
+     */
+    private function parseDateTime(string $date, DateTime $default = null): DateTime
+    {
+        $result = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
+        if ($result === false) {
+            $result = $default;
+        }
+        return $result;
     }
 }
