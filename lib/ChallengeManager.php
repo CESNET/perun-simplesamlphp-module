@@ -6,7 +6,10 @@ namespace SimpleSAML\Module\perun;
 
 use Jose\Component\Checker\AlgorithmChecker;
 use Jose\Component\Checker\ClaimCheckerManager;
+use Jose\Component\Checker\ExpirationTimeChecker;
 use Jose\Component\Checker\HeaderCheckerManager;
+use Jose\Component\Checker\IssuedAtChecker;
+use Jose\Component\Checker\NotBeforeChecker;
 use Jose\Component\Core\AlgorithmManager;
 use Jose\Component\KeyManagement\JWKFactory;
 use Jose\Component\Signature\JWSBuilder;
@@ -128,7 +131,7 @@ class ChallengeManager
         }
 
         $claimCheckerManager = new ClaimCheckerManager(
-            [new Checker\IssuedAtChecker(), new Checker\NotBeforeChecker(), new Checker\ExpirationTimeChecker()]
+            [new IssuedAtChecker(), new NotBeforeChecker(), new ExpirationTimeChecker()]
         );
         $claims = json_decode($jws->getPayload(), true);
 
