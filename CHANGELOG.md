@@ -1,3 +1,10 @@
+## [6.0.6](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.5...v6.0.6) (2021-08-19)
+
+
+### Bug Fixes
+
+* fix bad import of Exceptions ([bdd51b4](https://github.com/CESNET/perun-simplesamlphp-module/commit/bdd51b46edb765270d282c302176aaf3e01b9117))
+
 ## [6.0.5](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.4...v6.0.5) (2021-08-18)
 
 
