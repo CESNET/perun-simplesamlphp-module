@@ -1,0 +1,65 @@
+<?php
+
+/**
+ * This script loads all the metadata and finds the one which
+ * is closest to expiration. Then it sends the time to expiration
+ * to the template.
+ *
+ * This can be used to check whether the meta refresh works without problems.
+ */
+
+$config = SimpleSAML_Configuration::getInstance();
+$session = SimpleSAML_Session::getSessionFromRequest();
+
+$metadata = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+
+$metaentries = ['hosted' => [], 'remote' => [] ];
+$metaentries['remote']['saml20-idp-remote'] = $metadata->getList('saml20-idp-remote');
+$metaentries['remote']['shib13-idp-remote'] = $metadata->getList('shib13-idp-remote');
+
+if ($config->getBoolean('enable.saml20-idp', FALSE) === true) {
+    try {
+        $metaentries['remote']['saml20-sp-remote'] = $metadata->getList('saml20-sp-remote');
+    } catch(Exception $e) {
+        SimpleSAML\Logger::error('Federation: Error loading saml20-idp: ' . $e->getMessage());
+    }
+}
+
+if ($config->getBoolean('enable.shib13-idp', FALSE) === true) {
+    try {
+        $metaentries['remote']['shib13-sp-remote'] = $metadata->getList('shib13-sp-remote');
+    } catch(Exception $e) {
+        SimpleSAML\Logger::error('Federation: Error loading shib13-idp: ' . $e->getMessage());
+    }
+}
+
+if ($config->getBoolean('enable.adfs-idp', FALSE) === true) {
+    try {
+        $metaentries['remote']['adfs-sp-remote'] = $metadata->getList('adfs-sp-remote');
+    } catch(Exception $e) {
+        SimpleSAML\Logger::error('Federation: Error loading adfs-idp: ' . $e->getMessage());
+    }
+}
+
+foreach ($metaentries['remote'] as $key => $value) {
+    if (empty($value)) {
+        unset($metaentries['remote'][$key]);
+    }
+}
+
+$now = time();
+$closestExpiration = null;
+
+foreach ($metaentries['remote'] as $setkey => $set) {
+    foreach ($set as $entry) {
+        if (array_key_exists('expire', $entry)) {
+            $expires = number_format(($entry['expire'] - $now) / 3600, 1);
+            $closestExpiration === null ?
+                $closestExpiration = $expires : $closestExpiration = min($closestExpiration, $expires);
+        }
+    }
+}
+
+$t = new SimpleSAML_XHTML_Template($config, 'perun:metadata_expiration-tpl.php');
+$t->data['closestExpiration'] = $closestExpiration;
+$t->show();
