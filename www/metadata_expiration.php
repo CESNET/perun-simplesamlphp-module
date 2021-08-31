@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 /**
- * This script loads all the metadata and finds the one which
- * is closest to expiration. Then it sends the time to expiration
- * to the template.
+ * This script loads all the metadata and finds the one which is closest to expiration. Then it sends the time to
+ * expiration to the template.
  *
  * This can be used to check whether the meta refresh works without problems.
  */
@@ -13,30 +14,33 @@ $session = SimpleSAML_Session::getSessionFromRequest();
 
 $metadata = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
 
-$metaentries = ['hosted' => [], 'remote' => [] ];
+$metaentries = [
+    'hosted' => [],
+    'remote' => [],
+];
 $metaentries['remote']['saml20-idp-remote'] = $metadata->getList('saml20-idp-remote');
 $metaentries['remote']['shib13-idp-remote'] = $metadata->getList('shib13-idp-remote');
 
-if ($config->getBoolean('enable.saml20-idp', FALSE) === true) {
+if ($config->getBoolean('enable.saml20-idp', false) === true) {
     try {
         $metaentries['remote']['saml20-sp-remote'] = $metadata->getList('saml20-sp-remote');
-    } catch(Exception $e) {
+    } catch (Exception $e) {
         SimpleSAML\Logger::error('Federation: Error loading saml20-idp: ' . $e->getMessage());
     }
 }
 
-if ($config->getBoolean('enable.shib13-idp', FALSE) === true) {
+if ($config->getBoolean('enable.shib13-idp', false) === true) {
     try {
         $metaentries['remote']['shib13-sp-remote'] = $metadata->getList('shib13-sp-remote');
-    } catch(Exception $e) {
+    } catch (Exception $e) {
         SimpleSAML\Logger::error('Federation: Error loading shib13-idp: ' . $e->getMessage());
     }
 }
 
-if ($config->getBoolean('enable.adfs-idp', FALSE) === true) {
+if ($config->getBoolean('enable.adfs-idp', false) === true) {
     try {
         $metaentries['remote']['adfs-sp-remote'] = $metadata->getList('adfs-sp-remote');
-    } catch(Exception $e) {
+    } catch (Exception $e) {
         SimpleSAML\Logger::error('Federation: Error loading adfs-idp: ' . $e->getMessage());
     }
 }
