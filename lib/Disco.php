@@ -543,9 +543,25 @@ class Disco extends PowerIdPDisco
         return $result;
     }
 
+    public static function displayAllIdps(DiscoTemplate $t): string
+    {
+        $allIdps = $t->getAllIdps();
+
+        $result = '<div class="metalist list-group">' . PHP_EOL;
+        foreach ($allIdps as $idpentry) {
+            $result .= self::showEntry($t, $idpentry) . PHP_EOL;
+        }
+        $result .= '</div>' . PHP_EOL;
+
+        return $result;
+    }
+
     public static function getScripts(bool $boxed): string
     {
         $html = '<script type="text/javascript" src="' .
+            Module::getModuleUrl('perun/res/js/old-browsers.js') . '"></script>' . PHP_EOL;
+
+        $html .= '<script type="text/javascript" src="' .
             Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
 
         $html .= '<script type="text/javascript" src="' .

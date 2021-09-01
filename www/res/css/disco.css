@@ -25,6 +25,14 @@ html, body {
     width: auto;
 }
 
+#deprecation-notice {
+    font-weight: bold;
+}
+
+.d-none {
+    display: none;
+}
+
 a.metaentry {
     padding: 10px 15px 10px 15px;
 }

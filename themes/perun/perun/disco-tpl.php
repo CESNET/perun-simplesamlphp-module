@@ -59,6 +59,11 @@ if ($this->isAddInstitutionApp()) {
 
 $this->includeAtTemplateBase('includes/header.php');
 
+echo '<div id="deprecation-notice" class="d-none">';
+echo $this->t('{perun:disco:js_not_loaded_message}') . PHP_EOL;
+echo Disco::displayAllIdps($this) . PHP_EOL;
+echo '</div>';
+
 # IF WE HAVE A WARNING, DISPLAY IT TO THE USER
 if ($warningAttributes !== null && $warningAttributes->isEnabled()) {
     echo Disco::showWarning($this, $warningAttributes);
