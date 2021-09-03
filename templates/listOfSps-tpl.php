@@ -150,6 +150,6 @@ $this->includeAtTemplateBase('includes/footer.php');
 
 ?>
 
-<script src="<?php echo htmlspecialchars(Module::getModuleURL('chartjs/Chart.bundle.min.js')); ?>"></script>
+<script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/res/js/chart.min.js')); ?>"></script>
 
 <script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/listOfSps.js')); ?>"></script>
