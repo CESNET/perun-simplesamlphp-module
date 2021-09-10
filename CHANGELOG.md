@@ -41,11 +41,6 @@
 
 * fix processing attr val  of map type in LDAP ([d892ca9](https://github.com/CESNET/perun-simplesamlphp-module/commit/d892ca944d92b0de2e821d4a4421cce84bc5b514))
 
-# Change Log
-All notable changes to this project will be documented in this file.
-
-## [Unreleased]
-
 ## [v6.0.0]
 #### Changed
 - Improve WAYF searching by localized name and domain
