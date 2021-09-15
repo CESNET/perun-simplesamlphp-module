@@ -64,7 +64,7 @@ class NagiosStatusConnector extends StatusConnector
         $result = [];
 
         $key = file_get_contents($this->keyPath);
-        if ($key === false) {
+        if (! $key) {
             throw new Exception('Cannot load ket from path:  \'' . $this->keyPath . '\' !');
         }
 

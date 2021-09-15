@@ -24,7 +24,25 @@ $attributesToShow = $this->data['attributesToShow'];
 $samlServices = $this->data['samlServices'];
 $oidcServices = $this->data['oidcServices'];
 $allServices = $this->data['allServices'];
-
+if ($this->data['isNameMultilingual']) {
+    // translate service name for sorting
+    $allServices = array_map(function ($service) {
+        if (empty($service['name']) || empty($service['name']['value']) || ! is_array($service['name']['value'])) {
+            $service['name'] = [
+                'type' => 'java.lang.String',
+                'value' => '-',
+            ];
+        } else {
+            $service['name']['type'] = 'java.lang.String';
+            $service['name']['value'] = ListOfSps::getPreferredTranslation(
+                $service['name']['value'],
+                $this->getLanguage()
+            );
+        }
+        return $service;
+    }, $allServices);
+}
+usort($allServices, ['\\SimpleSAML\\Module\\perun\\ListOfSps', 'sortByName']);
 
 $productionServicesCount = $statistics['samlServicesCount'] - $statistics['samlTestServicesCount'] +
     $statistics['oidcServicesCount'] - $statistics['oidcTestServicesCount'];
@@ -150,6 +168,6 @@ $this->includeAtTemplateBase('includes/footer.php');
 
 ?>
 
-<script src="<?php echo htmlspecialchars(Module::getModuleURL('chartjs/Chart.bundle.min.js')); ?>"></script>
+<script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/res/js/chart.min.js')); ?>"></script>
 
 <script src="<?php echo htmlspecialchars(Module::getModuleURL('perun/listOfSps.js')); ?>"></script>

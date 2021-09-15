@@ -1,3 +1,10 @@
+## [6.0.7](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.6...v6.0.7) (2021-09-10)
+
+
+### Bug Fixes
+
+* bugfixes in list of SPs ([1cd84a8](https://github.com/CESNET/perun-simplesamlphp-module/commit/1cd84a8bdbe879bdec568b1952b8756f29d99f94))
+
 ## [6.0.6](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.5...v6.0.6) (2021-08-19)
 
 
@@ -40,11 +47,6 @@
 ### Bug Fixes
 
 * fix processing attr val  of map type in LDAP ([d892ca9](https://github.com/CESNET/perun-simplesamlphp-module/commit/d892ca944d92b0de2e821d4a4421cce84bc5b514))
-
-# Change Log
-All notable changes to this project will be documented in this file.
-
-## [Unreleased]
 
 ## [v6.0.0]
 #### Changed

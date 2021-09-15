@@ -8,7 +8,10 @@ class ListOfSps
 {
     public static function sortByName($a, $b)
     {
-        return strcmp(strtolower($a['name']['value']), strtolower($b['name']['value']));
+        return strnatcasecmp(
+            transliterator_transliterate('Any-Latin; Latin-ASCII', $a['name']['value']),
+            transliterator_transliterate('Any-Latin; Latin-ASCII', $b['name']['value'])
+        );
     }
 
     public static function getClass($type)

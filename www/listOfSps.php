@@ -164,7 +164,6 @@ foreach ($attrNames as $attrName) {
 }
 
 $allServices = array_merge($samlServices, $oidcServices);
-usort($allServices, 'ListOfSps::sortByName');
 
 if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $json = [];
@@ -201,6 +200,7 @@ if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $t->data['statistics'] = $statistics;
     $t->data['attributesToShow'] = $attributesToShow;
     $t->data['multilingualAttributes'] = $multilingualAttributes;
+    $t->data['isNameMultilingual'] = in_array($perunServiceNameAttr, $multilingualAttributes, true);
     $t->data['samlServices'] = $samlServices;
     $t->data['oidcServices'] = $oidcServices;
     $t->data['allServices'] = $allServices;

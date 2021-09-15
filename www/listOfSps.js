@@ -6,9 +6,7 @@ function getDataItem(name) {
     return JSON.parse(document.getElementById('data').getAttribute('content'))[name];
 }
 
-Chart.platform.disableCSSInjection = true;
-
-var ctx = document.getElementById("myChart").getContext('2d');
+var ctx = "myChart";
 new Chart(ctx, { // eslint-disable-line no-new
     type: 'bar',
     data: {
@@ -42,25 +40,27 @@ new Chart(ctx, { // eslint-disable-line no-new
         }]
     },
     options: {
+        plugins: {
+            legend: {
+                display: false
+            },
+            tooltip: {
+                callbacks: {
+                    label: function (tooltipItem) {
+                        return tooltipItem.yLabel;
+                    }
+                }
+            }
+        },
         scales: {
-            yAxes: [{
+            y: {
+                beginAtZero: true,
                 ticks: {
-                    beginAtZero: true,
                     callback: function (value) {
                         if (Number.isInteger(value)) {
                             return value;
                         }
                     }
-                }
-            }]
-        },
-        legend: {
-            display: false
-        },
-        tooltips: {
-            callbacks: {
-                label: function (tooltipItem) {
-                    return tooltipItem.yLabel;
                 }
             }
         }
