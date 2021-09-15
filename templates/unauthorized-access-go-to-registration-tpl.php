@@ -5,9 +5,7 @@ use SimpleSAML\Utils\HTTP;
 use SimpleSAML\XHTML\Template;
 
 /**
- * Template for inform user that he/she will be redirected to registration
- *
- * Allow type hinting in IDE
+ * Template displaying information user that user will be redirected to registration page
  *
  * @var Template $this
  */
@@ -16,20 +14,20 @@ $this->data['header'] = '';
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
     Module::getModuleUrl('perun/res/css/perun_identity_go_to_registration.css') . '" />';
 
-$spMetadata = $this->data['SPMetadata'];
-$serviceName = '';
-$informationURL = '';
 $params = $this->data['params'];
-if ($spMetadata['name']['en']) {
+if (isset($_POST['continueToRegistration'])) {
+    HTTP::redirectTrustedURL($_REQUEST['registerUrL'], $params);
+}
+$spMetadata = $this->data['SPMetadata'];
+
+$serviceName = '';
+if (isset($spMetadata['name']['en'])) {
     $serviceName = $spMetadata['name']['en'];
 }
 
-if ($spMetadata['InformationURL']['en']) {
+$informationURL = '';
+if (isset($spMetadata['InformationURL']['en'])) {
     $informationURL = $spMetadata['InformationURL']['en'];
-}
-
-if (isset($_POST['continueToRegistration'])) {
-    HTTP::redirectTrustedURL($_REQUEST['registerUrL'], $params);
 }
 
 $this->includeAtTemplateBase('includes/header.php');
@@ -49,13 +47,12 @@ echo '</div>';
 ?>
 
     <form method="post">
-        </hr>
-        </br>
+        <hr/>
+        <br/>
         <input type="submit" name="continueToRegistration"
                value="<?php echo $this->t('{perun:perun:go-to-registration_continue}') ?>"
                class="btn btn-lg btn-primary btn-block">
-        <div class="form-group">
-        </div>
+        <div class="form-group"></div>
     </form>
 
 <?php
