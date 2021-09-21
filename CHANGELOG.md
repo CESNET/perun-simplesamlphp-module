@@ -1,3 +1,15 @@
+# [6.1.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.7...v6.1.0) (2021-09-21)
+
+
+### Bug Fixes
+
+* Fixed ECS bugs ([0ac5a9f](https://github.com/CESNET/perun-simplesamlphp-module/commit/0ac5a9f910c1496d46d4e398ece4306b03bce868))
+
+
+### Features
+
+* Added metadata expiration page ([e1ad062](https://github.com/CESNET/perun-simplesamlphp-module/commit/e1ad062c7747be6ff2fb68ccbd8e01d43318a904))
+
 ## [6.0.7](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.6...v6.0.7) (2021-09-10)
 
 
