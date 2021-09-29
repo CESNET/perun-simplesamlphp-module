@@ -1,3 +1,10 @@
+## [6.1.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.1.0...v6.1.1) (2021-09-29)
+
+
+### Bug Fixes
+
+* Changed text labels on consent ([1764572](https://github.com/CESNET/perun-simplesamlphp-module/commit/1764572365e015291c35ac7ae03679bd9000d52e))
+
 # [6.1.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.0.7...v6.1.0) (2021-09-21)
 
 
