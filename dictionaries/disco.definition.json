@@ -67,6 +67,10 @@
     "en": "Still can't find your institution? Contact us at",
     "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
   },
+  "cannot_find_institution_disabled_whitelisting": {
+    "en": "Cannot find your institution? Contact us at",
+    "cs": "Nemúžete nalézt vaši organizaci? Kontaktujte nás na"
+  },
   "js_not_loaded_message": {
     "en": "Your browser does not support the required functionality to display this page. Please use a different browser and try again. We apologize for the caused difficulties.",
     "cs": "Váš prohlížeč nepodporuje funkcionalitu potřebnou pro správné zobrazení této stránky. Zkuste, prosím, použít jiný prohlížeč. Omlouváme se za vzniklé problémy."
