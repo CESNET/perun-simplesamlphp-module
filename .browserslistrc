@@ -1,0 +1,39 @@
+[production]
+ie 7
+ie 10
+electron 4.2
+ie 11
+last 2 chrome major versions
+last 2 firefox major versions
+firefox esr
+last 2 opera major versions
+last 2 chromeandroid major versions
+last 2 firefoxandroid major versions
+ios >= 14.0
+ios 13.4-13.999
+ios 12.2-12.999
+last 1 safari major versions
+last 2 edge major versions
+last 1 android major versions
+last 1 samsung major versions
+
+[supported]
+last 2 chrome major versions
+last 2 firefox major versions
+firefox esr
+last 2 opera major versions
+last 2 chromeandroid major versions
+last 2 firefoxandroid major versions
+last 1 ios major versions
+last 1 safari major versions
+last 2 edge major versions
+last 1 android major versions
+last 1 samsung major versions
+
+[unsupported]
+dead
+firefox < 78
+edge < 88
+ie <= 11
+ios < 12.5
+not since 2020-06
