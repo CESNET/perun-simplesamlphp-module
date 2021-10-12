@@ -473,6 +473,7 @@ class Disco extends PowerIdPDisco
     public static function showInlineSearch(
         DiscoTemplate $t,
         Configuration $blockConfig,
+        bool $disableWhitelisting,
         Configuration $addInstitution = null
     ): string {
         $result = '';
@@ -518,7 +519,11 @@ class Disco extends PowerIdPDisco
         $result .= '    </div>' . PHP_EOL;
         # NO ENTRIES BLOCK
         $result .= '    <div id="no-entries" class="no-idp-found alert alert-info entries-warning-block">' . PHP_EOL;
-        if ($isAddInstitutionApp && $addInstitutionEmail !== null) {
+        if ($disableWhitelisting && $addInstitutionEmail !== null) {
+            $result .= '        ' . $t->t('{perun:disco:cannot_find_institution_disabled_whitelisting}') .
+                ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
+                $addInstitutionEmail . '</a>' . PHP_EOL;
+        } elseif ($isAddInstitutionApp && $addInstitutionEmail !== null) {
             $result .= '        ' . $t->t('{perun:disco:add_institution_no_entries_contact_us}') .
                 ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
                 $addInstitutionEmail . '</a>' . PHP_EOL;

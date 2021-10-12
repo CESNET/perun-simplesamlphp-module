@@ -179,7 +179,7 @@ $config = [
          * specify if disco module should filter out IdPs which are not whitelisted neither committed to CoCo or RaS.
          * default is false.
          */
-        'disable_white_listing' => false,
+        'disable_whitelisting' => false,
         /**
          * Specify translate module
          */
@@ -223,7 +223,12 @@ $config = [
         'boxed' => true,
         // block of IDPs
         'idp_blocks_config' => [
-            [
+            'preferred_idps' => [
+                'type' => 'tagged',
+                'name' => 'preferred_idps',
+                'tags' => ['preferred'],
+            ],
+            'edugain' => [
                 // type has to be 'inlinesearch' for displaying eduGAIN entries or 'tagged' for custom IDPs
                 'type' => 'inlinesearch',
                 // name that will be used in some classes and translation keys
@@ -246,7 +251,7 @@ $config = [
                 ],
                  */
             ],
-            [
+            'social_idps' => [
                 'type' => 'tagged',
                 'name' => 'social_idps',
                 'text_enabled' => false,

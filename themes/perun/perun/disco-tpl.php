@@ -82,7 +82,12 @@ if ($this->isAddInstitutionApp()) {
         $type = $blockConfig->getString(Disco::IDP_BLOCK_TYPE);
         echo '<div class="row login-option-category">' . PHP_EOL;
         if ($type === Disco::IDP_BLOCK_TYPE_INLINESEARCH) {
-            echo Disco::showInlineSearch($this, $blockConfig, $addInstitutionConfig) . PHP_EOL;
+            echo Disco::showInlineSearch(
+                $this,
+                $blockConfig,
+                $wayfConfig->getBoolean(Disco::DISABLE_WHITELISTING, false),
+                $addInstitutionConfig
+            ) . PHP_EOL;
         }
         echo '</div>' . PHP_EOL;
     }
@@ -120,7 +125,12 @@ if ($this->isAddInstitutionApp()) {
         $type = $blockConfig->getString(Disco::IDP_BLOCK_TYPE);
         echo '<div class="row login-option-category">' . PHP_EOL;
         if (strtolower($type) === Disco::IDP_BLOCK_TYPE_INLINESEARCH) {
-            echo Disco::showInlineSearch($this, $blockConfig, $addInstitutionConfig) . PHP_EOL;
+            echo Disco::showInlineSearch(
+                $this,
+                $blockConfig,
+                $wayfConfig->getBoolean(Disco::DISABLE_WHITELISTING, false),
+                $addInstitutionConfig
+            ) . PHP_EOL;
         } elseif (strtolower($type) === Disco::IDP_BLOCK_TYPE_TAGGED) {
             echo Disco::showTaggedIdPs($this, $blockConfig) . PHP_EOL;
         }
