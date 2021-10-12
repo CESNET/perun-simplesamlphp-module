@@ -33,10 +33,6 @@ use SimpleSAML\Utils\HTTP;
  * should be placed e.g. in idp-hosted metadata.
  *
  * It relays on RetainIdPEntityID filter. Config it properly before this filter. (in SP context)
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Michal Prochazka <michalp@ics.muni.cz>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 {

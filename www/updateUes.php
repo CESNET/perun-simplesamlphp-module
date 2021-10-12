@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 /**
  * Script for updating UES in separate thread
- *
- * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
- * @author Dominik Baranek <baranek@ics.muni.cz>
  */
 
 use SimpleSAML\Logger;

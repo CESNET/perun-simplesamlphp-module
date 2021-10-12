@@ -6,9 +6,6 @@ namespace SimpleSAML\Module\perun\databaseCommand;
 
 use SimpleSAML\Database;
 
-/**
- * @author Dominik Baranek <baranek@ics.muni.cz>
- */
 abstract class DatabaseCommand
 {
     protected $config;

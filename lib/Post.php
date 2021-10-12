@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun;
 
-/**
- * Class Post
- *
- * @package SimpleSAML\Module\perun
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
- */
 class Post
 {
     /**

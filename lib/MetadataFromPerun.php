@@ -2,11 +2,6 @@
 
 declare(strict_types=1);
 
-/**
- * @author Pavel Vyskocil
- * @author Pavel Brousek <brousek@ics.muni.cz>
- */
-
 namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Configuration;

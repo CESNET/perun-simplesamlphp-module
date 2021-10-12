@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\model;
 
-/**
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- */
 class User implements HasId
 {
     private $id;

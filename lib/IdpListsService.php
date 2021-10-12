@@ -15,9 +15,6 @@ use SimpleSAML\Error\Exception;
  * was added or lately modified.
  *
  * Note that implementation should be thread/concurrency safe.
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 abstract class IdpListsService
 {

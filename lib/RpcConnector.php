@@ -16,9 +16,6 @@ use SimpleSAML\Module\perun\Exception as PerunException;
  *
  * try { $attribute = RpcConnector::get('attributesManager', 'getAttribute', [ 'user' => $userId, 'attributeName' =>
  * $attrName, ]); ... } catch (PerunException $pe) { ... }
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class RpcConnector
 {

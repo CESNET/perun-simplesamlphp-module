@@ -21,10 +21,6 @@ use SimpleSAML\Module\perun\model\Vo;
  * folder.
  *
  * Perun adapter which uses Perun LDAP interface
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Michal Prochazka <michalp@ics.muni.cz>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class AdapterLdap extends Adapter
 {

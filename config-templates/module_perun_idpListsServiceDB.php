@@ -5,8 +5,6 @@ declare(strict_types=1);
 /**
  * This is example configuration for connection to database with whitelist/greylist Copy this file to default config
  * directory and edit the properties.
- *
- * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 $config = [
     /*

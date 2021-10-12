@@ -8,8 +8,6 @@ use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
 
 /**
  * See sspmod_perun_Auth_Process_PerunIdentity for mor information.
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
 $state = State::loadState($_REQUEST['stateId'], 'perun:PerunIdentity');

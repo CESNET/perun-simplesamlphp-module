@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\model;
 
-/**
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
- */
 class Resource implements HasId
 {
     private $id;

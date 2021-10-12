@@ -8,9 +8,6 @@ use SimpleSAML\Configuration;
 
 /**
  * Implementation of WarningConfiguration for no warning configured
- *
- * @package SimpleSAML\Module\perun\model
- * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
  */
 class WarningConfigurationNone extends WarningConfiguration
 {

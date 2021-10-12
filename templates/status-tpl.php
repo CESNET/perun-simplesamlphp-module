@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 /**
  * Template of page, which showing status of used components
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 
 use SimpleSAML\Module\perun\StatusConnector;

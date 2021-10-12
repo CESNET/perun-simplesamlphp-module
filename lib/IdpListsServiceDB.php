@@ -8,8 +8,6 @@ use SimpleSAML\Module\perun\databaseCommand\IdpListsServiceDbCmd;
 
 /**
  * Implementation of IdpListsService using DB
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class IdpListsServiceDB extends IdpListsService
 {

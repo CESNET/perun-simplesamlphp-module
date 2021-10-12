@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\databaseCommand;
 
-/**
- * @author Dominik Baranek <baranek@ics.muni.cz>
- */
 class ChallengesDbCmd extends DatabaseCommand
 {
     private const CHALLENGES_TABLE_NAME = 'scriptChallenges';

@@ -11,10 +11,6 @@ use SimpleSAML\Module\perun\IdpListsService;
  *
  * example call:
  * https://login.example.org/proxy/module.php/perun/protected/whitelistIdp.php?entityId=hey&reason=Attribute%20check%20by%20user
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Michal Prochazka <michalp@ics.muni.cz>
- * @author Michal Prochazka <vyskocipavel@muni.cz>
  */
 
 if (! isset($_REQUEST['entityId'])) {

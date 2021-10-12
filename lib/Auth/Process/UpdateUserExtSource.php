@@ -13,9 +13,6 @@ use SimpleSAML\Module\perun\ChallengeManager;
  * Class sspmod_perun_Auth_Process_UpdateUserExtSource
  *
  * This filter updates userExtSource attributes when he logs in.
- *
- * @author Dominik Baránek <baranek@ics.muni.cz>
- * @author Pavel Vyskočil <vyskocilpavel@muni.cz>
  */
 class UpdateUserExtSource extends ProcessingFilter
 {

@@ -8,11 +8,6 @@ use phpseclib3\Crypt\RSA;
 use phpseclib3\Net\SSH2;
 use SimpleSAML\Error\Exception;
 
-/**
- * Class sspmod_perun_NagiosStatusConnector
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
- */
 class NagiosStatusConnector extends StatusConnector
 {
     protected const STATUS_NAGIOS = 'status_nagios';

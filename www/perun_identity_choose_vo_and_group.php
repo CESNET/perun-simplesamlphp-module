@@ -16,8 +16,6 @@ use SimpleSAML\XHTML\Template;
  * It prepares model data for Template.
  *
  * See PerunIdentity for mor information.
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
 $adapter = Adapter::getInstance($_REQUEST[PerunIdentity::INTERFACE_PROPNAME]);

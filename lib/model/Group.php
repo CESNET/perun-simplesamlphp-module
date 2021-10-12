@@ -4,10 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\model;
 
-/**
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
- */
 class Group implements HasId
 {
     private $id;

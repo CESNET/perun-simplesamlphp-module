@@ -10,10 +10,6 @@ use SimpleSAML\Logger;
 /**
  * Filter checks whether UID attribute contains @ which means there is a scope. If not then it gets UID, compute hash
  * and construct new eduPersonPrincipalName which consists of [prefix]_[hash(uid)]@[schacHomeOrganization]
- *
- * @author Michal Prochazka <michalp@ics.muni.cz>
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * Date: 21. 11. 2016
  */
 
 class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter

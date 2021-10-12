@@ -5,14 +5,10 @@ declare(strict_types=1);
 namespace SimpleSAML\Module\perun\model;
 
 use SimpleSAML\Configuration;
-use SimpleSAML\Error\Exception;
 use SimpleSAML\Module\perun\Disco;
 
 /**
  * Class WarningConfiguration provides an option to load warning in disco-tpl from different types of sources
- *
- * @package SimpleSAML\Module\perun\Model
- * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
 abstract class WarningConfiguration
 {
@@ -72,8 +68,6 @@ abstract class WarningConfiguration
 
     /**
      * Function returns the instance of WarningConfiguration
-     *
-     * @throws Exception
      */
     public static function getInstance(): self
     {
