@@ -6,13 +6,6 @@ namespace SimpleSAML\Module\perun;
 
 use SimpleSAML\Utils\Random;
 
-/**
- * Class Consent
- *
- * @package SimpleSAML\Module\perun
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
- */
 class Consent
 {
     public static function perunPresentAttributes($t, $attributes, $nameParent, $labelCol = 5)

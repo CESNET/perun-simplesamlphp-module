@@ -19,8 +19,6 @@ use SimpleSAML\Module\perun\model\User;
  * It strongly relays on PerunIdentity filter to obtain perun user id. Configure it before this filter properly.
  *
  * if attribute in Perun value is null or is not set at all SSP attribute is set to empty array.
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 class PerunAttributes extends ProcessingFilter
 {
@@ -126,7 +124,6 @@ class PerunAttributes extends ProcessingFilter
      *
      * @param $user
      * @param array $attributes List of attributes which will be loaded from Perun system
-     * @throws Exception
      */
     private function processAttributes(User $user, array $attributes): array
     {

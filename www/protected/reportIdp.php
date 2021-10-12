@@ -13,8 +13,6 @@ use SimpleSAML\XHTML\EMail;
  * Request has to be POST
  *
  * example URL (params are POST): https://login.example.org/proxy/module.php/perun/protected/reportIdp.php
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

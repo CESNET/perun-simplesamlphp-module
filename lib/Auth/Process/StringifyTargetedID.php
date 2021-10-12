@@ -14,9 +14,6 @@ use SimpleSAML\Error\Exception;
  * [NameQualifier]![SPNameQualifier]![TextValue] resp. https://idp!https://sp!uid If configuration option
  * targetAttribute is provided, uid attribute stays unchanged and new attribute is filled. If no, uid attribute is
  * overwritten.
- *
- * @author Michal Prochazka <michalp@ics.muni.cz>
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 
 class StringifyTargetedID extends ProcessingFilter

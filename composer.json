@@ -20,6 +20,18 @@
         {
             "name": "Pavel Brousek",
             "email": "brousek@ics.muni.cz"
+        },
+        {
+            "name": "Dominik Frantisek Bucik",
+            "email": "bucik@ics.muni.cz"
+        },
+        {
+            "name": "Dominik Baranek",
+            "email": "baranek@ics.muni.cz"
+        },
+        {
+            "name": "Dominik Baranek",
+            "email": "baranek@ics.muni.cz"
         }
     ],
     "require": {

@@ -27,15 +27,15 @@ return static function (ContainerConfigurator $containerConfigurator): void {
         __DIR__ . '/composer.json',
     ]);
 
-    $containerConfigurator->import(SetList::CLEAN_CODE);
-    $containerConfigurator->import(SetList::SYMPLIFY);
     $containerConfigurator->import(SetList::ARRAY);
+    $containerConfigurator->import(SetList::CLEAN_CODE);
     $containerConfigurator->import(SetList::COMMON);
     $containerConfigurator->import(SetList::COMMENTS);
     $containerConfigurator->import(SetList::CONTROL_STRUCTURES);
     $containerConfigurator->import(SetList::DOCBLOCK);
     $containerConfigurator->import(SetList::NAMESPACES);
     $containerConfigurator->import(SetList::PHPUNIT);
-    $containerConfigurator->import(SetList::SPACES);
     $containerConfigurator->import(SetList::PSR_12);
+    $containerConfigurator->import(SetList::SPACES);
+    $containerConfigurator->import(SetList::SYMPLIFY);
 };

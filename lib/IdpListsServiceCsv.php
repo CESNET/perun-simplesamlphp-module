@@ -10,9 +10,6 @@ use SimpleSAML\Utils\Config;
 /**
  * Implementation of IdpListsService using in simple csv files. first column is timestamp, second entityid and third
  * reason
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class IdpListsServiceCsv extends IdpListsService
 {

@@ -4,13 +4,6 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun;
 
-/**
- * Class Whitelisting
- *
- * @package SimpleSAML\Module\perun
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>v
- */
 class Whitelisting
 {
     public static function getEntityName($metadata)

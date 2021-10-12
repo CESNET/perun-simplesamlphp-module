@@ -9,9 +9,6 @@ use SimpleSAML\Logger;
 
 /**
  * Implementation of WarningConfiguration using json url as the source of warning attributes
- *
- * @package SimpleSAML\Module\perun\model
- * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
 class WarningConfigurationUrl extends WarningConfiguration
 {

@@ -5,8 +5,6 @@ use SimpleSAML\Module\perun\ListOfSps;
 
 /**
  * This is a simple example of template with table of SPs
- *
- * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
  */
 $this->data['header'] = '';
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .

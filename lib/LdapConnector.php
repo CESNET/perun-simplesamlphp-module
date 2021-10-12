@@ -14,9 +14,6 @@ use SimpleSAML\Logger;
  * Example Usage: $user = new LdapConnector(ldapHostname, $ldapUser, $ldapPassword)->searchForEntity( "ou=People,
  * dc=perun, dc=cesnet, dc=cz", "(eduPersonPrincipalNames=$uid)", ["perunUserId", "displayName", "cn", "preferredMail",
  * "mail"] );
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class LdapConnector
 {
@@ -49,7 +46,6 @@ class LdapConnector
      * @param string $filter
      * @param array|null $attrNames attributes to be returned. If null all attrs are returned.
      * @return array associative array where key is attribute name and value is array of values, entity or null
-     * @throws Exception if result contains more than one entity
      */
     public function searchForEntity($base, $filter, $attrNames = null)
     {

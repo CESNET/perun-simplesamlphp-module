@@ -16,9 +16,6 @@ use SimpleSAML\Module\perun\EntitlementUtils;
  *
  * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities and facility
  * capabilities
- *
- * @author Dominik Baránek <baranek@ics.muni.cz>
- * @author Pavel Vyskočil <Pavel.Vyskocil@cesnet.cz>
  */
 class PerunEntitlement extends ProcessingFilter
 {

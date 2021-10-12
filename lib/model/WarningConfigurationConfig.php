@@ -9,10 +9,6 @@ use SimpleSAML\Logger;
 
 /**
  * Implementation of WarningConfiguration using config file as the source of warning attributes
- *
- * @package SimpleSAML\Module\perun\model
- * @author Dominik Baránek <0Baranek.dominik0@gmail.com>
- * @author Dominik Frantisek Bucik <bucik@ics.muni.cz>
  */
 class WarningConfigurationConfig extends WarningConfiguration
 {

@@ -16,8 +16,6 @@ use SimpleSAML\Utils\Arrays;
  * - 'noData': Parameters which should be included in the no-request.
  * - 'attributes': The attributes which are about to be released.
  * - 'sppp': URL to the privacy policy of the destination, or FALSE.
- *
- * @package SimpleSAMLphp
  */
 assert(is_array($this->data['srcMetadata']));
 assert(is_array($this->data['dstMetadata']));

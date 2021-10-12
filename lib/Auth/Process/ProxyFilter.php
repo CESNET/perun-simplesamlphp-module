@@ -25,8 +25,6 @@ use SimpleSAML\Logger;
  * ['affiliate','member'], ], 'config' => [ 'class' => 'perun:NestedFilter', // ... ], ], 20 => [ 'class' =>
  * 'perun:ProxyFilter', 'mode' => 'whitelist', 'filterSPs' => ['enableSpEntityId01', 'enableSpEntityId02'], 'authproc'
  * => [ [ 'class' => 'perun:NestedFilter1', // ... ], [ 'class' => 'perun:NestedFilter2', // ... ], ], ],
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 {

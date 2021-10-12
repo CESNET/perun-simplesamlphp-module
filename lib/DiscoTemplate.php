@@ -12,8 +12,6 @@ use SimpleSAML\XHTML\Template;
  * Discovery services so template do not have to access directly $this->data field.
  *
  * Here should NOT be defined any view specific methods.
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 class DiscoTemplate extends Template
 {

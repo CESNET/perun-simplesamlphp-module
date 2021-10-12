@@ -33,7 +33,6 @@ abstract class Adapter
     /**
      * @param string $interface code of interface. Check constants of this class.
      * @return Adapter instance of this class. note it is NOT singleton.
-     * @throws Exception thrown if interface does not match any supported interface
      */
     public static function getInstance($interface)
     {
@@ -56,21 +55,18 @@ abstract class Adapter
      * @param model\Vo $vo
      * @param string $name group name. Note that name of group is without VO name prefix.
      * @return Group
-     * @throws Exception if does not exists
      */
     abstract public function getGroupByName($vo, $name);
 
     /**
      * @param string $voShortName
      * @return Vo
-     * @throws Exception
      */
     abstract public function getVoByShortName($voShortName);
 
     /**
      * @param integer $id
      * @return Vo
-     * @throws Exception if does not exists
      */
     abstract public function getVoById($id);
 

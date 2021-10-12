@@ -11,8 +11,6 @@ use SimpleSAML\Metadata\MetaDataStorageHandler;
  * Class IdPAttribute
  *
  * This class for each line in $attrMAp search the $key in IdP Metadata and save it to $request['Attributes'][$value]
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
 {

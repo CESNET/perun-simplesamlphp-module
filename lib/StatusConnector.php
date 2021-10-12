@@ -9,8 +9,6 @@ use SimpleSAML\Error\Exception;
 
 /**
  * Abstract class sspmod_perun_StatusConnector specify interface to get status information about some components
- *
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 abstract class StatusConnector
 {
@@ -33,7 +31,6 @@ abstract class StatusConnector
 
     /**
      * @return StatusConnector instance
-     * @throws Exception thrown if interface does not match any supported interface
      */
     public static function getInstance()
     {

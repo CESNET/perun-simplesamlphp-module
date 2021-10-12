@@ -8,8 +8,6 @@ namespace SimpleSAML\Module\perun;
  * Wrapper of Perun exception returned from RPC.
  *
  * It extends SimpleSAML_Error_Exception because SSP catches it and let user report it.
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
  */
 class Exception extends \SimpleSAML\Error\Exception
 {

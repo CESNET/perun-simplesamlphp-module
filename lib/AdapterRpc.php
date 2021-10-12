@@ -19,9 +19,6 @@ use SimpleSAML\Module\perun\model\Vo;
  * Class sspmod_perun_AdapterRpc
  *
  * Perun adapter which uses Perun RPC interface
- *
- * @author Michal Prochazka <michalp@ics.muni.cz>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class AdapterRpc extends Adapter
 {

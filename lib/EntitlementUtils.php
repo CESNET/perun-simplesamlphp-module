@@ -11,8 +11,6 @@ use SimpleSAML\Logger;
  * Class EntitlementUtils
  *
  * This class contains common functions of PerunEntitlement and PerunEntitlementExtended.
- *
- * @author Dominik Baránek <baranek@ics.muni.cz>
  */
 class EntitlementUtils
 {

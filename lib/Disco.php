@@ -21,9 +21,6 @@ use SimpleSAML\Utils\HTTP;
  * It adds functionality of whitelisting and greylisting IdPs. for security reasons for blacklisting please manipulate
  * directly with metadata. In case of manual idps comment them out or in case of automated metadata fetching configure
  * blacklist in config-metarefresh.php
- *
- * @author Ondrej Velisek <ondrejvelisek@gmail.com>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
  */
 class Disco extends PowerIdPDisco
 {
@@ -261,7 +258,6 @@ class Disco extends PowerIdPDisco
      * @param array $list A map of entities to filter.
      *
      * @return array The list in $list after filtering entities.
-     * @throws Exception In case
      */
     public static function doFilter(
         array $list,
@@ -322,7 +318,6 @@ class Disco extends PowerIdPDisco
      * This method remove all AuthnContextClassRef which start with prefix from configuration
      *
      * @param $state
-     * @throws \Exception
      */
     public function removeAuthContextClassRefWithPrefixes(&$state)
     {
@@ -580,7 +575,6 @@ class Disco extends PowerIdPDisco
      *
      * @param array $list A map of entities to filter.
      * @return array The list in $list after filtering entities.
-     * @throws Exception if all IdPs are filtered out and no one left.
      */
     protected function filterList($list): array
     {
@@ -606,7 +600,6 @@ class Disco extends PowerIdPDisco
      *
      * @param array $list A map of entities to filter.
      * @return array The list in $list after filtering entities.
-     * @throws Exception if all IdPs are filtered out and no one left.
      */
     protected function filterAddInstitutionList(array $list): array
     {

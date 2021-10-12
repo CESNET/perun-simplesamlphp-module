@@ -7,10 +7,6 @@ namespace SimpleSAML\Module\perun\databaseCommand;
 use PDO;
 use SimpleSAML\Logger;
 
-/**
- * @author Dominik Baranek <baranek@ics.muni.cz>
- * @author Pavel Vyskocil <vyskocilpavel@muni.cz>
- */
 class IdpListsServiceDbCmd extends DatabaseCommand
 {
     public const WHITELIST = 'whiteList';
