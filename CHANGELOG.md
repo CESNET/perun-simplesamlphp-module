@@ -1,3 +1,10 @@
+# [6.2.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.1.1...v6.2.0) (2021-10-12)
+
+
+### Features
+
+* Added support for old browsers ([4d62561](https://github.com/CESNET/perun-simplesamlphp-module/commit/4d62561cf8ca7ba2bb3645027541f0bc11c34681))
+
 ## [6.1.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.1.0...v6.1.1) (2021-09-29)
 
 
