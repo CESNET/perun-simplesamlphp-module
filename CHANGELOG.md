@@ -1,3 +1,15 @@
+# [6.3.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.2.0...v6.3.0) (2021-10-12)
+
+
+### Bug Fixes
+
+* 🐛 Add check of key existence in template - unauth-acc-reg ([34c10d5](https://github.com/CESNET/perun-simplesamlphp-module/commit/34c10d52df8afcac2f07c4ee4d3fb13401c5f8bc))
+
+
+### Features
+
+* Turn off addInstitution when whitelisting is disabled ([91990b5](https://github.com/CESNET/perun-simplesamlphp-module/commit/91990b55d94766cff330a6e686bb5b4fe7ec45a2))
+
 # [6.2.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.1.1...v6.2.0) (2021-10-12)
 
 
