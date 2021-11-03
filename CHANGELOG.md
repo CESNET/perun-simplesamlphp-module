@@ -1,3 +1,10 @@
+## [6.3.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.0...v6.3.1) (2021-11-03)
+
+
+### Bug Fixes
+
+* 🐛 Added missing ext-intl to the composer.json ([e79bd2a](https://github.com/CESNET/perun-simplesamlphp-module/commit/e79bd2a59547e4ccfd674a4f962fad285c17c2ac))
+
 # [6.3.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.2.0...v6.3.0) (2021-10-12)
 
 
