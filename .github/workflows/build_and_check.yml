@@ -29,7 +29,7 @@ jobs:
         with:
           php_version: ${{ matrix.php-version }}
           version: 2
-          php_extensions: curl json openssl iconv intl
+          php_extensions: ctype curl date dom filter hash iconv intl json mbstring openssl pcre simplexml SPL tokenizer xml xmlwriter zlib
       - name: Run easy coding standard
         run: vendor/bin/ecs check
   release:
