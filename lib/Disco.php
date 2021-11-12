@@ -7,7 +7,6 @@ namespace SimpleSAML\Module\perun;
 use SimpleSAML\Auth\State;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
-use SimpleSAML\Locale\Translate;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
@@ -34,6 +33,10 @@ class Disco extends PowerIdPDisco
     # ROOT CONFIGURATION ENTRY
     public const WAYF = 'wayf_config';
 
+    public const INTERFACE = 'interface';
+
+    public const RPC = 'rpc';
+
     # CONFIGURATION ENTRIES
     public const BOXED = 'boxed';
 
@@ -43,7 +46,7 @@ class Disco extends PowerIdPDisco
 
     public const DISABLE_WHITELISTING = 'disable_whitelisting';
 
-    public const DISPLAY_SP_NAME = 'display_sp_name';
+    public const DISPLAY_SP = 'display_sp_name';
 
     # CONFIGURATION ENTRIES IDP BLOCKS
     public const IDP_BLOCKS = 'idp_blocks_config';
@@ -128,13 +131,17 @@ class Disco extends PowerIdPDisco
 
     # DISPLAY SERVICE NAME KEYS
 
-    public const CLIENT_ID_PREFIX = 'urn:cesnet:proxyidp:Client_id:';
+    public const CLIENT_ID_PREFIX = 'urn:cesnet:proxyidp:client_id:';
 
-    public const INTERFACE = 'interface';
+    public const SERVICE_NAME_ATTR = 'service_name_attr';
 
-    public const RPC = 'rpc';
+    public const SERVICE_NAME_DEFAULT_ATTR_NAME = 'perunFacilityAttr_spname';
 
-    public const SERVICE_NAME_ATTR = 'urn:perun:facility:attribute-def:def:serviceName';
+    public const CLIENT_ID_ATTR = 'client_id_attr';
+
+    public const ENTITY_ID_ATTR = 'entity_id_attr';
+
+    # VARIABLES
 
     private $originalsp;
 
@@ -183,11 +190,6 @@ class Disco extends PowerIdPDisco
                         $this->proxyIdpEntityId = $state['IdPMetadata']['entityid'];
                     }
                     State::saveState($state, self::SAML_SP_SSO);
-                }
-
-                $this->displaySpName = $this->wayfConfiguration->getBoolean(self::DISPLAY_SP_NAME, false);
-                if ($this->displaySpName) {
-                    $this->fillSpName($state);
                 }
 
                 $e = explode('=', $returnURL)[0];
@@ -267,6 +269,11 @@ class Disco extends PowerIdPDisco
         }
 
         $t = new DiscoTemplate($this->config);
+        $this->displaySpName = $this->wayfConfiguration->getBoolean(self::DISPLAY_SP, false);
+        if ($this->displaySpName) {
+            $this->fillSpName($t);
+        }
+
         $t->data[self::ORIGINAL_SP] = $this->originalsp;
         $t->data[self::IDP_LIST] = $this->idplistStructured($idpList);
         $t->data[self::PREFERRED_IDP] = $preferredIdP;
@@ -277,7 +284,7 @@ class Disco extends PowerIdPDisco
         $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
         $t->data[self::WAYF] = $this->wayfConfiguration;
         $t->data[self::NAME] = $this->spName;
-        $t->data[self::DISPLAY_SP_NAME] = $this->displaySpName;
+        $t->data[self::DISPLAY_SP] = $this->displaySpName;
         $t->show();
     }
 
@@ -886,31 +893,61 @@ class Disco extends PowerIdPDisco
         return null;
     }
 
-    private function fillSpName($state)
+    private function fillSpName($t)
     {
-        $translate = new Translate(Configuration::getInstance());
-
         $clientIdWithPrefix = self::substrInArray(self::CLIENT_ID_PREFIX, $this->originalAuthnContextClassRef);
 
-        if ($clientIdWithPrefix !== null) {
-            $parts = explode(':', $clientIdWithPrefix);
-            $clientId = end($parts);
+        $this->adapter = Adapter::getInstance($this->wayfConfiguration->getString(self::INTERFACE, self::RPC));
+        try {
+            if ($clientIdWithPrefix !== null) {
+                $parts = explode(':', $clientIdWithPrefix);
+                $clientId = end($parts);
 
-            $this->adapter = Adapter::getInstance($this->wayfConfiguration->getString(self::INTERFACE, self::RPC));
+                $clientIdAttr = $this->wayfConfiguration->getString(self::CLIENT_ID_ATTR, null);
+                if ($clientIdAttr === null) {
+                    $facility = $this->adapter->getFacilityByClientId($clientId);
+                } else {
+                    $facility = $this->adapter->getFacilityByClientId($clientId, $clientIdAttr);
+                }
 
-            $facility = $this->adapter->getFacilityByClientId($clientId);
+                if ($facility !== null) {
+                    $spNameAttrName = $this->wayfConfiguration->getString(
+                        self::SERVICE_NAME_ATTR,
+                        self::SERVICE_NAME_DEFAULT_ATTR_NAME
+                    );
+                    $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttrName);
+                    if (! empty($spNameMap)) {
+                        $this->spName = $t->getTranslation($spNameMap);
+                    }
+                }
+            } else {
+                $entityId = $this->originalsp['entityid'];
+                $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
+                if ($entityIdAttr === null) {
+                    $facility = $this->adapter->getFacilityByEntityId($entityId);
+                } else {
+                    $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
+                }
 
-            if ($facility !== null) {
-                $spNameMap = $this->adapter->getFacilityAttribute($facility, self::SERVICE_NAME_ATTR);
+                if ($facility !== null) {
+                    $spNameAttr = $this->wayfConfiguration->getString(
+                        self::SERVICE_NAME_ATTR,
+                        self::SERVICE_NAME_DEFAULT_ATTR_NAME
+                    );
+                    $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttr);
+                    if (! empty($spNameMap)) {
+                        $this->spName = $t->getTranslation($spNameMap);
+                    }
+                }
+                if (empty($entityId)) {
+                    if (! empty($this->originalsp[self::NAME])) {
+                        $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
+                    }
+                }
             }
-
-            if (! empty($spNameMap)) {
-                $this->spName = $translate->getPreferredTranslation($spNameMap);
-            }
-        } else {
-            if (! empty($state[self::STATE_SP_METADATA][self::NAME])) {
-                $this->spName = $translate->getPreferredTranslation($state[self::STATE_SP_METADATA][self::NAME]);
-            }
+        } catch (\Exception $e) {
+            Logger::warning("Fill SP name - caught exception ${e}");
+            //OK, we will just display the disco
         }
     }
 }

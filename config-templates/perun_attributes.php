@@ -22,6 +22,11 @@ $config = [
         'ldap' => 'dynamicRegistration',
         'type' => 'bool',
     ],
+    'perunFacilityAttr_entityID' => [
+        'rpc' => 'urn:perun:facility:attribute-def:def:entityID',
+        'ldap' => 'entityID',
+        'type' => 'string',
+    ],
     'perunFacilityAttr_OIDCClientID' => [
         'rpc' => 'urn:perun:facility:attribute-def:def:OIDCClientID',
         'ldap' => 'OIDCClientID',
@@ -60,6 +65,11 @@ $config = [
     'perunFacilityAttr_capabilities' => [
         'rpc' => 'urn:perun:facility:attribute-def:def:capabilities',
         'ldap' => 'capabilities',
+        'type' => 'map',
+    ],
+    'perunFacilityAttr_spname' => [
+        'rpc' => 'urn:perun:facility:attribute-def:def:serviceName',
+        'ldap' => 'serviceName',
         'type' => 'map',
     ],
 

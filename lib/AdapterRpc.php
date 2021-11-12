@@ -323,9 +323,10 @@ class AdapterRpc extends Adapter
 
     public function getFacilityAttribute($facility, $attrName)
     {
+        $attrNameRpc = AttributeUtils::getRpcAttrName($attrName);
         $perunAttr = $this->connector->get('attributesManager', 'getAttribute', [
             'facility' => $facility->getId(),
-            'attributeName' => $attrName,
+            'attributeName' => $attrNameRpc,
         ]);
 
         return $perunAttr['value'];
@@ -368,10 +369,14 @@ class AdapterRpc extends Adapter
         return $this->removeDuplicateEntities($groups);
     }
 
-    public function getFacilityByEntityId($spEntityId)
+    public function getFacilityByEntityId($spEntityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
+        $attributeName = AttributeUtils::getRpcAttrName($entityIdAttr);
+        if (empty($attributeName)) {
+            throw new Exception("No attribute configuration in RPC found for attribute ${entityIdAttr}");
+        }
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => 'urn:perun:facility:attribute-def:def:entityID',
+            'attributeName' => $attributeName,
             'attributeValue' => $spEntityId,
         ]);
 
@@ -390,10 +395,14 @@ class AdapterRpc extends Adapter
         return new Facility($perunAttr[0]['id'], $perunAttr[0]['name'], $perunAttr[0]['description'], $spEntityId);
     }
 
-    public function getFacilityByClientId($clientId)
+    public function getFacilityByClientId($clientId, $clientIdAttr = 'perunFacilityAttr_OIDCClientID')
     {
+        $attributeName = AttributeUtils::getRpcAttrName($clientIdAttr);
+        if (empty($attributeName)) {
+            throw new Exception("No attribute configuration in RPC found for attribute ${clientIdAttr}");
+        }
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => 'urn:perun:facility:attribute-def:def:OIDCClientID',
+            'attributeName' => $attributeName,
             'attributeValue' => $clientId,
         ]);
 

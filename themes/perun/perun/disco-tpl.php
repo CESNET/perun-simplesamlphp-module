@@ -29,7 +29,7 @@ $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" hr
     Module::getModuleUrl('perun/res/css/disco.css') . '" />';
 
 $wayfConfig = $this->data[Disco::WAYF];
-$displaySpName = $this->data[Disco::DISPLAY_SP_NAME];
+$displaySpName = $this->data[Disco::DISPLAY_SP];
 $spName = $this->data[Disco::NAME];
 
 $translateModule = $wayfConfig->getString(Disco::TRANSLATE_MODULE, 'disco');

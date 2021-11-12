@@ -284,11 +284,15 @@ class AdapterLdap extends Adapter
         return $this->fallbackAdapter->getFacilitiesByEntityId($spEntityId);
     }
 
-    public function getFacilityByEntityId($spEntityId)
+    public function getFacilityByEntityId($spEntityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
+        $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
+        if (empty($attributeName)) {
+            throw new Exception("No attribute configuration in LDAP found for attribute ${entityIdAttr}");
+        }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
-            '(&(objectClass=perunFacility)(entityID=' . $spEntityId . '))',
+            "(&(objectClass=perunFacility)(${attrName}=${spEntityId}))",
             [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
         );
 
@@ -307,11 +311,15 @@ class AdapterLdap extends Adapter
         return $facility;
     }
 
-    public function getFacilityByClientId($clientId)
+    public function getFacilityByClientId($clientId, $clientIdAttr = 'perunFacilityAttr_OIDCClientID')
     {
+        $attrName = AttributeUtils::getLdapAttrName($clientIdAttr);
+        if (empty($attributeName)) {
+            throw new Exception("No attribute configuration in LDAP found for attribute ${clientIdAttr}");
+        }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
-            '(&(objectClass=perunFacility)(OIDCClientID=' . $clientId . '))',
+            "(&(objectClass=perunFacility)(${attrName}=${clientId}))",
             [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
         );
 
