@@ -75,6 +75,13 @@ class RpcConnector
         Logger::debug('perun.RPC: GET call ' . $uri . ' with params: ' . $paramsQuery . ', response : ' .
             $json . ' in: ' . $responseTime . 's.');
 
+        if ($json === false) {
+            throw new Exception(
+                'Cant\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsQuery .
+                ', Response: ' . $json
+            );
+        }
+
         $result = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -120,6 +127,13 @@ class RpcConnector
         $responseTime = round($endTime - $startTime, 3);
         Logger::debug('perun.RPC: POST call ' . $uri . ' with params: ' . $paramsJson . ', response : ' .
             $json . ' in: ' . $responseTime . 's.');
+
+        if ($json === false) {
+            throw new Exception(
+                'Can\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsQuery .
+                ', Response: ' . $json
+            );
+        }
 
         $result = json_decode($json, true);
 
