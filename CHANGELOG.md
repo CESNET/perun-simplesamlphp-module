@@ -1,3 +1,10 @@
+## [6.3.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.1...v6.3.2) (2021-11-15)
+
+
+### Bug Fixes
+
+* prevent type errors in RPC connector ([5152cbe](https://github.com/CESNET/perun-simplesamlphp-module/commit/5152cbe154f950c1a83b25c7e8c6e8d68051bf12))
+
 ## [6.3.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.0...v6.3.1) (2021-11-03)
 
 
