@@ -11,26 +11,20 @@ use SimpleSAML\XHTML\Template;
  * @var Template $this
  */
 
-$this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
-    Module::getModuleUrl('perun/res/css/warning_test_sp.css') . '" />';
-
-$this->data['header'] = '';
-
-$this->includeAtTemplateBase('includes/header.php');
 $customHeaderEnabled = isset($this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_ENABLED])
     && $this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_ENABLED];
 $customTextEnabled = isset($this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_TEXT_ENABLED])
     && $this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_TEXT_ENABLED];
+
+$this->data['header'] = $customTextEnabled ?
+    $this->t(Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_KEY) :
+    $this->t('{perun:perun:warning-test-sp-tpl_text}');
+
+$this->includeAtTemplateBase('includes/header.php');
 ?>
 
     <form method="post" action="<?php echo Module::getModuleURL('perun/warning_test_sp_continue.php'); ?>">
-
         <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>">
-        <h3><?php echo $customTextEnabled ?
-                $this->t(Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_KEY) :
-                $this->t('{perun:perun:warning-test-sp-tpl_text}')
-        ?>
-        </h3>
         <?php
         if ($customTextEnabled) {
             echo '<div>' . $this->t(Module\perun\Auth\Process\WarningTestSP::CUSTOM_TEXT_KEY) . '</div>' . PHP_EOL;

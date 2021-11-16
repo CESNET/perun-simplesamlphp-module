@@ -264,13 +264,15 @@ $config = [
     ],
 
     'warning_test_sp_config' => [
+        // text to be injected into header of the page (h1 element)
         'header' => [
-            'en' => '<h3>Warning - service in test environment</h3>',
-            'cs' => '<h3>Varování - testovací služba</h3>',
+            'en' => 'Warning - service in test environment',
+            'cs' => 'Varování - testovací služba',
         ],
+        // Custom text that will be displayed between the header and continue button. Use paragraphs for formatting.
         'text' => [
-            'en' => '<p>Service is in the test environment.<br class="spacer"/>Hit the continue button.</p>',
-            'cs' => '<p>Služba je v testovacím režimu.<br class="spacer"/>Pokračujte zmáčknutím tlačítka.</p>',
+            'en' => '<p>Service is in the test environment.<br/>You can access it, but it might not work as expected.</p><p>Hit the continue button.</p>',
+            'cs' => '<p>Služba je v testovacím režimu.<br/>Služba v testovacím režimu nemusí správně fungovat.</p><p>Pokračujte zmáčknutím tlačítka.</p>',
         ],
     ],
 ];
