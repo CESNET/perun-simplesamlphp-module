@@ -1,3 +1,10 @@
+## [6.3.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.2...v6.3.3) (2021-11-16)
+
+
+### Bug Fixes
+
+* 🐛 Remove fixed footer for warning_test_sp ([540afac](https://github.com/CESNET/perun-simplesamlphp-module/commit/540afac23a60916d1676998bb96ba18b5720676d))
+
 ## [6.3.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.1...v6.3.2) (2021-11-15)
 
 
