@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 
 use SimpleSAML\Module;
+use SimpleSAML\Module\perun\Auth\Process\WarningTestSP;
 use SimpleSAML\XHTML\Template;
 
 /**
@@ -11,13 +12,13 @@ use SimpleSAML\XHTML\Template;
  * @var Template $this
  */
 
-$customHeaderEnabled = isset($this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_ENABLED])
-    && $this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_ENABLED];
-$customTextEnabled = isset($this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_TEXT_ENABLED])
-    && $this->data[Module\perun\Auth\Process\WarningTestSP::CUSTOM_TEXT_ENABLED];
+$customHeaderEnabled = isset($this->data[WarningTestSP::CUSTOM_HEADER_ENABLED])
+    && $this->data[WarningTestSP::CUSTOM_HEADER_ENABLED];
+$customTextEnabled = isset($this->data[WarningTestSP::CUSTOM_TEXT_ENABLED])
+    && $this->data[WarningTestSP::CUSTOM_TEXT_ENABLED];
 
 $this->data['header'] = $customTextEnabled ?
-    $this->t(Module\perun\Auth\Process\WarningTestSP::CUSTOM_HEADER_KEY) :
+    $this->t(WarningTestSP::CUSTOM_HEADER_KEY) :
     $this->t('{perun:perun:warning-test-sp-tpl_text}');
 
 $this->includeAtTemplateBase('includes/header.php');
@@ -27,7 +28,7 @@ $this->includeAtTemplateBase('includes/header.php');
         <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>">
         <?php
         if ($customTextEnabled) {
-            echo '<div>' . $this->t(Module\perun\Auth\Process\WarningTestSP::CUSTOM_TEXT_KEY) . '</div>' . PHP_EOL;
+            echo '<div>' . $this->t(WarningTestSP::CUSTOM_TEXT_KEY) . '</div>' . PHP_EOL;
         }
         ?>
         <br/>
