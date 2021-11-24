@@ -9,7 +9,6 @@ use SimpleSAML\Module\perun\databaseCommand\ChallengesDbCmd;
  * Hook to run a cron job.
  *
  * @param array $croninfo  Output
- * @author Dominik Baranek <baranek@ics.muni.cz>
  */
 function perun_hook_cron(&$croninfo)
 {
@@ -19,9 +18,15 @@ function perun_hook_cron(&$croninfo)
     }
     Logger::info('cron [perun]: Running cron in cron tag [' . $croninfo['tag'] . '] ');
 
-    $challengesDbCmd = new ChallengesDbCmd();
+    try {
+        $challengesDbCmd = new ChallengesDbCmd();
 
-    if (! $challengesDbCmd->deleteOldChallenges()) {
-        Logger::error('cron [perun]: Error while deleting old challenges from the database.');
+        if (! $challengesDbCmd->deleteOldChallenges()) {
+            Logger::error('cron [perun]: Error while deleting old challenges from the database.');
+        }
+    } catch (\Exception $e) {
+        Logger::info(
+            'cron [perun]: Not deleting old challenges from the database because no database is configured or an error occured: ' . $e->getMessage()
+        );
     }
 }

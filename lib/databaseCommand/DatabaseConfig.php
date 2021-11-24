@@ -32,7 +32,7 @@ class DatabaseConfig
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
 
-        $this->config = $configuration->getConfigItem(self::DATABASE, null);
+        $this->config = $configuration->getConfigItem(self::DATABASE);
         $this->store = $this->config->getConfigItem(self::STORE, null);
 
         $this->whitelistTableName = $this->config->getString(self::WHITELIST_TABLE_NAME, null);
