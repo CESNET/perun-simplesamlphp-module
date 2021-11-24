@@ -1,3 +1,10 @@
+# [6.4.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.3...v6.4.0) (2021-11-24)
+
+
+### Features
+
+* Added possibility to add a service name on WAYF ([1c84441](https://github.com/CESNET/perun-simplesamlphp-module/commit/1c844417dd241ac2255713387b2b2052760a70e8))
+
 ## [6.3.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.2...v6.3.3) (2021-11-16)
 
 
