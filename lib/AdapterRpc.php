@@ -371,12 +371,15 @@ class AdapterRpc extends Adapter
 
     public function getFacilityByEntityId($spEntityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
-        $attributeName = AttributeUtils::getRpcAttrName($entityIdAttr);
-        if (empty($attributeName)) {
-            throw new Exception("No attribute configuration in RPC found for attribute ${entityIdAttr}");
+        $attrName = AttributeUtils::getRpcAttrName($entityIdAttr);
+        if (empty($attrName)) {
+            $attrName = 'urn:perun:facility:attribute-def:def:entityID';
+            Logger::warning(
+                "No attribute configuration in RPC found for attribute ${entityIdAttr}, using ${attrName} as fallback value"
+            );
         }
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => $attributeName,
+            'attributeName' => $attrName,
             'attributeValue' => $spEntityId,
         ]);
 
@@ -397,12 +400,15 @@ class AdapterRpc extends Adapter
 
     public function getFacilityByClientId($clientId, $clientIdAttr = 'perunFacilityAttr_OIDCClientID')
     {
-        $attributeName = AttributeUtils::getRpcAttrName($clientIdAttr);
-        if (empty($attributeName)) {
-            throw new Exception("No attribute configuration in RPC found for attribute ${clientIdAttr}");
+        $attrName = AttributeUtils::getRpcAttrName($clientIdAttr);
+        if (empty($attrName)) {
+            $attrName = 'urn:perun:facility:attribute-def:def:OIDCClientID';
+            Logger::warning(
+                "No attribute configuration in RPC found for attribute ${clientIdAttr}, using ${attrName} as fallback value"
+            );
         }
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
-            'attributeName' => $attributeName,
+            'attributeName' => $attrName,
             'attributeValue' => $clientId,
         ]);
 
