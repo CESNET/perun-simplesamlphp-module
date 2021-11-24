@@ -1,3 +1,10 @@
+## [6.4.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.0...v6.4.1) (2021-11-24)
+
+
+### Bug Fixes
+
+* 🐛 Fix wrong variable names in getFacilityByXY methods ([986a7d8](https://github.com/CESNET/perun-simplesamlphp-module/commit/986a7d85de7fbfd3e63f4a7587bb80e473252376))
+
 # [6.4.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.3.3...v6.4.0) (2021-11-24)
 
 
