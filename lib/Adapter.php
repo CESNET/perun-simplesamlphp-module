@@ -126,10 +126,18 @@ abstract class Adapter
     abstract public function getFacilityAttribute($facility, $attrName);
 
     /**
-     * @param string $spEntityId
+     * @param string $spEntityId Value of the entityID identifier
      * @return Facility facility
      */
-    abstract public function getFacilityByEntityId($spEntityId);
+    abstract public function getFacilityByEntityId($spEntityId, $entityIdAttr);
+
+    /**
+     * @param string $clientId Value of the client_id identifier
+     * @param string $clientIdAttr Internal name of the client_id attribute, defaults to 'perunFacilityAttr_OIDCClientID'
+     * this key has to be present in the attribute map configuration (see perun_attributes.php config template)
+     * @return Facility facility
+     */
+    abstract public function getFacilityByClientId($clientId, $clientIdAttr);
 
     /**
      * @param string $spEntityId entity id of the sp

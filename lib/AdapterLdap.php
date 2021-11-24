@@ -284,11 +284,15 @@ class AdapterLdap extends Adapter
         return $this->fallbackAdapter->getFacilitiesByEntityId($spEntityId);
     }
 
-    public function getFacilityByEntityId($spEntityId)
+    public function getFacilityByEntityId($spEntityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
+        $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
+        if (empty($attributeName)) {
+            throw new Exception("No attribute configuration in LDAP found for attribute ${entityIdAttr}");
+        }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
-            '(&(objectClass=perunFacility)(entityID=' . $spEntityId . '))',
+            "(&(objectClass=perunFacility)(${attrName}=${spEntityId}))",
             [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
         );
 
@@ -302,6 +306,33 @@ class AdapterLdap extends Adapter
             $ldapResult[self::CN][0],
             $ldapResult[self::DESCRIPTION][0],
             $spEntityId
+        );
+
+        return $facility;
+    }
+
+    public function getFacilityByClientId($clientId, $clientIdAttr = 'perunFacilityAttr_OIDCClientID')
+    {
+        $attrName = AttributeUtils::getLdapAttrName($clientIdAttr);
+        if (empty($attributeName)) {
+            throw new Exception("No attribute configuration in LDAP found for attribute ${clientIdAttr}");
+        }
+        $ldapResult = $this->connector->searchForEntity(
+            $this->ldapBase,
+            "(&(objectClass=perunFacility)(${attrName}=${clientId}))",
+            [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
+        );
+
+        if (empty($ldapResult)) {
+            Logger::warning('perun:AdapterLdap: No facility with clientId \'' . $clientId . '\' found.');
+            return null;
+        }
+
+        $facility = new Facility(
+            $ldapResult[self::PERUN_FACILITY_ID][0],
+            $ldapResult[self::CN][0],
+            $ldapResult[self::DESCRIPTION][0],
+            $clientId
         );
 
         return $facility;

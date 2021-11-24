@@ -33,6 +33,10 @@ class Disco extends PowerIdPDisco
     # ROOT CONFIGURATION ENTRY
     public const WAYF = 'wayf_config';
 
+    public const INTERFACE = 'interface';
+
+    public const RPC = 'rpc';
+
     # CONFIGURATION ENTRIES
     public const BOXED = 'boxed';
 
@@ -41,6 +45,8 @@ class Disco extends PowerIdPDisco
     public const REMOVE_AUTHN_CONTEXT_CLASS_PREFIXES = 'remove_authn_context_class_ref_prefixes';
 
     public const DISABLE_WHITELISTING = 'disable_whitelisting';
+
+    public const DISPLAY_SP = 'display_sp_name';
 
     # CONFIGURATION ENTRIES IDP BLOCKS
     public const IDP_BLOCKS = 'idp_blocks_config';
@@ -121,6 +127,22 @@ class Disco extends PowerIdPDisco
 
     public const SAML_SP_SSO = 'saml:sp:sso';
 
+    public const NAME = 'name';
+
+    # DISPLAY SERVICE NAME KEYS
+
+    public const CLIENT_ID_PREFIX = 'urn:cesnet:proxyidp:client_id:';
+
+    public const SERVICE_NAME_ATTR = 'service_name_attr';
+
+    public const SERVICE_NAME_DEFAULT_ATTR_NAME = 'perunFacilityAttr_spname';
+
+    public const CLIENT_ID_ATTR = 'client_id_attr';
+
+    public const ENTITY_ID_ATTR = 'entity_id_attr';
+
+    # VARIABLES
+
     private $originalsp;
 
     private array $originalAuthnContextClassRef = [];
@@ -128,6 +150,12 @@ class Disco extends PowerIdPDisco
     private $wayfConfiguration;
 
     private $perunModuleConfiguration;
+
+    private $displaySpName;
+
+    private $spName;
+
+    private $adapter;
 
     private $proxyIdpEntityId;
 
@@ -156,12 +184,14 @@ class Disco extends PowerIdPDisco
             if ($state !== null) {
                 if (isset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF])) {
                     $this->originalAuthnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF];
+
                     $this->removeAuthContextClassRefWithPrefixes($state);
                     if (isset($state['IdPMetadata']['entityid'])) {
                         $this->proxyIdpEntityId = $state['IdPMetadata']['entityid'];
                     }
                     State::saveState($state, self::SAML_SP_SSO);
                 }
+
                 $e = explode('=', $returnURL)[0];
                 $newReturnURL = $e . '=' . urlencode($id);
                 $_GET[self::RETURN] = $newReturnURL;
@@ -239,6 +269,11 @@ class Disco extends PowerIdPDisco
         }
 
         $t = new DiscoTemplate($this->config);
+        $this->displaySpName = $this->wayfConfiguration->getBoolean(self::DISPLAY_SP, false);
+        if ($this->displaySpName) {
+            $this->fillSpName($t);
+        }
+
         $t->data[self::ORIGINAL_SP] = $this->originalsp;
         $t->data[self::IDP_LIST] = $this->idplistStructured($idpList);
         $t->data[self::PREFERRED_IDP] = $preferredIdP;
@@ -248,6 +283,8 @@ class Disco extends PowerIdPDisco
         $t->data[self::AUTHN_CONTEXT_CLASS_REF] = $this->originalAuthnContextClassRef;
         $t->data[self::WARNING_ATTRIBUTES] = $warningAttributes;
         $t->data[self::WAYF] = $this->wayfConfiguration;
+        $t->data[self::NAME] = $this->spName;
+        $t->data[self::DISPLAY_SP] = $this->displaySpName;
         $t->show();
     }
 
@@ -843,5 +880,74 @@ class Disco extends PowerIdPDisco
         $res .= (' ' . implode(' ', $dataSearchKeys));
 
         return strtolower(str_replace('"', '', iconv('UTF-8', 'US-ASCII//TRANSLIT', $res)));
+    }
+
+    private static function substrInArray($needle, array $haystack)
+    {
+        foreach ($haystack as $item) {
+            if (strpos($item, $needle) !== false) {
+                return $item;
+            }
+        }
+
+        return null;
+    }
+
+    private function fillSpName($t)
+    {
+        $clientIdWithPrefix = self::substrInArray(self::CLIENT_ID_PREFIX, $this->originalAuthnContextClassRef);
+
+        $this->adapter = Adapter::getInstance($this->wayfConfiguration->getString(self::INTERFACE, self::RPC));
+        try {
+            if ($clientIdWithPrefix !== null) {
+                $parts = explode(':', $clientIdWithPrefix);
+                $clientId = end($parts);
+
+                $clientIdAttr = $this->wayfConfiguration->getString(self::CLIENT_ID_ATTR, null);
+                if ($clientIdAttr === null) {
+                    $facility = $this->adapter->getFacilityByClientId($clientId);
+                } else {
+                    $facility = $this->adapter->getFacilityByClientId($clientId, $clientIdAttr);
+                }
+
+                if ($facility !== null) {
+                    $spNameAttrName = $this->wayfConfiguration->getString(
+                        self::SERVICE_NAME_ATTR,
+                        self::SERVICE_NAME_DEFAULT_ATTR_NAME
+                    );
+                    $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttrName);
+                    if (! empty($spNameMap)) {
+                        $this->spName = $t->getTranslation($spNameMap);
+                    }
+                }
+            } else {
+                $entityId = $this->originalsp['entityid'];
+                $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
+                if ($entityIdAttr === null) {
+                    $facility = $this->adapter->getFacilityByEntityId($entityId);
+                } else {
+                    $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
+                }
+
+                if ($facility !== null) {
+                    $spNameAttr = $this->wayfConfiguration->getString(
+                        self::SERVICE_NAME_ATTR,
+                        self::SERVICE_NAME_DEFAULT_ATTR_NAME
+                    );
+                    $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttr);
+                    if (! empty($spNameMap)) {
+                        $this->spName = $t->getTranslation($spNameMap);
+                    }
+                }
+                if (empty($entityId)) {
+                    if (! empty($this->originalsp[self::NAME])) {
+                        $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            Logger::warning("Fill SP name - caught exception ${e}");
+            //OK, we will just display the disco
+        }
     }
 }

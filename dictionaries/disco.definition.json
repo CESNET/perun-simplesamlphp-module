@@ -1,7 +1,11 @@
 {
   "header": {
     "en": "Choose how to log in",
-    "cs": "Vyberte čím se chcete přihlásit"
+    "cs": "Vyberte, čím se chcete přihlásit"
+  },
+  "header_display_service": {
+    "en": "to the service",
+    "cs": "ke službě"
   },
   "institutional_account": {
     "en": "your institutional account",
