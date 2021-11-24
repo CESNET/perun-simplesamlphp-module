@@ -28,14 +28,9 @@
         {
             "name": "Dominik Baranek",
             "email": "baranek@ics.muni.cz"
-        },
-        {
-            "name": "Dominik Baranek",
-            "email": "baranek@ics.muni.cz"
         }
     ],
     "require": {
-        "simplesamlphp/simplesamlphp": "~1.17",
         "simplesamlphp/composer-module-installer": "~1.0",
         "symfony/var-exporter": "^5.0",
         "phpseclib/phpseclib": "~3.0",
