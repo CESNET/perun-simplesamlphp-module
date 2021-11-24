@@ -287,8 +287,11 @@ class AdapterLdap extends Adapter
     public function getFacilityByEntityId($spEntityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
         $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
-        if (empty($attributeName)) {
-            throw new Exception("No attribute configuration in LDAP found for attribute ${entityIdAttr}");
+        if (empty($attrName)) {
+            $attrName = 'entityID';
+            Logger::warning(
+                "No attribute configuration in LDAP found for attribute ${entityIdAttr}, using ${attrName} as fallback value"
+            );
         }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
@@ -301,21 +304,22 @@ class AdapterLdap extends Adapter
             return null;
         }
 
-        $facility = new Facility(
+        return new Facility(
             $ldapResult[self::PERUN_FACILITY_ID][0],
             $ldapResult[self::CN][0],
             $ldapResult[self::DESCRIPTION][0],
             $spEntityId
         );
-
-        return $facility;
     }
 
     public function getFacilityByClientId($clientId, $clientIdAttr = 'perunFacilityAttr_OIDCClientID')
     {
         $attrName = AttributeUtils::getLdapAttrName($clientIdAttr);
-        if (empty($attributeName)) {
-            throw new Exception("No attribute configuration in LDAP found for attribute ${clientIdAttr}");
+        if (empty($attrName)) {
+            $attrName = 'OIDCClientID';
+            Logger::warning(
+                "No attribute configuration in LDAP found for attribute ${clientIdAttr}, using ${attrName} as fallback value"
+            );
         }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
@@ -328,14 +332,12 @@ class AdapterLdap extends Adapter
             return null;
         }
 
-        $facility = new Facility(
+        return new Facility(
             $ldapResult[self::PERUN_FACILITY_ID][0],
             $ldapResult[self::CN][0],
             $ldapResult[self::DESCRIPTION][0],
             $clientId
         );
-
-        return $facility;
     }
 
     public function getEntitylessAttribute($attrName)
