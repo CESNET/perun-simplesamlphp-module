@@ -1,3 +1,10 @@
+## [6.4.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.1...v6.4.2) (2021-11-25)
+
+
+### Bug Fixes
+
+* make database required for challenges, skip challenge cleanup without database ([c42c3fa](https://github.com/CESNET/perun-simplesamlphp-module/commit/c42c3fa2a3be98509d0d3e9037fff2a0722a5db1)), closes [#182](https://github.com/CESNET/perun-simplesamlphp-module/issues/182)
+
 ## [6.4.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.0...v6.4.1) (2021-11-24)
 
 
