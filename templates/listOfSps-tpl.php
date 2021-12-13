@@ -3,7 +3,7 @@
 use SimpleSAML\Module;
 use SimpleSAML\Module\perun\ListOfSps;
 
-/**
+/*
  * This is a simple example of template with table of SPs
  */
 $this->data['header'] = '';
@@ -25,7 +25,7 @@ $allServices = $this->data['allServices'];
 if ($this->data['isNameMultilingual']) {
     // translate service name for sorting
     $allServices = array_map(function ($service) {
-        if (empty($service['name']) || empty($service['name']['value']) || ! is_array($service['name']['value'])) {
+        if (empty($service['name']) || empty($service['name']['value']) || !is_array($service['name']['value'])) {
             $service['name'] = [
                 'type' => 'java.lang.String',
                 'value' => '-',
@@ -37,6 +37,7 @@ if ($this->data['isNameMultilingual']) {
                 $this->getLanguage()
             );
         }
+
         return $service;
     }, $allServices);
 }
@@ -62,7 +63,7 @@ $this->includeAtTemplateBase('includes/header.php');
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-12">
-                <h3><?php echo $this->t('{perun:listOfSps:statistics}') ?></h3>
+                <h3><?php echo $this->t('{perun:listOfSps:statistics}'); ?></h3>
             </div>
         </div>
         <div class="row">
@@ -70,23 +71,23 @@ $this->includeAtTemplateBase('includes/header.php');
                 <table class="table table-stats">
                     <tr>
                         <th></th>
-                        <th><?php echo $this->t('{perun:listOfSps:production_services}') ?></th>
-                        <th><?php echo $this->t('{perun:listOfSps:test_services}') ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:production_services}'); ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:test_services}'); ?></th>
                     </tr>
                     <tr>
-                        <th><?php echo $this->t('{perun:listOfSps:all}') ?></th>
-                        <th><?php echo $productionServicesCount ?></th>
-                        <th><?php echo $testServicesCount ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:all}'); ?></th>
+                        <th><?php echo $productionServicesCount; ?></th>
+                        <th><?php echo $testServicesCount; ?></th>
                     </tr>
                     <tr>
-                        <th><?php echo $this->t('{perun:listOfSps:saml}') ?></th>
-                        <th><?php echo $samlProductionCount ?></th>
-                        <th><?php echo $statistics['samlTestServicesCount'] ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:saml}'); ?></th>
+                        <th><?php echo $samlProductionCount; ?></th>
+                        <th><?php echo $statistics['samlTestServicesCount']; ?></th>
                     </tr>
                     <tr>
-                        <th><?php echo $this->t('{perun:listOfSps:oidc}') ?></th>
-                        <th><?php echo $oidcProductionCount ?></th>
-                        <th><?php echo $statistics['oidcTestServicesCount'] ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:oidc}'); ?></th>
+                        <th><?php echo $oidcProductionCount; ?></th>
+                        <th><?php echo $statistics['oidcTestServicesCount']; ?></th>
                     </tr>
                 </table>
             </div>
@@ -100,7 +101,7 @@ $this->includeAtTemplateBase('includes/header.php');
     <div class="col-md-12">
         <div class="row">
             <div class="col-md-12">
-                <h3><?php echo $this->t('{perun:listOfSps:services}') ?></h3>
+                <h3><?php echo $this->t('{perun:listOfSps:services}'); ?></h3>
             </div>
         </div>
         <div class="row">
@@ -108,11 +109,11 @@ $this->includeAtTemplateBase('includes/header.php');
                 <table class="table table-striped" id="table1">
                     <thead>
                     <tr>
-                        <th><?php echo $this->t('{perun:listOfSps:name}') ?></th>
-                        <th><?php echo $this->t('{perun:listOfSps:authenticate_protocol}') ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:name}'); ?></th>
+                        <th><?php echo $this->t('{perun:listOfSps:authenticate_protocol}'); ?></th>
                         <?php
                         foreach ($attributesToShow as $attr) {
-                            if (! empty($samlServices)) {
+                            if (!empty($samlServices)) {
                                 echo "<th class='" . ListOfSps::getClass(
                                     array_values($samlServices)[0]['facilityAttributes'][$attr]['type']
                                 ) . "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
@@ -126,7 +127,7 @@ $this->includeAtTemplateBase('includes/header.php');
                     <?php
                     foreach ($allServices as $service) {
                         if (empty($service['showOnServiceList']['value']) ||
-                            ! ($service['showOnServiceList']['value'])
+                            !($service['showOnServiceList']['value'])
                         ) {
                             continue;
                         }
@@ -145,7 +146,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         foreach ($attributesToShow as $attr) {
                             $type = $service['facilityAttributes'][$attr]['type'];
                             $value = $service['facilityAttributes'][$attr]['value'];
-                            if ($value !== null && in_array($attr, $this->data['multilingualAttributes'], true)) {
+                            if (null !== $value && in_array($attr, $this->data['multilingualAttributes'], true)) {
                                 $type = 'java.lang.String';
                                 $value = ListOfSps::getPreferredTranslation($value, $this->getLanguage());
                             }

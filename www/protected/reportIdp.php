@@ -6,7 +6,7 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\XHTML\EMail;
 
-/**
+/*
  * endpoint which report (send email) given idp defined by idpEntityId param. Also consumes other parameters such as
  * 'isOk' After successfull report it redirects user back to URL defined in 'redirectUri'
  *
@@ -15,24 +15,24 @@ use SimpleSAML\XHTML\EMail;
  * example URL (params are POST): https://login.example.org/proxy/module.php/perun/protected/reportIdp.php
  */
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+if ('POST' !== $_SERVER['REQUEST_METHOD']) {
     echo 'ERROR request has to be POST';
     die;
 }
 
-if (! isset($_POST['idpEntityId'])) {
+if (!isset($_POST['idpEntityId'])) {
     http_response_code(400);
     echo 'ERROR parametr "idpEntityId" is missing';
     die;
 }
 
-if (! isset($_POST['isOk'])) {
+if (!isset($_POST['isOk'])) {
     http_response_code(400);
     echo 'ERROR parametr "isOk" is missing';
     die;
 }
 
-if (! isset($_POST['redirectUri'])) {
+if (!isset($_POST['redirectUri'])) {
     http_response_code(400);
     echo 'ERROR parametr "redirectUri" is missing';
     die;
@@ -60,7 +60,7 @@ IdP were whitelisted automatically: {$_POST['resultOnProxy']}
 CODE_SAMPLE;
 
 $toAddress = $config->getString('technicalcontact_email', 'N/A');
-if ($toAddress !== 'N/A') {
+if ('N/A' !== $toAddress) {
     $email = new EMail($toAddress, 'Report: ' . $_POST['title'], $_POST['from']);
     $email->setBody($message);
     $email->send();

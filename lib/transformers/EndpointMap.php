@@ -25,11 +25,13 @@ class EndpointMap extends SingularAttributeTransformer
     public function __construct(\SimpleSAML\Configuration $config)
     {
         $this->defaultBinding = $config->getString('defaultBinding');
-        $this->fullNames = ! $config->getBoolean('shortNames', false);
+        $this->fullNames = !$config->getBoolean('shortNames', false);
     }
 
     /**
      * @override
+     *
+     * @param mixed $values
      */
     public function singleTransform($values)
     {
@@ -37,7 +39,7 @@ class EndpointMap extends SingularAttributeTransformer
         if (empty($endpoints)) {
             return null;
         }
-        if (! is_array($endpoints)) {
+        if (!is_array($endpoints)) {
             return [
                 $this->defaultBinding => $endpoints,
             ];
@@ -45,15 +47,16 @@ class EndpointMap extends SingularAttributeTransformer
         $result = [];
         foreach ($endpoints as $endpoint) {
             $binding = $endpoint['Binding'] ?: $this->defaultBinding;
-            if (! $this->fullNames) {
+            if (!$this->fullNames) {
                 $binding = str_replace(self::BINDING_PREFIX, '', $binding);
             }
-            if (! isset($result[$binding])) {
+            if (!isset($result[$binding])) {
                 $result[$binding] = $endpoint['Location'];
             } else {
                 $result[$binding] .= self::MAPLIST_SEPARATOR . $endpoint['Location'];
             }
         }
+
         return $result;
     }
 

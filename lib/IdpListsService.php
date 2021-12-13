@@ -27,7 +27,7 @@ abstract class IdpListsService
     public const DB = 'db';
 
     /**
-     * Function returns the instance of sspmod_perun_IdPListsService by configuration Default is CSV
+     * Function returns the instance of sspmod_perun_IdPListsService by configuration Default is CSV.
      *
      * @return IdpListsServiceCsv|IdpListsServiceDB
      */
@@ -35,37 +35,38 @@ abstract class IdpListsService
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $idpListServiceType = $configuration->getString(self::PROPNAME_IDP_LIST_SERVICE_TYPE, self::CSV);
-        if ($idpListServiceType === self::CSV) {
+        if (self::CSV === $idpListServiceType) {
             return new IdpListsServiceCsv();
-        } elseif ($idpListServiceType === self::DB) {
+        }
+        if (self::DB === $idpListServiceType) {
             return new IdpListsServiceDB();
         }
         throw new Exception('Unknown idpListService type. Hint: try ' . self::CSV . ' or ' . self::DB);
     }
 
     /**
-     * Function returns all whitelisted IdPs as array
+     * Function returns all whitelisted IdPs as array.
      *
      * @return array of all whitelisted IdPs, every IdP is represents as array
      */
     abstract public function getWhitelist();
 
     /**
-     * Function returns all greylisted IdPs as array
+     * Function returns all greylisted IdPs as array.
      *
      * @return array of all greylisted IdPs, every IdP is represents as array
      */
     abstract public function getGreylist();
 
     /**
-     * Function returns all whitelisted entityIds as array
+     * Function returns all whitelisted entityIds as array.
      *
      * @return array of all whitelisted entityIds
      */
     abstract public function getWhitelistEntityIds();
 
     /**
-     * Function returns all greylisted entityIds as array
+     * Function returns all greylisted entityIds as array.
      *
      * @return array of all greylisted entityIds
      */
@@ -73,13 +74,15 @@ abstract class IdpListsService
 
     /**
      * @param string $entityID
-     * @return bool true if whitelist contains given entityID, false otherwise.
+     *
+     * @return bool true if whitelist contains given entityID, false otherwise
      */
     abstract public function isWhitelisted($entityID);
 
     /**
      * @param string $entityID
-     * @return bool true if greylist contains given entityID, false otherwise.
+     *
+     * @return bool true if greylist contains given entityID, false otherwise
      */
     abstract public function isGreylisted($entityID);
 
@@ -87,8 +90,8 @@ abstract class IdpListsService
      * Function check if this entity is already whitelisted. If not, it will be added into whitelist and if this
      * entityId is greylisted, it will be removed from greylist.
      *
-     * @param string $entityID
-     * @param null|string $reason
+     * @param string      $entityID
+     * @param string|null $reason
      */
     abstract public function whitelistIdp($entityID, $reason = null);
 }

@@ -33,6 +33,7 @@ class LogicalAnd extends AttributeTransformer
             }
             $attributes[$this->output] = $output;
         }
+
         return $attributes;
     }
 

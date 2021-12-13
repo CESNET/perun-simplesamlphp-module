@@ -28,7 +28,7 @@ try {
 }
 
 foreach ($state['newAups'] as $key => $newAup) {
-    if (! ($userAups === null) && array_key_exists($key, $userAups)) {
+    if (!(null === $userAups) && array_key_exists($key, $userAups)) {
         $userAupList = json_decode($userAups[$key]);
     } else {
         $userAupList = [];

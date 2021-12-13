@@ -4,7 +4,7 @@ use SimpleSAML\Module;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\XHTML\Template;
 
-/**
+/*
  * Template displaying information user that user will be redirected to registration page
  *
  * @var Template $this
@@ -33,9 +33,9 @@ if (isset($spMetadata['InformationURL']['en'])) {
 $this->includeAtTemplateBase('includes/header.php');
 
 $header = $this->t('{perun:perun:go-to-registration_header1}');
-if (! empty($serviceName) && ! empty($informationURL)) {
+if (!empty($serviceName) && !empty($informationURL)) {
     $header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
-} elseif (! empty($serviceName)) {
+} elseif (!empty($serviceName)) {
     $header .= $serviceName;
 }
 $header .= $this->t('{perun:perun:go-to-registration_header2}');
@@ -50,7 +50,7 @@ echo '</div>';
         <hr/>
         <br/>
         <input type="submit" name="continueToRegistration"
-               value="<?php echo $this->t('{perun:perun:go-to-registration_continue}') ?>"
+               value="<?php echo $this->t('{perun:perun:go-to-registration_continue}'); ?>"
                class="btn btn-lg btn-primary btn-block">
         <div class="form-group"></div>
     </form>

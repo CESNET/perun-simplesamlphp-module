@@ -39,27 +39,30 @@ class DiscoTemplate extends Template
      */
     public function getPreferredIdp(): array
     {
-        if (isset($this->data[Disco::PREFERRED_IDP]) && ! empty($this->data[Disco::PREFERRED_IDP])) {
+        if (isset($this->data[Disco::PREFERRED_IDP]) && !empty($this->data[Disco::PREFERRED_IDP])) {
             return $this->getAllIdps()[$this->data[Disco::PREFERRED_IDP]];
         }
+
         return [];
     }
 
     /**
      * @param string $tag desired tag. If not provided 'misc' is used for all untagged idps.
-     * @return array list of idp metadatas from declared tag or untagged (misc) idps are returned.
+     *
+     * @return array list of idp metadatas from declared tag or untagged (misc) idps are returned
      */
     public function getIdps($tag = 'misc'): array
     {
         if (isset($this->data[Disco::IDP_LIST][$tag])) {
             return $this->data[Disco::IDP_LIST][$tag];
         }
+
         return [];
     }
 
     /**
      * @return array structure of idp metadatas divided by tags.
-     * example structure:
+     *               example structure:
      *
      * [
      *        'social' => [
@@ -89,6 +92,7 @@ class DiscoTemplate extends Template
         foreach ($this->data[Disco::IDP_LIST] as $tag => $idplist) {
             $allIdps = array_merge($idplist, $allIdps);
         }
+
         return $allIdps;
     }
 
@@ -145,7 +149,7 @@ class DiscoTemplate extends Template
         if (isset($metadata[self::UI_INFO][self::DISPLAY_NAME])) {
             $displayName = $metadata[self::UI_INFO][self::DISPLAY_NAME];
             assert(is_array($displayName)); // Should always be an array of language code -> translation
-            if (! empty($displayName)) {
+            if (!empty($displayName)) {
                 return $this->getTranslation($displayName);
             }
         }
@@ -154,8 +158,10 @@ class DiscoTemplate extends Template
             if (is_array($metadata[self::NAME])) {
                 return $this->getTranslation($metadata[self::NAME]);
             }
+
             return $metadata[self::NAME];
         }
+
         return $metadata[Disco::ENTITY_ID];
     }
 }

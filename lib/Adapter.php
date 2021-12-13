@@ -21,7 +21,7 @@ abstract class Adapter
     public const LDAP = 'ldap';
 
     /**
-     * @var RpcConnector | LdapConnector
+     * @var RpcConnector|LdapConnector
      */
     protected $connector;
 
@@ -32,13 +32,15 @@ abstract class Adapter
 
     /**
      * @param string $interface code of interface. Check constants of this class.
+     *
      * @return Adapter instance of this class. note it is NOT singleton.
      */
     public static function getInstance($interface)
     {
-        if ($interface === self::RPC) {
+        if (self::RPC === $interface) {
             return new AdapterRpc();
-        } elseif ($interface === self::LDAP) {
+        }
+        if (self::LDAP === $interface) {
             return new AdapterLdap();
         }
         throw new Exception('Unknown perun interface. Hint: try ' . self::RPC . ' or ' . self::LDAP);
@@ -46,129 +48,149 @@ abstract class Adapter
 
     /**
      * @param string $idpEntityId entity id of hosted idp used as extSourceName
-     * @param string $uids list of user identifiers received from remote idp used as userExtSourceLogin
+     * @param string $uids        list of user identifiers received from remote idp used as userExtSourceLogin
+     *
      * @return User or null if not exists
      */
     abstract public function getPerunUser($idpEntityId, $uids);
 
     /**
      * @param model\Vo $vo
-     * @param string $name group name. Note that name of group is without VO name prefix.
+     * @param string   $name group name. Note that name of group is without VO name prefix.
+     *
      * @return Group
      */
     abstract public function getGroupByName($vo, $name);
 
     /**
      * @param string $voShortName
+     *
      * @return Vo
      */
     abstract public function getVoByShortName($voShortName);
 
     /**
-     * @param integer $id
+     * @param int $id
+     *
      * @return Vo
      */
     abstract public function getVoById($id);
 
     /**
      * @param User $user perun user
-     * @param Vo $vo vo we are working with.
+     * @param Vo   $vo   vo we are working with
+     *
      * @return Group[] groups from vo which member is. Including VO members group.
      */
     abstract public function getMemberGroups($user, $vo);
 
     /**
      * @param string $spEntityId entity id of the sp
+     *
      * @return Group[] from vo which are assigned to all facilities with spEntityId.
-     * registering to those groups should should allow access to the service
+     *                 registering to those groups should should allow access to the service
      */
     abstract public function getSpGroups($spEntityId);
 
     /**
-     * @param User $user
-     * @param array $attrNames .
+     * @param User  $user
+     * @param array $attrNames
+     *
      * @return array of attribute name -> attribute
      */
     abstract public function getUserAttributes($user, $attrNames);
 
     /**
-     * @param User $user
+     * @param User  $user
      * @param array $attributes of internal attribute names
+     *
      * @return array of attribute name -> attribute value
      */
     abstract public function getUserAttributesValues($user, $attributes);
 
     /**
      * @param string $attrName
-     * @return map of all entityless attributes with attrName (for all namespaces of same attribute).
+     *
+     * @return map of all entityless attributes with attrName (for all namespaces of same attribute)
      */
     abstract public function getEntitylessAttribute($attrName);
 
     /**
-     * @param Vo $vo
+     * @param Vo    $vo
      * @param array $attrNames
+     *
      * @return array of attribute name -> attribute
      */
     abstract public function getVoAttributes($vo, $attrNames);
 
     /**
-     * @param Vo $vo
+     * @param Vo    $vo
      * @param array $attributes of internal attribute names
+     *
      * @return array of attribute name -> attribute value
      */
     abstract public function getVoAttributesValues($vo, $attributes);
 
     /**
      * @param Facility $facility
-     * @param string $attrName
+     * @param string   $attrName
+     *
      * @return array with attribute value
      */
     abstract public function getFacilityAttribute($facility, $attrName);
 
     /**
-     * @param string $spEntityId Value of the entityID identifier
+     * @param string $spEntityId   Value of the entityID identifier
+     * @param mixed  $entityIdAttr
+     *
      * @return Facility facility
      */
     abstract public function getFacilityByEntityId($spEntityId, $entityIdAttr);
 
     /**
-     * @param string $clientId Value of the client_id identifier
+     * @param string $clientId     Value of the client_id identifier
      * @param string $clientIdAttr Internal name of the client_id attribute, defaults to 'perunFacilityAttr_OIDCClientID'
-     * this key has to be present in the attribute map configuration (see perun_attributes.php config template)
+     *                             this key has to be present in the attribute map configuration (see perun_attributes.php config template)
+     *
      * @return Facility facility
      */
     abstract public function getFacilityByClientId($clientId, $clientIdAttr);
 
     /**
      * @param string $spEntityId entity id of the sp
-     * @param int $userId
+     * @param int    $userId
+     *
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
      */
     abstract public function getUsersGroupsOnFacility($spEntityId, $userId);
 
     /**
      * @param <String, String> map $attribute
+     *
      * @return array of Facility
      */
     abstract public function searchFacilitiesByAttributeValue($attribute);
 
     /**
      * @param Facility $facility
-     * @param array $attrNames string $attrNames
+     * @param array    $attrNames string $attrNames
+     *
      * @return array of attribute name -> attribute
      */
     abstract public function getFacilityAttributes($facility, $attrNames);
 
     /**
      * @param Facility $facility
-     * @param array $attributes of internal attribute names
+     * @param array    $attributes of internal attribute names
+     *
      * @return array of attribute name -> attribute value
      */
     abstract public function getFacilityAttributesValues($facility, $attributes);
 
     /**
-     * @param string $extSourceName name of ext source
+     * @param string $extSourceName  name of ext source
      * @param string $extSourceLogin login
+     *
      * @return array user ext source
      */
     abstract public function getUserExtSource($extSourceName, $extSourceLogin);
@@ -179,47 +201,53 @@ abstract class Adapter
     abstract public function updateUserExtSourceLastAccess($userExtSource);
 
     /**
-     * @param int $userExtSourceId userExtSourceId
-     * @param array $attributes attributes
+     * @param int   $userExtSourceId userExtSourceId
+     * @param array $attributes      attributes
+     *
      * @return array attributes
      */
     abstract public function getUserExtSourceAttributes($userExtSourceId, $attributes);
 
     /**
-     * @param int $userExtSourceId userExtSourceId
-     * @param array $attributes attributes
+     * @param int   $userExtSourceId userExtSourceId
+     * @param array $attributes      attributes
      */
     abstract public function setUserExtSourceAttributes($userExtSourceId, $attributes);
 
     /**
      * @param sspmod_perun_model_User $user user
-     * @param sspmod_perun_model_Vo $vo vo
+     * @param sspmod_perun_model_Vo   $vo   vo
+     *
      * @return string status, null if member does not exist
      */
     abstract public function getMemberStatusByUserAndVo($user, $vo);
 
     /**
-     * @param User $user
+     * @param User   $user
      * @param string $voShortName
-     * @return boolean
+     *
+     * @return bool
      */
     abstract public function isUserInVo($user, $voShortName);
 
     /**
-     * @param int $entityId entityId
+     * @param int   $entityId   entityId
      * @param array $userGroups of groups where user belongs to
+     *
      * @return array of resource capabilities
      */
     abstract public function getResourceCapabilities($entityId, $userGroups);
 
     /**
      * @param int $entityId entityId
+     *
      * @return array of facility capabilities
      */
     abstract public function getFacilityCapabilities($entityId);
 
     /**
      * @param HasId[] $entities
+     *
      * @return HasId[] without duplicates
      */
     protected function removeDuplicateEntities($entities)
@@ -227,11 +255,12 @@ abstract class Adapter
         $removed = [];
         $ids = [];
         foreach ($entities as $entity) {
-            if (! in_array($entity->getId(), $ids, true)) {
+            if (!in_array($entity->getId(), $ids, true)) {
                 array_push($ids, $entity->getId());
                 array_push($removed, $entity);
             }
         }
+
         return $removed;
     }
 }

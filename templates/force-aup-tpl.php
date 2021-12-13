@@ -3,7 +3,7 @@
 use SimpleSAML\Module;
 
 /**
- * This is simple example of template where user has to accept usage policy
+ * This is simple example of template where user has to accept usage policy.
  *
  * Allow type hinting in IDE
  *
@@ -31,7 +31,7 @@ $this->includeAtTemplateBase('includes/header.php');
         }
         ?>
 
-        <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>">
+        <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId']; ?>">
 
         <div class="form-group">
             <button type="submit" class="btn btn-lg btn-primary btn-block">

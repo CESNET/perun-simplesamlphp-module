@@ -36,8 +36,7 @@ $perunProxyIdentifierAttr = AttributeUtils::getAttrName(
 );
 if (empty($perunProxyIdentifierAttr)) {
     throw new Exception(
-        'perun:listOfSps: missing mandatory config option \''
-        . PERUN_PROXY_IDENTIFIER_ATTR_NAME . '\'.'
+        'perun:listOfSps: missing mandatory config option \'' . PERUN_PROXY_IDENTIFIER_ATTR_NAME . '\'.'
     );
 }
 
@@ -55,25 +54,18 @@ $showOIDCServices = $conf->getBoolean(SHOW_OIDC_SERVICES, false);
 $perunSaml2EntityIdAttr = $conf->getString(PERUN_SAML2_ENTITY_ID_ATTR_NAME);
 if (empty($perunSaml2EntityIdAttr)) {
     throw new Exception(
-        'perun:listOfSps: missing mandatory config option \''
-        . PERUN_SAML2_ENTITY_ID_ATTR_NAME . '\'.'
+        'perun:listOfSps: missing mandatory config option \'' . PERUN_SAML2_ENTITY_ID_ATTR_NAME . '\'.'
     );
 }
 
 $perunOidcClientIdAttr = $conf->getString(PERUN_OIDC_CLIENT_ID_ATTR_NAME);
 if ($showOIDCServices && empty($perunOidcClientIdAttr)) {
-    throw new Exception(
-        'perun:listOfSps: missing mandatory config option \''
-        . PERUN_OIDC_CLIENT_ID_ATTR_NAME . '\'.'
-    );
+    throw new Exception('perun:listOfSps: missing mandatory config option \'' . PERUN_OIDC_CLIENT_ID_ATTR_NAME . '\'.');
 }
 
 $perunServiceNameAttr = $conf->getString(PERUN_SERVICE_NAME_ATTR_NAME, null);
 if (empty($perunServiceNameAttr)) {
-    throw new Exception(
-        'perun:listOfSps: missing mandatory config option \''
-        . PERUN_SERVICE_NAME_ATTR_NAME . '\'.'
-    );
+    throw new Exception('perun:listOfSps: missing mandatory config option \'' . PERUN_SERVICE_NAME_ATTR_NAME . '\'.');
 }
 $perunLoginURLAttr = $conf->getString(PERUN_LOGIN_URL_ATTR_NAME, null);
 $perunTestSpAttr = $conf->getString(PERUN_TEST_SP_ATTR_NAME, null);
@@ -90,16 +82,16 @@ $attrNames = [];
 
 array_push($attrNames, $perunSaml2EntityIdAttr);
 array_push($attrNames, $perunServiceNameAttr);
-if (! empty($perunOidcClientIdAttr)) {
+if (!empty($perunOidcClientIdAttr)) {
     array_push($attrNames, $perunOidcClientIdAttr);
 }
-if (! empty($perunLoginURLAttr)) {
+if (!empty($perunLoginURLAttr)) {
     array_push($attrNames, $perunLoginURLAttr);
 }
-if (! empty($perunTestSpAttr)) {
+if (!empty($perunTestSpAttr)) {
     array_push($attrNames, $perunTestSpAttr);
 }
-if (! empty($perunShowOnServiceListAttr)) {
+if (!empty($perunShowOnServiceListAttr)) {
     array_push($attrNames, $perunShowOnServiceListAttr);
 }
 foreach ($attributesDefinitions as $attributeDefinition) {
@@ -117,7 +109,7 @@ foreach ($facilities as $facility) {
     foreach ($attributes as $attribute) {
         $facilityAttributes[$attribute['name']] = $attribute;
     }
-    if (! empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
+    if (!empty($facilityAttributes[$perunSaml2EntityIdAttr]['value'])) {
         $samlServices[$facility->getId()] = [
             'facility' => $facility,
             'name' => $facilityAttributes[$perunServiceNameAttr],
@@ -126,11 +118,11 @@ foreach ($facilities as $facility) {
             'facilityAttributes' => $facilityAttributes,
         ];
         if ($facilityAttributes[$perunTestSpAttr]['value']) {
-            $samlTestServicesCount++;
+            ++$samlTestServicesCount;
         }
     }
 
-    if ($showOIDCServices && ! empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
+    if ($showOIDCServices && !empty($facilityAttributes[$perunOidcClientIdAttr]['value'])) {
         $oidcServices[$facility->getId()] = [
             'facility' => $facility,
             'name' => $facilityAttributes[$perunServiceNameAttr],
@@ -139,7 +131,7 @@ foreach ($facilities as $facility) {
             'facilityAttributes' => $facilityAttributes,
         ];
         if ($facilityAttributes[$perunTestSpAttr]['value']) {
-            $oidcTestServicesCount++;
+            ++$oidcTestServicesCount;
         }
     }
 }
@@ -165,7 +157,7 @@ foreach ($attrNames as $attrName) {
 
 $allServices = array_merge($samlServices, $oidcServices);
 
-if (isset($_GET['output']) && $_GET['output'] === 'json') {
+if (isset($_GET['output']) && 'json' === $_GET['output']) {
     $json = [];
     $json['services'] = [];
 

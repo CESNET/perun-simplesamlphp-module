@@ -25,7 +25,7 @@ class EndpointIndexMap extends AttributeTransformer
     public function __construct(\SimpleSAML\Configuration $config)
     {
         $this->defaultBinding = $config->getString('defaultBinding');
-        $this->fullNames = ! $config->getBoolean('shortNames', false);
+        $this->fullNames = !$config->getBoolean('shortNames', false);
     }
 
     /**
@@ -33,7 +33,7 @@ class EndpointIndexMap extends AttributeTransformer
      */
     public function transform(array $attributes)
     {
-        if (count($attributes) !== 2) {
+        if (2 !== count($attributes)) {
             throw new \Exception(
                 'Invalid configuration of EndpointIndexMap transformer, exactly 2 input attributes exptected'
             );
@@ -50,7 +50,7 @@ class EndpointIndexMap extends AttributeTransformer
         if (empty($endpoints)) {
             $result = null;
         } else {
-            if (! is_array($endpoints)) {
+            if (!is_array($endpoints)) {
                 $endpoints = [[
                     'Location' => $endpoints,
                 ]];
@@ -58,10 +58,10 @@ class EndpointIndexMap extends AttributeTransformer
             $result = [];
             foreach ($endpoints as $endpoint) {
                 $binding = $endpoint['Binding'] ?: $this->defaultBinding;
-                if (! $this->fullNames) {
+                if (!$this->fullNames) {
                     $binding = str_replace(self::BINDING_PREFIX, '', $binding);
                 }
-                if (! isset($result[$binding])) {
+                if (!isset($result[$binding])) {
                     $result[$binding] = [];
                 }
 
@@ -70,9 +70,10 @@ class EndpointIndexMap extends AttributeTransformer
             if ($keepIndexes) {
                 $result = array_map(function ($endpoints) {
                     $e = [];
-                    for ($i = 0; $i <= max(array_keys($endpoints)); $i++) {
+                    for ($i = 0; $i <= max(array_keys($endpoints)); ++$i) {
                         $e[] = isset($endpoints[$i]) ? $endpoints[$i] : '';
                     }
+
                     return implode(self::MAPLIST_SEPARATOR, $e);
                 }, $result);
             } else {
@@ -81,6 +82,7 @@ class EndpointIndexMap extends AttributeTransformer
                 }, $result);
             }
         }
+
         return [
             $attributeName => $result,
         ];
@@ -93,6 +95,7 @@ class EndpointIndexMap extends AttributeTransformer
     {
         $descriptions = array_values($attributes);
         $names = array_keys($attributes);
+
         return [
             $names[0] => sprintf('comma-separated lists of Locations per Bindings from (%s)', $descriptions[0]),
             $names[1] => '',

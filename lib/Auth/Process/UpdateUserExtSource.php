@@ -10,7 +10,7 @@ use SimpleSAML\Module;
 use SimpleSAML\Module\perun\ChallengeManager;
 
 /**
- * Class sspmod_perun_Auth_Process_UpdateUserExtSource
+ * Class sspmod_perun_Auth_Process_UpdateUserExtSource.
  *
  * This filter updates userExtSource attributes when he logs in.
  */
@@ -28,7 +28,7 @@ class UpdateUserExtSource extends ProcessingFilter
 
         assert(is_array($config));
 
-        if (! isset($config['attrMap'])) {
+        if (!isset($config['attrMap'])) {
             throw new Exception('perun:UpdateUserExtSource: missing mandatory configuration option \'attrMap\'.');
         }
 

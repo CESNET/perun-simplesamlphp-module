@@ -12,8 +12,8 @@ class Post
      * If the value is a string, this function will write a single INPUT element. If the value is an array, it will
      * write multiple INPUT elements to recreate the array.
      *
-     * @param string $name The name of the element.
-     * @param string|array $value The value of the element.
+     * @param string       $name  the name of the element
+     * @param string|array $value the value of the element
      */
     public static function printItem($name, $value)
     {
@@ -23,6 +23,7 @@ class Post
         if (is_string($value)) {
             echo '<input type="hidden" name="' . htmlspecialchars($name) .
                  '" value="' . htmlspecialchars($value) . '" />';
+
             return;
         }
 

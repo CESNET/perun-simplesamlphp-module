@@ -42,7 +42,7 @@ class LoginInfo extends ProcessingFilter
             $finalString .= 'ID: ' . $user->getId() . ', ';
         }
 
-        if (! empty($this->attrs)) {
+        if (!empty($this->attrs)) {
             $finalString .= 'identifiers: [';
 
             foreach ($this->attrs as $attr) {
@@ -56,9 +56,9 @@ class LoginInfo extends ProcessingFilter
 
         $finalString .= 'service: ' . $spEntityId;
 
-        if (! empty($this->sourceIdentifierAttr) && isset($request['Attributes'][$this->sourceIdentifierAttr][0])) {
+        if (!empty($this->sourceIdentifierAttr) && isset($request['Attributes'][$this->sourceIdentifierAttr][0])) {
             $finalString .= ', external identity: ' . $request['Attributes'][$this->sourceIdentifierAttr][0];
-            if (! empty($this->sourceIdpAttr) && isset($request['Attributes'][$this->sourceIdpAttr][0])) {
+            if (!empty($this->sourceIdpAttr) && isset($request['Attributes'][$this->sourceIdpAttr][0])) {
                 $finalString .= ' from ' . $request['Attributes'][$this->sourceIdpAttr][0];
             }
         }

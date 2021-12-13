@@ -16,7 +16,7 @@ use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Module\perun\model\Vo;
 
 /**
- * Class sspmod_perun_AdapterRpc
+ * Class sspmod_perun_AdapterRpc.
  *
  * Perun adapter which uses Perun RPC interface
  */
@@ -54,7 +54,7 @@ class AdapterRpc extends Adapter
 
     public function __construct($configFileName = null)
     {
-        if ($configFileName === null) {
+        if (null === $configFileName) {
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
@@ -80,27 +80,28 @@ class AdapterRpc extends Adapter
                 ]);
 
                 $name = '';
-                if (! empty($user['titleBefore'])) {
+                if (!empty($user['titleBefore'])) {
                     $name .= $user['titleBefore'] . ' ';
                 }
-                if (! empty($user['titleBefore'])) {
+                if (!empty($user['titleBefore'])) {
                     $name .= $user['firstName'] . ' ';
                 }
-                if (! empty($user['titleBefore'])) {
+                if (!empty($user['titleBefore'])) {
                     $name .= $user['middleName'] . ' ';
                 }
-                if (! empty($user['titleBefore'])) {
+                if (!empty($user['titleBefore'])) {
                     $name .= $user['lastName'];
                 }
-                if (! empty($user['titleBefore'])) {
+                if (!empty($user['titleBefore'])) {
                     $name .= ' ' . $user['titleAfter'];
                 }
 
                 return new User($user['id'], $name);
             } catch (PerunException $e) {
-                if ($e->getName() === 'UserExtSourceNotExistsException') {
+                if ('UserExtSourceNotExistsException' === $e->getName()) {
                     continue;
-                } elseif ($e->getName() === 'ExtSourceNotExistsException') {
+                }
+                if ('ExtSourceNotExistsException' === $e->getName()) {
                     // Because use of original/source entityID as extSourceName
                     continue;
                 }
@@ -157,7 +158,7 @@ class AdapterRpc extends Adapter
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             return [];
         }
 
@@ -213,6 +214,7 @@ class AdapterRpc extends Adapter
             'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName',
         ]);
         $uniqueName = $attr['value'] . ':' . $group['name'];
+
         return new Group(
             $group['id'],
             $group['voId'],
@@ -272,7 +274,7 @@ class AdapterRpc extends Adapter
             'attrName' => AttributeUtils::getAttrName($attrName, self::RPC),
         ]);
 
-        if (! isset($perunAttrValues[0]['id'])) {
+        if (!isset($perunAttrValues[0]['id'])) {
             return $attributes;
         }
         $attrId = $perunAttrValues[0]['id'];
@@ -281,7 +283,7 @@ class AdapterRpc extends Adapter
             'attributeDefinition' => $attrId,
         ]);
 
-        for ($i = 0, $iMax = count($perunAttrKeys); $i < $iMax; $i++) {
+        for ($i = 0, $iMax = count($perunAttrKeys); $i < $iMax; ++$i) {
             $key = $perunAttrKeys[$i];
             $value = $perunAttrValues[$i];
             $attributes[$key] = $value;
@@ -337,7 +339,7 @@ class AdapterRpc extends Adapter
         $facility = $this->getFacilityByEntityId($spEntityId);
         $groups = [];
 
-        if ($facility === null) {
+        if (null === $facility) {
             return $groups;
         }
 
@@ -353,7 +355,7 @@ class AdapterRpc extends Adapter
 
         foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
             if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
-                $usersGroupOnFacility['attributes'][0]['friendlyName'] === 'voShortName') {
+                'voShortName' === $usersGroupOnFacility['attributes'][0]['friendlyName']) {
                 $uniqueName = $usersGroupOnFacility['attributes'][0]['value'] . ':' . $usersGroupOnFacility['name'];
 
                 array_push($groups, new Group(
@@ -366,6 +368,7 @@ class AdapterRpc extends Adapter
                 ));
             }
         }
+
         return $this->removeDuplicateEntities($groups);
     }
 
@@ -375,7 +378,7 @@ class AdapterRpc extends Adapter
         if (empty($attrName)) {
             $attrName = 'urn:perun:facility:attribute-def:def:entityID';
             Logger::warning(
-                "No attribute configuration in RPC found for attribute ${entityIdAttr}, using ${attrName} as fallback value"
+                "No attribute configuration in RPC found for attribute {$entityIdAttr}, using {$attrName} as fallback value"
             );
         }
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
@@ -385,6 +388,7 @@ class AdapterRpc extends Adapter
 
         if (empty($perunAttr)) {
             Logger::warning('perun:AdapterRpc: No facility with entityID \'' . $spEntityId . '\' found.');
+
             return null;
         }
 
@@ -392,6 +396,7 @@ class AdapterRpc extends Adapter
             Logger::warning(
                 'perun:AdapterRpc: There is more than one facility with entityID \'' . $spEntityId . '.'
             );
+
             return null;
         }
 
@@ -404,7 +409,7 @@ class AdapterRpc extends Adapter
         if (empty($attrName)) {
             $attrName = 'urn:perun:facility:attribute-def:def:OIDCClientID';
             Logger::warning(
-                "No attribute configuration in RPC found for attribute ${clientIdAttr}, using ${attrName} as fallback value"
+                "No attribute configuration in RPC found for attribute {$clientIdAttr}, using {$attrName} as fallback value"
             );
         }
         $perunAttr = $this->connector->get('facilitiesManager', 'getFacilitiesByAttribute', [
@@ -414,11 +419,13 @@ class AdapterRpc extends Adapter
 
         if (empty($perunAttr)) {
             Logger::warning('perun:AdapterRpc: No facility with clientId \'' . $clientId . '\' found.');
+
             return null;
         }
 
         if (count($perunAttr) > 1) {
             Logger::warning('perun:AdapterRpc: There is more than one facility with clientId \'' . $clientId . '.');
+
             return null;
         }
 
@@ -426,10 +433,11 @@ class AdapterRpc extends Adapter
     }
 
     /**
-     * Returns member by User and Vo
+     * Returns member by User and Vo.
      *
      * @param User $user
-     * @param Vo $vo
+     * @param Vo   $vo
+     *
      * @return Member
      */
     public function getMemberByUser($user, $vo)
@@ -438,12 +446,12 @@ class AdapterRpc extends Adapter
             'user' => $user->getId(),
             'vo' => $vo->getId(),
         ]);
-        if ($member === null) {
+        if (null === $member) {
             throw new Exception(
-                'Member for User with name ' . $user->getName() . ' and Vo with shortName ' .
-                $vo->getShortName() . 'does not exist in Perun!'
+                'Member for User with name ' . $user->getName() . ' and Vo with shortName ' . $vo->getShortName() . 'does not exist in Perun!'
             );
         }
+
         return new Member($member['id'], $member['voId'], $member['status']);
     }
 
@@ -457,19 +465,21 @@ class AdapterRpc extends Adapter
         }
 
         $vo = $this->getVoByShortName($voShortName);
-        if ($vo === null) {
+        if (null === $vo) {
             Logger::debug('isUserInVo - No VO found, returning false');
+
             return false;
         }
 
-        return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
+        return Member::VALID === $this->getMemberStatusByUserAndVo($user, $vo);
     }
 
     /**
-     * Returns true if entity has registration form, false otherwise
+     * Returns true if entity has registration form, false otherwise.
      *
      * @param $entityId
      * @param $entityName
+     *
      * @return bool
      */
     public function hasRegistrationForm($entityId, $entityName)
@@ -478,6 +488,7 @@ class AdapterRpc extends Adapter
             $this->connector->get('registrarManager', 'getApplicationForm', [
                 $entityName => $entityId,
             ]);
+
             return true;
         } catch (\Exception $exception) {
             return false;
@@ -507,6 +518,7 @@ class AdapterRpc extends Adapter
                 new Facility($perunAttr['id'], $perunAttr['name'], $perunAttr['description'], null)
             );
         }
+
         return $facilities;
     }
 
@@ -557,6 +569,7 @@ class AdapterRpc extends Adapter
             'userExtSource' => $userExtSourceId,
             'attrNames' => array_keys($attrNamesMap),
         ]);
+
         return $this->getAttributes($perunAttrs, $attrNamesMap);
     }
 
@@ -575,6 +588,7 @@ class AdapterRpc extends Adapter
         } catch (Exception $ex) {
             return null;
         }
+
         return $member->getStatus();
     }
 
@@ -582,7 +596,7 @@ class AdapterRpc extends Adapter
     {
         $facility = $this->getFacilityByEntityId($entityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             return [];
         }
 
@@ -606,7 +620,7 @@ class AdapterRpc extends Adapter
                 'attributeName' => 'urn:perun:resource:attribute-def:def:capabilities',
             ])['value'];
 
-            if ($resourceCapabilities === null) {
+            if (null === $resourceCapabilities) {
                 continue;
             }
 
@@ -627,7 +641,7 @@ class AdapterRpc extends Adapter
     {
         $facility = $this->getFacilityByEntityId($entityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             return [];
         }
 

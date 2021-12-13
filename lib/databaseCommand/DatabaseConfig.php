@@ -26,7 +26,7 @@ class DatabaseConfig
 
     private $greyListTableName;
 
-    private static $instance = null;
+    private static $instance;
 
     private function __construct()
     {
@@ -41,9 +41,10 @@ class DatabaseConfig
 
     public static function getInstance()
     {
-        if (self::$instance === null) {
+        if (null === self::$instance) {
             self::$instance = new self();
         }
+
         return self::$instance;
     }
 

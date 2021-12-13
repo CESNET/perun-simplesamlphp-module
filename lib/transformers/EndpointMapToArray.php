@@ -36,23 +36,27 @@ class EndpointMapToArray extends AttributeTransformer
         foreach ($attributes as $attribute => $value) {
             $result[$attribute] = $this->getEndpointsArray($value);
         }
+
         return $result;
     }
 
     private function getBindingName($binding)
     {
-        if (strpos($binding, 'urn:') !== 0) {
+        if (0 !== strpos($binding, 'urn:')) {
             return self::BINDING_PREFIX . $binding;
         }
+
         return $binding;
     }
 
     /**
      * @see https://simplesamlphp.org/docs/stable/simplesamlphp-metadata-endpoints
+     *
+     * @param mixed $endpointMap
      */
     private function getEndpointsArray($endpointMap)
     {
-        if (empty(array_filter($endpointMap)) || ! is_array($endpointMap)) {
+        if (empty(array_filter($endpointMap)) || !is_array($endpointMap)) {
             return null;
         }
 
@@ -64,13 +68,14 @@ class EndpointMapToArray extends AttributeTransformer
         $endpointMap = $fullBindingNames;
 
         // if all endpoints use the default binding and there are no spaces
-        if (count($endpointMap) === 1 && isset($endpointMap[$this->defaultBinding])
-            && strpos(
+        if (1 === count($endpointMap) && isset($endpointMap[$this->defaultBinding])
+            && false === strpos(
                 $endpointMap[$this->defaultBinding],
                 self::MAPLIST_SEPARATOR . self::MAPLIST_SEPARATOR
-            ) === false) {
+            )) {
             $result = explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]);
-            return count($result) === 1 ? $result[0] : $result;
+
+            return 1 === count($result) ? $result[0] : $result;
         }
 
         $result = [];
@@ -78,7 +83,7 @@ class EndpointMapToArray extends AttributeTransformer
         // prefer default binding
         if (isset($endpointMap[$this->defaultBinding])) {
             foreach (explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]) as $location) {
-                $result[] = $this->getEndpoint($location, $this->defaultBinding, $index++, $index === self::INDEX_MIN);
+                $result[] = $this->getEndpoint($location, $this->defaultBinding, $index++, self::INDEX_MIN === $index);
             }
         }
         foreach ($endpointMap as $binding => $locations) {
@@ -102,6 +107,7 @@ class EndpointMapToArray extends AttributeTransformer
         if ($isDefault) {
             $result['isDefault'] = $isDefault;
         }
+
         return $result;
     }
 }

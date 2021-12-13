@@ -15,7 +15,6 @@ use SimpleSAML\Metadata\MetaDataStorageHandler;
  *
  * TODO: Use standardized format (JSON)
  */
-
 $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $spsMetadata = $metadataHandler->getList('saml20-sp-remote');
 
@@ -24,38 +23,38 @@ header('Content-Type: text/plain');
 $delimiter = '|';
 
 foreach ($spsMetadata as $entityID => $spMetadata) {
-    if (array_key_exists('showOnServicesList', $spMetadata) && $spMetadata['showOnServicesList'] === true) {
+    if (array_key_exists('showOnServicesList', $spMetadata) && true === $spMetadata['showOnServicesList']) {
         if (array_key_exists('name', $spMetadata)) {
-            print $spMetadata['name']['en'];
+            echo $spMetadata['name']['en'];
         }
-        print $delimiter;
+        echo $delimiter;
 
         if (array_key_exists('description', $spMetadata)) {
-            print $spMetadata['description']['en'];
+            echo $spMetadata['description']['en'];
         }
-        print $delimiter;
+        echo $delimiter;
 
         if (array_key_exists('OrganizationName', $spMetadata)) {
-            print $spMetadata['OrganizationName']['en'];
+            echo $spMetadata['OrganizationName']['en'];
         }
-        print $delimiter;
+        echo $delimiter;
 
         if (array_key_exists('privacypolicy', $spMetadata)) {
-            print $spMetadata['privacypolicy'];
+            echo $spMetadata['privacypolicy'];
         }
-        print $delimiter;
+        echo $delimiter;
 
-        if (array_key_exists('CoCo', $spMetadata) && $spMetadata['CoCo'] === true) {
-            print 'yes';
+        if (array_key_exists('CoCo', $spMetadata) && true === $spMetadata['CoCo']) {
+            echo 'yes';
         } else {
-            print 'no';
+            echo 'no';
         }
-        print $delimiter;
+        echo $delimiter;
 
         if (array_key_exists('InformationURL', $spMetadata)) {
-            print $spMetadata['InformationURL']['en'];
+            echo $spMetadata['InformationURL']['en'];
         }
 
-        print "\n";
+        echo "\n";
     }
 }

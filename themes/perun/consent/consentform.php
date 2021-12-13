@@ -4,7 +4,7 @@ use SimpleSAML\Module;
 use SimpleSAML\Module\perun\Consent;
 use SimpleSAML\Utils\Arrays;
 
-/**
+/*
  * Template form for giving consent.
  *
  * Parameters:
@@ -25,9 +25,9 @@ assert(is_string($this->data['noTarget']));
 assert(is_array($this->data['noData']));
 assert(is_array($this->data['attributes']));
 assert(is_array($this->data['hiddenAttributes']));
-assert($this->data['sppp'] === false || is_string($this->data['sppp']));
+assert(false === $this->data['sppp'] || is_string($this->data['sppp']));
 
-if (! isset($this->data['label-col'])) {
+if (!isset($this->data['label-col'])) {
     $this->data['label-col'] = 5;
 }
 
@@ -71,7 +71,7 @@ $this->data['header'] = $this->t(
     ]
 );
 
-if (! isset($this->data['head'])) {
+if (!isset($this->data['head'])) {
     $this->data['head'] = '';
 }
 $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" href="' .
@@ -91,7 +91,7 @@ if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
     );
 }
 
-if ($this->data['sppp'] !== false) {
+if (false !== $this->data['sppp']) {
     echo '<p>' . htmlspecialchars($this->t('{perun:consent:consent_privacypolicy}')) . ' ';
     echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . '</a>';
     echo '</p>';
@@ -127,7 +127,7 @@ echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-
                 ?>
 
                 <button type="submit" name="yes" class="btn btn-lg btn-primary btn-success btn-block" id="yesbutton">
-                    <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')) ?></span>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')); ?></span>
                 </button>
 
             </form>
@@ -144,7 +144,7 @@ echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-
                 }
                 ?>
                 <button type="submit" class="btn btn-lg btn-default btn-block  btn-no" name="no" id="nobutton">
-                    <span><?php echo htmlspecialchars($this->t('{consent:consent:no}')) ?></span>
+                    <span><?php echo htmlspecialchars($this->t('{consent:consent:no}')); ?></span>
                 </button>
 
             </form>

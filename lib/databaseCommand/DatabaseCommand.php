@@ -29,6 +29,7 @@ abstract class DatabaseCommand
         if (is_int($response)) {
             return true;
         }
+
         return false;
     }
 }

@@ -8,7 +8,7 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Module\perun\Disco;
 
 /**
- * Class WarningConfiguration provides an option to load warning in disco-tpl from different types of sources
+ * Class WarningConfiguration provides an option to load warning in disco-tpl from different types of sources.
  */
 abstract class WarningConfiguration
 {
@@ -67,18 +67,21 @@ abstract class WarningConfiguration
     }
 
     /**
-     * Function returns the instance of WarningConfiguration
+     * Function returns the instance of WarningConfiguration.
      */
     public static function getInstance(): self
     {
         $configuration = self::getConfig();
         if ($configuration->hasValue(self::SOURCE_TYPE_CONFIG)) {
             return new WarningConfigurationConfig();
-        } elseif ($configuration->hasValue(self::SOURCE_TYPE_FILE)) {
+        }
+        if ($configuration->hasValue(self::SOURCE_TYPE_FILE)) {
             return new WarningConfigurationFile();
-        } elseif ($configuration->hasValue(self::SOURCE_TYPE_URL)) {
+        }
+        if ($configuration->hasValue(self::SOURCE_TYPE_URL)) {
             return new WarningConfigurationUrl();
         }
+
         return new WarningConfigurationNone();
     }
 
@@ -86,7 +89,8 @@ abstract class WarningConfiguration
     {
         return Configuration::getConfig(self::CONFIG_FILE_NAME)
             ->getConfigItem(Disco::WAYF)
-            ->getConfigItem(self::WARNING);
+            ->getConfigItem(self::WARNING)
+        ;
     }
 
     /**

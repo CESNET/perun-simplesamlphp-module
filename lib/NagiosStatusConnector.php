@@ -34,7 +34,7 @@ class NagiosStatusConnector extends StatusConnector
 
         $config = $this->configuration->getConfigItem(self::STATUS_NAGIOS, null);
 
-        if ($config === null) {
+        if (null === $config) {
             throw new Exception('Property  \'' . self::STATUS_NAGIOS . '\' is missing or invalid!');
         }
 
@@ -45,11 +45,14 @@ class NagiosStatusConnector extends StatusConnector
 
         if (empty($this->host)) {
             throw new Exception('Required option \'' . self::HOST . '\' is empty!');
-        } elseif (empty($this->keyPath)) {
+        }
+        if (empty($this->keyPath)) {
             throw new Exception('Required option \'' . self::KEY_PATH . '\' is empty!');
-        } elseif (empty($this->login)) {
+        }
+        if (empty($this->login)) {
             throw new Exception('Required option \'' . self::LOGIN . '\' is empty!');
-        } elseif (empty($this->command)) {
+        }
+        if (empty($this->command)) {
             throw new Exception('Required option \'' . self::COMMAND . '\' is empty!');
         }
     }
@@ -59,14 +62,14 @@ class NagiosStatusConnector extends StatusConnector
         $result = [];
 
         $key = file_get_contents($this->keyPath);
-        if (! $key) {
+        if (!$key) {
             throw new Exception('Cannot load ket from path:  \'' . $this->keyPath . '\' !');
         }
 
         $key = RSA::load($key);
         $ssh = new SSH2($this->host);
 
-        if (! $ssh->login($this->login, $key)) {
+        if (!$ssh->login($this->login, $key)) {
             throw new Exception('Error during ssh connection to \'' . $this->login . '@' . $this->host . '\' !');
         }
 

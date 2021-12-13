@@ -47,7 +47,8 @@ class ChallengesDbCmd extends DatabaseCommand
         ];
 
         return $this->read($query, $params)
-            ->fetchColumn();
+            ->fetchColumn()
+        ;
     }
 
     public function deleteChallenge($id): bool

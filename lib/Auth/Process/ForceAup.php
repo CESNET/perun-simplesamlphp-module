@@ -15,7 +15,7 @@ use SimpleSAML\Module\perun\model;
 use SimpleSAML\Utils\HTTP;
 
 /**
- * Class ForceAup
+ * Class ForceAup.
  *
  * This filter check if user has attribute 'perunForceAttr' in perun set if so, it forces user to accept usage policy
  * specify in 'aupUrl' and unset 'perunForceAttr' and move the value to 'perunAupAttr'. So attribute defined in
@@ -68,23 +68,20 @@ class ForceAup extends ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        if (! isset($config[self::UID_ATTR])) {
+        if (!isset($config[self::UID_ATTR])) {
+            throw new Exception('perun:ForceAup: missing mandatory configuration option \'' . self::UID_ATTR . '\'.');
+        }
+        if (!isset($config[self::PERUN_AUPS_ATTR]) && !isset($config[self::PERUN_VO_AUP_ATTR])) {
             throw new Exception(
-                'perun:ForceAup: missing mandatory configuration option \'' . self::UID_ATTR . '\'.'
+                'perun:ForceAup: missing at least one of mandatory configuration options \'' . self::PERUN_AUPS_ATTR . '\' or \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
         }
-        if (! isset($config[self::PERUN_AUPS_ATTR]) && ! isset($config[self::PERUN_VO_AUP_ATTR])) {
-            throw new Exception(
-                'perun:ForceAup: missing at least one of mandatory configuration options \''
-                . self::PERUN_AUPS_ATTR . '\' or \'' . self::PERUN_VO_AUP_ATTR . '\'.'
-            );
-        }
-        if (! isset($config[self::PERUN_USER_AUP_ATTR])) {
+        if (!isset($config[self::PERUN_USER_AUP_ATTR])) {
             throw new Exception(
                 'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_USER_AUP_ATTR . '\'.'
             );
         }
-        if (! isset($config[self::INTERFACE_PROPNAME])) {
+        if (!isset($config[self::INTERFACE_PROPNAME])) {
             $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
         }
 
@@ -110,23 +107,21 @@ class ForceAup extends ProcessingFilter
 
         if (isset($request['perun']['user'])) {
             /**
-             * allow IDE hint whisperer
+             * allow IDE hint whisperer.
              *
              * @var model\User $user
              */
             $user = $request['perun']['user'];
         } else {
             throw new Exception(
-                'perun:ForceAup: ' .
-                'missing mandatory field \'perun.user\' in request.' .
-                'Hint: Did you configured PerunIdentity filter before this filter?'
+                'perun:ForceAup: ' . 'missing mandatory field \'perun.user\' in request.' . 'Hint: Did you configured PerunIdentity filter before this filter?'
             );
         }
 
         try {
             $facility = $this->adapter->getFacilityByEntityId($request['SPMetadata']['entityid']);
 
-            if ($facility === null) {
+            if (null === $facility) {
                 return;
             }
 
@@ -157,6 +152,7 @@ class ForceAup extends ProcessingFilter
                     'Perun.ForceAup - No AUPs to be approved have been requested by facility with EntityId: ' .
                     $request['SPMetadata']['entityid']
                 );
+
                 return;
             }
 
@@ -165,7 +161,7 @@ class ForceAup extends ProcessingFilter
                 [$this->perunUserAupAttr]
             )[$this->perunUserAupAttr];
 
-            if ($userAups === null) {
+            if (null === $userAups) {
                 $userAups = [];
             }
 
@@ -180,7 +176,7 @@ class ForceAup extends ProcessingFilter
 
         Logger::debug('perun:ForceAup - NewAups: ' . json_encode($aupsToBeApproved));
 
-        if (! empty($aupsToBeApproved)) {
+        if (!empty($aupsToBeApproved)) {
             $request[self::UID_ATTR] = $this->uidAttr;
             $request[self::PERUN_USER_AUP_ATTR] = $this->perunUserAupAttr;
             $request['newAups'] = $aupsToBeApproved;
@@ -194,6 +190,7 @@ class ForceAup extends ProcessingFilter
 
     /**
      * @param array $aups
+     *
      * @return aup with the latest date
      */
     public function getLatestAup($aups)
@@ -210,11 +207,13 @@ class ForceAup extends ProcessingFilter
                 $latestDate = $aupDate;
             }
         }
+
         return $latestAup;
     }
 
     /**
      * @param string[] $voShortNames
+     *
      * @return array
      */
     public function getVoAups($voShortNames)
@@ -222,7 +221,7 @@ class ForceAup extends ProcessingFilter
         $vos = [];
         foreach ($voShortNames as $voShortName) {
             $vo = $this->adapter->getVoByShortName($voShortName);
-            if ($vo !== null) {
+            if (null !== $vo) {
                 array_push($vos, $vo);
             }
         }
@@ -230,7 +229,7 @@ class ForceAup extends ProcessingFilter
         $voAups = [];
         foreach ($vos as $vo) {
             $aups = $this->adapter->getVoAttributesValues($vo, [$this->perunVoAupAttr])[$this->perunVoAupAttr];
-            if ($aups !== null) {
+            if (null !== $aups) {
                 $voAups[$vo->getShortName()] = $aups;
             }
         }
@@ -241,7 +240,7 @@ class ForceAup extends ProcessingFilter
     private function getPerunAups()
     {
         $perunAupsAttr = [];
-        if ($this->perunAupsAttr !== null) {
+        if (null !== $this->perunAupsAttr) {
             $perunAupsAttr = $this->adapter->getEntitylessAttribute($this->perunAupsAttr);
         }
 
@@ -249,20 +248,22 @@ class ForceAup extends ProcessingFilter
         foreach ($perunAupsAttr as $key => $attr) {
             $perunAups[$key] = $attr['value'];
         }
+
         return $perunAups;
     }
 
     private function getAupsToBeApproved($perunAups, $voAups, $requestedAups, $userAups)
     {
         $perunAupsToBeApproved = [];
-        if (! empty($perunAups)) {
+        if (!empty($perunAups)) {
             $perunAupsToBeApproved = $this->fillAupsToBeApproved($requestedAups, $perunAups, $userAups);
         }
 
         $voAupsToBeApproved = [];
-        if (! empty($voAups)) {
+        if (!empty($voAups)) {
             $voAupsToBeApproved = $this->fillAupsToBeApproved($requestedAups, $voAups, $userAups);
         }
+
         return $this->mergeAupsToBeApproved($perunAupsToBeApproved, $voAupsToBeApproved);
     }
 
@@ -276,14 +277,14 @@ class ForceAup extends ProcessingFilter
             }
             $decodedAups = json_decode($aupsInJson);
             $latestAup = $this->getLatestAup($decodedAups);
-            if ($latestAup === null) {
+            if (null === $latestAup) {
                 continue;
             }
 
-            if (! empty($userApprovedAups[$requestedAup])) {
+            if (!empty($userApprovedAups[$requestedAup])) {
                 $userAupsList = json_decode($userApprovedAups[$requestedAup]);
                 $userLatestAup = $this->getLatestAup($userAupsList);
-                if ($userLatestAup !== null) {
+                if (null !== $userLatestAup) {
                     $latestDate = self::parseDateTime($latestAup->date);
                     $userLatestDate = self::parseDateTime($userLatestAup->date);
                     if ($userLatestDate >= $latestDate) {
@@ -293,6 +294,7 @@ class ForceAup extends ProcessingFilter
             }
             $aupsToBeApproved[$requestedAup] = $latestAup;
         }
+
         return $aupsToBeApproved;
     }
 
@@ -312,23 +314,26 @@ class ForceAup extends ProcessingFilter
                 $resultAups[$aupKey] = $voAup;
             }
         }
+
         return $resultAups;
     }
 
     /**
      * Parses datetime with format set in self::DATETIME_FORMAT. If parsing fails, value passed in $default will be
-     * returned (or null if not provided)
+     * returned (or null if not provided).
      *
-     * @param string $date to be parsed using self::DATETIME_FORMAT format
+     * @param string        $date    to be parsed using self::DATETIME_FORMAT format
      * @param DateTime|null $default (optional) value to be returned in case of error
+     *
      * @return DateTime parsed datetime, or default value (null if not provided)
      */
     private function parseDateTime(string $date, DateTime $default = null): DateTime
     {
         $result = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
-        if ($result === false) {
+        if (false === $result) {
             $result = $default;
         }
+
         return $result;
     }
 }

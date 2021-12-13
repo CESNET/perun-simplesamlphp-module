@@ -5,37 +5,37 @@ declare(strict_types=1);
 use SimpleSAML\Module\perun\MetadataToPerun;
 
 $config = [
-    /**
+    /*
      * Identifier of Proxy
      */
     'proxyIdentifier' => '',
 
-    /**
+    /*
      * Name of facility attribute Proxy Identifiers
      */
     'perunProxyIdentifierAttr' => 'urn:perun:facility:attribute-def:def:proxyIdentifiers',
 
-    /**
+    /*
      * Name of facility attribute Master Proxy Identifier
      */
     'perunMasterProxyIdentifierAttr' => 'urn:perun:facility:attribute-def:def:masterProxyIdentifier',
 
-    /**
+    /*
      * Name of facility attribute EntityID
      */
     'perunProxyEntityIDAttr' => 'urn:perun:facility:attribute-def:def:entityID',
 
-    /**
+    /*
      * Name of facility attribute isSamlFacility (optional)
      */
     'perunIsSamlFacilityAttr' => 'urn:perun:facility:attribute-def:def:isSamlFacility',
 
-    /**
+    /*
      * Absolute path, where the metadata will be stored
      */
     //'absoluteFileName' => '',
 
-    /**
+    /*
      * List of attributes definitions (for export)
      */
     'attributesDefinitions' => [
@@ -57,7 +57,7 @@ $config = [
         'urn:perun:facility:attribute-def:def:spDisableEncryption' => 'assertion.encryption',
     ],
 
-    /**
+    /*
      * Transform attributes after retrieving from Perun (during export). Array of arrays with string class (of the
      * transformer), array attributes (which are transformed) and array config (passed to the transformer). The
      * transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
@@ -104,7 +104,7 @@ $config = [
         ],
     ],
 
-    /**
+    /*
      * Attribute map used for extracting info during import from the entity descriptor XML. Map of internal name =>
      * Xpath selector string or Xpath selector in array if array should be extracted
      */
@@ -138,7 +138,7 @@ $config = [
             . '/*[local-name() = "EmailAddress"]', ],
     ],
 
-    /**
+    /*
      * Attribute map used for extracting info during import from the SSP array. Map of internal name => flatfile name
      * (nesting by dots) or array of indexes for multiple sources
      */
@@ -159,7 +159,7 @@ $config = [
         'singleLogoutService' => 'SingleLogoutService',
     ],
 
-    /**
+    /*
      * Attribute map used for storing extracted info in Perun during import. Map of name in Perun => internal name (from
      * xml2internal and flatfile2internal).
      */
@@ -187,7 +187,7 @@ $config = [
         'urn:perun:facility:attribute-def:def:proxyIdentifiers' => 'proxyIdentifiers',
     ],
 
-    /**
+    /*
      * Transform attributes before storing in Perun (during import). Array of arrays with string class (of the
      * transformer), array attributes (which are transformed) and array config (passed to the transformer). The
      * transformers should implement the \SimpleSAML\Module\perun\AttributeTransformer interface.
@@ -214,7 +214,6 @@ $config = [
                 'purpose2internal' => [
                     'signing' => 'signingCert',
                     'encryption' => 'encryptionCert',
-
                 ],
             ],
         ],
@@ -315,8 +314,13 @@ $config = [
         ],
         [
             'class' => '\\SimpleSAML\\Module\\perun\\transformers\\FlatMap',
-            'attributes'
-=> ['serviceName', 'serviceDescription', 'organizationName', 'spInformationURL', 'spOrganizationURL'],
+            'attributes' => [
+                'serviceName',
+                'serviceDescription',
+                'organizationName',
+                'spInformationURL',
+                'spOrganizationURL',
+            ],
         ],
     ],
 ];

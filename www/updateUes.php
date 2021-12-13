@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Script for updating UES in separate thread
+ * Script for updating UES in separate thread.
  */
 
 use SimpleSAML\Logger;
@@ -46,11 +46,9 @@ try {
         $attributesFromIdP['sourceIdPEntityID'][0],
         $attributesFromIdP['sourceIdPEppn'][0]
     );
-    if ($userExtSource === null) {
+    if (null === $userExtSource) {
         throw new Exception(
-            'perun/www/updateUes.php: there is no UserExtSource with ExtSource ' .
-            $attributesFromIdP['sourceIdPEntityID'][0] . ' and Login ' .
-            $attributesFromIdP['sourceIdPEppn'][0]
+            'perun/www/updateUes.php: there is no UserExtSource with ExtSource ' . $attributesFromIdP['sourceIdPEntityID'][0] . ' and Login ' . $attributesFromIdP['sourceIdPEppn'][0]
         );
     }
 
@@ -60,7 +58,7 @@ try {
         $attributesFromPerun[$attributeFromPerunRaw['name']] = $attributeFromPerunRaw;
     }
 
-    if ($attributesFromPerun === null) {
+    if (null === $attributesFromPerun) {
         throw new Exception('perun/www/updateUes.php: getting attributes was not successful.');
     }
 
@@ -77,7 +75,7 @@ try {
                 foreach ($attr as $value) {
                     $arrayAsString[0] .= $value . ';';
                 }
-                if (! empty($arrayAsString[0])) {
+                if (!empty($arrayAsString[0])) {
                     $arrayAsString[0] = substr($arrayAsString[0], 0, -1);
                 }
                 $attr = $arrayAsString;
@@ -101,7 +99,7 @@ try {
     }
 
     $attributesToUpdateFinal = [];
-    if (! empty($attributesToUpdate)) {
+    if (!empty($attributesToUpdate)) {
         foreach ($attributesToUpdate as $attribute) {
             $attribute['name'] = UES_ATTR_NMS . ':' . $attribute['friendlyName'];
             array_push($attributesToUpdateFinal, $attribute);

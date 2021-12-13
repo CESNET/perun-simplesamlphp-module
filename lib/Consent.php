@@ -67,14 +67,16 @@ class Consent
             // end else: not child table
         }   // end foreach
         $str .= isset($attributes) ? '</ul>' : '';
+
         return $str;
     }
 
     public static function presentAttributesPhotoOrValue($nameraw, $listitem)
     {
-        if ($nameraw === 'jpegPhoto') {
+        if ('jpegPhoto' === $nameraw) {
             return '<img src="data:image/jpeg;base64,' . htmlspecialchars($listitem) . '" alt="User photo" />';
         }
+
         return htmlspecialchars($listitem);
     }
 }

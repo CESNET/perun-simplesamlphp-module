@@ -44,7 +44,7 @@ class EnsureVoMember extends ProcessingFilter
         parent::__construct($config, $reserved);
         $config = Configuration::loadFromArray($config);
 
-        if ($config === null) {
+        if (null === $config) {
             throw new Exception(
                 'perun:EnsureVoMember: Property  \'' . self::ENSURE_VO_MEMBER . '\' is missing or invalid!'
             );
@@ -53,17 +53,13 @@ class EnsureVoMember extends ProcessingFilter
         $this->triggerAttr = $config->getString(self::TRIGGER_ATTR, '');
 
         if (empty($this->triggerAttr)) {
-            throw new Exception(
-                'perun:EnsureVoMember: Missing configuration option \'' . self::TRIGGER_ATTR . '\''
-            );
+            throw new Exception('perun:EnsureVoMember: Missing configuration option \'' . self::TRIGGER_ATTR . '\'');
         }
 
         $this->voDefsAttr = $config->getString(self::VO_DEFS_ATTR, '');
 
         if (empty($this->voDefsAttr)) {
-            throw new Exception(
-                'perun:EnsureVoMember: Missing configuration option \'' . self::VO_DEFS_ATTR . '\''
-            );
+            throw new Exception('perun:EnsureVoMember: Missing configuration option \'' . self::VO_DEFS_ATTR . '\'');
         }
 
         $this->loginUrlAttr = $config->getString(self::LOGIN_URL, null);
@@ -79,8 +75,7 @@ class EnsureVoMember extends ProcessingFilter
             $spEntityId = $request['SPMetadata']['entityid'];
         } else {
             throw new Exception(
-                'perun:EnsureVoMember: Cannot find entityID of remote SP. ' .
-                'hint: Do you have this filter in IdP context?'
+                'perun:EnsureVoMember: Cannot find entityID of remote SP. ' . 'hint: Do you have this filter in IdP context?'
             );
         }
 
@@ -88,16 +83,15 @@ class EnsureVoMember extends ProcessingFilter
             $user = $request['perun']['user'];
         } else {
             throw new Exception(
-                'perun:EnsureVoMember: ' .
-                'missing mandatory field \'perun.user\' in request.' .
-                'Hint: Did you configured PerunIdentity filter before this filter?'
+                'perun:EnsureVoMember: ' . 'missing mandatory field \'perun.user\' in request.' . 'Hint: Did you configured PerunIdentity filter before this filter?'
             );
         }
 
         $facility = $this->adapter->getFacilityByEntityId($spEntityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             Logger::debug('perun:EnsureVoMember: skip execution - no facility provided');
+
             return;
         }
 
@@ -107,10 +101,11 @@ class EnsureVoMember extends ProcessingFilter
         );
 
         $triggerAttrValue = $attrValues[$this->triggerAttr];
-        if ($triggerAttrValue === null || $triggerAttrValue === false) {
+        if (null === $triggerAttrValue || false === $triggerAttrValue) {
             Logger::debug(
                 'perun:EnsureVoMember: skip execution - attribute ' . self::TRIGGER_ATTR . ' is null or false'
             );
+
             return;
         }
 
@@ -119,6 +114,7 @@ class EnsureVoMember extends ProcessingFilter
             Logger::debug(
                 'perun:EnsureVoMember: skip execution - attribute ' . self::VO_DEFS_ATTR . ' has null or no value'
             );
+
             return;
         }
 
@@ -132,8 +128,8 @@ class EnsureVoMember extends ProcessingFilter
 
     private function redirect($request, $loginUrl, $voShortName)
     {
-        if (! empty($voShortName) &&
-            ! empty($this->registrarUrl) &&
+        if (!empty($voShortName) &&
+            !empty($this->registrarUrl) &&
             $this->adapter->hasRegistrationFormByVoShortName($voShortName)
         ) {
             $this->redirectToRegistration($loginUrl, $voShortName);

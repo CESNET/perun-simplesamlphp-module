@@ -13,10 +13,12 @@ class LogicalNot extends SingularAttributeTransformer
 {
     /**
      * @override
+     *
+     * @param mixed $value
      */
     public function singleTransform($value)
     {
-        return ! $value;
+        return !$value;
     }
 
     /**

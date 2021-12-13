@@ -43,11 +43,13 @@ class MetadataFromPerun
 
     /**
      * Get metadata array from facility (with attributes).
+     *
+     * @param mixed $facility
      */
     public function getMetadata($facility)
     {
         if (
-            ! isset($facility[self::FACILITY_ATTRIBUTES][$this->perunProxyEntityIDAttr]) ||
+            !isset($facility[self::FACILITY_ATTRIBUTES][$this->perunProxyEntityIDAttr]) ||
             empty($facility[self::FACILITY_ATTRIBUTES][$this->perunProxyEntityIDAttr]['value'])
         ) {
             return null;
@@ -56,13 +58,13 @@ class MetadataFromPerun
         $metadata = [];
         foreach ($this->attributesDefinitions as $perunAttrName => $metadataAttrName) {
             $attribute = $facility[self::FACILITY_ATTRIBUTES][$perunAttrName];
-            if ($attribute['value'] !== null) {
-                if ($attribute['value'] !== null) {
+            if (null !== $attribute['value']) {
+                if (null !== $attribute['value']) {
                     $target = &$metadata;
                     $keys = explode('>', $metadataAttrName);
                     while (count($keys) > 1) {
                         $key = array_shift($keys);
-                        if (! isset($target[$key])) {
+                        if (!isset($target[$key])) {
                             $target[$key] = [];
                         }
                         $target = &$target[$key];
@@ -76,14 +78,14 @@ class MetadataFromPerun
             $class = $transformer['class'];
             $t = new $class(Configuration::loadFromArray($transformer['config']));
             $attrs = array_intersect_key($metadata, array_flip($transformer['attributes']));
-            if (! empty($attrs)) {
+            if (!empty($attrs)) {
                 $newAttrs = $t->transform($attrs);
                 $metadata = array_merge($metadata, $newAttrs);
             }
         }
 
         $metadata = array_filter($metadata, function ($value) {
-            return $value !== null;
+            return null !== $value;
         });
 
         return [
@@ -100,6 +102,7 @@ class MetadataFromPerun
         foreach ($this->getFacilitiesWithAttributes() as $facility) {
             $metadata = array_merge($metadata, $this->getMetadata($facility));
         }
+
         return $metadata;
     }
 
@@ -118,6 +121,8 @@ class MetadataFromPerun
      * Generate array with metadata.
      *
      * @see https://github.com/simplesamlphp/simplesamlphp/blob/master/www/admin/metadata-converter.php
+     *
+     * @param mixed $metadata
      */
     public static function metadataToFlatfile($metadata)
     {
@@ -126,6 +131,7 @@ class MetadataFromPerun
             $flatfile .= '$metadata[' . var_export($entityId, true) . '] = '
             . VarExporter::export($entityMetadata) . ";\n";
         }
+
         return $flatfile;
     }
 
@@ -162,6 +168,7 @@ class MetadataFromPerun
         foreach (array_keys($this->attributesDefinitions) as $attr) {
             array_push($allAttrNames, $attr);
         }
+
         return $allAttrNames;
     }
 
@@ -176,10 +183,11 @@ class MetadataFromPerun
         $attributeDefinition = [
             $perunProxyIdentifierRpcAttrName => $proxyIdentifier,
         ];
+
         return $this->rpcAdapter->searchFacilitiesByAttributeValue($attributeDefinition);
     }
 
-    /**+
+    /*+
      * Get facilities with attributes.
      */
     private function getFacilitiesWithAttributes()
@@ -192,13 +200,14 @@ class MetadataFromPerun
             foreach ($attributes as $attribute) {
                 $facilityAttributes[$attribute['name']] = $attribute;
             }
-            if (! empty($facilityAttributes[$this->perunProxyEntityIDAttr]['value'])) {
+            if (!empty($facilityAttributes[$this->perunProxyEntityIDAttr]['value'])) {
                 $facilitiesWithAttributes[$facility->getId()] = [
                     'facility' => $facility,
                     self::FACILITY_ATTRIBUTES => $facilityAttributes,
                 ];
             }
         }
+
         return $facilitiesWithAttributes;
     }
 }

@@ -8,7 +8,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Metadata\MetaDataStorageHandler;
 
 /**
- * Class IdPAttribute
+ * Class IdPAttribute.
  *
  * This class for each line in $attrMAp search the $key in IdP Metadata and save it to $request['Attributes'][$value]
  */
@@ -22,7 +22,7 @@ class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
 
         assert(is_array($config));
 
-        if (! isset($config['attrMap'])) {
+        if (!isset($config['attrMap'])) {
             throw new Exception('perun:IdPAttribute: missing mandatory configuration option \'attrMap\'.');
         }
 
@@ -40,23 +40,23 @@ class IdPAttribute extends \SimpleSAML\Auth\ProcessingFilter
             $attributeNames = preg_split('/:/', $attributeKey);
             $key = array_shift($attributeNames);
 
-            if (! isset($sourceIdpMeta[$key])) {
+            if (!isset($sourceIdpMeta[$key])) {
                 continue;
             }
             $value = $sourceIdpMeta[$key];
 
             foreach ($attributeNames as $attributeName) {
-                if (! isset($value[$attributeName])) {
+                if (!isset($value[$attributeName])) {
                     continue;
                 }
                 $value = $value[$attributeName];
             }
 
-            if (! is_array($value)) {
+            if (!is_array($value)) {
                 $value = [$value];
             }
 
-            if (! empty($value)) {
+            if (!empty($value)) {
                 $request['Attributes'][$attributeValue] = $value;
             }
         }

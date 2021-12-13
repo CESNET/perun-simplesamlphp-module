@@ -80,6 +80,7 @@ class MetadataToPerun
         $this->transformers = array_map(function ($transformer) {
             $class = $transformer['class'];
             $t = new $class(Configuration::loadFromArray($transformer['config'] ?? []));
+
             return [
                 'instance' => $t,
                 'attributes' => $transformer['attributes'],
@@ -91,6 +92,7 @@ class MetadataToPerun
      * Convert SSP metadata array to Perun facility array.
      *
      * @return array facility or null if a transformer deleted entityID
+     *
      * @see \SimpleSAML\Module\perun\AttributeTransformer
      */
     public function metadataToFacility(array $metadata)
@@ -102,10 +104,10 @@ class MetadataToPerun
 
         foreach ($this->transformers as $transformer) {
             $attrs = array_intersect_key($facility, array_flip($transformer['attributes']));
-            if (! empty($attrs)) {
+            if (!empty($attrs)) {
                 $newAttrs = $transformer['instance']->transform($attrs);
                 $facility = array_merge($facility, $newAttrs);
-                if (! isset($facility[self::ENTITY_ID]) || $facility[self::ENTITY_ID] === null) {
+                if (!isset($facility[self::ENTITY_ID]) || null === $facility[self::ENTITY_ID]) {
                     return null;
                 }
             }
@@ -118,6 +120,7 @@ class MetadataToPerun
      * Load XML metadata file and get SPs.
      *
      * @return array metadata
+     *
      * @see getFacilitiesFrom()
      */
     public function getFacilitiesFromXml(string $filename)
@@ -132,7 +135,9 @@ class MetadataToPerun
      * Load flatfile metadata and get SPs.
      *
      * @param string $directory
+     *
      * @return array metadata
+     *
      * @see getFacilitiesFrom()
      */
     public function getFacilitiesFromFlatfile(string $directory = null)
@@ -140,9 +145,10 @@ class MetadataToPerun
         $config = [
             'type' => 'flatfile',
         ];
-        if ($directory !== null) {
+        if (null !== $directory) {
             $config['directory'] = $directory;
         }
+
         return $this->getFacilitiesFrom($config);
     }
 
@@ -150,7 +156,9 @@ class MetadataToPerun
      * Load metadata and get SPs. See MetaDataStorageSource and subclasses for details.
      *
      * @param array $config - config for MetaDataStorageSource::getSource (type, file, directory...)
+     *
      * @return array metadata
+     *
      * @see https://github.com/simplesamlphp/simplesamlphp/blob/master/lib/SimpleSAML/Metadata/MetaDataStorageSource.php
      */
     public function getFacilitiesFrom(array $config)
@@ -164,7 +172,8 @@ class MetadataToPerun
      * Create facility in Perun and set its attributes based on the facility array.
      *
      * @param array $info - facility array
-     * @return boolean true on success
+     *
+     * @return bool true on success
      */
     public function createFacilityWithAttributes(array $info)
     {
@@ -197,15 +206,15 @@ class MetadataToPerun
             if (isset($this->perunAttributes[$perunName])) {
                 $internalName = $this->perunAttributes[$perunName];
                 $value = $info[$internalName] ?? null;
-                if ($value !== null) {
-                    if (! is_array($value) && substr($attribute['type'], -4) === 'List') {
+                if (null !== $value) {
+                    if (!is_array($value) && 'List' === substr($attribute['type'], -4)) {
                         $value = [$value];
                     }
                     $attributes[$i]['value'] = $value;
                 }
             } elseif ($perunName === $this->masterProxyIdentifierAttr) {
                 $attributes[$i]['value'] = $this->proxyIdentifier;
-            } elseif ($this->isSamlFacilityAttr !== '' && $perunName === $this->isSamlFacilityAttr) {
+            } elseif ('' !== $this->isSamlFacilityAttr && $perunName === $this->isSamlFacilityAttr) {
                 $attributes[$i]['value'] = true;
             }
             if ($perunName === $this->proxyIdentifiersAttr) {
@@ -236,7 +245,7 @@ class MetadataToPerun
             $indexes = is_array($metadataAttribute) ? $metadataAttribute : [$metadataAttribute];
             foreach ($indexes as $index) {
                 $t = self::getNestedAttribute($metadata, explode('.', $index));
-                if ($t !== null) {
+                if (null !== $t) {
                     $facility[$perunAttribute] = $t;
                 }
             }
@@ -250,18 +259,19 @@ class MetadataToPerun
         foreach ($this->xmlAttributes as $perunAttribute => $xpath) {
             if (is_string($xpath)) {
                 $result = $xml->xpath($xpath);
-                $result = $result !== false && count($result) > 0 ? $result[0] : false;
-            } elseif (count($xpath) !== 1) {
+                $result = false !== $result && count($result) > 0 ? $result[0] : false;
+            } elseif (1 !== count($xpath)) {
                 throw new \Exception('xpath array should have exactly 1 item');
             } else {
                 $index = key($xpath);
                 $xpathSelector = $xpath[$index];
                 $result = $xml->xpath($xpathSelector);
-                if ($result !== false && count($result) > 0) {
+                if (false !== $result && count($result) > 0) {
                     if (is_string($index)) {
                         $indexes = array_map(function ($el) use ($index) {
                             $i = $el->xpath($index);
-                            return $i !== false && count($i) > 0 ? ((string) $i[0]) : false;
+
+                            return false !== $i && count($i) > 0 ? ((string) $i[0]) : false;
                         }, $result);
                         if (in_array(false, $indexes, true) || count($indexes) !== count($result)) {
                             throw new \Exception('Did not find corresponding number of keys using xpath ' . $index);
@@ -276,7 +286,7 @@ class MetadataToPerun
                 }
             }
 
-            if ($result !== false) {
+            if (false !== $result) {
                 $facility[$perunAttribute] = $result;
             }
         }
@@ -285,11 +295,13 @@ class MetadataToPerun
     private function getAttributesDefinition(array $attrNames)
     {
         $perunAttrNames = AttributeUtils::getAttrNames($attrNames, AttributeUtils::RPC);
+
         return array_values(
             array_filter(
                 $this->adapter->getAttributesDefinition(),
                 function ($attr) use ($perunAttrNames) {
                     $perunName = $attr['namespace'] . self::NAMESPACE_SEPARATOR . $attr['friendlyName'];
+
                     return in_array($perunName, $perunAttrNames, true);
                 }
             )
@@ -302,13 +314,14 @@ class MetadataToPerun
     }
 
     /**
-     * @return string|boolean
+     * @return string|bool
      */
     private static function generateFacilityName(array $info)
     {
         if (empty($info[self::ENTITY_ID])) {
             return false;
         }
+
         return self::escapeFacilityName(
             'SP_' .
             self::stringOrEnglishOrAny(
@@ -320,6 +333,8 @@ class MetadataToPerun
     }
 
     /**
+     * @param mixed $str
+     *
      * @return string
      */
     private static function escapeFacilityName($str)
@@ -328,6 +343,8 @@ class MetadataToPerun
     }
 
     /**
+     * @param mixed $strOrEn
+     *
      * @return string
      */
     private static function stringOrEnglishOrAny($strOrEn)
@@ -338,6 +355,7 @@ class MetadataToPerun
         if (isset($strOrEn['en'])) {
             return $strOrEn['en'];
         }
+
         return current($strOrEn);
     }
 
@@ -351,17 +369,19 @@ class MetadataToPerun
                 ),
             ],
         ];
+
         return $this->adapter->createFacility($facility);
     }
 
     private static function getNestedAttribute(array $array, array $indexes)
     {
         foreach ($indexes as $index) {
-            if (! isset($array[$index])) {
+            if (!isset($array[$index])) {
                 return null;
             }
             $array = $array[$index];
         }
+
         return $array;
     }
 }
