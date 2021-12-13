@@ -1,3 +1,10 @@
+## [6.4.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.2...v6.4.3) (2021-12-13)
+
+
+### Bug Fixes
+
+* typo in RpcConnector ([4e15e8b](https://github.com/CESNET/perun-simplesamlphp-module/commit/4e15e8ba350db256b39417a307e0db3a8a8c1c13))
+
 ## [6.4.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.1...v6.4.2) (2021-11-25)
 
 
