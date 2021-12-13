@@ -32,6 +32,8 @@ class AttributeAlter extends SingularAttributeTransformer
 
     /**
      * @override
+     *
+     * @param mixed $values
      */
     public function singleTransform($values)
     {
@@ -41,10 +43,10 @@ class AttributeAlter extends SingularAttributeTransformer
         $request = [
             self::ATTRIBUTES_KEY => [
                 self::SUBJECT => $values,
-
             ],
         ];
         $filter->process($request);
+
         return $request[self::ATTRIBUTES_KEY][self::SUBJECT] ?? null;
     }
 
@@ -66,6 +68,7 @@ class AttributeAlter extends SingularAttributeTransformer
                     $description
                 );
             }
+
             return sprintf(
                 'if (%s) matches %s then %s else (%s)',
                 $description,
@@ -74,9 +77,10 @@ class AttributeAlter extends SingularAttributeTransformer
                 $description
             );
         }
-        if ($this->config->getString('pattern') === '/^/') {
+        if ('/^/' === $this->config->getString('pattern')) {
             return sprintf('prepend %s to (%s)', $this->config->getString('replacement'), $description);
         }
+
         return sprintf(
             'replace %s with %s in (%s)',
             $this->config->getString('pattern'),

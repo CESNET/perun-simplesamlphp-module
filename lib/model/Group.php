@@ -26,6 +26,7 @@ class Group implements HasId
      * @param $name
      * @param $uniqueName
      * @param $description
+     * @param mixed $uuid
      */
     public function __construct($id, $voId, $uuid, $name, $uniqueName, $description)
     {

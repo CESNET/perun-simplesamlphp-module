@@ -42,9 +42,10 @@ class LdapConnector
     }
 
     /**
-     * @param string $base
-     * @param string $filter
+     * @param string     $base
+     * @param string     $filter
      * @param array|null $attrNames attributes to be returned. If null all attrs are returned.
+     *
      * @return array associative array where key is attribute name and value is array of values, entity or null
      */
     public function searchForEntity($base, $filter, $attrNames = null)
@@ -56,14 +57,13 @@ class LdapConnector
                 'sspmod_perun_LdapConnector.searchForEntity - No entity found. Returning \'null\'. ' .
                 'query base: ' . $base . ', filter: ' . $filter . '"'
             );
+
             return null;
         }
 
         if (sizeof($entries) > 1) {
             throw new Exception(
-                'sspmod_perun_LdapConnector.searchForEntity - More than one entity found. ' .
-                'query base: ' . $base . ', filter: ' . $filter . '.' .
-                'Hint: Use method searchForEntities if you expect array of entities.'
+                'sspmod_perun_LdapConnector.searchForEntity - More than one entity found. ' . 'query base: ' . $base . ', filter: ' . $filter . '.' . 'Hint: Use method searchForEntities if you expect array of entities.'
             );
         }
 
@@ -73,7 +73,8 @@ class LdapConnector
     /**
      * @param string $base
      * @param string $filter
-     * @param array $attrNames attributes to be returned. If null all attrs are returned.
+     * @param array  $attrNames attributes to be returned. If null all attrs are returned.
+     *
      * @return array of entities. Each entity is associative array.
      */
     public function searchForEntities($base, $filter, $attrNames = null)
@@ -85,6 +86,7 @@ class LdapConnector
                 'sspmod_perun_LdapConnector.searchForEntity - No entities found. Returning empty array. ' .
                 'query base: ' . $base . ', filter: ' . $filter
             );
+
             return $entries;
         }
 
@@ -94,20 +96,20 @@ class LdapConnector
     protected function search($base, $filter, $attributes = null)
     {
         $conn = ldap_connect($this->hostname);
-        if ($conn === false) {
+        if (false === $conn) {
             throw new Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
         }
 
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 
         // Enable TLS, if needed
-        if ($this->enableTLS && stripos($this->hostname, 'ldaps:') === false) {
-            if (! @ldap_start_tls($conn)) {
+        if ($this->enableTLS && false === stripos($this->hostname, 'ldaps:')) {
+            if (!@ldap_start_tls($conn)) {
                 throw new Exception('Unable to force TLS on Perun LDAP');
             }
         }
 
-        if (ldap_bind($conn, $this->user, $this->password) === false) {
+        if (false === ldap_bind($conn, $this->user, $this->password)) {
             throw new Exception('Unable to bind user to the Perun LDAP, ' . $this->hostname);
         }
 
@@ -121,7 +123,7 @@ class LdapConnector
         $responseTime = round(($endTime - $startTime) * 1000, 3);
 
         // no such entity
-        if (ldap_errno($conn) === 2) {
+        if (2 === ldap_errno($conn)) {
             return [];
         }
 
@@ -136,10 +138,12 @@ class LdapConnector
     }
 
     /**
-     * remove unnecessary meta information from entry (e.g. 'count' field) and simplify entry structure
+     * remove unnecessary meta information from entry (e.g. 'count' field) and simplify entry structure.
      *
      * @param $conn
-     * @return array associative array where key is attr name and value is array of attr values.
+     * @param mixed $resultId
+     *
+     * @return array associative array where key is attr name and value is array of attr values
      */
     private static function getSimplifiedEntries($conn, $resultId)
     {

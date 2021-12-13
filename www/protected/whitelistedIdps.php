@@ -16,7 +16,6 @@ use SimpleSAML\Module\perun\Whitelisting;
  *
  * TODO: Use standardized format (JSON)
  */
-
 $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 $idpsMetadata = $metadataHandler->getList('saml20-idp-remote');
 
@@ -31,11 +30,11 @@ $idps = $service->getWhitelist();
 foreach ($idps as $idp) {
     $entityID = $idp['entityid'];
 
-    print Whitelisting::getEntityName($idpsMetadata[$entityID]);
+    echo Whitelisting::getEntityName($idpsMetadata[$entityID]);
 
-    print $delimiter;
+    echo $delimiter;
 
-    print $entityID;
+    echo $entityID;
 
-    print "\n";
+    echo "\n";
 }

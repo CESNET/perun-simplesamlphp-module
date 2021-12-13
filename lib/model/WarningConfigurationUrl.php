@@ -8,7 +8,7 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Logger;
 
 /**
- * Implementation of WarningConfiguration using json url as the source of warning attributes
+ * Implementation of WarningConfiguration using json url as the source of warning attributes.
  */
 class WarningConfigurationUrl extends WarningConfiguration
 {
@@ -46,14 +46,14 @@ class WarningConfigurationUrl extends WarningConfiguration
     {
         $conf = self::getSourceOfWarningAttributes();
 
-        if ($conf !== null) {
+        if (null !== $conf) {
             $this->enabled = $conf->getBoolean(WarningConfiguration::ENABLED, false);
         }
 
         if ($this->enabled) {
             if ($conf->hasValue(WarningConfiguration::TYPE)) {
                 $this->type = $conf->getString(WarningConfiguration::TYPE, self::WARNING_TYPE_INFO);
-                if (! in_array($this->type, $this->allowedTypes, true)) {
+                if (!in_array($this->type, $this->allowedTypes, true)) {
                     Logger::info("perun:WarningConfigurationUrl: '" . self::TYPE
                         . "' has invalid value, value set to " . self::WARNING_TYPE_INFO);
                     $this->type = self::WARNING_TYPE_INFO;
@@ -64,6 +64,7 @@ class WarningConfigurationUrl extends WarningConfiguration
                     'perun:WarningConfigurationUrl: ' .
                     "missing or invalid '" . self::TYPE . "' parameter in the URL content with warning configuration"
                 );
+
                 return $this;
             }
 
@@ -74,6 +75,7 @@ class WarningConfigurationUrl extends WarningConfiguration
                     'perun:WarningConfigurationUrl: ' .
                     "missing or invalid '" . self::TITLE . "' parameter in the URL content with warning configuration"
                 );
+
                 return $this;
             }
 
@@ -84,6 +86,7 @@ class WarningConfigurationUrl extends WarningConfiguration
                     'perun:WarningConfigurationUrl: ' .
                     "missing or invalid '" . self::TEXT . "' parameter in the URL content with warning configuration"
                 );
+
                 return $this;
             }
         }

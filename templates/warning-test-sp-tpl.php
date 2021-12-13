@@ -5,13 +5,12 @@ use SimpleSAML\Module\perun\Auth\Process\WarningTestSP;
 use SimpleSAML\XHTML\Template;
 
 /**
- * Template for warn user that he/she is accessing test SP
+ * Template for warn user that he/she is accessing test SP.
  *
  * Allow type hinting in IDE
  *
  * @var Template $this
  */
-
 $customHeaderEnabled = isset($this->data[WarningTestSP::CUSTOM_HEADER_ENABLED])
     && $this->data[WarningTestSP::CUSTOM_HEADER_ENABLED];
 $customTextEnabled = isset($this->data[WarningTestSP::CUSTOM_TEXT_ENABLED])
@@ -25,7 +24,7 @@ $this->includeAtTemplateBase('includes/header.php');
 ?>
 
     <form method="post" action="<?php echo Module::getModuleURL('perun/warning_test_sp_continue.php'); ?>">
-        <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId'] ?>">
+        <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId']; ?>">
         <?php
         if ($customTextEnabled) {
             echo '<div>' . $this->t(WarningTestSP::CUSTOM_TEXT_KEY) . '</div>' . PHP_EOL;
@@ -33,7 +32,7 @@ $this->includeAtTemplateBase('includes/header.php');
         ?>
         <br/>
         <div class="form-group">
-            <input type="submit" value="<?php echo $this->t('{perun:perun:continue}') ?>"
+            <input type="submit" value="<?php echo $this->t('{perun:perun:continue}'); ?>"
                    class="btn btn-lg btn-primary btn-block">
         </div>
     </form>

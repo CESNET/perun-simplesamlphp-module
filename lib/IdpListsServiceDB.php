@@ -7,7 +7,7 @@ namespace SimpleSAML\Module\perun;
 use SimpleSAML\Module\perun\databaseCommand\IdpListsServiceDbCmd;
 
 /**
- * Implementation of IdpListsService using DB
+ * Implementation of IdpListsService using DB.
  */
 class IdpListsServiceDB extends IdpListsService
 {
@@ -50,7 +50,7 @@ class IdpListsServiceDB extends IdpListsService
 
     public function whitelistIdp($entityID, $reason = null)
     {
-        if (! $this->isWhitelisted($entityID)) {
+        if (!$this->isWhitelisted($entityID)) {
             $this->idpListServiceDbCmd->insertToList($this->idpListServiceDbCmd::WHITELIST, $entityID, $reason);
             if ($this->isGreylisted($entityID)) {
                 $this->idpListServiceDbCmd->deleteFromList($this->idpListServiceDbCmd::GREYLIST, $entityID);

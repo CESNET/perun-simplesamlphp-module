@@ -8,7 +8,7 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 
 /**
- * Abstract class sspmod_perun_StatusConnector specify interface to get status information about some components
+ * Abstract class sspmod_perun_StatusConnector specify interface to get status information about some components.
  */
 abstract class StatusConnector
 {
@@ -36,25 +36,24 @@ abstract class StatusConnector
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $statusType = $configuration->getString(self::STATUS_TYPE, 'NAGIOS');
-        if ($statusType === self::NAGIOS) {
+        if (self::NAGIOS === $statusType) {
             return new NagiosStatusConnector();
         }
         throw new Exception(
-            'Unknown StatusConnector type in option \'' . self::STATUS_TYPE . '\'. Only ' .
-                self::NAGIOS . ' type available now!'
+            'Unknown StatusConnector type in option \'' . self::STATUS_TYPE . '\'. Only ' . self::NAGIOS . ' type available now!'
         );
     }
 
     /**
      * Returns list of components with statuses in this format: [ [ 'name' => 'Component name', 'status' => 'Component
-     * status' ], ],
+     * status' ], ],.
      *
      * @return array
      */
     abstract public function getStatus();
 
     /**
-     * Returns the HTML code with correct class
+     * Returns the HTML code with correct class.
      *
      * @param string $status Status of services
      *
@@ -64,11 +63,13 @@ abstract class StatusConnector
     {
         $statusAsInt = intval($status);
 
-        if ($statusAsInt === self::OK) {
+        if (self::OK === $statusAsInt) {
             return '<span class="status label label-success">OK</span>';
-        } elseif ($statusAsInt === self::WARNING) {
+        }
+        if (self::WARNING === $statusAsInt) {
             return '<span class="status label label-warning">WARNING</span>';
         }
+
         return '<span class="status label label-danger">CRITICAL</span>';
     }
 }

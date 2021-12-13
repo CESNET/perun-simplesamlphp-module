@@ -13,7 +13,7 @@ class User implements HasId
     /**
      * User constructor.
      *
-     * @param int $id
+     * @param int    $id
      * @param string $name
      */
     public function __construct($id, $name)

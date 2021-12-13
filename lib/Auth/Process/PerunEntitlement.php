@@ -12,7 +12,7 @@ use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\EntitlementUtils;
 
 /**
- * Class PerunEntitlement
+ * Class PerunEntitlement.
  *
  * This filter joins eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities and facility
  * capabilities
@@ -94,14 +94,13 @@ class PerunEntitlement extends ProcessingFilter
         $capabilities = [];
         $forwardedEduPersonEntitlement = [];
 
-        if ($this->entityId === null) {
+        if (null === $this->entityId) {
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);
-        } elseif (! is_string($this->entityId)) {
+        } elseif (!is_string($this->entityId)) {
             throw new Exception(
-                'perun:PerunEntitlement: invalid configuration option entityID. ' .
-                'It must be a string or a callable.'
+                'perun:PerunEntitlement: invalid configuration option entityID. ' . 'It must be a string or a callable.'
             );
         }
 
@@ -141,27 +140,32 @@ class PerunEntitlement extends ProcessingFilter
      *
      * @param $request
      * @param string $groupName
+     *
      * @return string translated group name
      */
     protected function mapGroupName($request, $groupName)
     {
         if (
-            isset($request['SPMetadata']['groupMapping']) &&
-            isset($request['SPMetadata']['groupMapping'][$groupName])) {
+            isset($request['SPMetadata']['groupMapping'], $request['SPMetadata']['groupMapping'][$groupName])
+            ) {
             Logger::debug(
                 'Mapping ' . $groupName . ' to ' . $request['SPMetadata']['groupMapping'][$groupName] .
                 ' for SP ' . $this->entityId
             );
+
             return $request['SPMetadata']['groupMapping'][$groupName];
-        } elseif (isset($request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR])) {
+        }
+        if (isset($request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR])) {
             Logger::debug(
                 'EntitlementPrefix overridden by a SP ' . $this->entityId .
                 ' to ' . $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR]
             );
+
             return $request['SPMetadata'][self::ENTITLEMENTPREFIX_ATTR] . $groupName;
         }
-        # No mapping defined, so just put groupNamePrefix in front of the group
+        // No mapping defined, so just put groupNamePrefix in front of the group
         Logger::debug('No mapping found for group ' . $groupName . ' for SP ' . $this->entityId);
+
         return $this->entitlementPrefix . 'group:' . $groupName;
     }
 
@@ -175,14 +179,13 @@ class PerunEntitlement extends ProcessingFilter
             $groupName = preg_replace('/^(\w*)\:members$/', '$1', $groupName);
 
             if (isset($request['SPMetadata']['groupNameAARC']) || $this->groupNameAARC) {
-                # https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
-                # Group name is URL encoded by RFC 3986 (http://www.ietf.org/rfc/rfc3986.txt)
-                # Example:
-                # urn:geant:einfra.cesnet.cz:perun.cesnet.cz:group:einfra:<groupName>:<subGroupName>#perun.cesnet.cz
+                // https://aarc-project.eu/wp-content/uploads/2017/11/AARC-JRA1.4A-201710.pdf
+                // Group name is URL encoded by RFC 3986 (http://www.ietf.org/rfc/rfc3986.txt)
+                // Example:
+                // urn:geant:einfra.cesnet.cz:perun.cesnet.cz:group:einfra:<groupName>:<subGroupName>#perun.cesnet.cz
                 if (empty($this->entitlementAuthority) || empty($this->entitlementPrefix)) {
                     throw new Exception(
-                        'perun:PerunEntitlement: missing mandatory configuration options ' .
-                        '\'groupNameAuthority\' or \'groupNamePrefix\'.'
+                        'perun:PerunEntitlement: missing mandatory configuration options ' . '\'groupNameAuthority\' or \'groupNamePrefix\'.'
                     );
                 }
                 $groupName = $this->groupNameWrapper($groupName);
@@ -192,6 +195,7 @@ class PerunEntitlement extends ProcessingFilter
             array_push($eduPersonEntitlement, $groupName);
         }
         natsort($eduPersonEntitlement);
+
         return $eduPersonEntitlement;
     }
 

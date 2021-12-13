@@ -45,7 +45,7 @@ class ListOfSps
 
     public static function printAttributeValue($type, $value)
     {
-        if (empty($value) && $type !== 'java.lang.Boolean') {
+        if (empty($value) && 'java.lang.Boolean' !== $type) {
             return "<td class='center'>&horbar;</td>";
         }
 
@@ -63,7 +63,7 @@ class ListOfSps
                 $string = htmlspecialchars($value);
                 break;
             case 'java.lang.Boolean':
-                if ($value !== null && $value) {
+                if (null !== $value && $value) {
                     $string = '&#x2714;';
                 } else {
                     $string = '&#x2715;';
@@ -87,9 +87,10 @@ class ListOfSps
             default:
                 $string = '';
         }
-        if (! empty($string)) {
+        if (!empty($string)) {
             return '<td class="' . self::getClass($type) . '">' . $string . '</td>';
         }
+
         return '<td/>';
     }
 
@@ -109,6 +110,7 @@ class ListOfSps
 
         if (count($translations) > 0) {
             $languages = array_keys($translations);
+
             return $translations[$languages[0]];
         }
 

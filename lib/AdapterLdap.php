@@ -15,7 +15,7 @@ use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Module\perun\model\Vo;
 
 /**
- * Class AdapterLdap
+ * Class AdapterLdap.
  *
  * Configuration file should be placed in default config folder of SimpleSAMLphp. Example of file is in config-template
  * folder.
@@ -67,7 +67,7 @@ class AdapterLdap extends Adapter
 
     public function __construct($configFileName = null)
     {
-        if ($configFileName === null) {
+        if (null === $configFileName) {
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
@@ -85,7 +85,7 @@ class AdapterLdap extends Adapter
 
     public function getPerunUser($idpEntityId, $uids)
     {
-        # Build a LDAP query, we are searching for the user who has at least one of the uid
+        // Build a LDAP query, we are searching for the user who has at least one of the uid
         $query = '';
         foreach ($uids as $uid) {
             $query .= '(eduPersonPrincipalNames=' . $uid . ')';
@@ -100,7 +100,7 @@ class AdapterLdap extends Adapter
             '(|' . $query . ')',
             ['perunUserId', 'displayName', 'cn', 'givenName', 'sn', 'preferredMail', 'mail']
         );
-        if ($user === null) {
+        if (null === $user) {
             return $user;
         }
 
@@ -111,6 +111,7 @@ class AdapterLdap extends Adapter
         } else {
             $name = null;
         }
+
         return new User($user['perunUserId'][0], $name);
     }
 
@@ -155,7 +156,7 @@ class AdapterLdap extends Adapter
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             return [];
         }
 
@@ -190,9 +191,8 @@ class AdapterLdap extends Adapter
                 }
             }
         }
-        $groups = $this->removeDuplicateEntities($groups);
 
-        return $groups;
+        return $this->removeDuplicateEntities($groups);
     }
 
     public function getGroupByName($vo, $name)
@@ -203,11 +203,10 @@ class AdapterLdap extends Adapter
             '(&(objectClass=perunGroup)(perunUniqueGroupName=' . $name . '))',
             ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
         );
-        if ($group === null) {
-            throw new Exception(
-                'Group with name: $name in VO: ' . $vo->getName() . ' does not exists in Perun LDAP.'
-            );
+        if (null === $group) {
+            throw new Exception('Group with name: $name in VO: ' . $vo->getName() . ' does not exists in Perun LDAP.');
         }
+
         return new Group(
             $group['perunGroupId'][0],
             $group['perunVoId'][0],
@@ -225,7 +224,7 @@ class AdapterLdap extends Adapter
             '(&(objectClass=perunVo)(o=' . $voShortName . '))',
             ['perunVoId', 'o', 'description']
         );
-        if ($vo === null) {
+        if (null === $vo) {
             throw new Exception('Vo with name: ' . $voShortName . ' does not exists in Perun LDAP.');
         }
 
@@ -240,7 +239,7 @@ class AdapterLdap extends Adapter
             ['o', 'description']
         );
 
-        if ($vo === null) {
+        if (null === $vo) {
             throw new Exception('Vo with id: ' . $id . ' does not exists in Perun LDAP.');
         }
 
@@ -250,13 +249,13 @@ class AdapterLdap extends Adapter
     public function getUserAttributes($user, $attrNames)
     {
         $userId = $user->getId();
-        $attributes = $this->connector->searchForEntity(
+
+        return $this->connector->searchForEntity(
             'perunUserId=' . $userId . ',ou=People,' . $this->ldapBase,
             '(objectClass=perunUser)',
             $attrNames
         );
         // user in ldap (simplified by LdapConnector method) is actually set of its attributes
-        return $attributes;
     }
 
     public function getUserAttributesValues($user, $attributes)
@@ -290,17 +289,18 @@ class AdapterLdap extends Adapter
         if (empty($attrName)) {
             $attrName = 'entityID';
             Logger::warning(
-                "No attribute configuration in LDAP found for attribute ${entityIdAttr}, using ${attrName} as fallback value"
+                "No attribute configuration in LDAP found for attribute {$entityIdAttr}, using {$attrName} as fallback value"
             );
         }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
-            "(&(objectClass=perunFacility)(${attrName}=${spEntityId}))",
+            "(&(objectClass=perunFacility)({$attrName}={$spEntityId}))",
             [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
         );
 
         if (empty($ldapResult)) {
             Logger::warning('perun:AdapterLdap: No facility with entityID \'' . $spEntityId . '\' found.');
+
             return null;
         }
 
@@ -318,17 +318,18 @@ class AdapterLdap extends Adapter
         if (empty($attrName)) {
             $attrName = 'OIDCClientID';
             Logger::warning(
-                "No attribute configuration in LDAP found for attribute ${clientIdAttr}, using ${attrName} as fallback value"
+                "No attribute configuration in LDAP found for attribute {$clientIdAttr}, using {$attrName} as fallback value"
             );
         }
         $ldapResult = $this->connector->searchForEntity(
             $this->ldapBase,
-            "(&(objectClass=perunFacility)(${attrName}=${clientId}))",
+            "(&(objectClass=perunFacility)({$attrName}={$clientId}))",
             [self::PERUN_FACILITY_ID, self::CN, self::DESCRIPTION]
         );
 
         if (empty($ldapResult)) {
             Logger::warning('perun:AdapterLdap: No facility with clientId \'' . $clientId . '\' found.');
+
             return null;
         }
 
@@ -429,7 +430,7 @@ class AdapterLdap extends Adapter
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             return [];
         }
 
@@ -442,7 +443,7 @@ class AdapterLdap extends Adapter
         );
         Logger::debug('Resources - ' . json_encode($resources));
 
-        if ($resources === null) {
+        if (null === $resources) {
             throw new Exception('Service with spEntityId: ' . $spEntityId . ' hasn\'t assigned any resource.');
         }
         $resourcesString = '(|';
@@ -473,6 +474,7 @@ class AdapterLdap extends Adapter
         }
         $resultGroups = $this->removeDuplicateEntities($resultGroups);
         Logger::debug('Groups - ' . json_encode($resultGroups));
+
         return $resultGroups;
     }
 
@@ -488,6 +490,7 @@ class AdapterLdap extends Adapter
         if (empty($groupId)) {
             return Member::INVALID;
         }
+
         return Member::VALID;
     }
 
@@ -501,19 +504,20 @@ class AdapterLdap extends Adapter
         }
 
         $vo = $this->getVoByShortName($voShortName);
-        if ($vo === null) {
+        if (null === $vo) {
             Logger::debug('isUserInVo - No VO found, returning false');
+
             return false;
         }
 
-        return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
+        return Member::VALID === $this->getMemberStatusByUserAndVo($user, $vo);
     }
 
     public function getResourceCapabilities($entityId, $userGroups)
     {
         $facility = $this->getFacilityByEntityId($entityId);
 
-        if ($facility === null) {
+        if (null === $facility) {
             return [];
         }
 
@@ -534,8 +538,8 @@ class AdapterLdap extends Adapter
         $resourceCapabilities = [];
         foreach ($resources as $resource) {
             if (
-                ! array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
-                ! array_key_exists(self::CAPABILITIES, $resource)
+                !array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
+                !array_key_exists(self::CAPABILITIES, $resource)
             ) {
                 continue;
             }
@@ -569,22 +573,26 @@ class AdapterLdap extends Adapter
 
     private function resolveAttrValue($attrsNameTypeMap, $attrsFromLdap, $attr)
     {
-        if (! array_key_exists($attr, $attrsFromLdap)) {
-            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
+        if (!array_key_exists($attr, $attrsFromLdap)) {
+            if (self::TYPE_BOOL === $attrsNameTypeMap[$attr][self::TYPE]) {
                 return false;
-            } elseif ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP
-                || $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY
+            }
+            if (self::TYPE_MAP === $attrsNameTypeMap[$attr][self::TYPE]
+                || self::TYPE_DICTIONARY === $attrsNameTypeMap[$attr][self::TYPE]
             ) {
                 return [];
             }
         } else {
-            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
+            if (self::TYPE_MAP === $attrsNameTypeMap[$attr][self::TYPE]) {
                 return $attrsFromLdap[$attr];
-            } elseif ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY) {
+            }
+            if (self::TYPE_DICTIONARY === $attrsNameTypeMap[$attr][self::TYPE]) {
                 return $this->convertToMap($attrsFromLdap[$attr]);
             }
+
             return $attrsFromLdap[$attr][0];
         }
+
         return null;
     }
 
@@ -595,6 +603,7 @@ class AdapterLdap extends Adapter
             list($key, $value) = explode('=', $sub, 2);
             $result[$key] = $value;
         }
+
         return $result;
     }
 }

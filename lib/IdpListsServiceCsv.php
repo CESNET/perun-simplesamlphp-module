@@ -9,7 +9,7 @@ use SimpleSAML\Utils\Config;
 
 /**
  * Implementation of IdpListsService using in simple csv files. first column is timestamp, second entityid and third
- * reason
+ * reason.
  */
 class IdpListsServiceCsv extends IdpListsService
 {
@@ -64,14 +64,12 @@ class IdpListsServiceCsv extends IdpListsService
                 flock($wf, LOCK_UN);
             } else {
                 throw new Exception(
-                    'IdpListsServiceCsv - unable to get file lock. Hint: ' .
-                    'Try to create folder config/idplists and add write rights.'
+                    'IdpListsServiceCsv - unable to get file lock. Hint: ' . 'Try to create folder config/idplists and add write rights.'
                 );
             }
         } else {
             throw new Exception(
-                'IdpListsServiceCsv - unable to get file lock. Hint: ' .
-                'Try to create folder config/idplists and add write rights.'
+                'IdpListsServiceCsv - unable to get file lock. Hint: ' . 'Try to create folder config/idplists and add write rights.'
             );
         }
         fclose($wf);
@@ -99,13 +97,14 @@ class IdpListsServiceCsv extends IdpListsService
     }
 
     /**
-     * @param string $listName "whitelist" or "greylist".
-     * @param boolean $all
+     * @param string $listName "whitelist" or "greylist"
+     * @param bool   $all
+     *
      * @return array of IdPS if $all is true or arrayOf entityIds
      */
     public function listToArray($listName, $all)
     {
-        if ($listName === 'whitelist') {
+        if ('whitelist' === $listName) {
             $list = $this->whitelistFile;
         } else {
             $list = $this->greylistFile;
@@ -113,7 +112,7 @@ class IdpListsServiceCsv extends IdpListsService
 
         $resultList = [];
 
-        if (! file_exists($list)) {
+        if (!file_exists($list)) {
             return $resultList;
         }
 
@@ -121,10 +120,10 @@ class IdpListsServiceCsv extends IdpListsService
         if (flock($f, LOCK_SH)) {
             while (($idp = $this->arrayToIdp(fgetcsv($f))) !== false) {
                 if ($all) {
-                    if (! in_array($idp, $resultList, true)) {
+                    if (!in_array($idp, $resultList, true)) {
                         array_push($resultList, $idp);
                     }
-                } elseif (! in_array($idp['entityid'], $resultList, true)) {
+                } elseif (!in_array($idp['entityid'], $resultList, true)) {
                     array_push($resultList, $idp['entityid']);
                 }
             }
@@ -133,17 +132,17 @@ class IdpListsServiceCsv extends IdpListsService
             flock($f, LOCK_UN);
         } else {
             throw new Exception(
-                'IdpListsServiceCsv - unable to get file lock. Hint: ' .
-                'Try to create folder config/idplists and add write rights.'
+                'IdpListsServiceCsv - unable to get file lock. Hint: ' . 'Try to create folder config/idplists and add write rights.'
             );
         }
         fclose($f);
+
         return $resultList;
     }
 
     private function arrayToIdp($csv)
     {
-        if (! is_array($csv)) {
+        if (!is_array($csv)) {
             return false;
         }
 
@@ -151,6 +150,7 @@ class IdpListsServiceCsv extends IdpListsService
         $idp['timestamp'] = $csv[0];
         $idp['entityid'] = $csv[1];
         $idp['reason'] = $csv[2];
+
         return $idp;
     }
 }

@@ -11,7 +11,7 @@ class Whitelisting
         if (isset($metadata['UIInfo']['DisplayName'])) {
             $displayName = $metadata['UIInfo']['DisplayName'];
             assert(is_array($displayName)); // Should always be an array of language code -> translation
-            if (! empty($displayName)) {
+            if (!empty($displayName)) {
                 return preg_replace("/\r|\n/", '', $displayName['en']);
             }
         }
@@ -19,8 +19,10 @@ class Whitelisting
             if (is_array($metadata['name'])) {
                 return preg_replace("/\r|\n/", '', $metadata['name']['en']);
             }
+
             return preg_replace("/\r|\n/", '', $metadata['name']);
         }
+
         return $metadata['entityid'];
     }
 }

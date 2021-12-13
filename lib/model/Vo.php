@@ -15,7 +15,7 @@ class Vo implements HasId
     /**
      * Vo constructor.
      *
-     * @param int $id
+     * @param int    $id
      * @param string $name
      * @param string $shortName
      */

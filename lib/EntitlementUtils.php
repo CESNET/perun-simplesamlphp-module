@@ -8,7 +8,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
 /**
- * Class EntitlementUtils
+ * Class EntitlementUtils.
  *
  * This class contains common functions of PerunEntitlement and PerunEntitlementExtended.
  */
@@ -24,11 +24,12 @@ class EntitlementUtils
     {
         $result = [];
 
-        if (! isset($request['perun']['user'])) {
+        if (!isset($request['perun']['user'])) {
             Logger::debug(
                 'perun:EntitlementUtils: Object Perun User is not specified.' .
                 '=> Skipping getting forwardedEntitlement.'
             );
+
             return $result;
         }
 
@@ -46,7 +47,7 @@ class EntitlementUtils
             );
         }
 
-        if (! empty($forwardedEduPersonEntitlementMap)) {
+        if (!empty($forwardedEduPersonEntitlementMap)) {
             $result = array_values($forwardedEduPersonEntitlementMap)[0];
         }
 
@@ -94,9 +95,8 @@ class EntitlementUtils
         ];
 
         $name = rawurlencode($name);
-        $name = str_replace(array_values($charsToSkip), array_keys($charsToSkip), $name);
 
-        return $name;
+        return str_replace(array_values($charsToSkip), array_keys($charsToSkip), $name);
     }
 
     public static function encodeEntitlement($name)
@@ -118,9 +118,8 @@ class EntitlementUtils
         ];
 
         $name = array_map('rawurlencode', explode(':', $name));
-        $name = str_replace(array_values($charsToSkip), array_keys($charsToSkip), $name);
 
-        return $name;
+        return str_replace(array_values($charsToSkip), array_keys($charsToSkip), $name);
     }
 
     public static function capabilitiesWrapper($capabilities, $prefix, $authority)
@@ -146,7 +145,8 @@ class EntitlementUtils
         if (isset($request['SPMetadata']['entityid'])) {
             return $request['SPMetadata']['entityid'];
         }
-        throw new Exception('perun:EntitlementUtils: Cannot find entityID of remote SP. ' .
-                'hint: Do you have this filter in IdP context?');
+        throw new Exception(
+            'perun:EntitlementUtils: Cannot find entityID of remote SP. ' . 'hint: Do you have this filter in IdP context?'
+        );
     }
 }

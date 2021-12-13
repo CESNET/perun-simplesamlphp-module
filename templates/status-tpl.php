@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 /**
- * Template of page, which showing status of used components
+ * Template of page, which showing status of used components.
  */
 
 use SimpleSAML\Module\perun\StatusConnector;
@@ -26,7 +26,7 @@ echo '<div class="services">';
 foreach ($services as $service) {
     echo '<div class="row service">';
     echo '<h3>' . $service['name'] . StatusConnector::getBadgeByStatus($service['status']) . ' </h3>';
-    if (isset($service['description']) && ! empty($service['description'])) {
+    if (isset($service['description']) && !empty($service['description'])) {
         echo '<p><span class="glyphicon glyphicon-info-sign"></span> ' . $service['description'] . '</p>';
     }
     echo '</div>';

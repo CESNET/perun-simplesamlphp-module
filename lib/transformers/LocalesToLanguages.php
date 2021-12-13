@@ -20,6 +20,8 @@ class LocalesToLanguages extends SingularAttributeTransformer
 
     /**
      * @override
+     *
+     * @param mixed $values
      */
     public function singleTransform($values)
     {
@@ -28,6 +30,7 @@ class LocalesToLanguages extends SingularAttributeTransformer
             $lang = \Locale::getPrimaryLanguage($locale);
             $result[$lang] = array_merge($result[$lang] ?? [], is_array($value) ? $value : [$value]);
         }
+
         return $result;
     }
 

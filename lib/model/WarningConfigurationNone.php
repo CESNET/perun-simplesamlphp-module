@@ -7,7 +7,7 @@ namespace SimpleSAML\Module\perun\model;
 use SimpleSAML\Configuration;
 
 /**
- * Implementation of WarningConfiguration for no warning configured
+ * Implementation of WarningConfiguration for no warning configured.
  */
 class WarningConfigurationNone extends WarningConfiguration
 {

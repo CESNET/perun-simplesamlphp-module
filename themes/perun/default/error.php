@@ -5,7 +5,7 @@ use SimpleSAML\Module;
 $this->data['header'] = '<i class="glyphicon glyphicon-exclamation-sign text-danger"></i> ' .
     $this->t($this->data['dictTitle']);
 
-$this->data['head'] = <<<CODE_SAMPLE
+$this->data['head'] = <<<'CODE_SAMPLE'
 <meta name="robots" content="noindex, nofollow" />
 <meta name="googlebot" content="noarchive, nofollow" />
 CODE_SAMPLE;

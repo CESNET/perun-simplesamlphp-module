@@ -23,6 +23,8 @@ class FlatMap extends SingularAttributeTransformer
 
     /**
      * @override
+     *
+     * @param mixed $values
      */
     public function singleTransform($values)
     {

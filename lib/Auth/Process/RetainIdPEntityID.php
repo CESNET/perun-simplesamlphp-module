@@ -8,7 +8,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
 /**
- * Class sspmod_perun_Auth_Process_RetainIdPEntityID
+ * Class sspmod_perun_Auth_Process_RetainIdPEntityID.
  *
  * Filter extract entityID of source remote (source/original) IdP to attribute defined by 'attrName' config property. It
  * supposed to be used in proxy SP context. Means it should be defined in authsources or idp-remote files. But it can be
@@ -24,7 +24,7 @@ class RetainIdPEntityID extends \SimpleSAML\Auth\ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        # Target attribute can be set in config, if not, the the default is used
+        // Target attribute can be set in config, if not, the the default is used
         if (isset($config['attrName'])) {
             $this->attrName = $config['attrName'];
         } else {
@@ -39,8 +39,9 @@ class RetainIdPEntityID extends \SimpleSAML\Auth\ProcessingFilter
         if (isset($request['Source']['entityid'])) {
             $entityId = $request['Source']['entityid'];
         } else {
-            throw new Exception('perun:RetainIdPEntityID: Cannot find entityID of remote IDP. ' .
-                'hint: Do you have this filter in SP context?');
+            throw new Exception(
+                'perun:RetainIdPEntityID: Cannot find entityID of remote IDP. ' . 'hint: Do you have this filter in SP context?'
+            );
         }
 
         $request['Attributes'][$this->attrName] = [$entityId];

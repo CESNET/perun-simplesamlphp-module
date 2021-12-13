@@ -9,7 +9,6 @@ use SimpleSAML\Module\perun\Auth\Process\PerunIdentity;
 /**
  * See sspmod_perun_Auth_Process_PerunIdentity for mor information.
  */
-
 $state = State::loadState($_REQUEST['stateId'], 'perun:PerunIdentity');
 
 $perunIdentity = new PerunIdentity($state['config'], null);

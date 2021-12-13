@@ -7,5 +7,4 @@ declare(strict_types=1);
  *
  * It can be used to check whether the meta refresh works without problems.
  */
-
 echo $this->data['closestExpiration'];

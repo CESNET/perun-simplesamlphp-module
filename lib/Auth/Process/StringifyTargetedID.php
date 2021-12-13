@@ -15,7 +15,6 @@ use SimpleSAML\Error\Exception;
  * targetAttribute is provided, uid attribute stays unchanged and new attribute is filled. If no, uid attribute is
  * overwritten.
  */
-
 class StringifyTargetedID extends ProcessingFilter
 {
     private $uidAttr;
@@ -28,10 +27,10 @@ class StringifyTargetedID extends ProcessingFilter
 
         assert(is_array($config));
 
-        if (! isset($config['uidAttr'])) {
+        if (!isset($config['uidAttr'])) {
             throw new Exception('perun:ProcessTargetedID: missing mandatory configuration option \'uidAttr\'.');
         }
-        if (! isset($config['targetAttr'])) {
+        if (!isset($config['targetAttr'])) {
             $config['targetAttr'] = $config['uidAttr'];
         }
 
@@ -43,7 +42,7 @@ class StringifyTargetedID extends ProcessingFilter
     {
         assert(is_array($request));
 
-        if (! empty($request['Attributes'][$this->uidAttr])) {
+        if (!empty($request['Attributes'][$this->uidAttr])) {
             $stringified = $this->stringify($request['Attributes'][$this->uidAttr][0]);
             $request['Attributes'][$this->targetAttr] = [$stringified];
         }
@@ -56,10 +55,11 @@ class StringifyTargetedID extends ProcessingFilter
      */
     private function stringify(NameID $attributeValue)
     {
-        if (is_object($attributeValue) && get_class($attributeValue) === 'SAML2\XML\saml\NameID') {
+        if (is_object($attributeValue) && 'SAML2\XML\saml\NameID' === get_class($attributeValue)) {
             return $attributeValue->getNameQualifier() . '!' . $attributeValue->getSPNameQualifier() . '!'
                 . $attributeValue->getValue();
         }
+
         return $attributeValue;
     }
 }

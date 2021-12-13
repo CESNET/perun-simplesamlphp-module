@@ -67,9 +67,10 @@ class ChallengeManager
 
         if (empty($id) ||
             empty($scriptName) ||
-            ! $this->challengeDbCmd->insertChallenge($challenge, $id, $scriptName)) {
+            !$this->challengeDbCmd->insertChallenge($challenge, $id, $scriptName)) {
             throw new Exception('ChallengeManager.generateChallenge: Error while storing a challenge to DB.');
         }
+
         return $challenge;
     }
 
@@ -100,12 +101,12 @@ class ChallengeManager
             ->addSignature($jwk, [
                 'alg' => $this->sigAlg,
             ])
-            ->build();
+            ->build()
+        ;
 
         $serializer = new CompactSerializer();
-        $token = $serializer->serialize($jws, 0);
 
-        return $token;
+        return $serializer->serialize($jws, 0);
     }
 
     public function decodeToken($token)
@@ -126,7 +127,7 @@ class ChallengeManager
 
         $isVerified = $jwsVerifier->verifyWithKey($jws, $jwk, 0);
 
-        if (! $isVerified) {
+        if (!$isVerified) {
             throw new Exception('ChallengeManager.decodeToken: The token signature is invalid!');
         }
 
@@ -148,7 +149,7 @@ class ChallengeManager
         $checkAccessSucceeded = self::checkAccess($challenge, $challengeDb);
         $challengeSuccessfullyDeleted = $challengeManager->deleteChallengeFromDb($id);
 
-        if (! $checkAccessSucceeded || ! $challengeSuccessfullyDeleted) {
+        if (!$checkAccessSucceeded || !$challengeSuccessfullyDeleted) {
             exit;
         }
 
@@ -170,8 +171,9 @@ class ChallengeManager
             return false;
         }
 
-        if (! hash_equals($challengeDb, $challenge)) {
+        if (!hash_equals($challengeDb, $challenge)) {
             Logger::error(self::LOG_PREFIX . 'Hashes are not equal.');
+
             return false;
         }
 
@@ -184,8 +186,9 @@ class ChallengeManager
             return false;
         }
 
-        if (! $this->challengeDbCmd->deleteChallenge($id)) {
+        if (!$this->challengeDbCmd->deleteChallenge($id)) {
             Logger::error(self::LOG_PREFIX . 'Error while deleting challenge from the database.');
+
             return false;
         }
 
@@ -195,9 +198,10 @@ class ChallengeManager
     private static function getAlgorithm($path, $className)
     {
         $classPath = sprintf('Jose\\Component\\%s\\%s', $path, $className);
-        if (! class_exists($classPath)) {
+        if (!class_exists($classPath)) {
             throw new \Exception('Invalid algorithm specified: ' . $classPath);
         }
+
         return new $classPath();
     }
 }

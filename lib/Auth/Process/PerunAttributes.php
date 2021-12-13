@@ -11,7 +11,7 @@ use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\model\User;
 
 /**
- * Class PerunAttributes
+ * Class PerunAttributes.
  *
  * This filter fetches user attributes by its names listed as keys of attrMap config property and set them as Attributes
  * values to keys specified as attrMap values. Old values of Attributes are replaced.
@@ -43,14 +43,14 @@ class PerunAttributes extends ProcessingFilter
 
         assert(is_array($config));
 
-        if (! isset($config['attrMap'])) {
+        if (!isset($config['attrMap'])) {
             throw new Exception('perun:PerunAttributes: missing mandatory configuration option \'attrMap\'.');
         }
-        if (! isset($config['interface'])) {
+        if (!isset($config['interface'])) {
             $config['interface'] = Adapter::RPC;
         }
 
-        if (! isset($config['mode'])) {
+        if (!isset($config['mode'])) {
             $config['mode'] = self::MODE_FULL;
         }
 
@@ -58,7 +58,7 @@ class PerunAttributes extends ProcessingFilter
         $this->mode = (string) $config['mode'];
         $this->attrMap = (array) $config['attrMap'];
 
-        if (! in_array($this->mode, [self::MODE_FULL, self::MODE_PARTIAL], true)) {
+        if (!in_array($this->mode, [self::MODE_FULL, self::MODE_PARTIAL], true)) {
             $this->mode = self::MODE_FULL;
         }
         $this->adapter = Adapter::getInstance($this->interface);
@@ -70,16 +70,14 @@ class PerunAttributes extends ProcessingFilter
             $user = $request['perun']['user'];
         } else {
             throw new Exception(
-                'perun:PerunAttributes: ' .
-                'missing mandatory field \'perun.user\' in request.' .
-                'Hint: Did you configured PerunIdentity filter before this filter?'
+                'perun:PerunAttributes: ' . 'missing mandatory field \'perun.user\' in request.' . 'Hint: Did you configured PerunIdentity filter before this filter?'
             );
         }
 
         $attributes = [];
-        if ($this->mode === self::MODE_FULL) {
+        if (self::MODE_FULL === $this->mode) {
             $attributes = array_keys($this->attrMap);
-        } elseif ($this->mode === self::MODE_PARTIAL) {
+        } elseif (self::MODE_PARTIAL === $this->mode) {
             // Check if attribute has some value
             foreach ($this->attrMap as $attrName => $attrValue) {
                 if (empty($attrValue)) {
@@ -87,7 +85,7 @@ class PerunAttributes extends ProcessingFilter
                     break;
                 }
 
-                if (! is_array($attrValue)) {
+                if (!is_array($attrValue)) {
                     $attrValue = [$attrValue];
                 }
 
@@ -113,14 +111,15 @@ class PerunAttributes extends ProcessingFilter
 
     private function hasStringKeys($array): bool
     {
-        if (! is_array($array)) {
+        if (!is_array($array)) {
             return false;
         }
+
         return count(array_filter(array_keys($array), 'is_string')) > 0;
     }
 
     /**
-     * Method process attributes from Perun system and store them to request
+     * Method process attributes from Perun system and store them to request.
      *
      * @param $user
      * @param array $attributes List of attributes which will be loaded from Perun system
@@ -134,7 +133,7 @@ class PerunAttributes extends ProcessingFilter
             $sspAttr = $this->attrMap[$attrName];
 
             // convert $attrValue into array
-            if ($attrValue === null) {
+            if (null === $attrValue) {
                 $value = [];
             } elseif (is_string($attrValue) || is_numeric($attrValue)) {
                 $value = [$attrValue];
@@ -144,9 +143,7 @@ class PerunAttributes extends ProcessingFilter
                 $value = $attrValue;
             } else {
                 throw new Exception(
-                    'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' .
-                    'Attribute name: ' . $attrName . ', ' .
-                    'Supported types: null, string, numeric, array, associative array.'
+                    'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' . 'Attribute name: ' . $attrName . ', ' . 'Supported types: null, string, numeric, array, associative array.'
                 );
             }
 
@@ -157,8 +154,7 @@ class PerunAttributes extends ProcessingFilter
                 $attrArray = $sspAttr;
             } else {
                 throw new Exception(
-                    'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' .
-                    'Attribute ' . $attrName . ', Supported types: string, array.'
+                    'sspmod_perun_Auth_Process_PerunAttributes - Unsupported attribute type. ' . 'Attribute ' . $attrName . ', Supported types: string, array.'
                 );
             }
 
@@ -170,6 +166,7 @@ class PerunAttributes extends ProcessingFilter
                 $result[$attribute] = $value;
             }
         }
+
         return $result;
     }
 }

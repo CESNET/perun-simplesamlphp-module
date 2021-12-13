@@ -9,7 +9,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
 /**
- * Class sspmod_perun_Auth_Process_ProxyFilter
+ * Class sspmod_perun_Auth_Process_ProxyFilter.
  *
  * This filter allows to disable/enable nested filters for particular SP or for users with one of (black/white)listed
  * attribute values. Based on the mode of operation, the nested filters ARE (whitelist) or ARE NOT (blacklist) run when
@@ -72,7 +72,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
     {
         assert(is_array($request));
 
-        $default = $this->mode === self::MODE_BLACKLIST;
+        $default = self::MODE_BLACKLIST === $this->mode;
         $shouldRun = $this->shouldRunForSP($request['Destination']['entityid'], $default);
         if ($shouldRun === $default) {
             $shouldRun = $this->shouldRunForAttribute($request['Attributes'], $default);
@@ -80,7 +80,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 
         if ($shouldRun) {
             $this->processState($request);
-        } elseif ($this->mode === self::MODE_WHITELIST) {
+        } elseif (self::MODE_WHITELIST === $this->mode) {
             Logger::info(
                 sprintf(
                     'perun.ProxyFilter: Not running filter %s for SP %s',
@@ -95,7 +95,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
     {
         foreach ($this->filterSPs as $sp) {
             if ($sp === $currentSp) {
-                $shouldRun = ! $default;
+                $shouldRun = !$default;
                 Logger::info(
                     sprintf(
                         'perun.ProxyFilter: %s filter %s for SP %s',
@@ -104,9 +104,11 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
                         $currentSp
                     )
                 );
+
                 return $shouldRun;
             }
         }
+
         return $default;
     }
 
@@ -116,7 +118,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
             if (isset($attributes[$attr]) && is_array($attributes[$attr])) {
                 foreach ($values as $value) {
                     if (in_array($value, $attributes[$attr], true)) {
-                        $shouldRun = ! $default;
+                        $shouldRun = !$default;
                         Logger::info(
                             sprintf(
                                 'perun.ProxyFilter: %s filter %s because %s contains %s',
@@ -126,11 +128,13 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
                                 $value
                             )
                         );
+
                         return $shouldRun;
                     }
                 }
             }
         }
+
         return $default;
     }
 
@@ -139,8 +143,9 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
      *
      * @see https://github.com/simplesamlphp/simplesamlphp/blob/simplesamlphp-1.17/lib/SimpleSAML/Auth/ProcessingChain.php
      *
-     * @param array $filterSrc  Array with filter configuration.
-     * @return array  Array of ProcessingFilter objects.
+     * @param array $filterSrc array with filter configuration
+     *
+     * @return array array of ProcessingFilter objects
      */
     private static function parseFilterList($filterSrc)
     {
@@ -155,9 +160,10 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
                 ];
             }
 
-            if (! is_array($filter)) {
-                throw new \Exception('Invalid authentication processing filter configuration: ' .
-                    'One of the filters wasn\'t a string or an array.');
+            if (!is_array($filter)) {
+                throw new \Exception(
+                    'Invalid authentication processing filter configuration: ' . 'One of the filters wasn\'t a string or an array.'
+                );
             }
 
             $parsedFilters[] = self::parseFilter($filter, $priority);
@@ -171,16 +177,17 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
      *
      * @see https://github.com/simplesamlphp/simplesamlphp/blob/simplesamlphp-1.17/lib/SimpleSAML/Auth/ProcessingChain.php
      *
-     * @param array $config      Array with the authentication processing filter configuration.
-     * @param int $priority      The priority of the current filter, (not included in the filter
-     * definition.)
-     * @return ProcessingFilter  The parsed filter.
+     * @param array $config   array with the authentication processing filter configuration
+     * @param int   $priority The priority of the current filter, (not included in the filter
+     *                        definition.)
+     *
+     * @return ProcessingFilter the parsed filter
      */
     private static function parseFilter($config, $priority)
     {
         assert(is_array($config));
 
-        if (! array_key_exists('class', $config)) {
+        if (!array_key_exists('class', $config)) {
             throw new \Exception('Authentication processing filter without name given.');
         }
 
@@ -191,6 +198,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
         );
         $config['%priority'] = $priority;
         unset($config['class']);
+
         return new $className($config, null);
     }
 
@@ -209,12 +217,11 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
      * this function. If the user has redirected to a different page, the exception will be
      * returned through the exception handler defined on the state array. See
      * State for more information.
-     *
      * @see State
      * @see State::EXCEPTION_HANDLER_URL
      * @see State::EXCEPTION_HANDLER_FUNC
      *
-     * @param array $state  The state we are processing.
+     * @param array $state the state we are processing
      */
     private function processState(&$state)
     {

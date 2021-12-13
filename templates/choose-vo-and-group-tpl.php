@@ -7,7 +7,7 @@ use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Utils\HTTP;
 use SimpleSAML\XHTML\Template;
 
-/**
+/*
  * This is simple example of template where user can choose where they want to register to access the requested service
  *
  * Allow type hinting in IDE
@@ -49,7 +49,7 @@ if (isset($_POST['selectedGroup'])) {
 
     $params['vo'] = $vo;
 
-    if ($group !== 'members') {
+    if ('members' !== $group) {
         $params['group'] = $group;
     }
 
@@ -60,9 +60,9 @@ if (isset($_POST['selectedGroup'])) {
 }
 
 $header = $this->t('{perun:perun:choose-vo-and-group-tpl_header-part1}');
-if (! empty($serviceName) && ! empty($informationURL)) {
+if (!empty($serviceName) && !empty($informationURL)) {
     $header .= '<a href="' . $informationURL . '">' . $serviceName . '</a>';
-} elseif (! empty($serviceName)) {
+} elseif (!empty($serviceName)) {
     $header .= $serviceName;
 }
 $header .= $this->t('{perun:perun:choose-vo-and-group-tpl_header-part2}');

@@ -51,7 +51,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $this->throwOnMismatch = $config->getBoolean('throwOnMismatch', false);
 
         $data = $config->getString('file', null);
-        if ($data !== null) {
+        if (null !== $data) {
             $data_is_url = true;
         } else {
             $data_is_url = false;
@@ -72,14 +72,14 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $entityCategories = $attributes[$this->entityCategoriesAttribute] ?? [];
 
         $releasedAttributes = $this->getReleasedAttributes($entityId, $entityCategories);
-        if ($releasedAttributes === null) {
+        if (null === $releasedAttributes) {
             return [
                 $this->entityIdAttribute => null,
             ];
         }
 
         $missingRequiredAttributes = array_diff($attributes[$this->attributesAttribute] ?? [], $releasedAttributes);
-        if (! empty($missingRequiredAttributes)) {
+        if (!empty($missingRequiredAttributes)) {
             $message = 'Missing required attributes ' . implode(',', $missingRequiredAttributes);
             if ($this->throwOnMismatch) {
                 self::error($message);
@@ -91,9 +91,10 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $result = [
             $this->attributesAttribute => $releasedAttributes,
         ];
-        if ($this->tagsAttribute !== null && ! empty($this->tags[$entityId])) {
+        if (null !== $this->tagsAttribute && !empty($this->tags[$entityId])) {
             $result[$this->tagsAttribute] = $this->tags[$entityId];
         }
+
         return $result;
     }
 
@@ -109,8 +110,10 @@ class ShibbolethAttributeFilter extends AttributeTransformer
             ) {
                 return null;
             }
+
             return $attributes;
         }
+
         return $this->skipDefault ? null : $this->releasedAttributesForAll;
     }
 
@@ -124,6 +127,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
                 self::warning('Skipping entity category ' . $entityCategory);
             }
         }
+
         return $attributes;
     }
 
@@ -136,9 +140,10 @@ class ShibbolethAttributeFilter extends AttributeTransformer
                 $description
             ),
         ];
-        if ($this->tagsAttribute !== null) {
+        if (null !== $this->tagsAttribute) {
             $d[$this->tagsAttribute] = sprintf('internal tags from Shibboleth configuration');
         }
+
         return $d;
     }
 
@@ -158,7 +163,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         foreach ($attributeFilterPolicyGroup->AttributeFilterPolicy as $policy) {
             $sps = [];
             $notSps = [];
-            if (count($policy->PolicyRequirementRule) !== 1) {
+            if (1 !== count($policy->PolicyRequirementRule)) {
                 self::error('Not exactly one PolicyRequirementRule');
             }
             $requirement = $policy->PolicyRequirementRule;
@@ -199,10 +204,11 @@ class ShibbolethAttributeFilter extends AttributeTransformer
     {
         $arr = array_unique(array_merge($attributes, $this->getDefaultAttributes($entityCategories)));
         $arr = array_filter($arr, function ($attr) use ($attributes) {
-            return substr($attr, 0, strlen(self::DENIED_ATTRIBUTE_PREFIX)) !== self::DENIED_ATTRIBUTE_PREFIX
-                && ! in_array(self::DENIED_ATTRIBUTE_PREFIX . $attr, $attributes, true);
+            return self::DENIED_ATTRIBUTE_PREFIX !== substr($attr, 0, strlen(self::DENIED_ATTRIBUTE_PREFIX))
+                && !in_array(self::DENIED_ATTRIBUTE_PREFIX . $attr, $attributes, true);
         });
         sort($arr);
+
         return $arr;
     }
 
@@ -217,7 +223,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
     {
         $sps = [];
         foreach ($requirement->children('basic', true) as $rule) {
-            if ($rule->getName() !== 'Rule') {
+            if ('Rule' !== $rule->getName()) {
                 continue;
             }
             switch ($rule->attributes('xsi', true)->type) {
@@ -231,6 +237,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
                     self::error('Unsupported type ' . $rule->attributes('xsi', true)->type);
             }
         }
+
         return $sps;
     }
 

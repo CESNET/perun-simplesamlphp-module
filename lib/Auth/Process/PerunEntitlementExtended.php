@@ -12,7 +12,7 @@ use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\EntitlementUtils;
 
 /**
- * Class PerunEntitlementExtended
+ * Class PerunEntitlementExtended.
  *
  * This filter joins extended version of eduPersonEntitlement, forwardedEduPersonEntitlement, resource capabilities and
  * facility capabilities
@@ -94,14 +94,13 @@ class PerunEntitlementExtended extends ProcessingFilter
         $capabilities = [];
         $forwardedEduPersonEntitlement = [];
 
-        if ($this->entityId === null) {
+        if (null === $this->entityId) {
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);
-        } elseif (! is_string($this->entityId)) {
+        } elseif (!is_string($this->entityId)) {
             throw new Exception(
-                'perun:PerunEntitlement: invalid configuration option entityID. ' .
-                'It must be a string or a callable.'
+                'perun:PerunEntitlement: invalid configuration option entityID. ' . 'It must be a string or a callable.'
             );
         }
 
@@ -165,6 +164,7 @@ class PerunEntitlementExtended extends ProcessingFilter
         }
 
         natsort($eduPersonEntitlementExtended);
+
         return $eduPersonEntitlementExtended;
     }
 }

@@ -5,7 +5,6 @@ declare(strict_types=1);
 /**
  * Configuration for the DiscoPower module.
  */
-
 $config = [
     // Which tab should be set as default. 0 is the first tab
     'defaulttab' => 0,
