@@ -130,7 +130,7 @@ class RpcConnector
 
         if ($json === false) {
             throw new Exception(
-                'Can\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsQuery .
+                'Can\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsJson .
                 ', Response: ' . $json
             );
         }
