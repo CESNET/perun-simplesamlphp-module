@@ -941,28 +941,32 @@ class Disco extends PowerIdPDisco
                     }
                 }
             } else {
-                $entityId = $this->originalsp['entityid'];
-                $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
-                if (null === $entityIdAttr) {
-                    $facility = $this->adapter->getFacilityByEntityId($entityId);
-                } else {
-                    $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
-                }
+                if (!empty($this->originalsp['entityid'])) {
+                    $entityId = $this->originalsp['entityid'];
+                    $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
+                    if (null === $entityIdAttr) {
+                        $facility = $this->adapter->getFacilityByEntityId($entityId);
+                    } else {
+                        $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
+                    }
 
-                if (null !== $facility) {
+                    if (null === $facility) {
+                        return;
+                    }
+
                     $spNameAttr = $this->wayfConfiguration->getString(
                         self::SERVICE_NAME_ATTR,
                         self::SERVICE_NAME_DEFAULT_ATTR_NAME
                     );
+
                     $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttr);
                     if (!empty($spNameMap)) {
                         $this->spName = $t->getTranslation($spNameMap);
-                    }
-                }
-                if (empty($entityId)) {
-                    if (!empty($this->originalsp[self::NAME])) {
+                    } elseif (!empty($this->originalsp[self::NAME])) {
                         $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
                     }
+                } elseif (!empty($this->originalsp[self::NAME])) {
+                    $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
                 }
             }
         } catch (\Exception $e) {

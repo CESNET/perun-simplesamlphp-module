@@ -26,7 +26,15 @@ class Exception extends \SimpleSAML\Error\Exception
      */
     public function __construct($id, $name, $message)
     {
-        parent::__construct('Perun error: ' . $id . ' - ' . $name . ' - ' . $message);
+        if (null === $name && null === $message) {
+            parent::__construct('Perun error: ' . $id);
+        } elseif (null === $name) {
+            parent::__construct('Perun error: ' . $id . ' - ' . $message);
+        } elseif (null === $message) {
+            parent::__construct('Perun error: ' . $id . ' - ' . $name);
+        } else {
+            parent::__construct('Perun error: ' . $id . ' - ' . $name . ' - ' . $message);
+        }
 
         $this->id = $id;
         $this->name = $name;
