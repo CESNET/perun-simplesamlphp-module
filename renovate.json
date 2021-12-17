@@ -1,0 +1,19 @@
+{
+  "extends": [
+    "config:base",
+    ":automergeBranch",
+    ":automergeLinters",
+    ":automergePatch",
+    ":automergeTesters",
+    ":enableVulnerabilityAlertsWithLabel(security)",
+    ":maintainLockFilesWeekly",
+    ":pinOnlyDevDependencies",
+    ":prNotPending",
+    ":rebaseStalePrs",
+    ":semanticCommits",
+    "npm:unpublishSafe"
+  ],
+  "composerIgnorePlatformReqs": ["ext-curl", "ext-json", "ext-openssl", "ext-iconv", "ext-intl"],
+  "stabilityDays": 3,
+  "transitiveRemediation": true
+}
