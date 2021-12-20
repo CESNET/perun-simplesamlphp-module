@@ -10,6 +10,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
+use SimpleSAML\Module\perun\Auth\Process\MultifactorAcrs;
 use SimpleSAML\Module\perun\model\WarningConfiguration;
 use SimpleSAML\Utils\HTTP;
 
@@ -991,6 +992,6 @@ class Disco extends PowerIdPDisco
     private function prepareAcrsForMfa(array &$state)
     {
         $contextsToAdd = $this->wayfConfiguration->getArray(self::ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA, []);
-        Module\perun\Auth\Process\RestoreAcrs::storeAcrs($state, $contextsToAdd);
+        MultifactorAcrs::addAndStoreAcrs($state, $contextsToAdd);
     }
 }

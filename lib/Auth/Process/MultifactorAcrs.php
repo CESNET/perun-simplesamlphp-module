@@ -14,7 +14,7 @@ use SimpleSAML\Module\perun\Disco;
  * failing. As a result, we then get modified requested ACRs, which should be restored to the previous (original) state
  * using this authproc filter. It should be run on one of the first places of the IdP authproc chain.
  */
-class RestoreAcrs extends ProcessingFilter
+class MultifactorAcrs extends ProcessingFilter
 {
     public const CONFIG_FILE_NAME = 'module_perun.php';
 
@@ -30,7 +30,7 @@ class RestoreAcrs extends ProcessingFilter
         $this->restoreAcrs($request);
     }
 
-    public static function storeAcrs(array &$state, array $acrsToAdd)
+    public static function addAndStoreAcrs(array &$state, array $acrsToAdd)
     {
         if (!empty($acrsToAdd)
             && !empty($state[Disco::SAML_REQUESTED_AUTHN_CONTEXT][Disco::STATE_AUTHN_CONTEXT_CLASS_REF])
@@ -70,10 +70,13 @@ class RestoreAcrs extends ProcessingFilter
     {
         if (!empty($request[Disco::SAML_REQUESTED_AUTHN_CONTEXT_ORIGINAL])) {
             unset($request[Disco::SAML_REQUESTED_AUTHN_CONTEXT][Disco::STATE_AUTHN_CONTEXT_CLASS_REF]);
-            $handle = &$request[Disco::SAML_REQUESTED_AUTHN_CONTEXT][Disco::STATE_AUTHN_CONTEXT_CLASS_REF];
-            $handle = $request[Disco::SAML_REQUESTED_AUTHN_CONTEXT_ORIGINAL];
+            $request[Disco::SAML_REQUESTED_AUTHN_CONTEXT][Disco::STATE_AUTHN_CONTEXT_CLASS_REF] =
+                $request[Disco::SAML_REQUESTED_AUTHN_CONTEXT_ORIGINAL];
             unset($request[Disco::SAML_REQUESTED_AUTHN_CONTEXT_ORIGINAL]);
-            Logger::debug(self::DEBUG_PREFIX . ': ACRS restored: ' . join(',', $handle));
+            Logger::debug(
+                self::DEBUG_PREFIX . ': ACRS restored: '
+                . join(',', $request[Disco::SAML_REQUESTED_AUTHN_CONTEXT][Disco::STATE_AUTHN_CONTEXT_CLASS_REF])
+            );
         }
     }
 }
