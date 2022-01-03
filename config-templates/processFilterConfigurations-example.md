@@ -133,7 +133,6 @@ Example how to enable filter ForceAup:
     'filterSPs' => $perunEntityIds,
     'config' => [
         'class' => 'perun:ForceAup',
-        'uidAttr' => 'uid',
         'interface' => 'rpc',
         'perunAupsAttr' => 'urn:perun:entityless:attribute-def:def:orgAups',
         'perunUserAupAttr' => 'urn:perun:user:attribute-def:def:aups',
