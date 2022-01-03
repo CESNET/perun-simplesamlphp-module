@@ -6,14 +6,16 @@ declare(strict_types=1);
  * Template of page, which showing status of used components.
  */
 
+use SimpleSAML\Configuration;
+use SimpleSAML\Module;
 use SimpleSAML\Module\perun\StatusConnector;
 
-$config = SimpleSAML_Configuration::getInstance();
+$config = Configuration::getInstance();
 $instanceName = $config->getString('instance_name', '');
 
 $this->data['header'] = $instanceName . ' ' . $this->t('{perun:status:aai}') . ' ' . $this->t('{perun:status:header}');
 $this->data['head'] = '<link rel="stylesheet"  media="screen" type="text/css" href="' .
-                      SimpleSAML\Module::getModuleUrl('perun/res/css/status.css') . '" />';
+                      Module::getModuleUrl('perun/res/css/status.css') . '" />';
 
 $services = $this->data['services'];
 
