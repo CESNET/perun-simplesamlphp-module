@@ -31,18 +31,26 @@
         }
     ],
     "require": {
+        "php": ">=7.1",
         "simplesamlphp/composer-module-installer": "~1.0",
+        "simplesamlphp/simplesamlphp": "^1.19",
+        "simplesamlphp/saml2": "^4.2.5",
+        "simplesamlphp/simplesamlphp-module-discopower": "^0.10",
         "symfony/var-exporter": "^5.0",
         "phpseclib/phpseclib": "~3.0",
         "ext-curl": "*",
-        "ext-json": "*",
-        "ext-openssl": "*",
+        "ext-filter": "*",
+        "ext-hash": "*",
         "ext-iconv": "*",
         "ext-intl": "*",
+        "ext-json": "*",
+        "ext-ldap": "*",
+        "ext-SimpleXML": "*",
         "web-token/jwt-key-mgmt": "^2.2",
         "web-token/jwt-signature": "^2.2",
         "web-token/jwt-signature-algorithm-rsa": "^2.2",
-        "web-token/jwt-checker": "^2.2"
+        "web-token/jwt-checker": "^2.2",
+        "web-token/jwt-core": "^2.2"
     },
     "require-dev": {
         "symplify/easy-coding-standard": "^10.0"

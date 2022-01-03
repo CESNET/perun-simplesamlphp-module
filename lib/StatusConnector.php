@@ -8,7 +8,7 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 
 /**
- * Abstract class sspmod_perun_StatusConnector specify interface to get status information about some components.
+ * Abstract class StatusConnector specify interface to get status information about some components.
  */
 abstract class StatusConnector
 {

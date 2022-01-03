@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+use SimpleSAML\Configuration;
+use SimpleSAML\Module\perun\StatusConnector;
+use SimpleSAML\XHTML\Template;
+
 const CONFIG_FILE_NAME = 'module_perun.php';
 const STATUS_NAGIOS = 'status_nagios';
 const SHOWN_SERVICES = 'status.shown_services';
@@ -13,8 +17,8 @@ const STATUS = 'status';
 $services = [];
 $shownServicesList = [];
 
-$config = SimpleSAML_Configuration::getInstance();
-$perunConfig = SimpleSAML_Configuration::getConfig(CONFIG_FILE_NAME);
+$config = Configuration::getInstance();
+$perunConfig = Configuration::getConfig(CONFIG_FILE_NAME);
 
 $params = $perunConfig->getArray(STATUS_NAGIOS, []);
 
@@ -22,7 +26,7 @@ if (isset($params[SHOWN_SERVICES]) && is_array($params[SHOWN_SERVICES])) {
     $shownServicesList = $params[SHOWN_SERVICES];
 }
 
-$statusConnector = sspmod_perun_StatusConnector::getInstance();
+$statusConnector = StatusConnector::getInstance();
 $services = $statusConnector->getStatus();
 
 $shownServices = [];
@@ -45,6 +49,6 @@ if (isset($_GET['output']) && 'json' === $_GET['output']) {
     exit;
 }
 
-$t = new SimpleSAML_XHTML_Template($config, 'perun:status-tpl.php');
+$t = new Template($config, 'perun:status-tpl.php');
 $t->data['services'] = $shownServices;
 $t->show();

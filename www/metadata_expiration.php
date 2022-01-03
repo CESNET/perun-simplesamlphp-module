@@ -2,16 +2,21 @@
 
 declare(strict_types=1);
 
+use SimpleSAML\Configuration;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+use SimpleSAML\Session;
+use SimpleSAML\XHTML\Template;
+
 /**
  * This script loads all the metadata and finds the one which is closest to expiration. Then it sends the time to
  * expiration to the template.
  *
  * This can be used to check whether the meta refresh works without problems.
  */
-$config = SimpleSAML_Configuration::getInstance();
-$session = SimpleSAML_Session::getSessionFromRequest();
+$config = Configuration::getInstance();
+$session = Session::getSessionFromRequest();
 
-$metadata = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+$metadata = MetaDataStorageHandler::getMetadataHandler();
 
 $metaentries = [
     'hosted' => [],
@@ -63,6 +68,6 @@ foreach ($metaentries['remote'] as $setkey => $set) {
     }
 }
 
-$t = new SimpleSAML_XHTML_Template($config, 'perun:metadata_expiration-tpl.php');
+$t = new Template($config, 'perun:metadata_expiration-tpl.php');
 $t->data['closestExpiration'] = $closestExpiration;
 $t->show();

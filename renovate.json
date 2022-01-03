@@ -13,7 +13,7 @@
     ":semanticCommits",
     "npm:unpublishSafe"
   ],
-  "composerIgnorePlatformReqs": ["ext-curl", "ext-json", "ext-openssl", "ext-iconv", "ext-intl"],
+  "composerIgnorePlatformReqs": ["ext-curl", "ext-json", "ext-iconv", "ext-intl", "ext-ldap"],
   "stabilityDays": 3,
   "transitiveRemediation": true
 }
