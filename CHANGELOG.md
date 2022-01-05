@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.0...v7.0.1) (2022-01-05)
+
+
+### Bug Fixes
+
+* Fixed some unchecked potential errors ([#204](https://github.com/CESNET/perun-simplesamlphp-module/issues/204)) ([617153c](https://github.com/CESNET/perun-simplesamlphp-module/commit/617153c41cae8c187ffa2c529d76c5966bfe25c6))
+
 # [7.0.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.3...v7.0.0) (2022-01-05)
 
 
