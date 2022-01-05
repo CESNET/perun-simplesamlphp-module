@@ -42,6 +42,14 @@ try {
 }
 
 try {
+    if (empty($attributesFromIdP['sourceIdPEntityID'][0])) {
+        throw new Exception('perun/www/updateUes.php: Invalid attributes from Idp - sourceIdPEntityID is empty');
+    }
+
+    if (empty($attributesFromIdP['sourceIdPEppn'][0])) {
+        throw new Exception('perun/www/updateUes.php: Invalid attributes from Idp - sourceIdPEppn is empty');
+    }
+
     $userExtSource = $adapter->getUserExtSource(
         $attributesFromIdP['sourceIdPEntityID'][0],
         $attributesFromIdP['sourceIdPEppn'][0]

@@ -920,54 +920,71 @@ class Disco extends PowerIdPDisco
         $this->adapter = Adapter::getInstance($this->wayfConfiguration->getString(self::INTERFACE, self::RPC));
         try {
             if (null !== $clientIdWithPrefix) {
-                $parts = explode(':', $clientIdWithPrefix);
-                $clientId = end($parts);
-
-                $clientIdAttr = $this->wayfConfiguration->getString(self::CLIENT_ID_ATTR, null);
-                if (null === $clientIdAttr) {
-                    $facility = $this->adapter->getFacilityByClientId($clientId);
-                } else {
-                    $facility = $this->adapter->getFacilityByClientId($clientId, $clientIdAttr);
-                }
-
-                if (null !== $facility) {
-                    $spNameAttrName = $this->wayfConfiguration->getString(
-                        self::SERVICE_NAME_ATTR,
-                        self::SERVICE_NAME_DEFAULT_ATTR_NAME
-                    );
-                    $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttrName);
-                    if (!empty($spNameMap)) {
-                        $this->spName = $t->getTranslation($spNameMap);
-                    }
-                }
+                $this->fillSpNameForOidc($t, $clientIdWithPrefix);
             } else {
-                $entityId = $this->originalsp['entityid'];
-                $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
-                if (null === $entityIdAttr) {
-                    $facility = $this->adapter->getFacilityByEntityId($entityId);
-                } else {
-                    $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
-                }
-
-                if (null !== $facility) {
-                    $spNameAttr = $this->wayfConfiguration->getString(
-                        self::SERVICE_NAME_ATTR,
-                        self::SERVICE_NAME_DEFAULT_ATTR_NAME
-                    );
-                    $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttr);
-                    if (!empty($spNameMap)) {
-                        $this->spName = $t->getTranslation($spNameMap);
-                    }
-                }
-                if (empty($entityId)) {
-                    if (!empty($this->originalsp[self::NAME])) {
-                        $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
-                    }
-                }
+                $this->fillSpNameForSaml($t);
             }
         } catch (\Exception $e) {
-            Logger::warning("Fill SP name - caught exception {$e}");
+            Logger::debug("Fill SP name - caught exception {$e}");
             //OK, we will just display the disco
+        }
+    }
+
+    private function fillSpNameForOidc($t, $clientIdWithPrefix)
+    {
+        if (null === $clientIdWithPrefix) {
+            return;
+        }
+        $parts = explode(':', $clientIdWithPrefix);
+        $clientId = end($parts);
+
+        $clientIdAttr = $this->wayfConfiguration->getString(self::CLIENT_ID_ATTR, null);
+        if (null === $clientIdAttr) {
+            $facility = $this->adapter->getFacilityByClientId($clientId);
+        } else {
+            $facility = $this->adapter->getFacilityByClientId($clientId, $clientIdAttr);
+        }
+
+        if (null !== $facility) {
+            $spNameAttrName = $this->wayfConfiguration->getString(
+                self::SERVICE_NAME_ATTR,
+                self::SERVICE_NAME_DEFAULT_ATTR_NAME
+            );
+            $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttrName);
+            if (!empty($spNameMap)) {
+                $this->spName = $t->getTranslation($spNameMap);
+            }
+        }
+    }
+
+    private function fillSpNameForSaml($t)
+    {
+        $this->spName = null;
+        if (!empty($this->originalsp['entityid'])) {
+            $entityId = $this->originalsp['entityid'];
+            $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
+            if (null === $entityIdAttr) {
+                $facility = $this->adapter->getFacilityByEntityId($entityId);
+            } else {
+                $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
+            }
+
+            if (null === $facility) {
+                return;
+            }
+
+            $spNameAttr = $this->wayfConfiguration->getString(
+                self::SERVICE_NAME_ATTR,
+                self::SERVICE_NAME_DEFAULT_ATTR_NAME
+            );
+
+            $spNameMap = $this->adapter->getFacilityAttribute($facility, $spNameAttr);
+            if (!empty($spNameMap)) {
+                $this->spName = $t->getTranslation($spNameMap);
+            }
+        }
+        if (empty($this->spName) && !empty($this->originalsp[self::NAME])) {
+            $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
         }
     }
 }

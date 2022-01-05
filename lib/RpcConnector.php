@@ -89,7 +89,10 @@ class RpcConnector
             );
         }
         if (isset($result['errorId'])) {
-            self::error($result['errorId'], $result['name'], $result['message'], $uri, $paramsQuery);
+            $name = $result['name'] ?? null;
+            $message = $result['message'] ?? null;
+
+            self::error($result['errorId'], $name, $message, $uri, $paramsQuery);
         }
 
         return $result;
@@ -140,7 +143,10 @@ class RpcConnector
             );
         }
         if (isset($result['errorId'])) {
-            self::error($result['errorId'], $result['name'], $result['message'], $uri, $paramsJson);
+            $name = $result['name'] ?? null;
+            $message = $result['message'] ?? null;
+
+            self::error($result['errorId'], $name, $message, $uri, $paramsJson);
         }
 
         return $result;
