@@ -1,3 +1,15 @@
+# [7.0.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.3...v7.0.0) (2022-01-05)
+
+
+### chore
+
+* add missing dependencies, PHP >= 7.1, SSP 1.19, add package-lock ([6c873af](https://github.com/CESNET/perun-simplesamlphp-module/commit/6c873af0533c20acfde90399bf5836ef67a9a299))
+
+
+### BREAKING CHANGES
+
+* PHP 7.1 or higher is required, SSP 1.19 is required
+
 ## [6.4.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v6.4.2...v6.4.3) (2021-12-13)
 
 
