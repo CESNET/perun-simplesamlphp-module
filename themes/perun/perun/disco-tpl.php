@@ -58,7 +58,7 @@ if ($this->isAddInstitutionApp()) {
     $this->data['header'] = $this->t('{perun:disco:header}');
 
     if ($displaySpName && !empty($spName)) {
-        $this->data['header'] .= ' ' . $this->t('{perun:disco:header_display_service}') . ' ' . $spName;
+        $this->data['header'] .= ' ' . $this->t('{perun:disco:header_display_service}') . ' <i>' . $spName . '</i>';
     }
 }
 
