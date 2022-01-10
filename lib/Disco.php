@@ -534,14 +534,16 @@ class Disco extends PowerIdPDisco
         );
 
         $result .= self::addLoginOptionNote($t, $blockConfig, '{perun:disco:institution_search_hint}');
+        $result .= '<div id="type-more" class="small text-muted">' . $t->t('{perun:disco:search_start_hint}') . '</div>' . PHP_EOL;
         $result .= '<div class="inlinesearch">' . PHP_EOL;
         $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
         $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value=""
-            name="query" id="query" autofocus oninput="$(\'#list\').show();" placeholder="'
+            name="query" id="query" autofocus placeholder="'
             . $t->t($placeholderTranslateKey) . '"/>' . PHP_EOL;
         $result .= '    </form>';
         // ENTRIES
-        $result .= '    <div class="metalist list-group" id="list" style="display: none">' . PHP_EOL;
+        $result .= '    <div class="metalist list-group" id="list"></div>' . PHP_EOL;
+        $result .= '    <div class="metalist list-group" id="list-hidden" style="display: none">' . PHP_EOL;
         foreach ($allIdps as $idpentry) {
             $result .= self::showEntry($t, $idpentry) . PHP_EOL;
         }
