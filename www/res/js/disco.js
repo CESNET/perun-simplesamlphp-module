@@ -1,28 +1,31 @@
 $(document).ready(function() {
-    if ($("#last-used-idp-wrap").length > 0) {
-        $("#last-used-idp .metaentry").focus();
-    } else {
-        $("#entries").show();
-    }
-
-    $("#showEntries").click(function() {
-        $("#last-used-idp-wrap").hide();
-        $("#entries").show();
-        $("#showEntries").hide();
-    });
-
     let forceShow = false
+    const entries = $('#entries');
     const noEntries = $('#no-entries');
     const tooManyEntries = $('#warning-entries');
     const displayed = $('#list');
     const hidden = $('#list-hidden');
     const resultsCnt = $('#results-cnt');
+    const input = $('#query');
+    const lastUsedIdpWrap = $("#last-used-idp-wrap");
+    const showEntries = $("#showEntries");
+
+    if (lastUsedIdpWrap.length > 0) {
+        showEl(lastUsedIdpWrap);
+        $("#last-used-idp .metaentry").focus();
+    } else {
+        showEl(entries);
+    }
+
+    showEntries.click(function() {
+        hideEl($("#last-used-idp-wrap"));
+        showEl(entries);
+        hideEl(showEntries);
+    });
 
     let lastFilterSize = Number.MAX_SAFE_INTEGER;
-
-    const input = $('#query');
     let typingTimer;
-    const doneTypingInterval = 300;
+    const doneTypingInterval = 100;
 
     input.on('input propertychange paste', function () {
         clearTimeout(typingTimer);

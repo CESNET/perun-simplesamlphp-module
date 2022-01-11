@@ -385,12 +385,17 @@ class Disco extends PowerIdPDisco
     }
 
     /**
-     * @param bool $favourite
+     * @param bool  $favourite
+     * @param mixed $constructSearchData
      *
      * @return string html
      */
-    public static function showEntry(DiscoTemplate $t, array $metadata, $favourite = false): string
-    {
+    public static function showEntry(
+        DiscoTemplate $t,
+        array $metadata,
+        $favourite = false,
+        $constructSearchData = false
+    ): string {
         $searchData = htmlspecialchars(self::constructSearchData($metadata));
         $extra = ($favourite ? ' favourite' : '');
         $href = $t->getContinueUrl($metadata[self::IDP_ENTITY_ID]);
@@ -534,20 +539,22 @@ class Disco extends PowerIdPDisco
         );
 
         $result .= self::addLoginOptionNote($t, $blockConfig, '{perun:disco:institution_search_hint}');
-        $result .= '<div id="type-more" class="small text-muted">' . $t->t('{perun:disco:search_start_hint}') . '</div>' . PHP_EOL;
+        $result .= '<div id="type-more" class="small text-muted">' . $t->t(
+            '{perun:disco:search_start_hint}'
+        ) . '</div>' . PHP_EOL;
         $result .= '<div class="inlinesearch">' . PHP_EOL;
         $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
-        $result .= '        <input class="inlinesearchf form-control input-lg" type="text" value=""
+        $result .= '        <input class="inlinesearch form-control input-lg" type="text" value=""
             name="query" id="query" autofocus placeholder="'
             . $t->t($placeholderTranslateKey) . '"/>' . PHP_EOL;
         $result .= '    </form>';
         // ENTRIES
         $result .= '    <div class="metalist list-group" id="list"></div>' . PHP_EOL;
-        $result .= '    <div class="metalist list-group" id="list-hidden" style="display: none">' . PHP_EOL;
+        $result .= '    <div class="metalist list-group d-none" id="list-hidden">' . PHP_EOL;
         foreach ($allIdps as $idpentry) {
-            $result .= self::showEntry($t, $idpentry) . PHP_EOL;
+            $result .= self::showEntry($t, $idpentry, false, true) . PHP_EOL;
         }
-        $result .= '    </div>' . PHP_EOL;
+        $result .= '</div>' . PHP_EOL;
         // TOO MUCH ENTRIES BLOCK
         $result .= '    <div id="warning-entries" class="alert alert-info entries-warning-block">' . PHP_EOL;
         $result .= '        ' . $t->t(
@@ -587,29 +594,13 @@ class Disco extends PowerIdPDisco
         return $result;
     }
 
-    public static function displayAllIdps(DiscoTemplate $t): string
-    {
-        $allIdps = $t->getAllIdps();
-
-        $result = '<div class="metalist list-group">' . PHP_EOL;
-        foreach ($allIdps as $idpentry) {
-            $result .= self::showEntry($t, $idpentry) . PHP_EOL;
-        }
-        $result .= '</div>' . PHP_EOL;
-
-        return $result;
-    }
-
     public static function getScripts(bool $boxed): string
     {
         $html = '<script type="text/javascript" src="' .
+            Module::getModuleUrl('perun/res/js/jquery.js') . '"></script>' . PHP_EOL;
+
+        $html .= '<script type="text/javascript" src="' .
             Module::getModuleUrl('perun/res/js/old-browsers.js') . '"></script>' . PHP_EOL;
-
-        $html .= '<script type="text/javascript" src="' .
-            Module::getModuleUrl('discopower/assets/js/suggest.js') . '"></script>' . PHP_EOL;
-
-        $html .= '<script type="text/javascript" src="' .
-            Module::getModuleUrl('perun/res/js/jquery.livesearch.js') . '"></script>' . PHP_EOL;
 
         $html .= '<script type="text/javascript" src="' .
             Module::getModuleUrl('perun/res/js/disco.js') . '"></script>' . PHP_EOL;
@@ -891,14 +882,14 @@ class Disco extends PowerIdPDisco
             $idpMetadata = array_merge($idpMetadata, $idpMetadata['UIInfo']);
         }
 
-        $keys = ['entityid', 'OrganizationName', 'OrganizationDisplayName',
-            'name', 'url', 'OrganizationURL', 'scope', 'DisplayName', ];
+        $keys = ['OrganizationName', 'OrganizationDisplayName', 'name', 'scope', 'DisplayName'];
 
         foreach ($keys as $key) {
             if (!empty($idpMetadata[$key])) {
                 $dataSearchKeys = [...$dataSearchKeys, ...self::arrayFlatten($idpMetadata[$key])];
             }
         }
+        $dataSearchKeys = array_unique($dataSearchKeys);
         $res .= (' ' . implode(' ', $dataSearchKeys));
 
         return strtolower(str_replace('"', '', iconv('UTF-8', 'US-ASCII//TRANSLIT', $res)));
