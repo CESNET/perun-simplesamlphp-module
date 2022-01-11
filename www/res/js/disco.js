@@ -1,63 +1,150 @@
-function hideAll () {
-    $("#list").hide();
-    $('#no-entries').hide();
-    $('#warning-entries').hide();
-}
-
 $(document).ready(function() {
-    if ($("#last-used-idp-wrap").length > 0) {
+    let forceShow = false
+    const entries = $('#entries');
+    const noEntries = $('#no-entries');
+    const tooManyEntries = $('#warning-entries');
+    const displayed = $('#list');
+    const hidden = $('#list-hidden');
+    const resultsCnt = $('#results-cnt');
+    const input = $('#query');
+    const lastUsedIdpWrap = $("#last-used-idp-wrap");
+    const showEntries = $("#showEntries");
+
+    if (lastUsedIdpWrap.length > 0) {
+        showEl(lastUsedIdpWrap);
         $("#last-used-idp .metaentry").focus();
     } else {
-        $("#entries").show();
+        showEl(entries);
     }
 
-    $("#showEntries").click(function() {
-        $("#last-used-idp-wrap").hide();
-        $("#entries").show();
-        $("#showEntries").hide();
+    showEntries.click(function() {
+        hideEl($("#last-used-idp-wrap"));
+        showEl(entries);
+        hideEl(showEntries);
     });
 
-    let forceShow = false
-    $('#query').keyup(function() {
-        const filter = $(this).val().trim().toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "")
-        if (!filter) {
-            hideAll();
+    let lastFilterSize = Number.MAX_SAFE_INTEGER;
+    let typingTimer;
+    const doneTypingInterval = 100;
+
+    input.on('input propertychange paste', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(filter, doneTypingInterval);
+    });
+
+    //on keydown, clear the countdown
+    input.on('keydown', function () {
+        clearTimeout(typingTimer);
+    });
+
+    function checkAndHandleEmptyFilter(filter) {
+        if (!filter || filter.trim().length < 3) {
+            hideEl(noEntries);
+            hideEl(tooManyEntries);
             forceShow = false;
+            return true;
+        }
+        return false;
+    }
+
+    //on keyup, start the countdown
+    function filter() {
+        let filter = input.val();
+        hideEl(displayed);
+
+        if (checkAndHandleEmptyFilter(filter)) {
+            return;
+        }
+        filter = filter.toLowerCase().normalize("NFD").replace(/\p{Diacritic}/gu, "");
+
+        if (checkAndHandleEmptyFilter(filter)) {
+            return;
+        }
+
+        const currentlyDisplayed = $('#list a');
+        const currentlyHidden = $('#list-hidden a');
+
+        const newDisplayed = [];
+        let newHidden = [];
+
+        if (lastFilterSize <= filter.length) {
+            newHidden = newHidden.concat(currentlyHidden);
         } else {
-            let matches = [];
-            $('#list a').each(function () {
-                if ($(this).attr('data-search').indexOf(filter) >= 0) {
-                    matches.push(this);
+            currentlyHidden.each(function () {
+                const el = $(this);
+                if (el.attr('data-search').indexOf(filter) >= 0) {
+                    newDisplayed.push(el);
                 } else {
-                    $(this).hide();
+                    newHidden.push(el);
                 }
             });
-            if (matches.length <= 0) {
-                $('#no-entries').show();
-                $('#warning-entries').hide();
+        }
+
+        lastFilterSize = filter.length;
+
+        currentlyDisplayed.each(function () {
+            const el = $(this);
+            if (el.attr('data-search').indexOf(filter) >= 0) {
+                newDisplayed.push(el);
             } else {
-                $("#list").show();
-                $('#results-cnt').text(matches.length);
-                $('#no-entries').hide();
-                if (matches.length > 10 && !forceShow) {
-                    matches.forEach(m => {
-                        $(m).hide();
-                    });
-                    $('#warning-entries').show();
-                } else {
-                    $('#warning-entries').hide();
-                    matches.forEach(m => {
-                        $(m).show();
-                    });
-                }
+                newHidden.push(el);
+            }
+        });
+
+        displayed.append(newDisplayed);
+        hidden.append(newHidden);
+
+        if (newDisplayed.length === 0) {
+            hideEl(tooManyEntries);
+            showEl(noEntries);
+            return;
+        }
+
+        if (newDisplayed.length > 0 && newDisplayed.length <= 10) {
+            handleFoundResults();
+        } else {
+            if (forceShow) {
+                handleForcedResults();
+            } else {
+                handleOverflowResults(newDisplayed.length);
             }
         }
-    });
+    }
+
+    function handleFoundResults() {
+        hideEl(noEntries);
+        hideEl(tooManyEntries);
+        showEl(displayed);
+    }
+
+    function handleForcedResults() {
+        hideEl(noEntries);
+        hideEl(tooManyEntries);
+        showEl(displayed);
+    }
+
+    function handleOverflowResults(newDisplayedCnt) {
+        hideEl(noEntries);
+        resultsCnt.text(newDisplayedCnt);
+        showEl(tooManyEntries);
+    }
 
     $('#warning-entries-btn-force-show').click(function(event) {
         event.preventDefault();
         forceShow = true;
-        $('#warning-entries').hide();
-        $('#query').trigger('keyup').focus();
+        tooManyEntries.hide();
+        input.trigger('input').focus();
     });
 });
+
+function hideEl(el) {
+    if (el.is(':visible')) {
+        el.hide();
+    }
+}
+
+function showEl(el) {
+    if (el.is(':hidden')) {
+        el.show();
+    }
+}

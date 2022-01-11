@@ -16,9 +16,9 @@ use SimpleSAML\Module\perun\model\WarningConfiguration;
  */
 
 $this->data['jquery'] = [
-    'core' => true,
-    'ui' => true,
-    'css' => true,
+    'core' => false,
+    'ui' => false,
+    'css' => false,
 ];
 
 $this->data['head'] = '<link rel="stylesheet" media="screen" type="text/css" href="' .
@@ -64,11 +64,6 @@ if ($this->isAddInstitutionApp()) {
 
 $this->includeAtTemplateBase('includes/header.php');
 
-echo '<div id="deprecation-notice" class="d-none">';
-echo $this->t('{perun:disco:js_not_loaded_message}') . PHP_EOL;
-echo Disco::displayAllIdps($this) . PHP_EOL;
-echo '</div>';
-
 // IF WE HAVE A WARNING, DISPLAY IT TO THE USER
 if (null !== $warningAttributes && $warningAttributes->isEnabled()) {
     echo Disco::showWarning($this, $warningAttributes);
@@ -101,7 +96,7 @@ if ($this->isAddInstitutionApp()) {
     // Last selection is not null => Firstly show last selection
     if (!empty($this->getPreferredIdp())) {
         // ENTRY FOR PREVIOUS SELECTION
-        echo '<div id="last-used-idp-wrap">' . PHP_EOL;
+        echo '<div id="last-used-idp-wrap" class="d-none">' . PHP_EOL;
         echo '    <p class="discoDescription-left" id="last-used-idp-desc">'
             . $this->t('{perun:disco:previous_selection}') . '</p>' . PHP_EOL;
         echo '    <div id="last-used-idp" class="metalist list-group">' . PHP_EOL;
@@ -120,7 +115,7 @@ if ($this->isAddInstitutionApp()) {
     }
 
     // regular wayf contains all entries
-    echo '<div id="entries">';
+    echo '<div id="entries" class="d-none">';
     $cnt = 1;
     $blocksCount = count($wayfConfig->getArray(Disco::IDP_BLOCKS));
     $blocksConfig = $wayfConfig->getConfigItem(Disco::IDP_BLOCKS);

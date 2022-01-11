@@ -78,5 +78,9 @@
   "js_not_loaded_message": {
     "en": "Your browser does not support the required functionality to display this page. Please use a different browser and try again. We apologize for the caused difficulties.",
     "cs": "Váš prohlížeč nepodporuje funkcionalitu potřebnou pro správné zobrazení této stránky. Zkuste, prosím, použít jiný prohlížeč. Omlouváme se za vzniklé problémy."
+  },
+  "search_start_hint": {
+    "en": "Type in at least 3 characters to start the search",
+    "cs": "Zadejte alespoň 3 znaky pro zahájení vyhledávání"
   }
 }

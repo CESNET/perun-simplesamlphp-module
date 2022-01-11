@@ -1,5 +1,5 @@
 html {
-    position:relative;
+    position: relative;
     min-height: 100%;
 }
 
@@ -15,21 +15,22 @@ html, body {
     margin-bottom: 110px;
 }
 
-#show-entries-wrap {
-    margin-bottom: 5%;
-}
-
 #header img {
     max-height: 120px;
     height: 30%;
     width: auto;
 }
 
-#deprecation-notice {
-    font-weight: bold;
+.d-none {
+    display: none;
 }
 
-.d-none {
+#last-used-idp-wrap {
+    display: none;
+    margin-bottom: 5%;
+}
+
+#list-hidden {
     display: none;
 }
 
@@ -176,14 +177,6 @@ form#idpselectform input {
 
 .add-institution-link {
     padding: 2px 5px;
-}
-
-#list {
-    display: none;
-}
-
-#entries {
-    display: none;
 }
 
 .add-institution-entries {
