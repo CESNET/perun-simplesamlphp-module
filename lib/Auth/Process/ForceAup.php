@@ -31,8 +31,6 @@ use SimpleSAML\Utils\HTTP;
  */
 class ForceAup extends ProcessingFilter
 {
-    public const UID_ATTR = 'uidAttr';
-
     public const INTERFACE_PROPNAME = 'interface';
 
     public const PERUN_AUPS_ATTR = 'perunAupsAttr';
@@ -46,8 +44,6 @@ class ForceAup extends ProcessingFilter
     public const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'perunFacilityVoShortNamesAttr';
 
     private const DATETIME_FORMAT = 'Y-m-d';
-
-    private $uidAttr;
 
     private $perunAupsAttr;
 
@@ -68,9 +64,6 @@ class ForceAup extends ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        if (!isset($config[self::UID_ATTR])) {
-            throw new Exception('perun:ForceAup: missing mandatory configuration option \'' . self::UID_ATTR . '\'.');
-        }
         if (!isset($config[self::PERUN_AUPS_ATTR]) && !isset($config[self::PERUN_VO_AUP_ATTR])) {
             throw new Exception(
                 'perun:ForceAup: missing at least one of mandatory configuration options \'' . self::PERUN_AUPS_ATTR . '\' or \'' . self::PERUN_VO_AUP_ATTR . '\'.'
@@ -85,7 +78,6 @@ class ForceAup extends ProcessingFilter
             $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
         }
 
-        $this->uidAttr = (string) $config[self::UID_ATTR];
         $this->perunAupsAttr = isset($config[self::PERUN_AUPS_ATTR]) ?
             (string) $config[self::PERUN_AUPS_ATTR] : null;
         $this->perunVoAupAttr = isset($config[self::PERUN_VO_AUP_ATTR]) ?
@@ -177,7 +169,6 @@ class ForceAup extends ProcessingFilter
         Logger::debug('perun:ForceAup - NewAups: ' . json_encode($aupsToBeApproved));
 
         if (!empty($aupsToBeApproved)) {
-            $request[self::UID_ATTR] = $this->uidAttr;
             $request[self::PERUN_USER_AUP_ATTR] = $this->perunUserAupAttr;
             $request['newAups'] = $aupsToBeApproved;
             $id = State::saveState($request, 'perun:forceAup');
