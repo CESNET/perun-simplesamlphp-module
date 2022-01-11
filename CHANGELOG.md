@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.1...v7.0.2) (2022-01-11)
+
+
+### Bug Fixes
+
+* **forceaup:** drop unused option uidAttr ([#215](https://github.com/CESNET/perun-simplesamlphp-module/issues/215)) ([a18fad6](https://github.com/CESNET/perun-simplesamlphp-module/commit/a18fad6da7ea41a154eb4b497d5f5a7a503c9cad)), closes [#157](https://github.com/CESNET/perun-simplesamlphp-module/issues/157)
+
 ## [7.0.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.0...v7.0.1) (2022-01-05)
 
 
