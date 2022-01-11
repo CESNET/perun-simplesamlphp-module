@@ -1,3 +1,10 @@
+## [7.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.2...v7.0.3) (2022-01-11)
+
+
+### Bug Fixes
+
+* refactor disco ([#218](https://github.com/CESNET/perun-simplesamlphp-module/issues/218)) ([31f8216](https://github.com/CESNET/perun-simplesamlphp-module/commit/31f82168cf0f294c43490e7a79e102542e582530))
+
 ## [7.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.1...v7.0.2) (2022-01-11)
 
 
