@@ -1,3 +1,10 @@
+# [7.1.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.3...v7.1.0) (2022-01-13)
+
+
+### Features
+
+* 🎸 Added RestoreAcrs authproc filter, modify ACRs when MFA ([ebafb05](https://github.com/CESNET/perun-simplesamlphp-module/commit/ebafb059323b8808fb0c04009e61d9ab5fa123b5))
+
 ## [7.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.2...v7.0.3) (2022-01-11)
 
 
