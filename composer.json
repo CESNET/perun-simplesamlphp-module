@@ -35,7 +35,7 @@
         "simplesamlphp/composer-module-installer": "~1.0",
         "simplesamlphp/simplesamlphp": "^1.19",
         "simplesamlphp/saml2": "^4.2.5",
-        "simplesamlphp/simplesamlphp-module-discopower": "^0.10",
+        "simplesamlphp/simplesamlphp-module-discopower": "^1.0",
         "symfony/var-exporter": "^5.0",
         "phpseclib/phpseclib": "~3.0",
         "ext-curl": "*",
