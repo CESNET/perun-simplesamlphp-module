@@ -10,6 +10,7 @@ use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
+use SimpleSAML\Module\perun\Auth\Process\MultifactorAcrs;
 use SimpleSAML\Module\perun\model\WarningConfiguration;
 use SimpleSAML\Utils\HTTP;
 
@@ -30,6 +31,8 @@ class Disco extends PowerIdPDisco
 
     public const DEFAULT_THEME = 'perun';
 
+    public const MFA_PROFILE = 'https://refeds.org/profile/mfa';
+
     // ROOT CONFIGURATION ENTRY
     public const WAYF = 'wayf_config';
 
@@ -47,6 +50,8 @@ class Disco extends PowerIdPDisco
     public const DISABLE_WHITELISTING = 'disable_whitelisting';
 
     public const DISPLAY_SP = 'display_sp_name';
+
+    public const ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA = 'add_authn_context_classes_for_mfa';
 
     // CONFIGURATION ENTRIES IDP BLOCKS
     public const IDP_BLOCKS = 'idp_blocks_config';
@@ -123,6 +128,8 @@ class Disco extends PowerIdPDisco
 
     public const SAML_REQUESTED_AUTHN_CONTEXT = 'saml:RequestedAuthnContext';
 
+    public const SAML_REQUESTED_AUTHN_CONTEXT_ORIGINAL = 'saml:RequestedAuthnContext:original';
+
     public const STATE_AUTHN_CONTEXT_CLASS_REF = 'AuthnContextClassRef';
 
     public const SAML_SP_SSO = 'saml:sp:sso';
@@ -186,6 +193,7 @@ class Disco extends PowerIdPDisco
                     $this->originalAuthnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF];
 
                     $this->removeAuthContextClassRefWithPrefixes($state);
+                    $this->prepareAcrsForMfa($state);
                     if (isset($state['IdPMetadata']['entityid'])) {
                         $this->proxyIdpEntityId = $state['IdPMetadata']['entityid'];
                     }
@@ -979,5 +987,11 @@ class Disco extends PowerIdPDisco
         if (empty($this->spName) && !empty($this->originalsp[self::NAME])) {
             $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
         }
+    }
+
+    private function prepareAcrsForMfa(array &$state)
+    {
+        $contextsToAdd = $this->wayfConfiguration->getArray(self::ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA, []);
+        MultifactorAcrs::addAndStoreAcrs($state, $contextsToAdd);
     }
 }
