@@ -363,7 +363,7 @@ class Disco extends PowerIdPDisco
     /**
      * This method remove all AuthnContextClassRef which start with prefix from configuration.
      *
-     * @param $state
+     * @param mixed $state
      */
     public function removeAuthContextClassRefWithPrefixes(&$state)
     {

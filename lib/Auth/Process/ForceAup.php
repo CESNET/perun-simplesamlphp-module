@@ -90,9 +90,6 @@ class ForceAup extends ProcessingFilter
         $this->perunFacilityVoShortNames = (string) $config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
     }
 
-    /**
-     * @param $request
-     */
     public function process(&$request)
     {
         assert(is_array($request));
