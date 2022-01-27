@@ -15,5 +15,6 @@
   ],
   "composerIgnorePlatformReqs": ["ext-curl", "ext-json", "ext-iconv", "ext-intl", "ext-ldap"],
   "stabilityDays": 3,
+  "ignoreDeps": ["npm"],
   "transitiveRemediation": true
 }
