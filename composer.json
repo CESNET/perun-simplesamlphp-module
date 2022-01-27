@@ -30,6 +30,11 @@
             "email": "baranek@ics.muni.cz"
         }
     ],
+    "config": {
+        "platform": {
+            "php": "7.4"
+        }
+    },
     "require": {
         "php": "^7.1 || ^8",
         "simplesamlphp/composer-module-installer": "~1.0",
