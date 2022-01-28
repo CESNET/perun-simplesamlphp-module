@@ -157,7 +157,13 @@ class ForceAup extends ProcessingFilter
             $perunAups = $this->getPerunAups();
             $voAups = $this->getVoAups($voShortNames);
 
-            $aupsToBeApproved = $this->getAupsToBeApproved($perunAups, $voAups, $requestedAups, $userAups);
+            $aupsToBeApproved = $this->getAupsToBeApproved(
+                $perunAups,
+                $voAups,
+                $voShortNames,
+                $requestedAups,
+                $userAups
+            );
         } catch (\Exception $ex) {
             Logger::warning('perun:ForceAup - ' . $ex->getMessage());
             $aupsToBeApproved = [];
@@ -240,7 +246,7 @@ class ForceAup extends ProcessingFilter
         return $perunAups;
     }
 
-    private function getAupsToBeApproved($perunAups, $voAups, $requestedAups, $userAups)
+    private function getAupsToBeApproved($perunAups, $voAups, $voShortNames, $requestedAups, $userAups)
     {
         $perunAupsToBeApproved = [];
         if (!empty($perunAups)) {
@@ -249,7 +255,7 @@ class ForceAup extends ProcessingFilter
 
         $voAupsToBeApproved = [];
         if (!empty($voAups)) {
-            $voAupsToBeApproved = $this->fillAupsToBeApproved($requestedAups, $voAups, $userAups);
+            $voAupsToBeApproved = $this->fillAupsToBeApproved($voShortNames, $voAups, $userAups);
         }
 
         return $this->mergeAupsToBeApproved($perunAupsToBeApproved, $voAupsToBeApproved);
@@ -294,9 +300,9 @@ class ForceAup extends ProcessingFilter
                 $voLatestDate = self::parseDateTime($voAup->date);
                 $perunLatestDate = self::parseDateTime($perunAupsToBeApproved[$aupKey]->date);
                 if ($voLatestDate >= $perunLatestDate) {
-                    $resultAups[$aupKey] = $voLatestDate;
+                    $resultAups[$aupKey] = $voAup;
                 } else {
-                    $resultAups[$aupKey] = $perunLatestDate;
+                    $resultAups[$aupKey] = $perunAupsToBeApproved[$aupKey];
                 }
             } else {
                 $resultAups[$aupKey] = $voAup;
