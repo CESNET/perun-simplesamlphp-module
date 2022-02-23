@@ -1,0 +1,26 @@
+{
+  "alternate_login_options": {
+    "en": "Alternate login options",
+    "cs": "Další možnosti přihlášení"
+  },
+  "introduction_notice": {
+    "en": "The service you are authenticating to requires MFA (Multi Factor Authentication). To complete the authentication, select one from the options below.",
+    "cs": "Služba, ke které chcete přistoupit, vyžaduje vícefaktorovou autentizaci. Pro dokončení přihlášení zvolte jednu z možností níže."
+  },
+  "webauthn": {
+    "en": "WebAuthn",
+    "cs": "WebAuthn"
+  },
+  "push": {
+    "en": "Push",
+    "cs": "Push"
+  },
+  "otp": {
+    "en": "OTP",
+    "cs": "OTP"
+  },
+  "u2f": {
+    "en": "U2F",
+    "cs": "U2F"
+  }
+}
