@@ -145,3 +145,18 @@ Example how to enable filter ForceAup:
 
 3.Fill the attributes and set list of required Aups (attr reqAups) and voShortNames (optional) for each facility
 
+## AttributeMap
+
+This filter maps attribute names according to a service specific map from Perun. It can be used to achieve compatibility with a SP which requires specific non-standard attribute names.
+
+Example how to enable filter AttributeMap:
+
+```php
+101 => [
+    'class' => 'perun:AttributeMap',
+    'attrMapAttr' => 'attrWhichContainsAttrMap', # expected structure: targetAttribute => sourceAttribute
+    // 'keepSourceAttributes' => true, # optional, whether keep source attributes or remove them, default false
+    // 'entityid' => 'EntityIdOfTheService', # optional, string or callable, defaults to current SP's entity ID
+    // 'interface' => 'rpc', # optional, rpc/ldap, default rpc
+],
+```
