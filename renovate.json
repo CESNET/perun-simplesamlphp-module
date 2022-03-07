@@ -14,6 +14,12 @@
     "npm:unpublishSafe"
   ],
   "composerIgnorePlatformReqs": ["ext-curl", "ext-json", "ext-iconv", "ext-intl", "ext-ldap"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^web-token/jwt"],
+      "groupName": "jwt"
+    }
+  ],
   "stabilityDays": 3,
   "ignoreDeps": ["npm"],
   "transitiveRemediation": true
