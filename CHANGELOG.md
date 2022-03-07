@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.1.0...v7.1.1) (2022-03-07)
+
+
+### Bug Fixes
+
+* Fixed AUP filter ([9ecf4c0](https://github.com/CESNET/perun-simplesamlphp-module/commit/9ecf4c01eb2ec3e823b69f16ffadd389b4760f20))
+
 # [7.1.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.0.3...v7.1.0) (2022-01-13)
 
 
