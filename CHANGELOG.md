@@ -1,3 +1,10 @@
+# [7.2.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.1.1...v7.2.0) (2022-03-09)
+
+
+### Features
+
+* Custom privacyIDEA login template ([15359e0](https://github.com/CESNET/perun-simplesamlphp-module/commit/15359e0d03b60d6ffbba76f5e0dc799785151ac2))
+
 ## [7.1.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.1.0...v7.1.1) (2022-03-07)
 
 
