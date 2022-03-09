@@ -1,0 +1,34 @@
+.message--common-error {
+    margin-left: 18px;
+    width: 520px;
+}
+
+.btn-wrap {
+    text-align: center;
+}
+
+.alternate-btn {
+    margin-top: 1rem;
+}
+
+.identifier-shown {
+    margin-bottom: 5rem;
+}
+
+#otp {
+    margin-top: 0;
+}
+
+#submitButton {
+    margin-top: 1rem;
+}
+
+@media (max-width: 576px) {
+    .col-12 {
+        width: 100%;
+    }
+
+    .col-offset-0 {
+        margin-left: 1%;
+    }
+}
