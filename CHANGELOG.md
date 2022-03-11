@@ -1,3 +1,10 @@
+## [7.2.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.2.0...v7.2.1) (2022-03-11)
+
+
+### Bug Fixes
+
+* 🐛 Fix privacyIDEA form for new version of PI module ([9a67d39](https://github.com/CESNET/perun-simplesamlphp-module/commit/9a67d39cf3e9e81077b3b62630434bde296f8db3))
+
 # [7.2.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.1.1...v7.2.0) (2022-03-09)
 
 
