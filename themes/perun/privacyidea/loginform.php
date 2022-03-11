@@ -77,7 +77,7 @@ $this->includeAtTemplateBase('includes/header.php');
             }
             ?>
 
-            <form action="" method="POST" id="piLoginForm" name="piLoginForm" class="loginForm">
+            <form action="FormReceiver.php" method="POST" id="piLoginForm" name="piLoginForm" class="loginForm">
                 <div class="form-panel first valid" id="gaia_firstform">
                     <div class="slide-out ">
                         <div class="input-wrapper focused">
@@ -282,7 +282,7 @@ if (!empty($this->data['links'])) {
                             }
 ?>
 
-    <script src="<?php echo htmlspecialchars(Module::getModuleUrl('privacyidea/js/webauthn.js'), ENT_QUOTES); ?>">
+    <script src="<?php echo htmlspecialchars(Module::getModuleUrl('privacyidea/js/webauthn-client/pi-webauthn.js'), ENT_QUOTES); ?>">
     </script>
 
     <script src="<?php echo htmlspecialchars(Module::getModuleUrl('privacyidea/js/u2f-api.js'), ENT_QUOTES); ?>">
