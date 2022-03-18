@@ -1,3 +1,10 @@
+# [7.3.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.2.1...v7.3.0) (2022-03-18)
+
+
+### Features
+
+* Custom AttributeMap filter ([903bd6f](https://github.com/CESNET/perun-simplesamlphp-module/commit/903bd6fc3f6a349c2ed359bc34edcd6f3cf72858))
+
 ## [7.2.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.2.0...v7.2.1) (2022-03-11)
 
 
