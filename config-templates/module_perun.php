@@ -264,6 +264,8 @@ $config = [
         'display_sp_name' => false,
         // interface needed just in case of display_sp_name => true
         'interface' => 'rpc',
+        // don't show 'previous selection' for entity/client ids listed below
+        'skip_previous_selection_services' => [],
     ],
 
     'warning_test_sp_config' => [

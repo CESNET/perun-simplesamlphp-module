@@ -30,6 +30,7 @@ $this->data['head'] .= '<link rel="stylesheet" media="screen" type="text/css" hr
 $wayfConfig = $this->data[Disco::WAYF];
 $displaySpName = $this->data[Disco::DISPLAY_SP];
 $spName = $this->data[Disco::NAME];
+$skipPreviousSelection = $this->data[Disco::SKIP_PREVIOUS_SELECTION];
 
 $translateModule = $wayfConfig->getString(Disco::TRANSLATE_MODULE, 'disco');
 $addInstitutionConfig = $wayfConfig->getConfigItem(Disco::ADD_INSTITUTION, null);
@@ -94,7 +95,7 @@ if ($this->isAddInstitutionApp()) {
 } else {
     // CHECK IF WE HAVE PREVIOUS SELECTION, IF YES, DISPLAY IT
     // Last selection is not null => Firstly show last selection
-    if (!empty($this->getPreferredIdp())) {
+    if (!empty($this->getPreferredIdp()) && !$skipPreviousSelection) {
         // ENTRY FOR PREVIOUS SELECTION
         echo '<div id="last-used-idp-wrap" class="d-none">' . PHP_EOL;
         echo '    <p class="discoDescription-left" id="last-used-idp-desc">'

@@ -53,6 +53,8 @@ class Disco extends PowerIdPDisco
 
     public const ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA = 'add_authn_context_classes_for_mfa';
 
+    public const SKIP_PREVIOUS_SELECTION = 'skip_previous_selection_services';
+
     // CONFIGURATION ENTRIES IDP BLOCKS
     public const IDP_BLOCKS = 'idp_blocks_config';
 
@@ -116,6 +118,8 @@ class Disco extends PowerIdPDisco
     public const SP_GREYLIST = 'greylist';
 
     public const IDP_ENTITY_ID = 'entityid';
+
+    public const SP_ENTITY_ID = 'entityid';
 
     public const IDP_COLOR = 'color';
 
@@ -282,6 +286,11 @@ class Disco extends PowerIdPDisco
             $this->fillSpName($t);
         }
 
+        $spsToSkipPreviousSelection = $this->wayfConfiguration->getArray(self::SKIP_PREVIOUS_SELECTION, []);
+        $spIdentifier = $this->getSpIdentifier($t);
+
+        $skipPreviousSelection = in_array($spIdentifier, $spsToSkipPreviousSelection, true);
+
         $t->data[self::ORIGINAL_SP] = $this->originalsp;
         $t->data[self::IDP_LIST] = $this->idplistStructured($idpList);
         $t->data[self::PREFERRED_IDP] = $preferredIdP;
@@ -293,6 +302,7 @@ class Disco extends PowerIdPDisco
         $t->data[self::WAYF] = $this->wayfConfiguration;
         $t->data[self::NAME] = $this->spName;
         $t->data[self::DISPLAY_SP] = $this->displaySpName;
+        $t->data[self::SKIP_PREVIOUS_SELECTION] = $skipPreviousSelection;
         $t->show();
     }
 
@@ -961,8 +971,8 @@ class Disco extends PowerIdPDisco
     private function fillSpNameForSaml($t)
     {
         $this->spName = null;
-        if (!empty($this->originalsp['entityid'])) {
-            $entityId = $this->originalsp['entityid'];
+        if (!empty($this->originalsp[self::SP_ENTITY_ID])) {
+            $entityId = $this->originalsp[self::SP_ENTITY_ID];
             $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
             if (null === $entityIdAttr) {
                 $facility = $this->adapter->getFacilityByEntityId($entityId);
@@ -993,5 +1003,18 @@ class Disco extends PowerIdPDisco
     {
         $contextsToAdd = $this->wayfConfiguration->getArray(self::ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA, []);
         MultifactorAcrs::addAndStoreAcrs($state, $contextsToAdd);
+    }
+
+    private function getSpIdentifier()
+    {
+        $clientIdWithPrefix = self::substrInArray(self::CLIENT_ID_PREFIX, $this->originalAuthnContextClassRef);
+
+        if (null !== $clientIdWithPrefix) {
+            $parts = explode(':', $clientIdWithPrefix);
+
+            return end($parts); // clientId
+        }
+
+        return empty($this->originalsp[self::SP_ENTITY_ID]) ? null : $this->originalsp[self::SP_ENTITY_ID];
     }
 }
