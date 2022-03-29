@@ -1,3 +1,10 @@
+# [7.4.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.3.0...v7.4.0) (2022-03-29)
+
+
+### Features
+
+* Do not show previous selection for SPs listed in config ([dda8140](https://github.com/CESNET/perun-simplesamlphp-module/commit/dda81406b58f92eb472fd6226adcde2ef6612349))
+
 # [7.3.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.2.1...v7.3.0) (2022-03-18)
 
 
