@@ -1,3 +1,10 @@
+# [7.5.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.4.0...v7.5.0) (2022-03-30)
+
+
+### Features
+
+* updateUes - configurable identifiers ([2a3d052](https://github.com/CESNET/perun-simplesamlphp-module/commit/2a3d052b65e49ceb1f6128f29ed58465d2d3da8d))
+
 # [7.4.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.3.0...v7.4.0) (2022-03-29)
 
 
