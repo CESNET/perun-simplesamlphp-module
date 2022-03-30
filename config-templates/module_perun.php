@@ -280,4 +280,13 @@ $config = [
             'cs' => '<p>Služba je v testovacím režimu.<br/>Služba v testovacím režimu nemusí správně fungovat.</p><p>Pokračujte zmáčknutím tlačítka.</p>',
         ],
     ],
+
+    'updateUes' => [
+        'userIdentifiers' => [
+            'eduPersonPrincipalName',
+            'internalUserIdentifiers',
+            'eduPersonUniqueId',
+            // ...
+        ],
+    ],
 ];
