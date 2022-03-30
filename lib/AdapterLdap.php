@@ -199,9 +199,9 @@ class AdapterLdap extends Adapter
         return $groups;
     }
 
-    public function getSpGroups(string $spEntityId): array
+    public function getSpGroups(string $spEntityId, string $entityIdAttr = 'perunFacilityAttr_entityID'): array
     {
-        $facility = $this->getFacilityByEntityId($spEntityId);
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
 
         return $this->getSpGroupsByFacility($facility);
     }
@@ -471,9 +471,9 @@ class AdapterLdap extends Adapter
         $this->fallbackAdapter->setUserExtSourceAttributes($userExtSourceId, $attributes);
     }
 
-    public function getUsersGroupsOnFacility($spEntityId, $userId)
+    public function getUsersGroupsOnFacility($spEntityId, $userId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
-        $facility = $this->getFacilityByEntityId($spEntityId);
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
 
         return self::getUsersGroupsOnSp($facility, $userId);
     }
@@ -560,9 +560,9 @@ class AdapterLdap extends Adapter
         return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
     }
 
-    public function getResourceCapabilities($entityId, $userGroups)
+    public function getResourceCapabilities($entityId, $userGroups, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
-        $facility = $this->getFacilityByEntityId($entityId);
+        $facility = $this->getFacilityByEntityId($entityId, $entityIdAttr);
 
         if ($facility === null) {
             return [];
@@ -603,11 +603,13 @@ class AdapterLdap extends Adapter
         return $resourceCapabilities;
     }
 
-    public function getFacilityCapabilities($entityId)
+    public function getFacilityCapabilities($entityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
+        $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
+
         $facilityCapabilities = $this->connector->searchForEntity(
             $this->ldapBase,
-            '(&(objectClass=perunFacility)(entityID=' . $entityId . '))',
+            '(&(objectClass=perunFacility)(' . $attrName . '=' . $entityId . '))',
             [self::CAPABILITIES]
         );
 

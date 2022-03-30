@@ -201,9 +201,9 @@ class AdapterRpc extends Adapter
         return $convertedGroups;
     }
 
-    public function getSpGroups(string $spEntityId): array
+    public function getSpGroups(string $spEntityId, string $entityIdAttr = 'perunFacilityAttr_entityID'): array
     {
-        $facility = $this->getFacilityByEntityId($spEntityId);
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
 
         if ($facility === null) {
             return [];
@@ -385,9 +385,9 @@ class AdapterRpc extends Adapter
         return $perunAttr['value'];
     }
 
-    public function getUsersGroupsOnFacility($spEntityId, $userId)
+    public function getUsersGroupsOnFacility($spEntityId, $userId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
-        $facility = $this->getFacilityByEntityId($spEntityId);
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
 
         return self::getUsersGroupsOnSp($facility, $userId);
     }
@@ -649,9 +649,9 @@ class AdapterRpc extends Adapter
         return $member->getStatus();
     }
 
-    public function getResourceCapabilities($entityId, $userGroups)
+    public function getResourceCapabilities($entityId, $userGroups, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
-        $facility = $this->getFacilityByEntityId($entityId);
+        $facility = $this->getFacilityByEntityId($entityId, $entityIdAttr);
 
         if ($facility === null) {
             return [];
@@ -694,9 +694,9 @@ class AdapterRpc extends Adapter
         return $capabilities;
     }
 
-    public function getFacilityCapabilities($entityId)
+    public function getFacilityCapabilities($entityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
-        $facility = $this->getFacilityByEntityId($entityId);
+        $facility = $this->getFacilityByEntityId($entityId, $entityIdAttr);
 
         if ($facility === null) {
             return [];
