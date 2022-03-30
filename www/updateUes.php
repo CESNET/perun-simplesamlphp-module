@@ -11,7 +11,7 @@ use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\Adapter;
 use SimpleSAML\Module\perun\ChallengeManager;
 
-const CLASS_PREFIX = 'perun/www/updateUes.php: ';
+const DEBUG_PREFIX = 'perun/www/updateUes.php: ';
 const CONFIG_FILE_NAME = 'module_perun.php';
 const CONFIG_SECTION = 'updateUes';
 const SOURCE_IDP_ATTRIBUTE_KEY = 'sourceIdPAttributeKey';
@@ -45,6 +45,33 @@ const EDU_PERSON_TARGETED_ID = 'eduPersonTargetedID';
 const NAMEID = 'nameid';
 const UID = 'uid';
 
+function getDefaultConfig(): array
+{
+    return [
+        SOURCE_IDP_ATTRIBUTE_KEY => SOURCE_IDP_ENTITY_ID,
+        USER_IDENTIFIERS => [EDU_PERSON_UNIQUE_ID, EDU_PERSON_PRINCIPAL_NAME, EDU_PERSON_TARGETED_ID, NAMEID, UID],
+    ];
+}
+
+function getConfiguration()
+{
+    $config = getDefaultConfig();
+    try {
+        $configuration = Configuration::getConfig(CONFIG_FILE_NAME);
+        $localConfig = $configuration->getArray(CONFIG_SECTION, null);
+        if (!empty($localConfig)) {
+            $config = $localConfig;
+        } else {
+            Logger::warning(DEBUG_PREFIX . 'Configuration is missing. Using default values');
+        }
+    } catch (Exception $e) {
+        Logger::warning(DEBUG_PREFIX . 'Configuration is invalid. Using default values');
+        //OK, we will use the default config
+    }
+
+    return $config;
+}
+
 $adapter = Adapter::getInstance(Adapter::RPC);
 $token = file_get_contents('php://input');
 
@@ -55,10 +82,10 @@ if (empty($token)) {
 
 $attributesFromIdP = null;
 $attrMap = null;
-$attrsToConversion = null;
+$serializedAttributes = null;
 $perunUserId = null;
 $id = null;
-$sourceIdpAttributeKey = null;
+$sourceIdpAttribute = null;
 
 try {
     $challengeManager = new ChallengeManager();
@@ -66,82 +93,76 @@ try {
 
     $attributesFromIdP = $claims[DATA][ATTRIBUTES];
     $attrMap = $claims[DATA][ATTR_MAP];
-    $attrsToConversion = $claims[DATA][ATTR_TO_CONVERSION];
+    $serializedAttributes = $claims[DATA][ATTR_TO_CONVERSION];
     $perunUserId = $claims[DATA][PERUN_USER_ID];
     $id = $claims[ID];
 } catch (Exception $ex) {
-    Logger::error(CLASS_PREFIX . 'The token verification ended with an error.');
+    Logger::error(DEBUG_PREFIX . 'The token verification ended with an error.');
     http_response_code(400);
     exit;
 }
 
-try {
-    $config = Configuration::getConfig(CONFIG_FILE_NAME);
-    $config = $config->getArray(CONFIG_SECTION, null);
-} catch (Exception $e) {
-    $config = null;
-}
+$config = getConfiguration();
 
-if (null === $config) {
-    Logger::warning(CLASS_PREFIX . 'Configuration is missing. Using default values');
-}
-
-$sourceIdpAttributeKey = empty($config[SOURCE_IDP_ATTRIBUTE_KEY]) ? SOURCE_IDP_ENTITY_ID : $config[SOURCE_IDP_ATTRIBUTE_KEY];
-
-if (null !== $config && !empty($config[USER_IDENTIFIERS] && is_array($config[USER_IDENTIFIERS]))) {
-    $userIdentifiers = $config[USER_IDENTIFIERS];
-} else {
-    $userIdentifiers = [EDU_PERSON_UNIQUE_ID, EDU_PERSON_PRINCIPAL_NAME, EDU_PERSON_TARGETED_ID, NAMEID, UID];
-}
+$sourceIdpAttribute = $config[SOURCE_IDP_ATTRIBUTE_KEY];
+$identifierAttributes = $config[USER_IDENTIFIERS];
 
 try {
-    if (empty($attributesFromIdP[$sourceIdpAttributeKey][0])) {
-        throw new Exception(CLASS_PREFIX . 'Invalid attributes from Idp - \'' . $sourceIdpAttributeKey . '\' is empty');
+    if (empty($attributesFromIdP[$sourceIdpAttribute][0])) {
+        throw new Exception(
+            DEBUG_PREFIX . 'Invalid attributes from IdP - Attribute \'' . $sourceIdpAttribute . '\' is empty'
+        );
     }
 
-    $extSourceName = $attributesFromIdP[$sourceIdpAttributeKey][0];
-    Logger::debug(CLASS_PREFIX . 'Extracted extSourceName: \'' . $extSourceName . '\'');
+    $extSourceName = $attributesFromIdP[$sourceIdpAttribute][0];
+    Logger::debug(DEBUG_PREFIX . 'Extracted extSourceName: \'' . $extSourceName . '\'');
 
-    $userExtSource = findUserExtSource($adapter, $extSourceName, $attributesFromIdP, $userIdentifiers);
+    $userExtSource = findUserExtSource($adapter, $extSourceName, $attributesFromIdP, $identifierAttributes);
     if (null === $userExtSource) {
         throw new Exception(
-            CLASS_PREFIX . 'There is no UserExtSource that could be used for user ' . $perunUserId . ' and ExtSource ' . $attributesFromIdP[$sourceIdpAttributeKey][0]
+            DEBUG_PREFIX . 'There is no UserExtSource that could be used for user ' . $perunUserId . ' and IdP ' . $extSourceName
         );
     }
 
     $attributesFromPerun = getAttributesFromPerun($adapter, $attrMap, $userExtSource);
-    $attributesToUpdate = getAttributesToUpdate($attributesFromPerun, $attrMap, $attrsToConversion, $attributesFromIdP);
+    $attributesToUpdate = getAttributesToUpdate(
+        $attributesFromPerun,
+        $attrMap,
+        $serializedAttributes,
+        $attributesFromIdP
+    );
 
     if (updateUserExtSource($adapter, $userExtSource, $attributesToUpdate)) {
-        Logger::debug(CLASS_PREFIX . 'Updating UES for user with userId: ' . $perunUserId . ' was successful.');
+        Logger::debug(DEBUG_PREFIX . 'Updating UES for user with userId: ' . $perunUserId . ' was successful.');
     }
 } catch (\Exception $ex) {
     Logger::warning(
-        CLASS_PREFIX . 'Updating UES for user with userId: ' . $perunUserId . ' was not successful: ' .
+        DEBUG_PREFIX . 'Updating UES for user with userId: ' . $perunUserId . ' was not successful: ' .
         $ex->getMessage()
     );
 }
 
-function findUserExtSource($adapter, $extSourceName, $attributes, $userIdentifiers)
+function findUserExtSource($adapter, $extSourceName, $attributesFromIdp, $identifierAttributes)
 {
-    foreach ($attributes as $attrName => $attrValue) {
-        if (!in_array($attrName, $userIdentifiers, true)) {
-            Logger::debug(CLASS_PREFIX . 'Identifier \'' . $attrName . '\' not listed in userIdentifiers. Skipping');
+    foreach ($attributesFromIdp as $attrName => $attrValue) {
+        if (!in_array($attrName, $identifierAttributes, true)) {
+            Logger::debug(DEBUG_PREFIX . 'Identifier \'' . $attrName . '\' not listed in userIdentifiers. Skipping');
             continue;
         }
 
-        if (is_array($attrValue)) {
-            foreach ($attrValue as $extLogin) {
-                $userExtSource = getUserExtSource($adapter, $extSourceName, $extLogin);
+        if (!is_array($attrValue)) {
+            $attrValue = [$attrValue];
+        }
 
-                if (null !== $userExtSource) {
-                    return $userExtSource;
-                }
-            }
-        } elseif (is_string($attrValue)) {
-            $userExtSource = getUserExtSource($adapter, $attrValue, $extLogin);
+        foreach ($attrValue as $extLogin) {
+            $userExtSource = getUserExtSource($adapter, $extSourceName, $extLogin);
 
             if (null !== $userExtSource) {
+                Logger::debug(
+                    DEBUG_PREFIX . 'Found user ext source for combination extSourceName \''
+                    . $extSourceName . '\' and extLogin \'' . $extLogin . '\''
+                );
+
                 return $userExtSource;
             }
         }
@@ -155,8 +176,8 @@ function getUserExtSource($adapter, $extSourceName, $extLogin)
     try {
         return $adapter->getUserExtSource($extSourceName, $extLogin);
     } catch (SimpleSAML\Module\perun\Exception $ex) {
-        Logger::debug(CLASS_PREFIX . 'Caught exception when fetching user ext source, probably does not exist.');
-        Logger::debug(CLASS_PREFIX . $ex->getMessage());
+        Logger::debug(DEBUG_PREFIX . 'Caught exception when fetching user ext source, probably does not exist.');
+        Logger::debug(DEBUG_PREFIX . $ex->getMessage());
 
         return null;
     }
@@ -164,8 +185,11 @@ function getUserExtSource($adapter, $extSourceName, $extLogin)
 
 function getAttributesFromPerun($adapter, $attrMap, $userExtSource): array
 {
-    $attributesFromPerunRaw = $adapter->getUserExtSourceAttributes($userExtSource[ID], array_keys($attrMap));
     $attributesFromPerun = [];
+    $attributesFromPerunRaw = $adapter->getUserExtSourceAttributes($userExtSource[ID], array_keys($attrMap));
+    if (empty($attributesFromPerunRaw)) {
+        throw new Exception(DEBUG_PREFIX . 'Getting attributes for UES was not successful.');
+    }
 
     foreach ($attributesFromPerunRaw as $rawAttribute) {
         if (!empty($rawAttribute[NAME])) {
@@ -173,14 +197,14 @@ function getAttributesFromPerun($adapter, $attrMap, $userExtSource): array
         }
     }
 
-    if (null === $attributesFromPerun) {
-        throw new Exception(CLASS_PREFIX . 'Getting attributes was not successful.');
+    if (empty($attributesFromPerun)) {
+        throw new Exception(DEBUG_PREFIX . 'Getting attributes for UES was not successful.');
     }
 
     return $attributesFromPerun;
 }
 
-function getAttributesToUpdate($attributesFromPerun, $attrMap, $attrsToConversion, $attributesFromIdP): array
+function getAttributesToUpdate($attributesFromPerun, $attrMap, $serializedAttributes, $attributesFromIdP): array
 {
     $attributesToUpdate = [];
 
@@ -192,7 +216,7 @@ function getAttributesToUpdate($attributesFromPerun, $attrMap, $attrsToConversio
             $attributesFromIdP[$attrMap[$attrName]] : null;
 
         if (null !== $mappedAttributeName && null !== $idpAttribute) {
-            if (in_array($attrName, $attrsToConversion, true)) {
+            if (in_array($attrName, $serializedAttributes, true)) {
                 $idpAttribute = serializeAsString($idpAttribute);
             }
 
@@ -201,7 +225,8 @@ function getAttributesToUpdate($attributesFromPerun, $attrMap, $attrsToConversio
             } elseif (isComplexType($attribute[TYPE])) {
                 $valueFromIdP = $idpAttribute;
             } else {
-                throw new Exception(CLASS_PREFIX . 'Unsupported type of attribute.');
+                Logger::debug(DEBUG_PREFIX . 'Unsupported type of attribute.');
+                continue;
             }
 
             if ($valueFromIdP !== $attribute[VALUE]) {
@@ -246,7 +271,7 @@ function isComplexType($attributeType): bool
         strpos($attributeType, MAP_TYPE);
 }
 
-function serializeAsString($idpAttribute)
+function serializeAsString($idpAttribute): array
 {
     $arrayAsString = [''];
 
