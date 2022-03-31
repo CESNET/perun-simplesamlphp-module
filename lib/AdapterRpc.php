@@ -83,16 +83,16 @@ class AdapterRpc extends Adapter
                 if (!empty($user['titleBefore'])) {
                     $name .= $user['titleBefore'] . ' ';
                 }
-                if (!empty($user['titleBefore'])) {
+                if (!empty($user['firstName'])) {
                     $name .= $user['firstName'] . ' ';
                 }
-                if (!empty($user['titleBefore'])) {
+                if (!empty($user['middleName'])) {
                     $name .= $user['middleName'] . ' ';
                 }
-                if (!empty($user['titleBefore'])) {
+                if (!empty($user['lastName'])) {
                     $name .= $user['lastName'];
                 }
-                if (!empty($user['titleBefore'])) {
+                if (!empty($user['titleAfter'])) {
                     $name .= ' ' . $user['titleAfter'];
                 }
 
