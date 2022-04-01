@@ -285,3 +285,27 @@ Configuration options:
     ],
 ],
 ```
+## SpAuthorization
+
+Performs authorization check define dby the SP based on group membership in Perun. User has to be valid member of at least one of the groups assigned to resources of the facility representing the service. If not satisfied, the filter check if registration is enabled. In case of enabled registration, user is forwarded to custom registration link (if configured), or to a dynamic form, where user will select the combination of VO and group to which he/she applies for access. Form then forwards user to Perun registration component. In all other cases, user is forwarded to access denied page.
+NOTE: for correct functionality, RPC adapter must be available, as other adapters cannot fetch info about what groups allow registration (have registration forms) and similar data.
+
+Configuration options:
+* `interface`: specifies what interface of Perun should be used to fetch data. See class `SimpleSAML\Module\perun\PerunAdapter` for more details.
+* `registrar_url`: URL where Perun registration component is located. Expected URL is the base, without any parameters.
+* `check_group_membership_attr`: mapping to the attribute containing flag, if membership check should be performed.
+* `vo_short_names_attr`: mapping to the attribute containing shortnames of the VOs for which the service has resources (gives access to the groups).
+* `registration_link_attr`: mapping to the attribute containing custom service registration link. Filter adds the callback URL, to which to redirect user after the registration, as query string in form of 'callback=URL'.
+* `allow_registration_attr`: mapping to the attribute containing flag, if registration in case of denied access is enabled
+
+```php
+25 => [
+    'class' => 'perun:SpAuthorization',
+    'interface' => 'LDAP',
+    'registrar_url' => 'https://signup.perun.cesnet.cz/fed/registrar/',
+    'check_group_membership_attr' => 'check_group_membership',
+    'vo_short_names_attr' => 'vo_short_names',
+    'registration_link_attr' => 'registration_link',
+    'allow_registration_attr' => 'allow_registration',
+],
+```

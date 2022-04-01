@@ -90,7 +90,15 @@ abstract class Adapter
      * @return Group[] from vo which are assigned to all facilities with spEntityId.
      *                 registering to those groups should should allow access to the service
      */
-    abstract public function getSpGroups($spEntityId);
+    abstract public function getSpGroups(string $spEntityId): array;
+
+    /**
+     * @param Facility $facility representing the SP
+     *
+     * @return Group[] from vo which are assigned to all facilities with spEntityId.
+     *                 registering to those groups should allow access to the service
+     */
+    abstract public function getSpGroupsByFacility(Facility $facility): array;
 
     /**
      * @param User  $user

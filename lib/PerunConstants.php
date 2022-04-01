@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace SimpleSAML\Module\perun;
 
 class PerunConstants
@@ -23,5 +21,21 @@ class PerunConstants
     public const CONFIG = 'config';
 
     public const CONTINUE_FILTER_CONFIG = 'continueFilterConfig';
+
+    public const SP_METADATA = 'SPMetadata';
+
+    public const SP_METADATA_ENTITYID = 'entityid';
+
+    public const VO = 'vo';
+
+    public const GROUP = 'group';
+
+    public const GROUP_MEMBERS = 'members';
+
+    public const SP_INFORMATION_URL = 'InformationURL';
+
+    public const SP_ADMINISTRATION_CONTACT = 'administrationContact';
+
+    public const SP_NAME = 'name';
 
 }
