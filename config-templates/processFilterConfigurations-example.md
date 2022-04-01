@@ -265,3 +265,23 @@ Configuration options:
     'sp_name_qualifier' => 'https://login.cesnet.cz/proxy/',
 ],
 ```
+
+## GenerateIdPAttributes
+
+Gets metadata of the IdP specified by `idp_identifier_attribute` value and tries to set the specified keys from IdP metadata into attributes.
+
+Configuration options:
+* `idp_identifier_attribute`: Attribute holding the identifier of the Authenticating IdP
+* `attribute_map`: Map of IdP metadata attributes, where keys are the colon separated keys that will be searched in IdP metadata and values are the destination attribute names.
+
+```php
+20 => [
+    'class' => 'perun:GenerateIdPAttributes',
+    'idp_identifier_attribute' => 'sourceIdPEntityID',
+    'attribute_map' => [
+        'name:en' => 'sourceIdPName',
+        'OrganizationName:en' => 'sourceIdPOrganizationName',
+        'OrganizationURL:en' => 'sourceIdPOrganizationURL',
+    ],
+],
+```
