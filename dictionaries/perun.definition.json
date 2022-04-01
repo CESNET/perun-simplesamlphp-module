@@ -102,5 +102,13 @@
   "register_button": {
     "en": "Proceed to register for an account",
     "cs": "Pokračovat na registraci ůčtu"
+  },
+  "aup_text": {
+    "en": "Oops! It seems you have tried to access service via Perun AAI, but you have not approved the Acceptable Use Policy (AUP). Let's fix that!",
+    "cs": "Ups! Vyzerá to, že jste se pokousil(a) přihlásit ke službě skrze Perun AAI, no neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
+  },
+  "aup_button": {
+    "en": "Proceed to approval of the AUP",
+    "cs": "Pokračovat na potvrzení souhlasu s AUP"
   }
 }
