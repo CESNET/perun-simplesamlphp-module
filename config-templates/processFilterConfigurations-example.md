@@ -229,3 +229,17 @@ Configuration options:
     'perun_approval_url' => 'https://signup.perun.cesnet.cz/fed/registrar/?vo=cesnet&group=aup'
 ],
 ```
+
+## DropUserAttributes
+
+Drops specified user attributes from the `$request['Attributes']` variable.
+
+Configuration options:
+* `attribute_names`: list of attribute names which will be dropped.
+
+```php
+10 => [
+    'class' => 'perun:DropUserAttributes',
+    'attribute_names' => ['aup', 'eppn', 'eduPersonTargetedID']
+],
+```
