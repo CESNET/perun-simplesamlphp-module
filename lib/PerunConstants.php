@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun;
 
 class PerunConstants
@@ -37,5 +39,4 @@ class PerunConstants
     public const SP_ADMINISTRATION_CONTACT = 'administrationContact';
 
     public const SP_NAME = 'name';
-
 }

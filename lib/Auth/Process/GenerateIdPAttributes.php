@@ -13,7 +13,7 @@ use SimpleSAML\Metadata\MetaDataStorageHandler;
 use SimpleSAML\Module\perun\PerunConstants;
 
 /**
- * Generated attributes based on IdP metadata
+ * Generated attributes based on IdP metadata.
  */
 class GenerateIdPAttributes extends ProcessingFilter
 {

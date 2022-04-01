@@ -202,7 +202,9 @@ class SpAuthorization extends ProcessingFilter
                 $callback = Module::getModuleURL(self::CALLBACK, [
                     self::PARAM_STATE_ID => $stateId,
                 ]);
-                HTTP::redirectTrustedURL($registrationLink, [self::PARAM_CALLBACK => $callback]);
+                HTTP::redirectTrustedURL($registrationLink, [
+                    self::PARAM_CALLBACK => $callback,
+                ]);
                 exit;
             }
             try {

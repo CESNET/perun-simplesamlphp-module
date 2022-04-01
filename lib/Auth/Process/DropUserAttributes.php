@@ -10,7 +10,7 @@ use SimpleSAML\Logger;
 use SimpleSAML\Module\perun\PerunConstants;
 
 /**
- * Drop specified user attributes
+ * Drop specified user attributes.
  */
 class DropUserAttributes extends ProcessingFilter
 {

@@ -48,10 +48,9 @@ class QualifyNameID extends ProcessingFilter
 
         $this->nameQualifier = $this->filterConfig->getString(self::NAME_QUALIFIER, null);
         $this->nameQualifierAttribute = $this->filterConfig->getString(self::NAME_QUALIFIER_ATTRIBUTE, null);
-        if (empty ($this->nameQualifier) && empty($this->nameQualifierAttribute)) {
+        if (empty($this->nameQualifier) && empty($this->nameQualifierAttribute)) {
             throw new Exception(
-                self::DEBUG_PREFIX . 'missing mandatory configuration for option \''
-                . self::NAME_QUALIFIER . '\' or \'' . self::NAME_QUALIFIER_ATTRIBUTE . '\', one must be configured.'
+                self::DEBUG_PREFIX . 'missing mandatory configuration for option \'' . self::NAME_QUALIFIER . '\' or \'' . self::NAME_QUALIFIER_ATTRIBUTE . '\', one must be configured.'
             );
         }
 
@@ -59,8 +58,7 @@ class QualifyNameID extends ProcessingFilter
         $this->spNameQualifierAttribute = $this->filterConfig->getString(self::SP_NAME_QUALIFIER_ATTRIBUTE, null);
         if (empty($this->spNameQualifier) && empty($this->spNameQualifierAttribute)) {
             throw new Exception(
-                self::DEBUG_PREFIX . 'missing mandatory configuration for option \''
-                . self::SP_NAME_QUALIFIER . '\' or \'' . self::SP_NAME_QUALIFIER_ATTRIBUTE . '\', one must be configured.'
+                self::DEBUG_PREFIX . 'missing mandatory configuration for option \'' . self::SP_NAME_QUALIFIER . '\' or \'' . self::SP_NAME_QUALIFIER_ATTRIBUTE . '\', one must be configured.'
             );
         }
     }
