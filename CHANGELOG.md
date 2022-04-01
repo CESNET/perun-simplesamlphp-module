@@ -1,3 +1,10 @@
+## [7.5.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.5.0...v7.5.1) (2022-04-01)
+
+
+### Bug Fixes
+
+* getPerunUser name construction ([ec7150a](https://github.com/CESNET/perun-simplesamlphp-module/commit/ec7150a8cd75b40f57e808cde1108fd7425c249e))
+
 # [7.5.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.4.0...v7.5.0) (2022-03-30)
 
 
