@@ -179,5 +179,28 @@ Configuration options:
     'fail_on_nonexisting_keys' => 'true',
     'default_value' => null,
 ],
+```
 
+## PerunUser
+
+Filter tries to identify the Perun user. It uses the combination of user identifier and IdP identifier to find the user (or to be more precise, the user identity and associated user account). If it can, the user object is set to `$request` parameter into `$request[PerunConstants::PERUN][PerunConstants::USER]`. Otherwise, user is forwarded to configured registration.
+
+Configuration options:
+* `interface`: specifies what interface of Perun should be used to fetch data. See class `SimpleSAML\Module\perun\PerunAdapter` for more details.
+* `uid_attrs`: list of attributes that contain user identifiers to be used for identification. The order of the items in the list represents the priority.
+* `idp_id_attr`: name of the attribute (from `$request['Attributes']` array), which holds EntityID of the identity provider that has performed the authentication.
+* `register_url`: URL to which the user will be forwarded for registration. Leave empty to use the Perun registrar.
+* `callback_parameter_name`: name of the parameter wich will hold callback URL, where the user should be redirected after the registration on URL configured in the `register_url` property.
+* `perun_register_url`: the complete URL (including vo and group) to which user will be redirected, if `register_url` has not been configured. Parameters targetnew, targetexisting and targetextended will be set to callback URL to continue after the registration is completed.
+
+```php
+2 => [
+    'class' => 'perun:PerunUser',
+    'interface' => 'LDAP',
+    'uid_attrs' => ['eduPersonUniqueId', 'eduPersonPrincipalName'],
+    'idp_id_attr' => 'authenticating_idp',
+    'register_url' => 'https://signup.cesnet.cz/',
+    'callback_parameter_name' => 'callback',
+    'perun_register_url' => 'https://signup.perun.cesnet.cz/fed/registrar/?vo=cesnet'
+],
 ```

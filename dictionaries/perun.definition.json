@@ -94,5 +94,13 @@
   "unauthorized-access_redirect_to_registration": {
     "en": "Now you will be redirected to registration to Perun system.",
     "cs": "Nyní budete přesměrování na registraci do systému Perun."
+  },
+  "register_text": {
+    "en": "Oops! It seems you have tried to access service via Perun AAI, but yo do not have an account. Let's fix that!",
+    "cs": "Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz Perun AAI, no nemáte uživatelský účet. Pojďme to napravit!"
+  },
+  "register_button": {
+    "en": "Proceed to register for an account",
+    "cs": "Pokračovat na registraci ůčtu"
   }
 }

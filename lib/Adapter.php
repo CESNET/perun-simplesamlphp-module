@@ -48,7 +48,7 @@ abstract class Adapter
 
     /**
      * @param string $idpEntityId entity id of hosted idp used as extSourceName
-     * @param string $uids        list of user identifiers received from remote idp used as userExtSourceLogin
+     * @param array  $uids        list of user identifiers received from remote idp used as userExtSourceLogin
      *
      * @return User or null if not exists
      */
