@@ -243,3 +243,25 @@ Configuration options:
     'attribute_names' => ['aup', 'eppn', 'eduPersonTargetedID']
 ],
 ```
+
+## QualifyNameID
+
+Adds qualifiers into NameID based on the configuration
+
+Configuration options:
+* `name_id_attribute`: Attribute (NameID) which should be qualified
+* `name_qualifier_attribute`: User attribute with value, which will be set as the NameQualifier part of the NameID. Leave empty to use static value configured via option `name_qualifier`.
+* `name_qualifier`: Static value which will be set as the NameQualifier part of the NameID.
+* `sp_name_qualifier_attribute`: User attribute with value, which will be set as the SPNameQualifier part of the NameID. Leave empty to use static value configured via option `sp_name_qualifier`.
+* `sp_name_qualifier`: Static value which will be set as the SPNameQualifier part of the NameID.
+
+```php
+11 => [
+    'class' => 'perun:QualifyNameID',
+    'name_id_attribute' => 'eduPersonTargetedID',
+    'name_qualifier_attribute' => 'SourceIdPEntityID',
+    'name_qualifier' => 'https://login.cesnet.cz/idp/',
+    'sp_name_qualifier_attribute' => 'ProxyEntityID',
+    'sp_name_qualifier' => 'https://login.cesnet.cz/proxy/',
+],
+```
