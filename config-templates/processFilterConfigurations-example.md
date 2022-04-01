@@ -160,3 +160,24 @@ Example how to enable filter AttributeMap:
     // 'interface' => 'rpc', # optional, rpc/ldap, default rpc
 ],
 ```
+
+## ExtractRequestAttribute
+
+Filter is intended to extract an attribute specified by set of keys forming the chain of keys in the `$request` variable into the configured destination attribute.
+Configuration options:
+* `attr_name`: specifies attribute name, into which the extracted value will be stored
+* `request_keys`: string, which contains a semicolon (`;`) separated chain of keys that are examined in the state. Numeric keys are automatically treated as array indexes. For instance, value `'saml:AuthenticatingAuthority;0'` will be treated as code `$request['saml:AuthenticatingAuthority'][0]`. In case of this value being empty, exception is thrown. Otherwise, extracted value is stored into the configured destination attribute.
+* `fail_on_nonexisting_keys`: `true` or `false`, specifies if in case of missing key in the request variable the filter should terminate with an exception or not
+* `default_value`: array, which will be set as default value, if the configured keys did not lead to value
+
+```php
+// EXTRACT AUTHENTICATING ENTITY INTO authenticating_idp attribute
+1 => [ 
+    'class' => 'perun:ExtractRequestAttribute',
+    'attr_name' => 'authenticating_idp',
+    'request_keys' => 'saml:AuthenticatingAuthority;0',
+    'fail_on_nonexisting_keys' => 'true',
+    'default_value' => null,
+],
+
+```
