@@ -33,6 +33,8 @@ class Disco extends PowerIdPDisco
 
     public const MFA_PROFILE = 'https://refeds.org/profile/mfa';
 
+    public const URN_CESNET_PROXYIDP_LSIDPENTITYID = 'urn:cesnet:proxyidp:lsidpentityid:';
+
     // ROOT CONFIGURATION ENTRY
     public const WAYF = 'wayf_config';
 
@@ -170,6 +172,8 @@ class Disco extends PowerIdPDisco
 
     private $proxyIdpEntityId;
 
+    private $authId;
+
     public function __construct(array $metadataSets, $instance)
     {
         //LOAD CONFIG FOR MODULE PERUN, WHICH CONTAINS WAYF CONFIGURATION
@@ -190,6 +194,7 @@ class Disco extends PowerIdPDisco
 
         if (isset($query[self::AUTH_ID])) {
             $id = explode(':', $query[self::AUTH_ID])[0];
+            $this->authId = $id;
             $state = State::loadState($id, self::SAML_SP_SSO, true);
 
             if (null !== $state) {
@@ -265,6 +270,26 @@ class Disco extends PowerIdPDisco
                             $this->returnURL,
                             $this->returnIdParam,
                             $idpEntityId
+                        );
+                        HTTP::redirectTrustedURL($url);
+                    }
+                    $acrStartSubstr = substr($value, 0, strlen(self::URN_CESNET_PROXYIDP_LSIDPENTITYID));
+                    if (self::URN_CESNET_PROXYIDP_LSIDPENTITYID === $acrStartSubstr) {
+                        $hintIdpEntityId = substr(
+                            $value,
+                            strlen(self::URN_CESNET_PROXYIDP_LSIDPENTITYID),
+                            strlen($value)
+                        );
+                        $state = State::loadState($this->authId, self::SAML_SP_SSO, true);
+                        $state['aarc_idp_hint'] = $hintIdpEntityId;
+                        $id = State::saveState($state, self::SAML_SP_SSO);
+
+                        Logger::info('Redirecting to LS AAI with hint to: ' . $hintIdpEntityId);
+                        $url = self::buildContinueUrl(
+                            $this->spEntityId,
+                            $this->returnURL,
+                            $this->returnIdParam,
+                            'https://proxy.aai.lifescience-ri.eu/proxy'
                         );
                         HTTP::redirectTrustedURL($url);
                     }
@@ -490,7 +515,7 @@ class Disco extends PowerIdPDisco
         if (0 === $idpCount) {
             return $html;
         }
-        $html .= '<div class="row">' . PHP_EOL;
+        $html .= '<div class="col-12 row">' . PHP_EOL;
         $html .= self::addLoginOptionHint($t, $blockConfig);
 
         $counter = 0;
@@ -560,9 +585,9 @@ class Disco extends PowerIdPDisco
         $result .= '<div id="type-more" class="small text-muted">' . $t->t(
             '{perun:disco:search_start_hint}'
         ) . '</div>' . PHP_EOL;
-        $result .= '<div class="inlinesearch">' . PHP_EOL;
+        $result .= '<div class="inlinesearch col-12">' . PHP_EOL;
         $result .= '    <form id="idpselectform" action="?" method="get">' . PHP_EOL;
-        $result .= '        <input class="inlinesearch form-control input-lg" type="text" value=""
+        $result .= '        <input class="inlinesearch form-control-lg" type="text" value=""
             name="query" id="query" autofocus placeholder="'
             . $t->t($placeholderTranslateKey) . '"/>' . PHP_EOL;
         $result .= '    </form>';
