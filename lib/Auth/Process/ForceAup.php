@@ -323,6 +323,9 @@ class ForceAup extends ProcessingFilter
      */
     private function parseDateTime(string $date, DateTime $default = null): DateTime
     {
+        if (null === $default) {
+            $default = DateTime::createFromFormat(self::DATETIME_FORMAT, '1970-01-01');
+        }
         $result = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
         if (false === $result) {
             $result = $default;
