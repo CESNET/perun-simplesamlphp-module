@@ -1,3 +1,10 @@
+## [7.6.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.0...v7.6.1) (2022-04-04)
+
+
+### Bug Fixes
+
+* 🐛 Fix default value in ForceAup due to strictypes ([eb75544](https://github.com/CESNET/perun-simplesamlphp-module/commit/eb75544958bf6feee5bbd644b7aa7b872a21402b))
+
 # [7.6.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.5.1...v7.6.0) (2022-04-04)
 
 
