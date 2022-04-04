@@ -152,14 +152,15 @@ class AdapterLdap extends Adapter
         return $groups;
     }
 
-    public function getSpGroups($spEntityId)
+    public function getSpGroups(string $spEntityId): array
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
-        if (null === $facility) {
-            return [];
-        }
+        return $this->getSpGroupsByFacility($facility);
+    }
 
+    public function getSpGroupsByFacility(Facility $facility): array
+    {
         $id = $facility->getId();
 
         $resources = $this->connector->searchForEntities(
@@ -177,16 +178,13 @@ class AdapterLdap extends Adapter
                         '(objectClass=perunGroup)',
                         ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
                     );
-                    array_push(
-                        $groups,
-                        new Group(
-                            $group['perunGroupId'][0],
-                            $group['perunVoId'][0],
-                            $group['uuid'][0],
-                            $group['cn'],
-                            $group['perunUniqueGroupName'][0],
-                            $group['description'][0] ?? ''
-                        )
+                    $groups[] = new Group(
+                        $group['perunGroupId'][0],
+                        $group['perunVoId'][0],
+                        $group['uuid'][0],
+                        $group['cn'],
+                        $group['perunUniqueGroupName'][0],
+                        $group['description'][0] ?? ''
                     );
                 }
             }

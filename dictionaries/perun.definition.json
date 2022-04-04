@@ -94,5 +94,66 @@
   "unauthorized-access_redirect_to_registration": {
     "en": "Now you will be redirected to registration to Perun system.",
     "cs": "Nyní budete přesměrování na registraci do systému Perun."
+  },
+  "register_text": {
+    "en": "Oops! It seems you have tried to access service via Perun AAI, but yo do not have an account. Let's fix that!",
+    "cs": "Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz Perun AAI, no nemáte uživatelský účet. Pojďme to napravit!"
+  },
+  "register_button": {
+    "en": "Proceed to register for an account",
+    "cs": "Pokračovat na registraci ůčtu"
+  },
+  "aup_text": {
+    "en": "Oops! It seems you have tried to access service via Perun AAI, but you have not approved the Acceptable Use Policy (AUP). Let's fix that!",
+    "cs": "Ups! Vyzerá to, že jste se pokousil(a) přihlásit ke službě skrze Perun AAI, no neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
+  },
+  "aup_button": {
+    "en": "Proceed to approval of the AUP",
+    "cs": "Pokračovat na potvrzení souhlasu s AUP"
+  },
+  ,
+  "sp_authorize_403_header": {
+    "en": "Unauthorized",
+    "cs": "Přístup zamítnut"
+  },
+  "sp_authorize_403_text": {
+    "en": "You are not authorized to access the service ",
+    "cs": "Nesplňujete autorizační pravidla pro přístup ke službě "
+  },
+  "sp_authorize_403_information_page": {
+    "en": "For more information about the service, visit ",
+    "cs": "Pro více informací o službě, navštivte "
+  },
+  "sp_authorize_403_information_page_link_text": {
+    "en": "this page",
+    "cs": "tuhle stránku"
+  },
+  "sp_authorize_403_contact_support": {
+    "en": "If you think you should have access to the service, please contact the service administrator at ",
+    "cs": "Jestli máte mít přístup ke službě, kontaktujte správce služby na "
+  },
+  "sp_authorize_403_subject": {
+    "en": "Unauthorized access",
+    "cs": "Přístup zamítnut"
+  },
+  "sp_authorize_notify_text": {
+    "en": "You are not authorized to access the service ",
+    "cs": "Nesplňujete autorizační pravidla pro přístup ke službě"
+  },
+  "sp_authorize_notify_information_page": {
+    "en": "For more information about the service, visit ",
+    "cs": "Pro více informací o službě, navštivte "
+  },
+  "sp_authorize_notify_information_page_link_text": {
+    "en": "this page",
+    "cs": "tuhle stránku"
+  },
+  "sp_authorize_notify_text2": {
+    "en": "We will now redirect you to a registration page, where you will apply for the access.",
+    "cs": "Budete přesmerován(a) na stránku, kde můžete o p%rístup na službu zažádat."
+  },
+  "sp_authorize_notify_button": {
+    "en": "Proceed to registration",
+    "cs": "Pokračovat na registrační stránku"
   }
 }

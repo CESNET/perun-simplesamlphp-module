@@ -154,7 +154,7 @@ class AdapterRpc extends Adapter
         return $convertedGroups;
     }
 
-    public function getSpGroups($spEntityId)
+    public function getSpGroups(string $spEntityId): array
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
@@ -162,15 +162,22 @@ class AdapterRpc extends Adapter
             return [];
         }
 
+        return $this->getSpGroupsByFacility($facility);
+    }
+
+    public function getSpGroupsByFacility(Facility $facility): array
+    {
         $perunAttrs = $this->connector->get('facilitiesManager', 'getAssignedResources', [
             'facility' => $facility->getId(),
         ]);
 
         $resources = [];
         foreach ($perunAttrs as $perunAttr) {
-            array_push(
-                $resources,
-                new Resource($perunAttr['id'], $perunAttr['voId'], $perunAttr['facilityId'], $perunAttr['name'])
+            $resources[] = new Resource(
+                $perunAttr['id'],
+                $perunAttr['voId'],
+                $perunAttr['facilityId'],
+                $perunAttr['name']
             );
         }
 
@@ -186,16 +193,13 @@ class AdapterRpc extends Adapter
                     'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName',
                 ]);
                 $uniqueName = $attr['value'] . ':' . $group['name'];
-                array_push(
-                    $spGroups,
-                    new Group(
-                        $group['id'],
-                        $group['voId'],
-                        $group['uuid'],
-                        $group['name'],
-                        $uniqueName,
-                        $group['description']
-                    )
+                $spGroups[] = new Group(
+                    $group['id'],
+                    $group['voId'],
+                    $group['uuid'],
+                    $group['name'],
+                    $uniqueName,
+                    $group['description']
                 );
             }
         }

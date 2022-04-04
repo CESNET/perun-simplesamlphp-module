@@ -48,7 +48,7 @@ abstract class Adapter
 
     /**
      * @param string $idpEntityId entity id of hosted idp used as extSourceName
-     * @param string $uids        list of user identifiers received from remote idp used as userExtSourceLogin
+     * @param array  $uids        list of user identifiers received from remote idp used as userExtSourceLogin
      *
      * @return User or null if not exists
      */
@@ -90,7 +90,15 @@ abstract class Adapter
      * @return Group[] from vo which are assigned to all facilities with spEntityId.
      *                 registering to those groups should should allow access to the service
      */
-    abstract public function getSpGroups($spEntityId);
+    abstract public function getSpGroups(string $spEntityId): array;
+
+    /**
+     * @param Facility $facility representing the SP
+     *
+     * @return Group[] from vo which are assigned to all facilities with spEntityId.
+     *                 registering to those groups should allow access to the service
+     */
+    abstract public function getSpGroupsByFacility(Facility $facility): array;
 
     /**
      * @param User  $user
