@@ -1,3 +1,22 @@
+# [7.6.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.5.1...v7.6.0) (2022-04-04)
+
+
+### Bug Fixes
+
+* 🐛 Fix code style ([77729ea](https://github.com/CESNET/perun-simplesamlphp-module/commit/77729ea0fc11eb37f7c2576d2866bfb79f372b62))
+
+
+### Features
+
+* 🎸 AuthProcFilter GenerateIdPAttributes ([a2ca6ea](https://github.com/CESNET/perun-simplesamlphp-module/commit/a2ca6ea455bbcd281d3d9fefb564e39c32f5e7e0))
+* 🎸 AuthProcFilter PerunUser - identify user from Perun ([b31976a](https://github.com/CESNET/perun-simplesamlphp-module/commit/b31976a4ace2fd0d592632e83131d453e3a6b103))
+* 🎸 AuthProcFilter QualifyNameID ([1f8bd75](https://github.com/CESNET/perun-simplesamlphp-module/commit/1f8bd750bb6013d56ea4332c50b38560aa955fcd))
+* 🎸 DropUserAttributes authProcFilter ([c763ad9](https://github.com/CESNET/perun-simplesamlphp-module/commit/c763ad9e97cc2fd6b191f7b95f096ce6a042255f))
+* 🎸 New filter for extracting attribute from request var ([6c6110f](https://github.com/CESNET/perun-simplesamlphp-module/commit/6c6110fd0ab2eee62ee68a0e819fbb94bf2b185e))
+* 🎸 PerunAup authProcFilter ([301139a](https://github.com/CESNET/perun-simplesamlphp-module/commit/301139a4c72357e65dfa1b5f2423c179fb080d75))
+* 🎸 SpAuthorization authproc filter ([5771a1b](https://github.com/CESNET/perun-simplesamlphp-module/commit/5771a1b3cf04db4805f26cee3a0934ddb2399fe1))
+* Consolidator app ([e7bbde9](https://github.com/CESNET/perun-simplesamlphp-module/commit/e7bbde9a85f8c0d67a16e6987a7614bbc9bb4995))
+
 ## [7.5.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.5.0...v7.5.1) (2022-04-01)
 
 
