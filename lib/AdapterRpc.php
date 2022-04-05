@@ -685,14 +685,14 @@ class AdapterRpc extends Adapter
 
         foreach ($perunAttrs as $perunAttr) {
             $perunAttrName = $perunAttr['namespace'] . ':' . $perunAttr['friendlyName'];
-            $attributes[$attrNamesMap[$perunAttrName]] = [
-                'id' => $perunAttr['id'],
-                'name' => $attrNamesMap[$perunAttrName],
-                'displayName' => $perunAttr['displayName'],
-                'type' => $perunAttr['type'],
-                'value' => $perunAttr['value'],
-                'friendlyName' => $perunAttr['friendlyName'],
-            ];
+            $attribute = [];
+            foreach (array_keys($perunAttr) as $key) {
+                $attribute[$key] = $perunAttr[$key];
+            }
+
+            $attribute['name'] = $attrNamesMap[$perunAttrName];
+            $attributes[$attrNamesMap[$perunAttrName]] = $attribute;
+
         }
 
         return $attributes;
