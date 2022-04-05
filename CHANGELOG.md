@@ -1,3 +1,10 @@
+## [7.6.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.1...v7.6.2) (2022-04-05)
+
+
+### Bug Fixes
+
+* 🐛 Fix JSON in perun dictionary ([41bf728](https://github.com/CESNET/perun-simplesamlphp-module/commit/41bf7281a5e1af734f0ad5edba260d988bfa4438))
+
 ## [7.6.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.0...v7.6.1) (2022-04-04)
 
 
