@@ -32,30 +32,29 @@ class QualifyNameID extends ProcessingFilter
     private $nameQualifierAttribute;
     private $spNameQualifier;
     private $spNameQualifierAttribute;
-    private $filterConfig;
 
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
         $filterConfig = Configuration::loadFromArray($config);
 
-        $this->targetedIdAttribute = $this->filterConfig->getString(self::NAME_ID_ATTRIBUTE, null);
+        $this->targetedIdAttribute = $filterConfig->getString(self::NAME_ID_ATTRIBUTE, null);
         if (empty($this->targetedIdAttribute)) {
             throw new Exception(
                 self::DEBUG_PREFIX . 'missing mandatory configuration for option \'' . self::NAME_ID_ATTRIBUTE . '\''
             );
         }
 
-        $this->nameQualifier = $this->filterConfig->getString(self::NAME_QUALIFIER, null);
-        $this->nameQualifierAttribute = $this->filterConfig->getString(self::NAME_QUALIFIER_ATTRIBUTE, null);
+        $this->nameQualifier = $filterConfig->getString(self::NAME_QUALIFIER, null);
+        $this->nameQualifierAttribute = $filterConfig->getString(self::NAME_QUALIFIER_ATTRIBUTE, null);
         if (empty($this->nameQualifier) && empty($this->nameQualifierAttribute)) {
             throw new Exception(
                 self::DEBUG_PREFIX . 'missing mandatory configuration for option \'' . self::NAME_QUALIFIER . '\' or \'' . self::NAME_QUALIFIER_ATTRIBUTE . '\', one must be configured.'
             );
         }
 
-        $this->spNameQualifier = $this->filterConfig->getString(self::SP_NAME_QUALIFIER, null);
-        $this->spNameQualifierAttribute = $this->filterConfig->getString(self::SP_NAME_QUALIFIER_ATTRIBUTE, null);
+        $this->spNameQualifier = $filterConfig->getString(self::SP_NAME_QUALIFIER, null);
+        $this->spNameQualifierAttribute = $filterConfig->getString(self::SP_NAME_QUALIFIER_ATTRIBUTE, null);
         if (empty($this->spNameQualifier) && empty($this->spNameQualifierAttribute)) {
             throw new Exception(
                 self::DEBUG_PREFIX . 'missing mandatory configuration for option \'' . self::SP_NAME_QUALIFIER . '\' or \'' . self::SP_NAME_QUALIFIER_ATTRIBUTE . '\', one must be configured.'
