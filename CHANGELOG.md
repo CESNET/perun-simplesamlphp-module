@@ -1,3 +1,10 @@
+## [7.6.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.3...v7.6.4) (2022-04-06)
+
+
+### Bug Fixes
+
+* Filters ([96a75de](https://github.com/CESNET/perun-simplesamlphp-module/commit/96a75dea431e2cdd287462bd7dc76ac97e537f92))
+
 ## [7.6.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.2...v7.6.3) (2022-04-06)
 
 
