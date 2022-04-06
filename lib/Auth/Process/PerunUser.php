@@ -60,13 +60,13 @@ class PerunUser extends ProcessingFilter
         $this->userIdAttrs = $this->filterConfig->getArray(self::UID_ATTRS, []);
         if (empty($this->userIdAttrs)) {
             throw new Exception(
-                self::DEBUG_PREFIX . 'Invalid configuration: no attributes configured for ' . 'extracting UID. Use option \'' . self::UID_ATTRS . '\' to configure list of attributes, ' . 'that should be considered as IDs for a user'
+                self::DEBUG_PREFIX . 'Invalid configuration: no attributes configured for extracting UID. Use option \'' . self::UID_ATTRS . '\' to configure list of attributes, that should be considered as IDs for a user'
             );
         }
         $this->idpEntityIdAttr = $this->filterConfig->getString(self::IDP_ID_ATTR, null);
         if (empty($this->idpEntityIdAttr)) {
             throw new Exception(
-                self::DEBUG_PREFIX . 'Invalid configuration: no attribute containing IDP ' . 'ID has been configured. Use option \'' . self::IDP_ID_ATTR . '\' to configure the name of the ' . 'attribute, that has been previously used in the configuration of filter \'perun:ExtractIdpEntityId\''
+                self::DEBUG_PREFIX . 'Invalid configuration: no attribute containing IDP ID has been configured. Use option \'' . self::IDP_ID_ATTR . '\' to configure the name of the attribute, that has been previously used in the configuration of filter \'perun:ExtractIdpEntityId\''
             );
         }
         $this->registerUrl = $this->filterConfig->getString(self::REGISTER_URL, null);
@@ -74,7 +74,7 @@ class PerunUser extends ProcessingFilter
         $this->perunRegisterUrl = $this->filterConfig->getString(self::PERUN_REGISTER_URL, null);
         if (empty($this->registerUrl) && empty($this->callbackParameterName) && empty($this->perunRegisterUrl)) {
             throw new Exception(
-                self::DEBUG_PREFIX . 'Invalid configuration: no URL where user should register for the ' . 'account has been configured. Use option \'' . self::REGISTER_URL . '\' to configure the URL and ' . 'option \'' . self::CALLBACK_PARAMETER_NAME . '\' to configure name of the callback parameter. 
+                self::DEBUG_PREFIX . 'Invalid configuration: no URL where user should register for the account has been configured. Use option \'' . self::REGISTER_URL . '\' to configure the URL and option \'' . self::CALLBACK_PARAMETER_NAME . '\' to configure name of the callback parameter. 
                 . If you wish to use the Perun registrar, use the option \'' . self::PERUN_REGISTER_URL . '\'.'
             );
         }
@@ -92,10 +92,10 @@ class PerunUser extends ProcessingFilter
             }
         }
         if (empty($uids)) {
-            throw new Exception(self::DEBUG_PREFIX . 'missing at least one of mandatory attributes [' . implode(
-                ', ',
-                $this->userIdAttrs
-            ) . '] in request.');
+            $serializedUids = implode(', ', $this->userIdAttrs);
+            throw new Exception(
+                self::DEBUG_PREFIX . 'missing at least one of mandatory attributes [' . $serializedUids . '] in request.'
+            );
         }
 
         if (!empty($request[PerunConstants::ATTRIBUTES][$this->idpEntityIdAttr][0])) {
@@ -109,13 +109,10 @@ class PerunUser extends ProcessingFilter
         $user = $this->adapter->getPerunUser($idpEntityId, $uids);
 
         if (!empty($user)) {
-            Logger::debug(self::DEBUG_PREFIX . 'User identified, setting Perun user into request.');
             $this->processUser($request, $user, $uids);
-
-            return;
+        } else {
+            $this->register($request, $uids);
         }
-        Logger::debug(self::DEBUG_PREFIX . 'User not identified, redirecting to registration.');
-        $this->register($request, $uids);
     }
 
     private function processUser(array &$request, User $user, array $uids): void
@@ -126,9 +123,9 @@ class PerunUser extends ProcessingFilter
 
         $request[PerunConstants::PERUN][PerunConstants::USER] = $user;
 
+        $logUids = implode(', ', $uids);
         Logger::info(
-            self::DEBUG_PREFIX . 'Perun user with identity/ies: ' . implode(',', $uids)
-            . ' has been found. Setting user ' . $user->getName() . ' with id: ' . $user->getId() . ' to the request.'
+            self::DEBUG_PREFIX . 'Perun user with identity/ies: \'' . $logUids . '\' has been found. Setting user ' . $user->getName() . ' with id: ' . $user->getId() . ' to the request.'
         );
     }
 
@@ -140,35 +137,34 @@ class PerunUser extends ProcessingFilter
             self::PARAM_STATE_ID => $stateId,
         ]);
         Logger::debug(self::DEBUG_PREFIX . 'Produced callback URL \'' . $callback . '\'');
+        $url = '';
+        $params = [];
 
         if (!empty($this->registerUrl) && !empty($this->callbackParameterName)) {
+            $url = $this->registerUrl;
+            $params[$this->callbackParameterName] = $callback;
             Logger::debug(
-                self::DEBUG_PREFIX . 'Redirecting to \'' . $this->registerUrl . ', callback parameter \''
-                . $this->callbackParameterName . '\' with value \'' . $callback . '\''
+                self::DEBUG_PREFIX . 'Redirecting to \'' . $this->registerUrl . ', callback parameter \'' . $this->callbackParameterName . '\' set to value \'' . $callback . '\'.'
             );
-            HTTP::redirectTrustedURL($this->registerUrl, [
-                $this->callbackParameterName => $callback,
-            ]);
         } elseif (!empty($this->perunRegisterUrl)) {
-            $params[PerunConstants::TARGET_NEW] = $callback;
-            $params[PerunConstants::TARGET_EXISTING] = $callback;
-            $params[PerunConstants::TARGET_EXTENDED] = $callback;
+            $perunParams[PerunConstants::TARGET_NEW] = $callback;
+            $perunParams[PerunConstants::TARGET_EXISTING] = $callback;
+            $perunParams[PerunConstants::TARGET_EXTENDED] = $callback;
+            $registrationUrl = HTTP::addURLParameters($this->perunRegisterUrl, $perunParams);
 
             $url = Module::getModuleURL(self::REDIRECT);
-            $registrationUrl = HTTP::addURLParameters($this->perunRegisterUrl, $params);
+            $params[self::PARAM_REGISTRATION_URL] = $registrationUrl;
             Logger::debug(
-                self::DEBUG_PREFIX . 'Redirecting to \'' . self::REDIRECT . ', registration URL \''
-                . $registrationUrl . '\''
+                self::DEBUG_PREFIX . 'Redirecting to \'' . self::REDIRECT . ', param registration URL \'' . $registrationUrl . '\'.'
             );
-            HTTP::redirectTrustedURL($url, [
-                self::PARAM_REGISTRATION_URL => $registrationUrl,
-            ]);
         } else {
-            throw new Exception(self::DEBUG_PREFIX . 'No configuration for registration enabled. Cannot proceed');
+            throw new Exception(self::DEBUG_PREFIX . 'No configuration for registration set. Cannot proceed.');
         }
+
+        HTTP::redirectTrustedURL($url, $params);
+        $logUids = implode(', ', $uids);
         Logger::info(
-            self::DEBUG_PREFIX . 'Perun user with identity/ies: ' . implode(',', $uids) .
-            ' has not been found. Redirecting to registration.'
+            self::DEBUG_PREFIX . 'Perun user with identity/ies: \'' . $logUids . '\' has not been found. User has been redirected to registration.'
         );
     }
 }
