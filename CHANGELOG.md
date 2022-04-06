@@ -1,3 +1,11 @@
+## [7.6.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.2...v7.6.3) (2022-04-06)
+
+
+### Bug Fixes
+
+* 🐛 Fix reading configurati novalues in ExtractRequestAttrib ([60d2ffb](https://github.com/CESNET/perun-simplesamlphp-module/commit/60d2ffb01228208fa035267cbd8cbf94aa6839fa))
+* 🐛 Small fix in redirects in the PerunUser filter ([e0166f6](https://github.com/CESNET/perun-simplesamlphp-module/commit/e0166f6e21e6a6c299d8da1f9e48d91bf169ee04))
+
 ## [7.6.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.1...v7.6.2) (2022-04-05)
 
 
