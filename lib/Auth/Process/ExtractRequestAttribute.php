@@ -24,7 +24,7 @@ class ExtractRequestAttribute extends ProcessingFilter
     public const DEFAULT_VALUE = 'default_value';
 
     public const KEYS_SEPARATOR = ';';
-    public const FAILURE_VALUE = '%$FAILURE_VALUE$%';
+    public const FAILURE_VALUE = ['%$FAILURE_VALUE$%'];
 
     private $destinationAttrName;
     private $requestKeys;
@@ -38,7 +38,7 @@ class ExtractRequestAttribute extends ProcessingFilter
         $this->filterConfig = Configuration::loadFromArray($config);
 
         $this->destinationAttrName = $this->filterConfig->getString(self::DESTINATION_ATTRIBUTE_NAME, null);
-        if (empty($this->requestKeys)) {
+        if (empty($this->destinationAttrName)) {
             throw new Exception(
                 self::DEBUG_PREFIX . 'missing mandatory configuration for option \'' . self::DESTINATION_ATTRIBUTE_NAME . '\''
             );
@@ -75,9 +75,7 @@ class ExtractRequestAttribute extends ProcessingFilter
             }
             if (!array_key_exists($key, $value)) {
                 Logger::warning(
-                    self::DEBUG_PREFIX . 'Cannot find key \'' .
-                    $key . '\' in the supposed path towards the value. Did you configure the right path of keys ' .
-                    'to extract it?'
+                    self::DEBUG_PREFIX . 'Cannot find key \'' . $key . '\' in the supposed path towards the value. Did you configure the right path of keys to extract it?'
                 );
                 if ($this->failOnNonExistingKey) {
                     throw new Exception(self::DEBUG_PREFIX . 'Specified chain of keys does not exist');
@@ -99,9 +97,9 @@ class ExtractRequestAttribute extends ProcessingFilter
             $value = [$value];
         }
         $request[PerunConstants::ATTRIBUTES][$this->destinationAttrName] = $value;
+        $logValue = implode(',', $value);
         Logger::debug(
-            self::DEBUG_PREFIX . 'Value \'' . implode(',', $value)
-            . '\' has been extracted and set to attribute ' . $this->destinationAttrName
+            self::DEBUG_PREFIX . 'Value \'' . $logValue . '\' has been extracted and set to attribute ' . $this->destinationAttrName
         );
     }
 }
