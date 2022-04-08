@@ -93,8 +93,6 @@ try {
     $challengeManager = new ChallengeManager();
     $claims = $challengeManager->decodeToken($token);
 
-    Logger::debug('updateUes attributes ' . print_r($claims[DATA][ATTRIBUTES], true));
-
     $attributesFromIdP = $claims[DATA][ATTRIBUTES];
     $attrMap = $claims[DATA][ATTR_MAP];
     $serializedAttributes = $claims[DATA][ATTR_TO_CONVERSION];
