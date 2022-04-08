@@ -18,6 +18,8 @@ class PerunConstants
 
     public const USER = 'user';
 
+    public const USER_GROUPS = 'groups';
+
     public const STATE_ID = 'stateId';
 
     public const CONFIG = 'config';
