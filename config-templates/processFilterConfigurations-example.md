@@ -297,6 +297,7 @@ Configuration options:
 * `vo_short_names_attr`: mapping to the attribute containing shortnames of the VOs for which the service has resources (gives access to the groups).
 * `registration_link_attr`: mapping to the attribute containing custom service registration link. Filter adds the callback URL, to which to redirect user after the registration, as query string in form of 'callback=URL'.
 * `allow_registration_attr`: mapping to the attribute containing flag, if registration in case of denied access is enabled
+* `handle_unsatisfied_membership`: whether handle unsatisfied membership
 
 ```php
 25 => [
@@ -307,6 +308,7 @@ Configuration options:
     'vo_short_names_attr' => 'vo_short_names',
     'registration_link_attr' => 'registration_link',
     'allow_registration_attr' => 'allow_registration',
+    'handle_unsatisfied_membership' => true,
 ],
 ```
 

@@ -15,7 +15,6 @@ use SimpleSAML\Module\perun\model\Facility;
 use SimpleSAML\Module\perun\model\Group;
 use SimpleSAML\Module\perun\model\Member;
 use SimpleSAML\Module\perun\model\User;
-use SimpleSAML\Module\perun\model\Vo;
 use SimpleSAML\Module\perun\PerunConstants;
 use SimpleSAML\Utils\HTTP;
 
@@ -60,6 +59,7 @@ class SpAuthorization extends ProcessingFilter
     public const REGISTRAR_URL = 'registrar_url';
     public const CHECK_GROUP_MEMBERSHIP_ATTR = 'check_group_membership_attr';
     public const VO_SHORT_NAMES_ATTR = 'vo_short_names_attr';
+    public const HANDLE_UNSATISFIED_MEMBERSHIP = 'handle_unsatisfied_membership';
     public const REGISTRATION_LINK_ATTR = 'registration_link_attr';
     public const ALLOW_REGISTRATION_ATTR = 'allow_registration_attr';
 
@@ -71,12 +71,13 @@ class SpAuthorization extends ProcessingFilter
 
     private $adapter;
     private $rpcAdapter;
-    private $registrarUrl;
     private $checkGroupMembershipAttr;
     private $voShortNamesAttr;
     private $allowRegistrationAttr;
     private $registrationLinkAttr;
     private $skipNotificationSps;
+    private $handleUnsatisfiedMembership;
+    private $registrarUrl;
     private $config;
     private $filterConfig;
 
@@ -88,21 +89,6 @@ class SpAuthorization extends ProcessingFilter
 
         $interface = $this->filterConfig->getString(self::INTERFACE, Adapter::RPC);
         $this->adapter = Adapter::getInstance($interface);
-
-        try {
-            $this->rpcAdapter = Adapter::getInstance(Adapter::RPC);
-        } catch (Exception $ex) {
-            Logger::warning(self::DEBUG_PREFIX . 'Could not create RPC adapter. Registrations will not work');
-            Logger::debug($ex);
-            $this->rpcAdapter = null;
-        }
-
-        $this->registrarUrl = $this->filterConfig->getString(self::REGISTRAR_URL, null);
-        if (empty($this->registrarUrl)) {
-            throw new Exception(
-                self::DEBUG_PREFIX . 'Invalid configuration: no URL with location of Perun registrar ' . 'has been configured. Use option \'' . self::REGISTRAR_URL . '\' to configure the location of Perun' . 'registration component.'
-            );
-        }
 
         $this->checkGroupMembershipAttr = $this->filterConfig->getString(self::CHECK_GROUP_MEMBERSHIP_ATTR, null);
         if (empty($this->checkGroupMembershipAttr)) {
@@ -118,9 +104,26 @@ class SpAuthorization extends ProcessingFilter
             );
         }
 
+        $this->registrarUrl = $this->filterConfig->getString(self::REGISTRAR_URL, null);
         $this->allowRegistrationAttr = $this->filterConfig->getString(self::ALLOW_REGISTRATION_ATTR, null);
         $this->registrationLinkAttr = $this->filterConfig->getString(self::REGISTRATION_LINK_ATTR, null);
         $this->skipNotificationSps = $this->filterConfig->getArray(self::SKIP_NOTIFICATION_SPS, []);
+
+        $this->handleUnsatisfiedMembership = $this->filterConfig->getBoolean(self::HANDLE_UNSATISFIED_MEMBERSHIP, true);
+        if ($this->handleUnsatisfiedMembership) {
+            if (empty($this->registrationLinkAttr) && empty($this->registrarUrl)) {
+                throw new Exception(
+                    self::DEBUG_PREFIX . 'Invalid configuration: filter should handle unsatisfied membership via registration, but neither registrarUrl nor registrationLinkAttr have been configured. Use option \'' . self::REGISTRAR_URL . '\' to configure the registrar location or/and option \'' . self::REGISTRATION_LINK_ATTR . '\' to configure attribute for Service defined registration link.'
+                );
+            }
+            try {
+                $this->rpcAdapter = Adapter::getInstance(Adapter::RPC);
+            } catch (Exception $ex) {
+                Logger::warning(self::DEBUG_PREFIX . 'Could not create RPC adapter. Registrations will not work.');
+                Logger::debug($ex);
+                $this->rpcAdapter = null;
+            }
+        }
     }
 
     public function process(&$request)
@@ -188,6 +191,11 @@ class SpAuthorization extends ProcessingFilter
         Facility $facility,
         array $facilityAttributes
     ) {
+        if (!$this->handleUnsatisfiedMembership) {
+            Logger::debug(self::DEBUG_PREFIX . 'Handling unsatisfied membership is disabled, redirecting to unauthorized');
+            $this->unauthorized($request);
+            return;
+        }
         $allowRegistration = $facilityAttributes[self::ALLOW_REGISTRATION] ?? false;
         if ($allowRegistration) {
             $registrationLink = $facilityAttributes[self::REGISTRATION_LINK] ?? null;
