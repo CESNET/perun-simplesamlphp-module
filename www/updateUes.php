@@ -37,6 +37,7 @@ const DATA = 'data';
 const ATTRIBUTES = 'attributes';
 const ATTR_MAP = 'attrMap';
 const ATTR_TO_CONVERSION = 'attrsToConversion';
+const APPEND_ONLY_ATTRS = 'appendOnlyAttrs';
 const PERUN_USER_ID = 'perunUserId';
 
 const EDU_PERSON_UNIQUE_ID = 'eduPersonUniqueId';
@@ -82,7 +83,8 @@ if (empty($token)) {
 
 $attributesFromIdP = null;
 $attrMap = null;
-$serializedAttributes = null;
+$serializedAttributes = [];
+$appendOnlyAttrs = [];
 $perunUserId = null;
 $id = null;
 $sourceIdpAttribute = null;
@@ -91,9 +93,12 @@ try {
     $challengeManager = new ChallengeManager();
     $claims = $challengeManager->decodeToken($token);
 
+    Logger::debug('updateUes attributes ' . print_r($claims[DATA][ATTRIBUTES], true));
+
     $attributesFromIdP = $claims[DATA][ATTRIBUTES];
     $attrMap = $claims[DATA][ATTR_MAP];
     $serializedAttributes = $claims[DATA][ATTR_TO_CONVERSION];
+    $appendOnlyAttrs = $claims[DATA][APPEND_ONLY_ATTRS];
     $perunUserId = $claims[DATA][PERUN_USER_ID];
     $id = $claims[ID];
 } catch (Exception $ex) {
@@ -129,6 +134,7 @@ try {
         $attributesFromPerun,
         $attrMap,
         $serializedAttributes,
+        $appendOnlyAttrs,
         $attributesFromIdP
     );
 
@@ -146,7 +152,6 @@ function findUserExtSource($adapter, $extSourceName, $attributesFromIdp, $identi
 {
     foreach ($attributesFromIdp as $attrName => $attrValue) {
         if (!in_array($attrName, $identifierAttributes, true)) {
-            Logger::debug(DEBUG_PREFIX . 'Identifier \'' . $attrName . '\' not listed in userIdentifiers. Skipping');
             continue;
         }
 
@@ -176,9 +181,6 @@ function getUserExtSource($adapter, $extSourceName, $extLogin)
     try {
         return $adapter->getUserExtSource($extSourceName, $extLogin);
     } catch (SimpleSAML\Module\perun\Exception $ex) {
-        Logger::debug(DEBUG_PREFIX . 'Caught exception when fetching user ext source, probably does not exist.');
-        Logger::debug(DEBUG_PREFIX . $ex->getMessage());
-
         return null;
     }
 }
@@ -204,36 +206,46 @@ function getAttributesFromPerun($adapter, $attrMap, $userExtSource): array
     return $attributesFromPerun;
 }
 
-function getAttributesToUpdate($attributesFromPerun, $attrMap, $serializedAttributes, $attributesFromIdP): array
+function getAttributesToUpdate($attributesFromPerun, $attrMap, $serializedAttributes, $appendOnlyAttrs,  $attributesFromIdP): array
 {
     $attributesToUpdate = [];
 
     foreach ($attributesFromPerun as $attribute) {
         $attrName = $attribute[NAME];
 
-        $mappedAttributeName = !empty($attrMap[$attrName]) ? $attrMap[$attrName] : null;
-        $idpAttribute = !empty($attributesFromIdP[$attrMap[$attrName]]) ?
+        $attr = !empty($attributesFromIdP[$attrMap[$attrName]]) ?
             $attributesFromIdP[$attrMap[$attrName]] : null;
 
-        if (null !== $mappedAttributeName && null !== $idpAttribute) {
-            if (in_array($attrName, $serializedAttributes, true)) {
-                $idpAttribute = serializeAsString($idpAttribute);
-            }
+        // appendOnly && has value && (complex || serialized)
+        if (in_array($attrName, $appendOnlyAttrs, true) &&
+            !empty($attribute[VALUE]) &&
+            (isComplexType($attribute[TYPE]) ||  in_array($attrName, $serializedAttributes, true))
+        ) {
+            $attr = in_array($attrName, $serializedAttributes, true) ?
+                array_merge($attr, explode(';', $attribute[VALUE])) : array_merge($attr, $attribute[VALUE]);
+        }
 
-            if (isSimpleType($attribute[TYPE])) {
-                $valueFromIdP = $idpAttribute[0];
-            } elseif (isComplexType($attribute[TYPE])) {
-                $valueFromIdP = $idpAttribute;
+
+        if (isSimpleType($attribute[TYPE])) {
+            $newValue = convertToString($attr);
+        } elseif (isComplexType($attribute[TYPE])) {
+            if (!empty($attr)) {
+                $newValue = array_values(array_unique($attr));
             } else {
-                Logger::debug(DEBUG_PREFIX . 'Unsupported type of attribute.');
-                continue;
+                $newValue = [];
             }
+            if (in_array($attrName, $serializedAttributes, true)) {
+                $newValue = convertToString($newValue);
+            }
+        } else {
+            Logger::debug(DEBUG_PREFIX . 'Unsupported type of attribute.');
+            continue;
+        }
 
-            if ($valueFromIdP !== $attribute[VALUE]) {
-                $attribute[VALUE] = $valueFromIdP;
-                $attribute[NAMESPACE_KEY] = UES_ATTR_NMS;
-                $attributesToUpdate[] = $attribute;
-            }
+        if ($newValue !== $attribute[VALUE]) {
+            $attribute[VALUE] = $newValue;
+            $attribute[NAMESPACE_KEY] = UES_ATTR_NMS;
+            $attributesToUpdate[] = $attribute;
         }
     }
 
@@ -271,17 +283,14 @@ function isComplexType($attributeType): bool
         strpos($attributeType, MAP_TYPE);
 }
 
-function serializeAsString($idpAttribute): array
+function convertToString($newValue)
 {
-    $arrayAsString = [''];
-
-    foreach ($idpAttribute as $value) {
-        $arrayAsString[0] .= $value . ';';
+    if (!empty($newValue)) {
+        $newValue = array_unique($newValue);
+        $attrValueAsString = implode(';', $newValue);
+    } else {
+        $attrValueAsString = '';
     }
 
-    if (!empty($arrayAsString[0])) {
-        $arrayAsString[0] = substr($arrayAsString[0], 0, -1);
-    }
-
-    return $arrayAsString;
+    return $attrValueAsString;
 }
