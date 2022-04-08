@@ -301,11 +301,32 @@ Configuration options:
 ```php
 25 => [
     'class' => 'perun:SpAuthorization',
-    'interface' => 'LDAP',
+    'interface' => 'ldap',
     'registrar_url' => 'https://signup.perun.cesnet.cz/fed/registrar/',
     'check_group_membership_attr' => 'check_group_membership',
     'vo_short_names_attr' => 'vo_short_names',
     'registration_link_attr' => 'registration_link',
     'allow_registration_attr' => 'allow_registration',
+],
+```
+
+## EnsureVOMember
+
+Checks whether the user is in the given VO (group). If not, redirects him/her to the registration.
+
+Configuration options:
+* `registrationUrl`: URL to the registration
+* `voShortName`: VO shortname to check the user's membership
+* `groupName`: OPTIONAL, checks that user is in given group
+* `callbackParameterName`: name of the parameter wich will hold callback URL, where the user should be redirected after the AUP approval on URL configured in the `approval_url` property,
+* `interface`: specifies what interface of Perun should be used to fetch data. See class `SimpleSAML\Module\perun\PerunAdapter` for more details.
+```php
+25 => [
+    'class' => 'perun:PerunEnsureMember',
+    'registerUrl' => 'https://signup.perun.cesnet.cz/fed/registrar/',
+    'voShortName' => 'cesnet',
+    'groupName' => 'cesnet_group_name', // optional
+    'callbackParameterName' => 'targetnew',
+    'interface' => 'ldap',
 ],
 ```
