@@ -147,7 +147,6 @@ class SpAuthorization extends ProcessingFilter
             Logger::debug(
                 self::DEBUG_PREFIX . 'No facility found for SP \'' . $spEntityId . '\', skip processing filter'
             );
-
             return;
         }
         $facilityAttributes = $this->getSPAttributes($facility);
@@ -156,22 +155,20 @@ class SpAuthorization extends ProcessingFilter
                 self::DEBUG_PREFIX . 'Could not fetch SP attributes, user will be redirected to unauthorized for security reasons'
             );
             $this->unauthorized($request);
-
             return;
         }
 
         $checkGroupMembership = $facilityAttributes[self::CHECK_GROUP_MEMBERSHIP];
         if (!$checkGroupMembership) {
             Logger::info(self::DEBUG_PREFIX . 'Group membership check not requested by the service.');
-
             return;
         }
 
-        $userGroups = $this->adapter->getUsersGroupsOnFacility($spEntityId, $user->getId());
+        $userGroups = $this->adapter->getUsersGroupsOnFacility($facility, $user->getId());
         if (!empty($userGroups)) {
             Logger::info(self::DEBUG_PREFIX . 'User satisfies the group membership check.');
         } else {
-            $this->handleUnsatisfiedMembership($request, $user, $spEntityId, $facilityAttributes);
+            $this->handleUnsatisfiedMembership($request, $user, $spEntityId, $facility, $facilityAttributes);
         }
     }
 
@@ -188,6 +185,7 @@ class SpAuthorization extends ProcessingFilter
         array $request,
         User $user,
         string $spEntityId,
+        Facility $facility,
         array $facilityAttributes
     ) {
         $allowRegistration = $facilityAttributes[self::ALLOW_REGISTRATION] ?? false;
@@ -208,11 +206,10 @@ class SpAuthorization extends ProcessingFilter
                 exit;
             }
             try {
-                $registrationData = $this->getRegistrationData($user, $spEntityId, $facilityAttributes);
+                $registrationData = $this->getRegistrationData($user, $facility, $spEntityId, $facilityAttributes);
                 if (!empty($registrationData)) {
                     $skipNotification = in_array($spEntityId, $this->skipNotificationSps, true);
                     $this->register($request, $registrationData, $skipNotification);
-
                     return;
                 }
                 Logger::debug(
@@ -223,7 +220,7 @@ class SpAuthorization extends ProcessingFilter
                 Logger::warning(
                     self::DEBUG_PREFIX . 'Caught exception, user will be redirected to unauthorized for security reasons'
                 );
-                Logger::debug($ex);
+                Logger::debug($ex->getMessage());
             }
         } else {
             Logger::debug(
@@ -354,7 +351,7 @@ class SpAuthorization extends ProcessingFilter
         ]);
     }
 
-    private function getRegistrationData($user, $spEntityId, array $facilityAttributes): array
+    private function getRegistrationData($user, Facility $facility, string $spEntityId, array $facilityAttributes): array
     {
         if (null === $this->rpcAdapter) {
             throw new Exception(self::DEBUG_PREFIX . 'No RPC adapter available, cannot fetch registration data');
@@ -367,7 +364,7 @@ class SpAuthorization extends ProcessingFilter
         }
         $voShorNamesForRegistration = $this->getRegistrationVoShortNames($user, $voShortNames);
 
-        return $this->getRegistrationGroups($spEntityId, $voShorNamesForRegistration);
+        return $this->getRegistrationGroups($facility, $voShorNamesForRegistration);
     }
 
     private function getRegistrationVoShortNames(User $user, array $voShortNames): array
