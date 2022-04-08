@@ -172,7 +172,7 @@ class Disco extends PowerIdPDisco
 
     private $proxyIdpEntityId;
 
-    private $authId;
+    private $state;
 
     public function __construct(array $metadataSets, $instance)
     {
@@ -213,6 +213,7 @@ class Disco extends PowerIdPDisco
                 $newReturnURL = $e . '=' . urlencode($id);
                 $_GET[self::RETURN] = $newReturnURL;
             }
+            $this->state = $state;
         }
 
         parent::__construct($metadataSets, $instance);
@@ -273,28 +274,22 @@ class Disco extends PowerIdPDisco
                         );
                         HTTP::redirectTrustedURL($url);
                     }
-                    $acrStartSubstr = substr($value, 0, strlen(self::URN_CESNET_PROXYIDP_LSIDPENTITYID));
-                    if (self::URN_CESNET_PROXYIDP_LSIDPENTITYID === $acrStartSubstr) {
-                        $hintIdpEntityId = substr(
-                            $value,
-                            strlen(self::URN_CESNET_PROXYIDP_LSIDPENTITYID),
-                            strlen($value)
-                        );
-                        $state = State::loadState($this->authId, self::SAML_SP_SSO, true);
-                        $state['aarc_idp_hint'] = $hintIdpEntityId;
-                        $id = State::saveState($state, self::SAML_SP_SSO);
-
-                        Logger::info('Redirecting to LS AAI with hint to: ' . $hintIdpEntityId);
-                        $url = self::buildContinueUrl(
-                            $this->spEntityId,
-                            $this->returnURL,
-                            $this->returnIdParam,
-                            'https://proxy.aai.lifescience-ri.eu/proxy'
-                        );
-                        HTTP::redirectTrustedURL($url);
-                    }
                 }
             }
+        }
+        if (!empty($state['aarc_idp_hint'])) {
+            $hintedIdp = $state['aarc_idp_hint'];
+            if (! array_key_exists($hintedIdp, $idpList)) {
+                throw new Exception("Invalid request - IDP is not allowed to be used for this SP");
+            }
+            Logger::info('Redirecting to hinted IdP using AARC_IDP_HINT. Redirecting to: ' . $hintedIdp);
+            $url = self::buildContinueUrl(
+                $this->spEntityId,
+                $this->returnURL,
+                $this->returnIdParam,
+                $hintedIdp
+            );
+            HTTP::redirectTrustedURL($url);
         }
 
         $warningAttributes = null;
