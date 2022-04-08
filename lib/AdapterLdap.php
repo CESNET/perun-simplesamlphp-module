@@ -152,6 +152,43 @@ class AdapterLdap extends Adapter
         return $groups;
     }
 
+    public function getGroupsWhereMemberIsActive($user, $vo)
+    {
+        $userId = $user->getId();
+        $userWithMembership = $this->connector->searchForEntity(
+            'perunUserId=' . $userId . ',ou=People,' . $this->ldapBase,
+            '(objectClass=perunUser)',
+            ['perunUserId', 'memberOf']
+        );
+
+        $groups = [];
+        foreach ($userWithMembership['memberOf'] as $groupDn) {
+            $voId = explode('=', explode(',', $groupDn)[1], 2)[1];
+            if ($voId !== $vo->getId()) {
+                continue;
+            }
+
+            $group = $this->connector->searchForEntity(
+                $groupDn,
+                '(objectClass=perunGroup)',
+                ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
+            );
+            array_push(
+                $groups,
+                new Group(
+                    $group['perunGroupId'][0],
+                    $group['perunVoId'][0],
+                    $group['uuid'][0],
+                    $group['cn'][0],
+                    $group['perunUniqueGroupName'][0],
+                    $group['description'][0] ?? ''
+                )
+            );
+        }
+
+        return $groups;
+    }
+
     public function getSpGroups(string $spEntityId): array
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
@@ -424,14 +461,17 @@ class AdapterLdap extends Adapter
         $this->fallbackAdapter->setUserExtSourceAttributes($userExtSourceId, $attributes);
     }
 
-    public function getUsersGroupsOnFacility($spEntityId, $userId)
+    public function getUsersGroupsOnSp($spEntityId, $userId)
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
+        return self::getUsersGroupsOnFacility($facility, $userId);
+    }
 
+    public function getUsersGroupsOnFacility($facility, $userId)
+    {
         if (null === $facility) {
             return [];
         }
-
         $id = $facility->getId();
 
         $resources = $this->connector->searchForEntities(
@@ -442,7 +482,7 @@ class AdapterLdap extends Adapter
         Logger::debug('Resources - ' . json_encode($resources));
 
         if (null === $resources) {
-            throw new Exception('Service with spEntityId: ' . $spEntityId . ' hasn\'t assigned any resource.');
+            throw new Exception('Service with ID: ' . $id . ' hasn\'t assigned any resource.');
         }
         $resourcesString = '(|';
         foreach ($resources as $resource) {
@@ -470,10 +510,7 @@ class AdapterLdap extends Adapter
                 )
             );
         }
-        $resultGroups = $this->removeDuplicateEntities($resultGroups);
-        Logger::debug('Groups - ' . json_encode($resultGroups));
-
-        return $resultGroups;
+        return $this->removeDuplicateEntities($resultGroups);
     }
 
     public function getMemberStatusByUserAndVo($user, $vo)

@@ -154,6 +154,48 @@ class AdapterRpc extends Adapter
         return $convertedGroups;
     }
 
+    public function getGroupsWhereMemberIsActive($user, $vo)
+    {
+        try {
+            $member = $this->connector->get('membersManager', 'getMemberByUser', [
+                'vo' => $vo->getId(),
+                'user' => $user->getId(),
+            ]);
+
+            $memberGroups = $this->connector->get('groupsManager', 'getGroupsWhereMemberIsActive', [
+                'member' => $member['id'],
+            ]);
+        } catch (PerunException $e) {
+            return [];
+        }
+
+        $convertedGroups = [];
+        foreach ($memberGroups as $group) {
+            try {
+                $attr = $this->connector->get('attributesManager', 'getAttribute', [
+                    'group' => $group['id'],
+                    'attributeName' => 'urn:perun:group:attribute-def:virt:voShortName',
+                ]);
+                $uniqueName = $attr['value'] . ':' . $group['name'];
+                array_push(
+                    $convertedGroups,
+                    new Group(
+                        $group['id'],
+                        $group['voId'],
+                        $group['uuid'],
+                        $group['name'],
+                        $uniqueName,
+                        $group['description']
+                    )
+                );
+            } catch (PerunException $e) {
+                continue;
+            }
+        }
+
+        return $convertedGroups;
+    }
+
     public function getSpGroups(string $spEntityId): array
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
@@ -338,13 +380,16 @@ class AdapterRpc extends Adapter
         return $perunAttr['value'];
     }
 
-    public function getUsersGroupsOnFacility($spEntityId, $userId)
+    public function getUsersGroupsOnSp($spEntityId, $userId)
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
-        $groups = [];
+        return self::getUsersGroupsOnFacility($facility, $userId);
+    }
 
+    public function getUsersGroupsOnFacility($facility, $userId)
+    {
         if (null === $facility) {
-            return $groups;
+            return [];
         }
 
         $usersGroupsOnFacility = $this->connector->get(
@@ -356,6 +401,8 @@ class AdapterRpc extends Adapter
                 'attrNames' => ['urn:perun:group:attribute-def:virt:voShortName'],
             ]
         );
+
+        $groups = [];
 
         foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
             if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
