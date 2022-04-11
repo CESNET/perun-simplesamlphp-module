@@ -1,3 +1,10 @@
+# [7.7.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.4...v7.7.0) (2022-04-11)
+
+
+### Features
+
+* ContactsToArray transformer ([015fb7f](https://github.com/CESNET/perun-simplesamlphp-module/commit/015fb7f8672cc6982e674406724d43f7e44c4ea2))
+
 ## [7.6.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.3...v7.6.4) (2022-04-06)
 
 
