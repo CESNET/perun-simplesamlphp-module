@@ -140,9 +140,8 @@ class SpAuthorization extends ProcessingFilter
         $spEntityId = $request[PerunConstants::SP_METADATA][PerunConstants::SP_METADATA_ENTITYID];
 
         if (empty($request[PerunConstants::PERUN][PerunConstants::USER])) {
-            throw new Exception(
-                self::DEBUG_PREFIX . 'Request does not contain Perun user. Did you configure ' . PerunUser::STAGE . ' filter before this filter in the processing chain?'
-            );
+            Logger::debug(self::DEBUG_PREFIX . 'Request does not contain Perun user. Did you configure ' . PerunUser::STAGE . ' filter before this filter in the processing chain?');
+            $this->unauthorized($request);
         }
         $user = $request[PerunConstants::PERUN][PerunConstants::USER];
         $facility = $this->adapter->getFacilityByEntityId($spEntityId);
