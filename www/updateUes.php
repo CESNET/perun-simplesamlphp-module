@@ -212,7 +212,7 @@ function getAttributesToUpdate($attributesFromPerun, $attrMap, $serializedAttrib
         $attrName = $attribute[NAME];
 
         $attr = !empty($attributesFromIdP[$attrMap[$attrName]]) ?
-            $attributesFromIdP[$attrMap[$attrName]] : null;
+            $attributesFromIdP[$attrMap[$attrName]] : [];
 
         // appendOnly && has value && (complex || serialized)
         if (in_array($attrName, $appendOnlyAttrs, true) &&
