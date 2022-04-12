@@ -23,7 +23,6 @@ class PerunEnsureMember extends ProcessingFilter
     const INTERFACE_PROPNAME = 'interface';
     const CALLBACK_PARAMETER_NAME = 'callbackParameterName';
     const RPC = 'rpc';
-    const GROUP = 'group';
 
     const CALLBACK = 'perun/perun_ensure_member_callback.php';
     const REDIRECT = 'perun/perun_ensure_member.php';
@@ -73,8 +72,8 @@ class PerunEnsureMember extends ProcessingFilter
 
     public function process(&$request)
     {
-        if (isset($request['perun']['user'])) {
-            $user = $request['perun']['user'];
+        if (isset($request[PerunConstants::PERUN][PerunConstants::USER])) {
+            $user = $request[PerunConstants::PERUN][PerunConstants::USER];
         } else {
             throw new Exception(
                 self::LOG_PREFIX . 'Missing mandatory field \'perun.user\' in request.' . 'Hint: Did you configured PerunIdentity filter before this filter?'
@@ -101,15 +100,24 @@ class PerunEnsureMember extends ProcessingFilter
         }
 
         $memberStatus = $this->rpcAdapter->getMemberStatusByUserAndVo($user, $vo);
+        $voHasRegistrationForm = $this->rpcAdapter->hasRegistrationForm($vo->getId(), PerunConstants::VO);
         $groupHasRegistrationForm = !empty($this->groupName) && $this->groupHasRegistrationForm($vo, $this->groupName);
 
-        if (Member::VALID === $memberStatus && !$isUserInGroup && $groupHasRegistrationForm) {
+        if (Member::VALID === $memberStatus && $isUserInGroup) {
+            Logger::debug(self::LOG_PREFIX . 'User is allowed to continue');
+        } elseif (Member::VALID === $memberStatus && !$isUserInGroup && $groupHasRegistrationForm) {
             Logger::debug(self::LOG_PREFIX . 'User is not valid in group ' . $this->groupName . ' - sending to registration');
             $this->register($request, $this->groupName);
-        } elseif (Member::EXPIRED === $memberStatus && $isUserInGroup) {
+        } elseif (null === $memberStatus && $voHasRegistrationForm && $isUserInGroup) {
+            Logger::debug(self::LOG_PREFIX . 'User is not member of vo ' . $this->voShortName . ' - sending to registration');
+            $this->register($request);
+        } elseif (null === $memberStatus && $voHasRegistrationForm && !$isUserInGroup && $groupHasRegistrationForm) {
+            Logger::debug(self::LOG_PREFIX . 'User is not member of vo ' . $this->voShortName . ' - sending to registration');
+            $this->register($request, $this->groupName);
+        } elseif (Member::EXPIRED === $memberStatus && $voHasRegistrationForm && $isUserInGroup) {
             Logger::debug(self::LOG_PREFIX . 'User is expired - sending to registration');
             $this->register($request);
-        } elseif (Member::EXPIRED === $memberStatus && !$isUserInGroup && $groupHasRegistrationForm) {
+        } elseif (Member::EXPIRED === $memberStatus && $voHasRegistrationForm && !$isUserInGroup && $groupHasRegistrationForm) {
             Logger::debug(self::LOG_PREFIX . 'User is expired and is not in group ' . $this->groupName . ' - sending to registration');
             $this->register($request, $this->groupName);
         } else {
@@ -140,7 +148,7 @@ class PerunEnsureMember extends ProcessingFilter
         }
 
         if (null !== $group) {
-            return $this->rpcAdapter->hasRegistrationForm($group->getId(), self::GROUP);
+            return $this->rpcAdapter->hasRegistrationForm($group->getId(), PerunConstants::GROUP);
         }
 
         return false;
