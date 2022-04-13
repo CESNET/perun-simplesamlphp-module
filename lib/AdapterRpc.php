@@ -383,6 +383,7 @@ class AdapterRpc extends Adapter
     public function getUsersGroupsOnSp($spEntityId, $userId)
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
+
         return self::getUsersGroupsOnFacility($facility, $userId);
     }
 
@@ -739,7 +740,6 @@ class AdapterRpc extends Adapter
 
             $attribute['name'] = $attrNamesMap[$perunAttrName];
             $attributes[$attrNamesMap[$perunAttrName]] = $attribute;
-
         }
 
         return $attributes;

@@ -204,8 +204,13 @@ function getAttributesFromPerun($adapter, $attrMap, $userExtSource): array
     return $attributesFromPerun;
 }
 
-function getAttributesToUpdate($attributesFromPerun, $attrMap, $serializedAttributes, $appendOnlyAttrs,  $attributesFromIdP): array
-{
+function getAttributesToUpdate(
+    $attributesFromPerun,
+    $attrMap,
+    $serializedAttributes,
+    $appendOnlyAttrs,
+    $attributesFromIdP
+): array {
     $attributesToUpdate = [];
 
     foreach ($attributesFromPerun as $attribute) {
@@ -217,12 +222,11 @@ function getAttributesToUpdate($attributesFromPerun, $attrMap, $serializedAttrib
         // appendOnly && has value && (complex || serialized)
         if (in_array($attrName, $appendOnlyAttrs, true) &&
             !empty($attribute[VALUE]) &&
-            (isComplexType($attribute[TYPE]) ||  in_array($attrName, $serializedAttributes, true))
+            (isComplexType($attribute[TYPE]) || in_array($attrName, $serializedAttributes, true))
         ) {
             $attr = in_array($attrName, $serializedAttributes, true) ?
                 array_merge($attr, explode(';', $attribute[VALUE])) : array_merge($attr, $attribute[VALUE]);
         }
-
 
         if (isSimpleType($attribute[TYPE])) {
             $newValue = convertToString($attr);

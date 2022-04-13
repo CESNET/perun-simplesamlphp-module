@@ -140,7 +140,9 @@ class SpAuthorization extends ProcessingFilter
         $spEntityId = $request[PerunConstants::SP_METADATA][PerunConstants::SP_METADATA_ENTITYID];
 
         if (empty($request[PerunConstants::PERUN][PerunConstants::USER])) {
-            Logger::debug(self::DEBUG_PREFIX . 'Request does not contain Perun user. Did you configure ' . PerunUser::STAGE . ' filter before this filter in the processing chain?');
+            Logger::debug(
+                self::DEBUG_PREFIX . 'Request does not contain Perun user. Did you configure ' . PerunUser::STAGE . ' filter before this filter in the processing chain?'
+            );
             $this->unauthorized($request);
         }
         $user = $request[PerunConstants::PERUN][PerunConstants::USER];
@@ -149,6 +151,7 @@ class SpAuthorization extends ProcessingFilter
             Logger::debug(
                 self::DEBUG_PREFIX . 'No facility found for SP \'' . $spEntityId . '\', skip processing filter'
             );
+
             return;
         }
         $facilityAttributes = $this->getSPAttributes($facility);
@@ -157,12 +160,14 @@ class SpAuthorization extends ProcessingFilter
                 self::DEBUG_PREFIX . 'Could not fetch SP attributes, user will be redirected to unauthorized for security reasons'
             );
             $this->unauthorized($request);
+
             return;
         }
 
         $checkGroupMembership = $facilityAttributes[self::CHECK_GROUP_MEMBERSHIP];
         if (!$checkGroupMembership) {
             Logger::info(self::DEBUG_PREFIX . 'Group membership check not requested by the service.');
+
             return;
         }
 
@@ -191,8 +196,11 @@ class SpAuthorization extends ProcessingFilter
         array $facilityAttributes
     ) {
         if (!$this->handleUnsatisfiedMembership) {
-            Logger::debug(self::DEBUG_PREFIX . 'Handling unsatisfied membership is disabled, redirecting to unauthorized');
+            Logger::debug(
+                self::DEBUG_PREFIX . 'Handling unsatisfied membership is disabled, redirecting to unauthorized'
+            );
             $this->unauthorized($request);
+
             return;
         }
         $allowRegistration = $facilityAttributes[self::ALLOW_REGISTRATION] ?? false;
@@ -217,6 +225,7 @@ class SpAuthorization extends ProcessingFilter
                 if (!empty($registrationData)) {
                     $skipNotification = in_array($spEntityId, $this->skipNotificationSps, true);
                     $this->register($request, $registrationData, $skipNotification);
+
                     return;
                 }
                 Logger::debug(
@@ -358,8 +367,12 @@ class SpAuthorization extends ProcessingFilter
         ]);
     }
 
-    private function getRegistrationData($user, Facility $facility, string $spEntityId, array $facilityAttributes): array
-    {
+    private function getRegistrationData(
+        $user,
+        Facility $facility,
+        string $spEntityId,
+        array $facilityAttributes
+    ): array {
         if (null === $this->rpcAdapter) {
             throw new Exception(self::DEBUG_PREFIX . 'No RPC adapter available, cannot fetch registration data');
         }

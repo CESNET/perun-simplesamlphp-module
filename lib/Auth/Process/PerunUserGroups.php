@@ -47,15 +47,12 @@ class PerunUserGroups extends ProcessingFilter
         }
 
         $spEntityId = $request[PerunConstants::SP_METADATA][PerunConstants::SP_METADATA_ENTITYID] ?? null;
-        $groups = [];
         if (empty($spEntityId)) {
             Logger::debug(self::DEBUG_PREFIX . 'No SP EntityID available, user groups will be empty');
-            throw new Exception(
-                self::DEBUG_PREFIX . 'Cannot find SP EntityID'
-            );
-        } else {
-            $groups = $this->adapter->getUsersGroupsOnSp($spEntityId, $user->getId());
+            throw new Exception(self::DEBUG_PREFIX . 'Cannot find SP EntityID');
         }
+
+        $groups = $this->adapter->getUsersGroupsOnSp($spEntityId, $user->getId());
         $request[PerunConstants::PERUN][PerunConstants::USER_GROUPS] = $groups;
     }
 }

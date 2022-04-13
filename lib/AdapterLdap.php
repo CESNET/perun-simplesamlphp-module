@@ -464,6 +464,7 @@ class AdapterLdap extends Adapter
     public function getUsersGroupsOnSp($spEntityId, $userId)
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
+
         return self::getUsersGroupsOnFacility($facility, $userId);
     }
 
@@ -510,6 +511,7 @@ class AdapterLdap extends Adapter
                 )
             );
         }
+
         return $this->removeDuplicateEntities($resultGroups);
     }
 

@@ -279,16 +279,11 @@ class Disco extends PowerIdPDisco
         }
         if (!empty($state['aarc_idp_hint'])) {
             $hintedIdp = $state['aarc_idp_hint'];
-            if (! array_key_exists($hintedIdp, $idpList)) {
-                throw new Exception("Invalid request - IDP is not allowed to be used for this SP");
+            if (!array_key_exists($hintedIdp, $idpList)) {
+                throw new Exception('Invalid request - IDP is not allowed to be used for this SP');
             }
             Logger::info('Redirecting to hinted IdP using AARC_IDP_HINT. Redirecting to: ' . $hintedIdp);
-            $url = self::buildContinueUrl(
-                $this->spEntityId,
-                $this->returnURL,
-                $this->returnIdParam,
-                $hintedIdp
-            );
+            $url = self::buildContinueUrl($this->spEntityId, $this->returnURL, $this->returnIdParam, $hintedIdp);
             HTTP::redirectTrustedURL($url);
         }
 

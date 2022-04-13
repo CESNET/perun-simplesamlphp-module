@@ -266,7 +266,9 @@ class ForceAup extends ProcessingFilter
         $aupsToBeApproved = [];
         foreach ($requestedAups as $requestedAup) {
             if (!array_key_exists($requestedAup, $aups)) {
-                Logger::debug('perun:ForceAup - Requested AUP \'' . $requestedAup . '\' is not in the list of VO AUPS, probably VO does not have AUP');
+                Logger::debug(
+                    'perun:ForceAup - Requested AUP \'' . $requestedAup . '\' is not in the list of VO AUPS, probably VO does not have AUP'
+                );
                 continue;
             }
             $aupsInJson = $aups[$requestedAup];

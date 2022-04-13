@@ -88,7 +88,7 @@ abstract class Adapter
      * @param User $user perun user
      * @param Vo   $vo   vo we are working with
      *
-     * @return Group[] groups from vo where user is valid.
+     * @return Group[] groups from vo where user is valid
      */
     abstract public function getGroupsWhereMemberIsActive($user, $vo);
 
@@ -182,7 +182,7 @@ abstract class Adapter
 
     /**
      * @param Facility $facility entity id of the sp
-     * @param int    $userId
+     * @param int      $userId
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
      */

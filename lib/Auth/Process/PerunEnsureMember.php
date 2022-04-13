@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SimpleSAML\Module\perun\Auth\Process;
 
 use SimpleSAML\Auth\ProcessingFilter;
@@ -15,17 +17,17 @@ use SimpleSAML\Utils\HTTP;
 
 class PerunEnsureMember extends ProcessingFilter
 {
-    const LOG_PREFIX = 'perun:PerunEnsureMember: ';
+    public const LOG_PREFIX = 'perun:PerunEnsureMember: ';
 
-    const REGISTER_URL = 'registerUrl';
-    const VO_SHORT_NAME = 'voShortName';
-    const GROUP_NAME = 'groupName';
-    const INTERFACE_PROPNAME = 'interface';
-    const CALLBACK_PARAMETER_NAME = 'callbackParameterName';
-    const RPC = 'rpc';
+    public const REGISTER_URL = 'registerUrl';
+    public const VO_SHORT_NAME = 'voShortName';
+    public const GROUP_NAME = 'groupName';
+    public const INTERFACE_PROPNAME = 'interface';
+    public const CALLBACK_PARAMETER_NAME = 'callbackParameterName';
+    public const RPC = 'rpc';
 
-    const CALLBACK = 'perun/perun_ensure_member_callback.php';
-    const REDIRECT = 'perun/perun_ensure_member.php';
+    public const CALLBACK = 'perun/perun_ensure_member_callback.php';
+    public const REDIRECT = 'perun/perun_ensure_member.php';
 
     public const STAGE = 'perun:PerunEnsureMember';
     public const PARAM_STATE_ID = PerunConstants::STATE_ID;
@@ -46,7 +48,7 @@ class PerunEnsureMember extends ProcessingFilter
         parent::__construct($config, $reserved);
         $this->config = $config;
         $this->filterConfig = Configuration::loadFromArray($config);
-        
+
         $this->registerUrl = $this->filterConfig->getString(self::REGISTER_URL, '');
         if (empty($this->registerUrl)) {
             throw new Exception(self::LOG_PREFIX . 'Missing configuration option \'' . self::REGISTER_URL . '\'');
@@ -59,7 +61,9 @@ class PerunEnsureMember extends ProcessingFilter
 
         $this->callbackParameterName = $this->filterConfig->getString(self::CALLBACK_PARAMETER_NAME, '');
         if (empty($this->callbackParameterName)) {
-            throw new Exception(self::LOG_PREFIX . 'Missing configuration option \'' . self::CALLBACK_PARAMETER_NAME . '\'');
+            throw new Exception(
+                self::LOG_PREFIX . 'Missing configuration option \'' . self::CALLBACK_PARAMETER_NAME . '\''
+            );
         }
 
         $this->groupName = $this->filterConfig->getString(self::GROUP_NAME, '');
@@ -96,6 +100,7 @@ class PerunEnsureMember extends ProcessingFilter
 
         if (Member::VALID === $memberStatus && $isUserInGroup) {
             Logger::debug(self::LOG_PREFIX . 'User is allowed to continue');
+
             return;
         }
 
@@ -106,22 +111,32 @@ class PerunEnsureMember extends ProcessingFilter
         if (Member::VALID === $memberStatus && $isUserInGroup) {
             Logger::debug(self::LOG_PREFIX . 'User is allowed to continue');
         } elseif (Member::VALID === $memberStatus && !$isUserInGroup && $groupHasRegistrationForm) {
-            Logger::debug(self::LOG_PREFIX . 'User is not valid in group ' . $this->groupName . ' - sending to registration');
+            Logger::debug(
+                self::LOG_PREFIX . 'User is not valid in group ' . $this->groupName . ' - sending to registration'
+            );
             $this->register($request, $this->groupName);
         } elseif (null === $memberStatus && $voHasRegistrationForm && $isUserInGroup) {
-            Logger::debug(self::LOG_PREFIX . 'User is not member of vo ' . $this->voShortName . ' - sending to registration');
+            Logger::debug(
+                self::LOG_PREFIX . 'User is not member of vo ' . $this->voShortName . ' - sending to registration'
+            );
             $this->register($request);
         } elseif (null === $memberStatus && $voHasRegistrationForm && !$isUserInGroup && $groupHasRegistrationForm) {
-            Logger::debug(self::LOG_PREFIX . 'User is not member of vo ' . $this->voShortName . ' - sending to registration');
+            Logger::debug(
+                self::LOG_PREFIX . 'User is not member of vo ' . $this->voShortName . ' - sending to registration'
+            );
             $this->register($request, $this->groupName);
         } elseif (Member::EXPIRED === $memberStatus && $voHasRegistrationForm && $isUserInGroup) {
             Logger::debug(self::LOG_PREFIX . 'User is expired - sending to registration');
             $this->register($request);
         } elseif (Member::EXPIRED === $memberStatus && $voHasRegistrationForm && !$isUserInGroup && $groupHasRegistrationForm) {
-            Logger::debug(self::LOG_PREFIX . 'User is expired and is not in group ' . $this->groupName . ' - sending to registration');
+            Logger::debug(
+                self::LOG_PREFIX . 'User is expired and is not in group ' . $this->groupName . ' - sending to registration'
+            );
             $this->register($request, $this->groupName);
         } else {
-            Logger::debug(self::LOG_PREFIX . 'User is not valid in vo/group and cannot be sent to the registration - sending to unauthorized');
+            Logger::debug(
+                self::LOG_PREFIX . 'User is not valid in vo/group and cannot be sent to the registration - sending to unauthorized'
+            );
             PerunIdentity::unauthorized($request);
         }
     }
