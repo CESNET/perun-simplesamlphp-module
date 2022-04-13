@@ -137,7 +137,6 @@ class PerunUser extends ProcessingFilter
             self::PARAM_STATE_ID => $stateId,
         ]);
         Logger::debug(self::DEBUG_PREFIX . 'Produced callback URL \'' . $callback . '\'');
-        $url = '';
         $params = [];
 
         if (!empty($this->registerUrl) && !empty($this->callbackParameterName)) {

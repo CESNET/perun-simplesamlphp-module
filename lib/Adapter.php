@@ -85,6 +85,14 @@ abstract class Adapter
     abstract public function getMemberGroups($user, $vo);
 
     /**
+     * @param User $user perun user
+     * @param Vo   $vo   vo we are working with
+     *
+     * @return Group[] groups from vo where user is valid
+     */
+    abstract public function getGroupsWhereMemberIsActive($user, $vo);
+
+    /**
      * @param string $spEntityId entity id of the sp
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId.
@@ -170,7 +178,15 @@ abstract class Adapter
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
      */
-    abstract public function getUsersGroupsOnFacility($spEntityId, $userId);
+    abstract public function getUsersGroupsOnSp($spEntityId, $userId);
+
+    /**
+     * @param Facility $facility entity id of the sp
+     * @param int      $userId
+     *
+     * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
+     */
+    abstract public function getUsersGroupsOnFacility($facility, $userId);
 
     /**
      * @param <String, String> map $attribute

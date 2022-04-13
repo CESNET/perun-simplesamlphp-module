@@ -22,6 +22,8 @@ class UpdateUserExtSource extends ProcessingFilter
 
     private $attrsToConversion;
 
+    private $appendOnlyAttrs = [];
+
     public function __construct($config, $reserved)
     {
         parent::__construct($config, $reserved);
@@ -38,6 +40,10 @@ class UpdateUserExtSource extends ProcessingFilter
             $this->attrsToConversion = [];
         }
 
+        if (isset($config['appendOnlyAttrs'])) {
+            $this->appendOnlyAttrs = (array) $config['appendOnlyAttrs'];
+        }
+
         $this->attrMap = (array) $config['attrMap'];
     }
 
@@ -50,6 +56,7 @@ class UpdateUserExtSource extends ProcessingFilter
             'attributes' => $request['Attributes'],
             'attrMap' => $this->attrMap,
             'attrsToConversion' => $this->attrsToConversion,
+            'appendOnlyAttrs' => $this->appendOnlyAttrs,
             'perunUserId' => $request['perun']['user']->getId(),
         ];
         $token = $challengeManager->generateToken($id, self::SCRIPT_NAME, $data);
