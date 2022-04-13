@@ -50,11 +50,12 @@ echo '</div>';
 
 echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_message}') . '</div>';
 ?>
-    <div class="list-group">
+    <div class="list-group mt-4">
         <form action="" method="post">
-            <h4 class="selectGroup"
-                style="display: none"><?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_select-group}'); ?></h4>
-            <select class="selectGroup form-control" name="selectedGroup" class="form-control" required>
+            <label for="selectedGroup">
+                <?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_select-group}'); ?>
+            </label>
+            <select class="selectGroup form-control" id="selectedGroup" name="selectedGroup" class="form-control mt-4" required>
                 <?php
                 foreach ($registrationData as $group) {
                     echo '<option class="groupOption" value="' . $group->getUniqueName() . '" >'
@@ -63,9 +64,8 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
                 }
                 ?>
             </select>
-
             <input type="submit" value="<?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_continue}'); ?>"
-                   class="btn btn-lg btn-primary btn-block">
+                   class="btn btn-lg btn-primary btn-block mt-4">
         </form>
     </div>
 
