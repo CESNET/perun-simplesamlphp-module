@@ -1,3 +1,10 @@
+## [7.8.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.8.0...v7.8.1) (2022-04-13)
+
+
+### Bug Fixes
+
+* 🐛 Fix direct registration in SpAuthorization ([1e52a49](https://github.com/CESNET/perun-simplesamlphp-module/commit/1e52a49bbc2c0eccdbafb34d9b3ef0ac1751e33d))
+
 # [7.8.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.7.0...v7.8.0) (2022-04-13)
 
 
