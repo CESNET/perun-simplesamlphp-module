@@ -324,7 +324,7 @@ class SpAuthorization extends ProcessingFilter
         $nameParts = explode(':', $group->getUniqueName(), 2);
         $params[PerunConstants::VO] = $nameParts[0];
         if (!empty($group) && PerunConstants::GROUP_MEMBERS !== $nameParts[1]) {
-            $params[PerunConstants::GROUP] = $group;
+            $params[PerunConstants::GROUP] = $nameParts[1];
         }
         $params[PerunConstants::TARGET_NEW] = $callback;
         $params[PerunConstants::TARGET_EXISTING] = $callback;
