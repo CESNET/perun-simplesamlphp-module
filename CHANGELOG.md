@@ -1,3 +1,28 @@
+# [7.8.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.7.0...v7.8.0) (2022-04-13)
+
+
+### Bug Fixes
+
+* Code checks ([fca9739](https://github.com/CESNET/perun-simplesamlphp-module/commit/fca9739d39ebb41d8cf38de257aacbc15a552c47))
+* Minor fixes in AuthProc filters ([48c6949](https://github.com/CESNET/perun-simplesamlphp-module/commit/48c6949edc155aa722eb50bc87cd9136c8c0ee61))
+* PerunEnsureMember sends users which are not in vo to regitration ([524c6ed](https://github.com/CESNET/perun-simplesamlphp-module/commit/524c6eddcb11c7c2cb4a210cb61d18eb01b15a72))
+* Removes redundant log in updateUes script ([232d3b8](https://github.com/CESNET/perun-simplesamlphp-module/commit/232d3b82d03841e13c127a30e56cfa4d6b5b7b36))
+* Rewrites aarc_idp_hint ([9657f72](https://github.com/CESNET/perun-simplesamlphp-module/commit/9657f72b5a2216ba240bc00382f992a22c211cbc))
+* SpAuthorization - unouthorized when user is not in the request ([f201a15](https://github.com/CESNET/perun-simplesamlphp-module/commit/f201a15c135b6fccea77b611c7d453de443bde28))
+* store a full attribute object from RPC ([efc0f8f](https://github.com/CESNET/perun-simplesamlphp-module/commit/efc0f8fce3ee77002f844191ad4ae64ea83484cb))
+* Updates processFilterConfigurations-example ([760b6bd](https://github.com/CESNET/perun-simplesamlphp-module/commit/760b6bdc2905f122cce9a9a787dd1d3e9f321aba))
+* updateUes - attr initialization from null to [] ([294f7c4](https://github.com/CESNET/perun-simplesamlphp-module/commit/294f7c4c8fa69f3b4fd804027ad1960847afdc9c))
+
+
+### Features
+
+* Adapter - getUsersGroupsOnSp, getGroupsWhereMemberIsActive ([18b6aed](https://github.com/CESNET/perun-simplesamlphp-module/commit/18b6aed3e0a1f523b54b97503c7ccb9391ba3fe2))
+* PerunConstants ([520bbb7](https://github.com/CESNET/perun-simplesamlphp-module/commit/520bbb70cfde28ec930abdaf553f96be2300f0dd))
+* PerunEnsureMember ([373d3a3](https://github.com/CESNET/perun-simplesamlphp-module/commit/373d3a3beda22bc9064c92f81498704d7dbeecc6))
+* PerunUserGroups ([48fd82c](https://github.com/CESNET/perun-simplesamlphp-module/commit/48fd82c0c15faedc3390f4dbb969702c070bb019))
+* SpAuthorization - adds handle_unsatisfied_membership option ([13ca45e](https://github.com/CESNET/perun-simplesamlphp-module/commit/13ca45e3faaf53ad089cd9db76c7d06c598745eb))
+* UpdateUserExtSource - introduces appendOnlyAttrs, fixes the way how attrsToUpdate are created ([b241135](https://github.com/CESNET/perun-simplesamlphp-module/commit/b241135de6fbcc526213b7334f3480291850f358))
+
 # [7.7.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.6.4...v7.7.0) (2022-04-11)
 
 
