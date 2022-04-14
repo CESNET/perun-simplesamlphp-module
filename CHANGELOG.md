@@ -1,3 +1,10 @@
+## [7.8.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.8.1...v7.8.2) (2022-04-14)
+
+
+### Bug Fixes
+
+* Swaps getUsersGroupsOnSp and getUsersGroupsOnFacility methods ([660ba85](https://github.com/CESNET/perun-simplesamlphp-module/commit/660ba85369725e490ca1bf9b19757d748cbb61c4))
+
 ## [7.8.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.8.0...v7.8.1) (2022-04-13)
 
 
