@@ -100,19 +100,29 @@ class AdapterLdap extends Adapter
             '(|' . $query . ')',
             ['perunUserId', 'displayName', 'cn', 'givenName', 'sn', 'preferredMail', 'mail']
         );
-        if (null === $user) {
-            return $user;
+
+        return self::mapUser($user);
+    }
+
+    public function getPerunUserByAdditionalIdentifiers($idpEntityId, $uids)
+    {
+        // Build a LDAP query, we are searching for the user who has at least one of the uid
+        $query = '';
+        foreach ($uids as $uid) {
+            $query .= '(internalUserIdentifiers=' . $uid . ')';
         }
 
-        if (isset($user['displayName'][0])) {
-            $name = $user['displayName'][0];
-        } elseif (isset($user['cn'][0])) {
-            $name = $user['cn'][0];
-        } else {
-            $name = null;
+        if (empty($query)) {
+            return null;
         }
 
-        return new User($user['perunUserId'][0], $name);
+        $user = $this->connector->searchForEntity(
+            'ou=People,' . $this->ldapBase,
+            '(|' . $query . ')',
+            ['perunUserId', 'displayName', 'cn', 'givenName', 'sn', 'preferredMail', 'mail']
+        );
+
+        return self::mapUser($user);
     }
 
     public function getMemberGroups($user, $vo)
@@ -606,6 +616,22 @@ class AdapterLdap extends Adapter
         }
 
         return $facilityCapabilities['capabilities'];
+    }
+
+    private function mapUser($user)
+    {
+        if (null === $user) {
+            return null;
+        }
+        if (isset($user['displayName'][0])) {
+            $name = $user['displayName'][0];
+        } elseif (isset($user['cn'][0])) {
+            $name = $user['cn'][0];
+        } else {
+            $name = null;
+        }
+
+        return new User($user['perunUserId'][0], $name);
     }
 
     private function resolveAttrValue($attrsNameTypeMap, $attrsFromLdap, $attr)

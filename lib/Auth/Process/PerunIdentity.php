@@ -16,6 +16,7 @@ use SimpleSAML\Module\perun\model\Group;
 use SimpleSAML\Module\perun\model\Member;
 use SimpleSAML\Module\perun\model\User;
 use SimpleSAML\Module\perun\model\Vo;
+use SimpleSAML\Module\perun\PerunConstants;
 use SimpleSAML\Utils\HTTP;
 
 /**
@@ -65,6 +66,10 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     public const PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS = 'facilityAllowRegistrationToGroups';
 
     public const LIST_OF_SPS_WITHOUT_INFO_ABOUT_REDIRECTION = 'listOfSpsWithoutInfoAboutRedirection';
+
+    public const USE_ADDITIONAL_IDENTIFIERS_LOOKUP = 'useAdditionalIdentifiersLookup';
+
+    public const ADDITIONAL_IDENTIFIERS_ATTRIBUTE = 'additionalIdentifiersAttribute';
 
     public const MODE = 'mode';
 
@@ -188,6 +193,14 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             );
         }
 
+        $this->useAdditionalIdentifiersLookup = $config->getBoolean(self::USE_ADDITIONAL_IDENTIFIERS_LOOKUP, false);
+        $this->additionalIdentifiersAttribute = $config->getString(self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE, null);
+        if ($this->useAdditionalIdentifiersLookup && null === $this->additionalIdentifiersAttribute) {
+            throw new Exception(
+                'perun:PerunIdentity: Invalid configuration: no attribute configured for extracting additional identifiers. Use option \'' . self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE . '\' to configure the name of the attribute, that should be considered as additional identifiers of the user.'
+            );
+        }
+
         $this->adapter = Adapter::getInstance($this->interface);
         $this->rpcAdapter = new AdapterRpc();
     }
@@ -235,6 +248,15 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $groups = [];
 
         $user = $this->adapter->getPerunUser($idpEntityId, $uids);
+        if ($this->useAdditionalIdentifiersLookup && null === $user) {
+            $additionalIdentifiers = $request[PerunConstants::ATTRIBUTES][$this->additionalIdentifiersAttribute] ?? null;
+            if (empty($additionalIdentifiers)) {
+                throw new Exception(
+                    'perun:PerunIdentity: missing mandatory attribute [' . $this->additionalIdentifiersAttribute . '] in request.'
+                );
+            }
+            $user = $this->adapter->getPerunUserByAdditionalIdentifiers($idpEntityId, $additionalIdentifiers);
+        }
 
         if (self::MODE_FULL === $this->mode) {
             $this->getSPAttributes($this->spEntityId);

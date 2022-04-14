@@ -12,6 +12,8 @@ Example how to configure PerunIdentity module:
                 'registerUrlBase' => 'https://perun.cesnet.cz/allfed/registrar',
                 'registerUrl' => 'https://login.cesnet.cz/register',
                 'interface' => 'ldap',
+                'useAdditionalIdentifiersLookup' => true,
+                'additionalIdentifiersAttribute' => 'additionalIdentifiers',
                 'facilityCheckGroupMembershipAttr' => 'urn:perun:facility:attribute-def:def:checkGroupMembership',
                 'facilityVoShortNamesAttr' => 'urn:perun:facility:attribute-def:virt:voShortNames',
                 'facilityDynamicRegistrationAttr' => 'urn:perun:facility:attribute-def:def:dynamicRegistration',
@@ -193,6 +195,8 @@ Configuration options:
 * `register_url`: URL to which the user will be forwarded for registration. Leave empty to use the Perun registrar.
 * `callback_parameter_name`: name of the parameter wich will hold callback URL, where the user should be redirected after the registration on URL configured in the `register_url` property.
 * `perun_register_url`: the complete URL (including vo and group) to which user will be redirected, if `register_url` has not been configured. Parameters targetnew, targetexisting and targetextended will be set to callback URL to continue after the registration is completed.
+* `use_additional_identifiers_lookup`: `true` or `false`, set it to `true` if you want to use additionalIdentifiers as fallback lookup method if the standard one fails.
+* `additional_identifiers_attribute`: name of the attribute (from `$request['Attributes']` array), which holds the additional identifiers. If you use RPC adapter, the value in the attribute resolved using `idp_id_attr` will be used as well for locating the user in Perun. 
 
 ```php
 2 => [
@@ -202,7 +206,9 @@ Configuration options:
     'idp_id_attr' => 'authenticating_idp',
     'register_url' => 'https://signup.cesnet.cz/',
     'callback_parameter_name' => 'callback',
-    'perun_register_url' => 'https://signup.perun.cesnet.cz/fed/registrar/?vo=cesnet'
+    'perun_register_url' => 'https://signup.perun.cesnet.cz/fed/registrar/?vo=cesnet',
+    'use_additional_identifiers_lookup' => true,
+    'additional_identifiers_attribute' => 'additionalIdentifiers',
 ],
 ```
 

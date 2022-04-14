@@ -112,6 +112,11 @@ class AdapterRpc extends Adapter
         return $user;
     }
 
+    public function getPerunUserByAdditionalIdentifiers($idpEntityId, $uids)
+    {
+        return $this->getPerunUser($idpEntityId, $uids);
+    }
+
     public function getMemberGroups($user, $vo)
     {
         try {
