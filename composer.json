@@ -33,6 +33,9 @@
     "config": {
         "platform": {
             "php": "7.4"
+        },
+        "allow-plugins": {
+            "simplesamlphp/composer-module-installer": true
         }
     },
     "require": {

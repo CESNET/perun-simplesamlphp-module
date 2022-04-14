@@ -7,10 +7,12 @@ namespace SimpleSAML\Module\perun\Auth\Process;
 use DateTime;
 use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Auth\State;
+use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
 use SimpleSAML\Module\perun\Adapter;
+use SimpleSAML\Module\perun\EntitlementUtils;
 use SimpleSAML\Module\perun\model;
 use SimpleSAML\Utils\HTTP;
 
@@ -43,6 +45,8 @@ class ForceAup extends ProcessingFilter
 
     public const PERUN_FACILITY_VO_SHORT_NAMES_ATTR = 'perunFacilityVoShortNamesAttr';
 
+    public const ENTITY_ID = 'entityID';
+
     private const DATETIME_FORMAT = 'Y-m-d';
 
     private $perunAupsAttr;
@@ -55,6 +59,8 @@ class ForceAup extends ProcessingFilter
 
     private $perunFacilityVoShortNames;
 
+    private $entityId;
+
     /**
      * @var Adapter
      */
@@ -64,35 +70,39 @@ class ForceAup extends ProcessingFilter
     {
         parent::__construct($config, $reserved);
 
-        if (!isset($config[self::PERUN_AUPS_ATTR]) && !isset($config[self::PERUN_VO_AUP_ATTR])) {
+        $configuration = Configuration::loadFromArray($config);
+        $this->perunAupsAttr = $configuration->getString(self::PERUN_AUPS_ATTR, null);
+        $this->perunVoAupAttr = $configuration->getString(self::PERUN_VO_AUP_ATTR, null);
+        if (null === $this->perunAupsAttr && null === $this->perunVoAupAttr) {
             throw new Exception(
                 'perun:ForceAup: missing at least one of mandatory configuration options \'' . self::PERUN_AUPS_ATTR . '\' or \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
         }
-        if (!isset($config[self::PERUN_USER_AUP_ATTR])) {
-            throw new Exception(
-                'perun:ForceAup: missing mandatory configuration option \'' . self::PERUN_USER_AUP_ATTR . '\'.'
-            );
-        }
-        if (!isset($config[self::INTERFACE_PROPNAME])) {
-            $config[self::INTERFACE_PROPNAME] = Adapter::RPC;
-        }
-
-        $this->perunAupsAttr = isset($config[self::PERUN_AUPS_ATTR]) ?
-            (string) $config[self::PERUN_AUPS_ATTR] : null;
-        $this->perunVoAupAttr = isset($config[self::PERUN_VO_AUP_ATTR]) ?
-            (string) $config[self::PERUN_VO_AUP_ATTR] : null;
-        $this->perunUserAupAttr = (string) $config[self::PERUN_USER_AUP_ATTR];
-        $interface = (string) $config[self::INTERFACE_PROPNAME];
+        $this->perunUserAupAttr = $configuration->getString(self::PERUN_USER_AUP_ATTR);
+        $interface = $configuration->getValueValidate(
+            self::INTERFACE_PROPNAME,
+            [Adapter::RPC, Adapter::LDAP],
+            Adapter::RPC
+        );
         $this->adapter = Adapter::getInstance($interface);
-
-        $this->perunFacilityRequestedAupsAttr = (string) $config[self::PERUN_FACILITY_REQ_AUPS_ATTR];
-        $this->perunFacilityVoShortNames = (string) $config[self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR];
+        $this->perunFacilityRequestedAupsAttr = $configuration->getString(self::PERUN_FACILITY_REQ_AUPS_ATTR);
+        $this->perunFacilityVoShortNames = $configuration->getString(self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR);
+        $this->entityId = $configuration->getValue(self::ENTITY_ID, null);
     }
 
     public function process(&$request)
     {
         assert(is_array($request));
+
+        if (null === $this->entityId) {
+            $this->entityId = EntitlementUtils::getSpEntityId($request);
+        } elseif (is_callable($this->entityId)) {
+            $this->entityId = call_user_func($this->entityId, $request);
+        } elseif (!is_string($this->entityId)) {
+            throw new Exception(
+                'perun:ForceAup: invalid configuration option entityID. It must be a string or a callable.'
+            );
+        }
 
         if (isset($request['perun']['user'])) {
             /**
@@ -108,7 +118,7 @@ class ForceAup extends ProcessingFilter
         }
 
         try {
-            $facility = $this->adapter->getFacilityByEntityId($request['SPMetadata']['entityid']);
+            $facility = $this->adapter->getFacilityByEntityId($this->entityId);
 
             if (null === $facility) {
                 return;
@@ -139,7 +149,7 @@ class ForceAup extends ProcessingFilter
             if (empty($requestedAups) && empty($voShortNames)) {
                 Logger::debug(
                     'Perun.ForceAup - No AUPs to be approved have been requested by facility with EntityId: ' .
-                    $request['SPMetadata']['entityid']
+                    $this->entityId
                 );
 
                 return;
