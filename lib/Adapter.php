@@ -178,7 +178,7 @@ abstract class Adapter
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
      */
-    abstract public function getUsersGroupsOnSp($spEntityId, $userId);
+    abstract public function getUsersGroupsOnFacility($spEntityId, $userId);
 
     /**
      * @param Facility $facility entity id of the sp
@@ -186,7 +186,7 @@ abstract class Adapter
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
      */
-    abstract public function getUsersGroupsOnFacility($facility, $userId);
+    abstract public function getUsersGroupsOnSp($facility, $userId);
 
     /**
      * @param <String, String> map $attribute
