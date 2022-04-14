@@ -171,7 +171,7 @@ class SpAuthorization extends ProcessingFilter
             return;
         }
 
-        $userGroups = $this->adapter->getUsersGroupsOnFacility($facility, $user->getId());
+        $userGroups = $this->adapter->getUsersGroupsOnSp($facility, $user->getId());
         if (!empty($userGroups)) {
             Logger::info(self::DEBUG_PREFIX . 'User satisfies the group membership check.');
         } else {

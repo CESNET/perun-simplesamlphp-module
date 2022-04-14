@@ -241,7 +241,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
             $this->checkMemberStateDefaultVo($request, $user, $uids);
 
-            $groups = $this->adapter->getUsersGroupsOnSp($this->spEntityId, $user->getId());
+            $groups = $this->adapter->getUsersGroupsOnFacility($this->spEntityId, $user->getId());
 
             if ($this->checkGroupMembership && empty($groups)) {
                 if ($this->allowRegistrationToGroups) {

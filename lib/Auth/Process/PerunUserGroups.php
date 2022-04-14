@@ -52,7 +52,7 @@ class PerunUserGroups extends ProcessingFilter
             throw new Exception(self::DEBUG_PREFIX . 'Cannot find SP EntityID');
         }
 
-        $groups = $this->adapter->getUsersGroupsOnSp($spEntityId, $user->getId());
+        $groups = $this->adapter->getUsersGroupsOnFacility($spEntityId, $user->getId());
         $request[PerunConstants::PERUN][PerunConstants::USER_GROUPS] = $groups;
     }
 }

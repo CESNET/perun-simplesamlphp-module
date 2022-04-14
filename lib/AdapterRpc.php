@@ -380,14 +380,14 @@ class AdapterRpc extends Adapter
         return $perunAttr['value'];
     }
 
-    public function getUsersGroupsOnSp($spEntityId, $userId)
+    public function getUsersGroupsOnFacility($spEntityId, $userId)
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
-        return self::getUsersGroupsOnFacility($facility, $userId);
+        return self::getUsersGroupsOnSp($facility, $userId);
     }
 
-    public function getUsersGroupsOnFacility($facility, $userId)
+    public function getUsersGroupsOnSp($facility, $userId)
     {
         if (null === $facility) {
             return [];
