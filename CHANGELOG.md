@@ -1,3 +1,10 @@
+# [7.9.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.8.2...v7.9.0) (2022-04-14)
+
+
+### Features
+
+* **forceaup:** new option entityID, fix required checks ([e2ec315](https://github.com/CESNET/perun-simplesamlphp-module/commit/e2ec3155db7d727c4c23c84471d3dc7ca68449c6))
+
 ## [7.8.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.8.1...v7.8.2) (2022-04-14)
 
 
