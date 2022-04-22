@@ -55,6 +55,14 @@ abstract class Adapter
     abstract public function getPerunUser($idpEntityId, $uids);
 
     /**
+     * @param string $idpEntityId entity id of hosted idp used as extSourceName
+     * @param array  $uids        list of user identifiers received from remote idp used as userExtSourceLogin
+     *
+     * @return User or null if not exists
+     */
+    abstract public function getPerunUserByAdditionalIdentifiers($idpEntityId, $uids);
+
+    /**
      * @param model\Vo $vo
      * @param string   $name group name. Note that name of group is without VO name prefix.
      *

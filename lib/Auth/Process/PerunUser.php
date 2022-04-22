@@ -38,6 +38,8 @@ class PerunUser extends ProcessingFilter
     public const REGISTER_URL = 'register_url';
     public const CALLBACK_PARAMETER_NAME = 'callback_parameter_name';
     public const PERUN_REGISTER_URL = 'perun_register_url';
+    public const USE_ADDITIONAL_IDENTIFIERS_LOOKUP = 'use_additional_identifiers_lookup';
+    public const ADDITIONAL_IDENTIFIERS_ATTRIBUTE = 'additional_identifiers_attribute';
 
     private $adapter;
     private $idpEntityIdAttr;
@@ -45,6 +47,8 @@ class PerunUser extends ProcessingFilter
     private $registerUrl;
     private $callbackParameterName;
     private $perunRegisterUrl;
+    private $useAdditionalIdentifiersLookup;
+    private $additionalIdentifiersAttribute;
     private $config;
     private $filterConfig;
 
@@ -78,6 +82,19 @@ class PerunUser extends ProcessingFilter
                 . If you wish to use the Perun registrar, use the option \'' . self::PERUN_REGISTER_URL . '\'.'
             );
         }
+        $this->useAdditionalIdentifiersLookup = $this->filterConfig->getBoolean(
+            self::USE_ADDITIONAL_IDENTIFIERS_LOOKUP,
+            false
+        );
+        $this->additionalIdentifiersAttribute = $this->filterConfig->getString(
+            self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE,
+            null
+        );
+        if ($this->useAdditionalIdentifiersLookup && null === $this->additionalIdentifiersAttribute) {
+            throw new Exception(
+                self::DEBUG_PREFIX . 'Invalid configuration: no attribute configured for extracting additional identifiers. Use option \'' . self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE . '\' to configure the name of the attribute, that should be considered as additional identifiers of the user.'
+            );
+        }
     }
 
     public function process(&$request)
@@ -107,6 +124,15 @@ class PerunUser extends ProcessingFilter
         }
 
         $user = $this->adapter->getPerunUser($idpEntityId, $uids);
+        if ($this->useAdditionalIdentifiersLookup && null === $user) {
+            $additionalIdentifiers = $request[PerunConstants::ATTRIBUTES][$this->additionalIdentifiersAttribute] ?? null;
+            if (empty($additionalIdentifiers)) {
+                throw new Exception(
+                    self::DEBUG_PREFIX . 'missing mandatory attribute [' . $this->additionalIdentifiersAttribute . '] in request.'
+                );
+            }
+            $user = $this->adapter->getPerunUserByAdditionalIdentifiers($idpEntityId, $additionalIdentifiers);
+        }
 
         if (!empty($user)) {
             $this->processUser($request, $user, $uids);
