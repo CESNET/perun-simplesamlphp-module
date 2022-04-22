@@ -1,3 +1,10 @@
+# [7.10.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.9.0...v7.10.0) (2022-04-22)
+
+
+### Features
+
+* 🎸 Additional identifiers lookup ([36f7f7c](https://github.com/CESNET/perun-simplesamlphp-module/commit/36f7f7ceddeecb9ae532090f702f379b01c8c807))
+
 # [7.9.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.8.2...v7.9.0) (2022-04-14)
 
 
