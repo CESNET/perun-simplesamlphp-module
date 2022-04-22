@@ -1,3 +1,10 @@
+## [7.10.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.10.0...v7.10.1) (2022-04-22)
+
+
+### Bug Fixes
+
+* 🐛 Fixed PrivacyIDEA template ([66b6656](https://github.com/CESNET/perun-simplesamlphp-module/commit/66b6656823ca2bc1c16349b1659c89574c7d7523))
+
 # [7.10.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.9.0...v7.10.0) (2022-04-22)
 
 
