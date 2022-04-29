@@ -1,3 +1,10 @@
+# [7.11.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.10.1...v7.11.0) (2022-04-29)
+
+
+### Features
+
+* 🎸 Possibility to hide authN protocol, small fixes ([635ea64](https://github.com/CESNET/perun-simplesamlphp-module/commit/635ea641f5afa315dea6f1d11a504db769f33fc9))
+
 ## [7.10.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.10.0...v7.10.1) (2022-04-22)
 
 
