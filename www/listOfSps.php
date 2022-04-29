@@ -19,6 +19,7 @@ const PERUN_PROXY_IDENTIFIER_ATTR_NAME = 'listOfSps.perunProxyIdentifierAttr';
 const PERUN_LOGIN_URL_ATTR_NAME = 'listOfSps.loginURLAttr';
 const PERUN_TEST_SP_ATTR_NAME = 'listOfSps.isTestSpAttr';
 const PERUN_SHOW_ON_SERVICE_LIST_ATTR_NAME = 'listOfSps.showOnServiceListAttr';
+const PERUN_SHOW_PROTOCOL = 'listOfSps.showProtocol';
 const PERUN_SAML2_ENTITY_ID_ATTR_NAME = 'listOfSps.SAML2EntityIdAttr';
 const PERUN_OIDC_CLIENT_ID_ATTR_NAME = 'listOfSps.OIDCClientIdAttr';
 
@@ -71,6 +72,8 @@ $perunLoginURLAttr = $conf->getString(PERUN_LOGIN_URL_ATTR_NAME, null);
 $perunTestSpAttr = $conf->getString(PERUN_TEST_SP_ATTR_NAME, null);
 $perunShowOnServiceListAttr
     = $conf->getString(PERUN_SHOW_ON_SERVICE_LIST_ATTR_NAME, null);
+
+$showProtocol = $conf->getBoolean(PERUN_SHOW_PROTOCOL, true);
 
 $rpcAdapter = new AdapterRpc();
 $attributeDefinition = [];
@@ -192,6 +195,7 @@ if (isset($_GET['output']) && 'json' === $_GET['output']) {
     $t->data['statistics'] = $statistics;
     $t->data['attributesToShow'] = $attributesToShow;
     $t->data['multilingualAttributes'] = $multilingualAttributes;
+    $t->data['showProtocol'] = $showProtocol;
     $t->data['isNameMultilingual'] = in_array($perunServiceNameAttr, $multilingualAttributes, true);
     $t->data['samlServices'] = $samlServices;
     $t->data['oidcServices'] = $oidcServices;
