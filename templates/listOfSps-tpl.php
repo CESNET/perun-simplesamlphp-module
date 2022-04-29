@@ -110,14 +110,16 @@ $this->includeAtTemplateBase('includes/header.php');
                     <thead>
                     <tr>
                         <th><?php echo $this->t('{perun:listOfSps:name}'); ?></th>
-                        <th><?php echo $this->t('{perun:listOfSps:authenticate_protocol}'); ?></th>
                         <?php
+                        if ($this->data['showProtocol']) {
+                            echo '<th>' . $this->t('{perun:listOfSps:authenticate_protocol}') . '</th>' . PHP_EOL;
+                        }
                         foreach ($attributesToShow as $attr) {
                             if (!empty($samlServices)) {
-                                echo "<th class='" . ListOfSps::getClass(
-                                    array_values($samlServices)[0]['facilityAttributes'][$attr]['type']
-                                ) . "'>" . array_values($samlServices)[0]['facilityAttributes'][$attr]['displayName']
-                                . '</th>';
+                                $displayName = array_values(
+                                    $samlServices
+                                )[0]['facilityAttributes'][$attr]['displayName'];
+                                echo '<th>' . $displayName . '</th>';
                             }
                         }
                         ?>
@@ -138,10 +140,12 @@ $this->includeAtTemplateBase('includes/header.php');
                                 $service['loginURL']['value'] ?? null
                             )
                             . '</td>';
-                        if (array_key_exists($service['facility']->getID(), $samlServices)) {
-                            echo '<td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
-                        } else {
-                            echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
+                        if ($this->data['showProtocol']) {
+                            if (array_key_exists($service['facility']->getID(), $samlServices)) {
+                                echo '<td>' . $this->t('{perun:listOfSps:saml}') . '</td>';
+                            } else {
+                                echo '<td>' . $this->t('{perun:listOfSps:oidc}') . '</td>';
+                            }
                         }
                         foreach ($attributesToShow as $attr) {
                             $type = $service['facilityAttributes'][$attr]['type'];
