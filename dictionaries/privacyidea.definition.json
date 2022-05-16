@@ -7,24 +7,8 @@
     "en": "The service you are trying to access has requested authentication using multiple factors. Use one of your registered additional authentication token using the buttons below.",
     "cs": "Služba ke které přistupujete vyžádala vícefaktorovout autentizaci. Použijte jednu z vašich zaregistrovaných metod kliknutím na jedno z tlačítek nížě."
   },
-  "otp": {
-    "en": "Security code",
-    "cs": "Bezpečnostní kód"
-  },
   "otp_help": {
     "en": "Enter the 6 digit one time password from the smartphone application.",
     "cs": "Vložte jednorázový kód, například z TOTP aplikace."
-  },
-  "otp_submit_btn": {
-    "en": "Submit",
-    "cs": "Potvrdit"
-  },
-  "webauthn": {
-    "en": "Web Authentication",
-    "cs": "Web Authentication"
-  },
-  "webauthn_btn": {
-    "en": "Trigger authentication",
-    "cs": "Spustit autentizaci"
   }
 }

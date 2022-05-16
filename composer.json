@@ -62,5 +62,8 @@
     },
     "require-dev": {
         "symplify/easy-coding-standard": "^10.0"
+    },
+    "suggest": {
+        "cesnet/simplesamlphp-module-privacyidea": "included privacyIDEA template is for this module"
     }
 }
