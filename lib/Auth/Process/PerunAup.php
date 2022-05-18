@@ -137,7 +137,7 @@ class PerunAup extends ProcessingFilter
             $params[PerunConstants::TARGET_EXTENDED] = $callback;
 
             $url = Module::getModuleURL(self::REDIRECT);
-            $approvalUrl = HTTP::addURLParameters($this->approvalUrl, $params);
+            $approvalUrl = HTTP::addURLParameters($this->perunApprovalUrl, $params);
             Logger::debug(
                 self::DEBUG_PREFIX . 'Redirecting to \'' . self::REDIRECT . ', approval URL \''
                 . $approvalUrl . '\''
