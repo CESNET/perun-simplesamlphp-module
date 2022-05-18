@@ -1,3 +1,10 @@
+## [7.11.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.11.0...v7.11.1) (2022-05-18)
+
+
+### Bug Fixes
+
+* 🐛 Fix using approvalUrl where perunApprovalUrl should be u ([66e13ee](https://github.com/CESNET/perun-simplesamlphp-module/commit/66e13ee91da208c86690b67bd4a178909dc4f5b8))
+
 # [7.11.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.10.1...v7.11.0) (2022-04-29)
 
 
