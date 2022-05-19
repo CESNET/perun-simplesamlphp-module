@@ -95,17 +95,25 @@
     "en": "Now you will be redirected to registration to Perun system.",
     "cs": "Nyní budete přesměrování na registraci do systému Perun."
   },
+  "register_header": {
+    "en": "No user account found",
+    "cs": "Uživatelský ůčet nebyl nalezen"
+  },
   "register_text": {
-    "en": "Oops! It seems you have tried to access service via Perun AAI, but yo do not have an account. Let's fix that!",
-    "cs": "Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz Perun AAI, no nemáte uživatelský účet. Pojďme to napravit!"
+    "en": "Oops! It seems you have tried to access service via the AAI, but the home organization account you have used is not associated with any AAI user account. Let's fix that!",
+    "cs": "Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz AAI, no Váš účet z domovské organizace použitý pro přihlášení není asociován s žádným uživatelským účtem v AAI. Pojďme to napravit!"
   },
   "register_button": {
     "en": "Proceed to register for an account",
     "cs": "Pokračovat na registraci ůčtu"
   },
+  "aup_header": {
+    "en": "Acceptable Use Policy",
+    "cs": " Podmínky užití služby (AUP)"
+  },
   "aup_text": {
-    "en": "Oops! It seems you have tried to access service via Perun AAI, but you have not approved the Acceptable Use Policy (AUP). Let's fix that!",
-    "cs": "Ups! Vyzerá to, že jste se pokousil(a) přihlásit ke službě skrze Perun AAI, no neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
+    "en": "Oops! It seems you have tried to access service via the AAI, but you have not approved the Acceptable Use Policy (AUP). Let's fix that!",
+    "cs": "Ups! Zdá se, že jste se pokousil(a) přihlásit ke službě skrz AAI, no neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
   },
   "aup_button": {
     "en": "Proceed to approval of the AUP",
