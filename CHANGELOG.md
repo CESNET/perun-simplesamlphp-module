@@ -1,3 +1,15 @@
+# [8.0.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.11.2...v8.0.0) (2022-05-19)
+
+
+### Features
+
+* new privacyIDEA template ([8bb43bc](https://github.com/CESNET/perun-simplesamlphp-module/commit/8bb43bc3f40358203f852480b62dd0d4dd047bcc))
+
+
+### BREAKING CHANGES
+
+* requires cesnet/simplesamlphp-module-privacyidea v5
+
 ## [7.11.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.11.1...v7.11.2) (2022-05-19)
 
 
