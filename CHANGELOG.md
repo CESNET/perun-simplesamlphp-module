@@ -1,3 +1,10 @@
+## [7.11.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.11.1...v7.11.2) (2022-05-19)
+
+
+### Bug Fixes
+
+* 🐛 Fix templates perun-aup and perun-user, update dicts ([49d8ee0](https://github.com/CESNET/perun-simplesamlphp-module/commit/49d8ee0f9cdaf047b4c702d941129ee3ef3b8c69))
+
 ## [7.11.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.11.0...v7.11.1) (2022-05-18)
 
 
