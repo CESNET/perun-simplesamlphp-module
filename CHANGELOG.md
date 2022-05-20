@@ -1,3 +1,10 @@
+## [8.0.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.0...v8.0.1) (2022-05-20)
+
+
+### Bug Fixes
+
+* **perunaup:** fix btn size and color ([bdaaa5a](https://github.com/CESNET/perun-simplesamlphp-module/commit/bdaaa5afb3cd4be853d3b8e6912115c0386c889d))
+
 # [8.0.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v7.11.2...v8.0.0) (2022-05-19)
 
 
