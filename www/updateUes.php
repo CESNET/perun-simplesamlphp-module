@@ -131,7 +131,6 @@ try {
     $attributesToUpdate = getAttributesToUpdate(
         $attributesFromPerun,
         $attrMap,
-        $serializedAttributes,
         $appendOnlyAttrs,
         $attributesFromIdP
     );
@@ -204,54 +203,94 @@ function getAttributesFromPerun($adapter, $attrMap, $userExtSource): array
     return $attributesFromPerun;
 }
 
-function getAttributesToUpdate(
-    $attributesFromPerun,
-    $attrMap,
-    $serializedAttributes,
-    $appendOnlyAttrs,
-    $attributesFromIdP
-): array {
+function getAttributesToUpdate($attributesFromPerun, $attrMap, $appendOnlyList, $attributesFromIdP): array
+{
     $attributesToUpdate = [];
 
-    foreach ($attributesFromPerun as $attribute) {
-        $attrName = $attribute[NAME];
-
-        $attr = !empty($attributesFromIdP[$attrMap[$attrName]]) ?
-            $attributesFromIdP[$attrMap[$attrName]] : [];
-
-        // appendOnly && has value && (complex || serialized)
-        if (in_array($attrName, $appendOnlyAttrs, true) &&
-            !empty($attribute[VALUE]) &&
-            (isComplexType($attribute[TYPE]) || in_array($attrName, $serializedAttributes, true))
-        ) {
-            $attr = in_array($attrName, $serializedAttributes, true) ?
-                array_merge($attr, explode(';', $attribute[VALUE])) : array_merge($attr, $attribute[VALUE]);
+    foreach ($attributesFromPerun as $perunAttribute) {
+        $attributeName = $perunAttribute[NAME];
+        Logger::debug(DEBUG_PREFIX . 'Generating value for attribute \'' . $attributeName . '\'');
+        $idpValue = !empty($attributesFromIdP[$attrMap[$attributeName]]) ?
+            $attributesFromIdP[$attrMap[$attributeName]] : [];
+        if (!is_array($idpValue)) {
+            $idpValue = [$idpValue];
         }
 
-        if (isSimpleType($attribute[TYPE])) {
-            $newValue = convertToString($attr);
-        } elseif (isComplexType($attribute[TYPE])) {
-            if (!empty($attr)) {
-                $newValue = array_values(array_unique($attr));
+        if ($perunAttribute[VALUE] === null) {
+            $perunAttribute[VALUE] = [];
+        }
+
+        $currentValue = $perunAttribute[VALUE];
+        if (isSimpleType($perunAttribute)) {
+            $currentValue = $currentValue[0] ?: '';
+        }
+
+        Logger::debug(DEBUG_PREFIX . 'value from IdP: ' . json_encode($idpValue));
+        Logger::debug(DEBUG_PREFIX . 'current value from Perun: ' . json_encode($currentValue));
+
+        $newValue = $idpValue;
+        // appendOnly
+        if (isAppendOnlyValue($attributeName, $appendOnlyList) && !empty($idpValue)) {
+            // complex type
+            if (isComplexType($perunAttribute)) {
+                $newValue = array_merge($idpValue, $currentValue);
+                Logger::debug(
+                    DEBUG_PREFIX . 'AppendOnly for complex type. Resulting value is ' . json_encode($newValue)
+                );
+            } elseif (isSimpleType($perunAttribute)) {
+                if (strpos($currentValue, ';')) {
+                    $currentValue = explode(';', $currentValue);
+                }
+                if (!is_array($currentValue)) {
+                    $currentValue = [$currentValue];
+                }
+                $newValue = array_merge($idpValue, $currentValue);
+                Logger::debug(
+                    DEBUG_PREFIX . 'AppendOnly for simple type. Resulting value is ' . json_encode($newValue)
+                );
+            } else {
+                Logger::debug(
+                    DEBUG_PREFIX . 'Invalid state - append only attribute \'' . $attributeName
+                    . '\', which is not marked as serialized, while being simple type'
+                );
+            }
+        }
+
+        if (isSimpleType($perunAttribute)) {
+            $newValue = convertToString($newValue);
+        } elseif (isComplexType($perunAttribute)) {
+            if (!empty($newValue)) {
+                $newValue = array_values(array_unique($newValue));
             } else {
                 $newValue = [];
-            }
-            if (in_array($attrName, $serializedAttributes, true)) {
-                $newValue = convertToString($newValue);
             }
         } else {
             Logger::debug(DEBUG_PREFIX . 'Unsupported type of attribute.');
             continue;
         }
 
-        if ($newValue !== $attribute[VALUE]) {
-            $attribute[VALUE] = $newValue;
-            $attribute[NAMESPACE_KEY] = UES_ATTR_NMS;
-            $attributesToUpdate[] = $attribute;
+        if ($newValue !== $perunAttribute[VALUE]) {
+            $perunAttribute[VALUE] = $newValue;
+            $perunAttribute[NAMESPACE_KEY] = UES_ATTR_NMS;
+            $attributesToUpdate[] = $perunAttribute;
+            Logger::debug(
+                DEBUG_PREFIX . 'Value has changed for attribute \'' . $attributeName . '\'. New value stored will be ' . json_encode(
+                    $newValue
+                )
+            );
+        } else {
+            Logger::debug(
+                DEBUG_PREFIX . 'Value has not changed, skipping update for attribute \'' . $attributeName . '\''
+            );
         }
     }
 
     return $attributesToUpdate;
+}
+
+function isAppendOnlyValue($attributeName, $appendOnlyAttrs): bool
+{
+    return in_array($attributeName, $appendOnlyAttrs, true);
 }
 
 function updateUserExtSource($adapter, $userExtSource, $attributesToUpdate): bool
@@ -272,26 +311,35 @@ function updateUserExtSource($adapter, $userExtSource, $attributesToUpdate): boo
     return true;
 }
 
-function isSimpleType($attributeType): bool
+function isSimpleType($attribute): bool
 {
-    return strpos($attributeType, STRING_TYPE)
-    || strpos($attributeType, INTEGER_TYPE)
-    || strpos($attributeType, BOOLEAN_TYPE);
+    if (empty($attribute[TYPE])) {
+        return false;
+    }
+    $attributeType = $attribute[TYPE];
+
+    return strpos($attributeType, STRING_TYPE) ||
+        strpos($attributeType, INTEGER_TYPE) ||
+        strpos($attributeType, BOOLEAN_TYPE);
 }
 
-function isComplexType($attributeType): bool
+function isComplexType($attribute): bool
 {
+    if (empty($attribute[TYPE])) {
+        return false;
+    }
+    $attributeType = $attribute[TYPE];
+
     return strpos($attributeType, ARRAY_TYPE) ||
         strpos($attributeType, MAP_TYPE);
 }
 
-function convertToString($newValue)
+function convertToString(array $newValue): string
 {
+    $attrValueAsString = '';
     if (!empty($newValue)) {
         $newValue = array_unique($newValue);
         $attrValueAsString = implode(';', $newValue);
-    } else {
-        $attrValueAsString = '';
     }
 
     return $attrValueAsString;

@@ -20,8 +20,6 @@ class UpdateUserExtSource extends ProcessingFilter
 
     private $attrMap;
 
-    private $attrsToConversion;
-
     private $appendOnlyAttrs = [];
 
     public function __construct($config, $reserved)
@@ -32,12 +30,6 @@ class UpdateUserExtSource extends ProcessingFilter
 
         if (!isset($config['attrMap'])) {
             throw new Exception('perun:UpdateUserExtSource: missing mandatory configuration option \'attrMap\'.');
-        }
-
-        if (isset($config['arrayToStringConversion'])) {
-            $this->attrsToConversion = (array) $config['arrayToStringConversion'];
-        } else {
-            $this->attrsToConversion = [];
         }
 
         if (isset($config['appendOnlyAttrs'])) {
@@ -55,7 +47,6 @@ class UpdateUserExtSource extends ProcessingFilter
         $data = [
             'attributes' => $request['Attributes'],
             'attrMap' => $this->attrMap,
-            'attrsToConversion' => $this->attrsToConversion,
             'appendOnlyAttrs' => $this->appendOnlyAttrs,
             'perunUserId' => $request['perun']['user']->getId(),
         ];
