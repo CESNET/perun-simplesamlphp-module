@@ -127,7 +127,7 @@ class AttributeUtils
             Logger::warning('perun:AttributeUtils: missing or invalid perun_attributes.php config file');
         }
 
-        if (null === $perunAttributesConfig) {
+        if ($perunAttributesConfig === null) {
             throw new Exception('perun:AttributeUtils: missing or invalid perun_attributes.php config file');
         }
 

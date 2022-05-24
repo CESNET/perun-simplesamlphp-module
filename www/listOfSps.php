@@ -160,7 +160,7 @@ foreach ($attrNames as $attrName) {
 
 $allServices = array_merge($samlServices, $oidcServices);
 
-if (isset($_GET['output']) && 'json' === $_GET['output']) {
+if (isset($_GET['output']) && $_GET['output'] === 'json') {
     $json = [];
     $json['services'] = [];
 

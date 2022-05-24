@@ -20,7 +20,7 @@ if (!empty($_POST)) {
     $group = explode(':', $_POST['selectedGroup'], 2)[1];
 
     $params[PerunConstants::VO] = $vo;
-    if (PerunConstants::GROUP_MEMBERS !== $group) {
+    if ($group !== PerunConstants::GROUP_MEMBERS) {
         $params[PerunConstants::GROUP] = $group;
     }
 

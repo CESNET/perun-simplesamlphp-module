@@ -72,7 +72,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
     {
         assert(is_array($request));
 
-        $default = self::MODE_BLACKLIST === $this->mode;
+        $default = $this->mode === self::MODE_BLACKLIST;
         $shouldRun = $this->shouldRunForSP($request['Destination']['entityid'], $default);
         if ($shouldRun === $default) {
             $shouldRun = $this->shouldRunForAttribute($request['Attributes'], $default);
@@ -80,7 +80,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 
         if ($shouldRun) {
             $this->processState($request);
-        } elseif (self::MODE_WHITELIST === $this->mode) {
+        } elseif ($this->mode === self::MODE_WHITELIST) {
             Logger::info(
                 sprintf(
                     'perun.ProxyFilter: Not running filter %s for SP %s',
@@ -179,7 +179,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
      *
      * @param array $config   array with the authentication processing filter configuration
      * @param int   $priority The priority of the current filter, (not included in the filter
-     *                        definition.)
+     * definition.)
      *
      * @return ProcessingFilter the parsed filter
      */

@@ -16,20 +16,29 @@ use SimpleSAML\Module\perun\PerunConstants;
 class ExtractRequestAttribute extends ProcessingFilter
 {
     public const STAGE = 'perun:ExtractRequestAttribute';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const DESTINATION_ATTRIBUTE_NAME = 'destination_attribute_name';
+
     public const REQUEST_KEYS = 'request_keys';
+
     public const FAIL_ON_NON_EXISTING_KEY = 'fail_on_not_existing_key';
+
     public const DEFAULT_VALUE = 'default_value';
 
     public const KEYS_SEPARATOR = ';';
+
     public const FAILURE_VALUE = ['%$FAILURE_VALUE$%'];
 
     private $destinationAttrName;
+
     private $requestKeys;
+
     private $failOnNonExistingKey;
+
     private $defaultValue;
+
     private $filterConfig;
 
     public function __construct($config, $reserved)
@@ -56,7 +65,7 @@ class ExtractRequestAttribute extends ProcessingFilter
         $this->defaultValue = $this->filterConfig->getArray(self::DEFAULT_VALUE, self::FAILURE_VALUE);
         if (
             !$this->failOnNonExistingKey
-            && self::FAILURE_VALUE === $this->defaultValue
+            && $this->defaultValue === self::FAILURE_VALUE
         ) {
             throw new Exception(
                 self::DEBUG_PREFIX . 'invalid configuration, fail on missing key is disabled, but no default value ' . 'for the attribute has been set'
@@ -86,7 +95,7 @@ class ExtractRequestAttribute extends ProcessingFilter
             $value = $value[$key];
         }
 
-        if (self::FAILURE_VALUE === $value) {
+        if ($value === self::FAILURE_VALUE) {
             throw new Exception(self::DEBUG_PREFIX . 'Value cannot be extracted');
         }
 

@@ -23,9 +23,9 @@ try {
     Logger::warning("perun:warning_test_sp_page: missing or invalid '" .
         WarningTestSP::CONFIG_FILE_NAME . "' config file");
 }
-if (null !== $perunModuleConfig) {
+if ($perunModuleConfig !== null) {
     $testSpWarningConfig = $perunModuleConfig->getConfigItem(WarningTestSP::TEST_SP_CONFIG, null);
-    if (null !== $testSpWarningConfig) {
+    if ($testSpWarningConfig !== null) {
         $header = $testSpWarningConfig->getArray(WarningTestSP::TEST_SP_CONFIG_HEADER, []);
         if (!empty($header)) {
             $t->includeInlineTranslation(WarningTestSP::CUSTOM_HEADER_KEY, $header);

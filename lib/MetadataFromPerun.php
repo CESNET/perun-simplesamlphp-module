@@ -58,8 +58,8 @@ class MetadataFromPerun
         $metadata = [];
         foreach ($this->attributesDefinitions as $perunAttrName => $metadataAttrName) {
             $attribute = $facility[self::FACILITY_ATTRIBUTES][$perunAttrName];
-            if (null !== $attribute['value']) {
-                if (null !== $attribute['value']) {
+            if ($attribute['value'] !== null) {
+                if ($attribute['value'] !== null) {
                     $target = &$metadata;
                     $keys = explode('>', $metadataAttrName);
                     while (count($keys) > 1) {
@@ -85,7 +85,7 @@ class MetadataFromPerun
         }
 
         $metadata = array_filter($metadata, function ($value) {
-            return null !== $value;
+            return $value !== null;
         });
 
         return [

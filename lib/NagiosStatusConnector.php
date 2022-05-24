@@ -34,7 +34,7 @@ class NagiosStatusConnector extends StatusConnector
 
         $config = $this->configuration->getConfigItem(self::STATUS_NAGIOS, null);
 
-        if (null === $config) {
+        if ($config === null) {
             throw new Exception('Property  \'' . self::STATUS_NAGIOS . '\' is missing or invalid!');
         }
 

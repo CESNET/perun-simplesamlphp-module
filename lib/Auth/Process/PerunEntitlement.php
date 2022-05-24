@@ -94,7 +94,7 @@ class PerunEntitlement extends ProcessingFilter
         $capabilities = [];
         $forwardedEduPersonEntitlement = [];
 
-        if (null === $this->entityId) {
+        if ($this->entityId === null) {
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);

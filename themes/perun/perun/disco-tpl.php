@@ -36,11 +36,11 @@ $translateModule = $wayfConfig->getString(Disco::TRANSLATE_MODULE, 'disco');
 $addInstitutionConfig = $wayfConfig->getConfigItem(Disco::ADD_INSTITUTION, null);
 
 $warningAttributes = $this->data[Disco::WARNING_ATTRIBUTES];
-if (null !== $warningAttributes) {
+if ($warningAttributes !== null) {
     $this->includeInlineTranslation('{perun:disco:warning_title}', $warningAttributes->getTitle());
     $this->includeInlineTranslation('{perun:disco:warning_text}', $warningAttributes->getText());
     // IF WARNING ERROR IS ENABLED, DISPLAY IT AND STOP THE USER
-    if ($warningAttributes->isEnabled() && WarningConfiguration::WARNING_TYPE_ERROR === $warningAttributes->getType()) {
+    if ($warningAttributes->isEnabled() && $warningAttributes->getType() === WarningConfiguration::WARNING_TYPE_ERROR) {
         $this->data['header'] = $this->t('{perun:disco:warning}');
         $this->includeAtTemplateBase('includes/header.php');
         echo Disco::showWarning($this, $warningAttributes);
@@ -66,7 +66,7 @@ if ($this->isAddInstitutionApp()) {
 $this->includeAtTemplateBase('includes/header.php');
 
 // IF WE HAVE A WARNING, DISPLAY IT TO THE USER
-if (null !== $warningAttributes && $warningAttributes->isEnabled()) {
+if ($warningAttributes !== null && $warningAttributes->isEnabled()) {
     echo Disco::showWarning($this, $warningAttributes);
 }
 //##
@@ -82,7 +82,7 @@ if ($this->isAddInstitutionApp()) {
         $blockConfig = $blocksConfig->getConfigItem($key);
         $type = $blockConfig->getString(Disco::IDP_BLOCK_TYPE);
         echo '<div class="row login-option-category">' . PHP_EOL;
-        if (Disco::IDP_BLOCK_TYPE_INLINESEARCH === $type) {
+        if ($type === Disco::IDP_BLOCK_TYPE_INLINESEARCH) {
             echo Disco::showInlineSearch(
                 $this,
                 $blockConfig,
@@ -125,14 +125,14 @@ if ($this->isAddInstitutionApp()) {
         $blockConfig = $blocksConfig->getConfigItem($key);
         $type = $blockConfig->getString(Disco::IDP_BLOCK_TYPE);
         echo '<div class="row login-option-category">' . PHP_EOL;
-        if (Disco::IDP_BLOCK_TYPE_INLINESEARCH === strtolower($type)) {
+        if (strtolower($type) === Disco::IDP_BLOCK_TYPE_INLINESEARCH) {
             echo Disco::showInlineSearch(
                 $this,
                 $blockConfig,
                 $wayfConfig->getBoolean(Disco::DISABLE_WHITELISTING, false),
                 $addInstitutionConfig
             ) . PHP_EOL;
-        } elseif (Disco::IDP_BLOCK_TYPE_TAGGED === strtolower($type)) {
+        } elseif (strtolower($type) === Disco::IDP_BLOCK_TYPE_TAGGED) {
             echo Disco::showTaggedIdPs($this, $blockConfig) . PHP_EOL;
         }
         if ($cnt++ < $blocksCount) {

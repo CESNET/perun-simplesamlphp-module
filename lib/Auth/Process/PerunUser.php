@@ -23,33 +23,53 @@ use SimpleSAML\Utils\HTTP;
 class PerunUser extends ProcessingFilter
 {
     public const STAGE = 'perun:PerunUser';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const CALLBACK = 'perun/perun_user_callback.php';
+
     public const REDIRECT = 'perun/perun_user.php';
+
     public const TEMPLATE = 'perun:perun-user-tpl.php';
 
     public const PARAM_REGISTRATION_URL = 'registrationUrl';
+
     public const PARAM_STATE_ID = PerunConstants::STATE_ID;
 
     public const INTERFACE = 'interface';
+
     public const UID_ATTRS = 'uid_attrs';
+
     public const IDP_ID_ATTR = 'idp_id_attr';
+
     public const REGISTER_URL = 'register_url';
+
     public const CALLBACK_PARAMETER_NAME = 'callback_parameter_name';
+
     public const PERUN_REGISTER_URL = 'perun_register_url';
+
     public const USE_ADDITIONAL_IDENTIFIERS_LOOKUP = 'use_additional_identifiers_lookup';
+
     public const ADDITIONAL_IDENTIFIERS_ATTRIBUTE = 'additional_identifiers_attribute';
 
     private $adapter;
+
     private $idpEntityIdAttr;
+
     private $userIdAttrs;
+
     private $registerUrl;
+
     private $callbackParameterName;
+
     private $perunRegisterUrl;
+
     private $useAdditionalIdentifiersLookup;
+
     private $additionalIdentifiersAttribute;
+
     private $config;
+
     private $filterConfig;
 
     public function __construct($config, $reserved)
@@ -90,7 +110,7 @@ class PerunUser extends ProcessingFilter
             self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE,
             null
         );
-        if ($this->useAdditionalIdentifiersLookup && null === $this->additionalIdentifiersAttribute) {
+        if ($this->useAdditionalIdentifiersLookup && $this->additionalIdentifiersAttribute === null) {
             throw new Exception(
                 self::DEBUG_PREFIX . 'Invalid configuration: no attribute configured for extracting additional identifiers. Use option \'' . self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE . '\' to configure the name of the attribute, that should be considered as additional identifiers of the user.'
             );
@@ -124,7 +144,7 @@ class PerunUser extends ProcessingFilter
         }
 
         $user = $this->adapter->getPerunUser($idpEntityId, $uids);
-        if ($this->useAdditionalIdentifiersLookup && null === $user) {
+        if ($this->useAdditionalIdentifiersLookup && $user === null) {
             $additionalIdentifiers = $request[PerunConstants::ATTRIBUTES][$this->additionalIdentifiersAttribute] ?? null;
             if (empty($additionalIdentifiers)) {
                 throw new Exception(

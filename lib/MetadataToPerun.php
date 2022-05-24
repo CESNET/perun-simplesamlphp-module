@@ -107,7 +107,7 @@ class MetadataToPerun
             if (!empty($attrs)) {
                 $newAttrs = $transformer['instance']->transform($attrs);
                 $facility = array_merge($facility, $newAttrs);
-                if (!isset($facility[self::ENTITY_ID]) || null === $facility[self::ENTITY_ID]) {
+                if (!isset($facility[self::ENTITY_ID]) || $facility[self::ENTITY_ID] === null) {
                     return null;
                 }
             }
@@ -145,7 +145,7 @@ class MetadataToPerun
         $config = [
             'type' => 'flatfile',
         ];
-        if (null !== $directory) {
+        if ($directory !== null) {
             $config['directory'] = $directory;
         }
 
@@ -206,15 +206,15 @@ class MetadataToPerun
             if (isset($this->perunAttributes[$perunName])) {
                 $internalName = $this->perunAttributes[$perunName];
                 $value = $info[$internalName] ?? null;
-                if (null !== $value) {
-                    if (!is_array($value) && 'List' === substr($attribute['type'], -4)) {
+                if ($value !== null) {
+                    if (!is_array($value) && substr($attribute['type'], -4) === 'List') {
                         $value = [$value];
                     }
                     $attributes[$i]['value'] = $value;
                 }
             } elseif ($perunName === $this->masterProxyIdentifierAttr) {
                 $attributes[$i]['value'] = $this->proxyIdentifier;
-            } elseif ('' !== $this->isSamlFacilityAttr && $perunName === $this->isSamlFacilityAttr) {
+            } elseif ($this->isSamlFacilityAttr !== '' && $perunName === $this->isSamlFacilityAttr) {
                 $attributes[$i]['value'] = true;
             }
             if ($perunName === $this->proxyIdentifiersAttr) {
@@ -245,7 +245,7 @@ class MetadataToPerun
             $indexes = is_array($metadataAttribute) ? $metadataAttribute : [$metadataAttribute];
             foreach ($indexes as $index) {
                 $t = self::getNestedAttribute($metadata, explode('.', $index));
-                if (null !== $t) {
+                if ($t !== null) {
                     $facility[$perunAttribute] = $t;
                 }
             }
@@ -259,19 +259,19 @@ class MetadataToPerun
         foreach ($this->xmlAttributes as $perunAttribute => $xpath) {
             if (is_string($xpath)) {
                 $result = $xml->xpath($xpath);
-                $result = false !== $result && count($result) > 0 ? $result[0] : false;
-            } elseif (1 !== count($xpath)) {
+                $result = $result !== false && count($result) > 0 ? $result[0] : false;
+            } elseif (count($xpath) !== 1) {
                 throw new \Exception('xpath array should have exactly 1 item');
             } else {
                 $index = key($xpath);
                 $xpathSelector = $xpath[$index];
                 $result = $xml->xpath($xpathSelector);
-                if (false !== $result && count($result) > 0) {
+                if ($result !== false && count($result) > 0) {
                     if (is_string($index)) {
                         $indexes = array_map(function ($el) use ($index) {
                             $i = $el->xpath($index);
 
-                            return false !== $i && count($i) > 0 ? ((string) $i[0]) : false;
+                            return $i !== false && count($i) > 0 ? ((string) $i[0]) : false;
                         }, $result);
                         if (in_array(false, $indexes, true) || count($indexes) !== count($result)) {
                             throw new \Exception('Did not find corresponding number of keys using xpath ' . $index);
@@ -286,7 +286,7 @@ class MetadataToPerun
                 }
             }
 
-            if (false !== $result) {
+            if ($result !== false) {
                 $facility[$perunAttribute] = $result;
             }
         }

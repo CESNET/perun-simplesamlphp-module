@@ -55,7 +55,7 @@ class StringifyTargetedID extends ProcessingFilter
      */
     private function stringify(NameID $attributeValue)
     {
-        if (is_object($attributeValue) && 'SAML2\XML\saml\NameID' === get_class($attributeValue)) {
+        if (is_object($attributeValue) && get_class($attributeValue) === 'SAML2\XML\saml\NameID') {
             return $attributeValue->getNameQualifier() . '!' . $attributeValue->getSPNameQualifier() . '!'
                 . $attributeValue->getValue();
         }

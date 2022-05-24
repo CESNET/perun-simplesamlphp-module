@@ -25,7 +25,7 @@ assert(is_string($this->data['noTarget']));
 assert(is_array($this->data['noData']));
 assert(is_array($this->data['attributes']));
 assert(is_array($this->data['hiddenAttributes']));
-assert(false === $this->data['sppp'] || is_string($this->data['sppp']));
+assert($this->data['sppp'] === false || is_string($this->data['sppp']));
 
 if (!isset($this->data['label-col'])) {
     $this->data['label-col'] = 5;
@@ -91,7 +91,7 @@ if (array_key_exists('descr_purpose', $this->data['dstMetadata'])) {
     );
 }
 
-if (false !== $this->data['sppp']) {
+if ($this->data['sppp'] !== false) {
     echo '<p>' . htmlspecialchars($this->t('{perun:consent:consent_privacypolicy}')) . ' ';
     echo "<a target='_blank' href='" . htmlspecialchars($this->data['sppp']) . "'>" . $dstName . '</a>';
     echo '</p>';

@@ -150,7 +150,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         foreach ($attributesToShow as $attr) {
                             $type = $service['facilityAttributes'][$attr]['type'];
                             $value = $service['facilityAttributes'][$attr]['value'];
-                            if (null !== $value && in_array($attr, $this->data['multilingualAttributes'], true)) {
+                            if ($value !== null && in_array($attr, $this->data['multilingualAttributes'], true)) {
                                 $type = 'java.lang.String';
                                 $value = ListOfSps::getPreferredTranslation($value, $this->getLanguage());
                             }

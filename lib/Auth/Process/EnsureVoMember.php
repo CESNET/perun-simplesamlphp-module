@@ -44,7 +44,7 @@ class EnsureVoMember extends ProcessingFilter
         parent::__construct($config, $reserved);
         $config = Configuration::loadFromArray($config);
 
-        if (null === $config) {
+        if ($config === null) {
             throw new Exception(
                 'perun:EnsureVoMember: Property  \'' . self::ENSURE_VO_MEMBER . '\' is missing or invalid!'
             );
@@ -89,7 +89,7 @@ class EnsureVoMember extends ProcessingFilter
 
         $facility = $this->adapter->getFacilityByEntityId($spEntityId);
 
-        if (null === $facility) {
+        if ($facility === null) {
             Logger::debug('perun:EnsureVoMember: skip execution - no facility provided');
 
             return;
@@ -101,7 +101,7 @@ class EnsureVoMember extends ProcessingFilter
         );
 
         $triggerAttrValue = $attrValues[$this->triggerAttr];
-        if (null === $triggerAttrValue || false === $triggerAttrValue) {
+        if ($triggerAttrValue === null || $triggerAttrValue === false) {
             Logger::debug(
                 'perun:EnsureVoMember: skip execution - attribute ' . self::TRIGGER_ATTR . ' is null or false'
             );

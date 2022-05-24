@@ -10,7 +10,7 @@ if (strlen($this->data['username']) > 0) {
 
 $this->includeAtTemplateBase('includes/header.php');
 
-if (null !== $this->data['errorcode']) {
+if ($this->data['errorcode'] !== null) {
     ?>
     <div class="alert alert-danger">
         <span class="glyphicon glyphicon-exclamation-sign"

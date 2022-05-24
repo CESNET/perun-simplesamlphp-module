@@ -153,41 +153,41 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
         $this->mode = $config->getValueValidate(self::MODE, self::MODES, self::MODE_FULL);
 
-        if (null === $this->uidsAttr) {
+        if ($this->uidsAttr === null) {
             throw new Exception('perun:PerunIdentity: missing mandatory config option \'' . self::UIDS_ATTR . '\'.');
         }
-        if (self::MODE_FULL === $this->mode && empty($this->registerUrlBase)) {
+        if ($this->mode === self::MODE_FULL && empty($this->registerUrlBase)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::REGISTER_URL_BASE . '\'.'
             );
         }
-        if (self::MODE_FULL === $this->mode && empty($this->defaultRegisterUrl)) {
+        if ($this->mode === self::MODE_FULL && empty($this->defaultRegisterUrl)) {
             throw new Exception('perun:PerunIdentity: missing mandatory config option \'' . self::REGISTER_URL . '\'.');
         }
-        if (self::MODE_FULL === $this->mode && empty($this->voShortName)) {
+        if ($this->mode === self::MODE_FULL && empty($this->voShortName)) {
             throw new Exception('perun:PerunIdentity: missing mandatory config option \'' . self::VO_SHORTNAME . '\'.');
         }
-        if (self::MODE_FULL === $this->mode && empty($this->facilityCheckGroupMembershipAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityCheckGroupMembershipAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::PERUN_FACILITY_CHECK_GROUP_MEMBERSHIP_ATTR . '\'.'
             );
         }
-        if (self::MODE_FULL === $this->mode && empty($this->facilityDynamicRegistrationAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityDynamicRegistrationAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::PERUN_FACILITY_DYNAMIC_REGISTRATION_ATTR . '\'.'
             );
         }
-        if (self::MODE_FULL === $this->mode && empty($this->facilityVoShortNamesAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityVoShortNamesAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::PERUN_FACILITY_VO_SHORT_NAMES_ATTR . '\'.'
             );
         }
-        if (self::MODE_FULL === $this->mode && empty($this->facilityRegisterUrlAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityRegisterUrlAttr)) {
             throw new Exception(
                 'perun:PerunIdentity: missing mandatory config option \'' . self::PERUN_FACILITY_REGISTER_URL_ATTR . '\'.'
             );
         }
-        if (self::MODE_FULL === $this->mode && empty($this->facilityAllowRegistrationToGroupsAttr)) {
+        if ($this->mode === self::MODE_FULL && empty($this->facilityAllowRegistrationToGroupsAttr)) {
             throw new Exception(
                 "perun:PerunIdentity: missing mandatory config option '" . self::PERUN_FACILITY_ALLOW_REGISTRATION_TO_GROUPS . "'."
             );
@@ -195,7 +195,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
         $this->useAdditionalIdentifiersLookup = $config->getBoolean(self::USE_ADDITIONAL_IDENTIFIERS_LOOKUP, false);
         $this->additionalIdentifiersAttribute = $config->getString(self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE, null);
-        if ($this->useAdditionalIdentifiersLookup && null === $this->additionalIdentifiersAttribute) {
+        if ($this->useAdditionalIdentifiersLookup && $this->additionalIdentifiersAttribute === null) {
             throw new Exception(
                 'perun:PerunIdentity: Invalid configuration: no attribute configured for extracting additional identifiers. Use option \'' . self::ADDITIONAL_IDENTIFIERS_ATTRIBUTE . '\' to configure the name of the attribute, that should be considered as additional identifiers of the user.'
             );
@@ -248,7 +248,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $groups = [];
 
         $user = $this->adapter->getPerunUser($idpEntityId, $uids);
-        if ($this->useAdditionalIdentifiersLookup && null === $user) {
+        if ($this->useAdditionalIdentifiersLookup && $user === null) {
             $additionalIdentifiers = $request[PerunConstants::ATTRIBUTES][$this->additionalIdentifiersAttribute] ?? null;
             if (empty($additionalIdentifiers)) {
                 throw new Exception(
@@ -258,7 +258,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             $user = $this->adapter->getPerunUserByAdditionalIdentifiers($idpEntityId, $additionalIdentifiers);
         }
 
-        if (self::MODE_FULL === $this->mode) {
+        if ($this->mode === self::MODE_FULL) {
             $this->getSPAttributes($this->spEntityId);
 
             $this->checkMemberStateDefaultVo($request, $user, $uids);
@@ -293,7 +293,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 ' has been found and SP has sufficient rights to get info about him. ' .
                 'User ' . $user->getName() . ' with id: ' . $user->getId() . ' is being set to request'
             );
-        } elseif (self::MODE_USERONLY === $this->mode) {
+        } elseif ($this->mode === self::MODE_USERONLY) {
             if (isset($user)) {
                 Logger::info(
                     'Perun user with identity/ies: ' . implode(',', $uids) .
@@ -326,11 +326,11 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
      */
     public function register($request, $vosForRegistration, $registerUrL = null, $dynamicRegistration = null)
     {
-        if (null === $registerUrL) {
+        if ($registerUrL === null) {
             $registerUrL = $this->registerUrl;
         }
 
-        if (null === $dynamicRegistration) {
+        if ($dynamicRegistration === null) {
             $dynamicRegistration = $this->dynamicRegistration;
         }
 
@@ -407,9 +407,9 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     protected function registerDirectly($request, $callback, $registerUrL, $vo = null, $group = null)
     {
         $params = [];
-        if (null !== $vo) {
+        if ($vo !== null) {
             $params['vo'] = $vo->getShortName();
-            if (null !== $group) {
+            if ($group !== null) {
                 $params['group'] = $group->getName();
             }
         }
@@ -485,7 +485,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         try {
             $facility = $this->adapter->getFacilityByEntityId($spEntityID);
 
-            if (null === $facility) {
+            if ($facility === null) {
                 return;
             }
 
@@ -508,7 +508,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 $this->registerUrl = $facilityAttrValues[(string) $this->facilityRegisterUrlAttr];
             }
 
-            if (null === $this->registerUrl) {
+            if ($this->registerUrl === null) {
                 $this->registerUrl = $this->defaultRegisterUrl;
             }
 
@@ -531,18 +531,18 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         $status = null;
         try {
             $vo = $this->adapter->getVoByShortName($this->voShortName);
-            if (null !== $user) {
+            if ($user !== null) {
                 $status = $this->adapter->getMemberStatusByUserAndVo($user, $vo);
             }
         } catch (\Exception $ex) {
             throw new Exception('perun:PerunIdentity: ' . $ex);
         }
 
-        if (null === $vo) {
+        if ($vo === null) {
             throw new Exception('perun:PerunIdentity: Vo with short name ' . $this->voShortName . ' does not exist.');
         }
 
-        if ($this->adapter instanceof AdapterLdap && Member::INVALID === $status) {
+        if ($this->adapter instanceof AdapterLdap && $status === Member::INVALID) {
             try {
                 $status = $this->rpcAdapter->getMemberStatusByUserAndVo($user, $vo);
             } catch (\Exception $ex) {
@@ -554,13 +554,13 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             }
         }
 
-        if (null === $user || null === $status || Member::EXPIRED === $status) {
-            if (null === $user) {
+        if ($user === null || $status === null || $status === Member::EXPIRED) {
+            if ($user === null) {
                 Logger::info(
                     'Perun user with identity/ies: ' . implode(',', $uids) . ' ' .
                     'has NOT been found. He is being redirected to register.'
                 );
-            } elseif (null === $status) {
+            } elseif ($status === null) {
                 Logger::info(
                     'Perun user with identity/ies: ' . implode(',', $uids) . ' ' .
                     'is NOT member in vo with short name ' . $this->voShortName .
@@ -573,7 +573,7 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
                 );
             }
             $this->register($request, [$vo], $this->defaultRegisterUrl, false);
-        } elseif (!(Member::VALID === $status)) {
+        } elseif (!($status === Member::VALID)) {
             Logger::warning(
                 'Member status for perun user with identity/ies: ' . implode(',', $uids) . ' ' .
                 'was INVALID/SUSPENDED/DISABLED. '
@@ -610,8 +610,8 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
         }
 
         foreach ($members as $member) {
-            if (Member::VALID === $member->getStatus() ||
-                Member::EXPIRED === $member->getStatus()) {
+            if ($member->getStatus() === Member::VALID ||
+                $member->getStatus() === Member::EXPIRED) {
                 array_push($vosIdForRegistration, $member->getVoId());
             }
         }

@@ -77,7 +77,7 @@ class AttributeAlter extends SingularAttributeTransformer
                 $description
             );
         }
-        if ('/^/' === $this->config->getString('pattern')) {
+        if ($this->config->getString('pattern') === '/^/') {
             return sprintf('prepend %s to (%s)', $this->config->getString('replacement'), $description);
         }
 

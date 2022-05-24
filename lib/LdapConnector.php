@@ -96,20 +96,20 @@ class LdapConnector
     protected function search($base, $filter, $attributes = null)
     {
         $conn = ldap_connect($this->hostname);
-        if (false === $conn) {
+        if ($conn === false) {
             throw new Exception('Unable to connect to the Perun LDAP, ' . $this->hostname);
         }
 
         ldap_set_option($conn, LDAP_OPT_PROTOCOL_VERSION, 3);
 
         // Enable TLS, if needed
-        if ($this->enableTLS && false === stripos($this->hostname, 'ldaps:')) {
+        if ($this->enableTLS && stripos($this->hostname, 'ldaps:') === false) {
             if (!@ldap_start_tls($conn)) {
                 throw new Exception('Unable to force TLS on Perun LDAP');
             }
         }
 
-        if (false === ldap_bind($conn, $this->user, $this->password)) {
+        if (ldap_bind($conn, $this->user, $this->password) === false) {
             throw new Exception('Unable to bind user to the Perun LDAP, ' . $this->hostname);
         }
 
@@ -123,7 +123,7 @@ class LdapConnector
         $responseTime = round(($endTime - $startTime) * 1000, 3);
 
         // no such entity
-        if (2 === ldap_errno($conn)) {
+        if (ldap_errno($conn) === 2) {
             return [];
         }
 

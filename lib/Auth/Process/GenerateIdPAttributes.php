@@ -18,16 +18,21 @@ use SimpleSAML\Module\perun\PerunConstants;
 class GenerateIdPAttributes extends ProcessingFilter
 {
     public const STAGE = 'perun:GenerateIdPAttributes';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const ATTRIBUTE_MAP = 'attribute_map';
+
     public const IDP_IDENTIFIER_ATTRIBUTE = 'idp_identifier_attribute';
 
     public const SAML_SP_IDP = 'saml:sp:IdP';
+
     public const SAML20_IDP_REMOTE = 'saml20-idp-remote';
 
     private $attributeMap;
+
     private $idpIdentifierAttribute;
+
     private $filterConfig;
 
     public function __construct($config, $reserved)

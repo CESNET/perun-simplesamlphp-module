@@ -37,9 +37,9 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $greyListTableName = $this->config->getGreyListTableName();
         $table = null;
 
-        if (self::WHITELIST === $tableName) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif (self::GREYLIST === $tableName) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
@@ -64,9 +64,9 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $greyListTableName = $this->config->getGreyListTableName();
         $table = null;
 
-        if (self::WHITELIST === $tableName) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif (self::GREYLIST === $tableName) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
@@ -91,9 +91,9 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $greyListTableName = $this->config->getGreyListTableName();
         $table = null;
 
-        if (self::WHITELIST === $tableName) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif (self::GREYLIST === $tableName) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
@@ -123,9 +123,9 @@ class IdpListsServiceDbCmd extends DatabaseCommand
         $greyListTableName = $this->config->getGreyListTableName();
         $table = null;
 
-        if (self::WHITELIST === $tableName) {
+        if ($tableName === self::WHITELIST) {
             $table = $whiteListTableName;
-        } elseif (self::GREYLIST === $tableName) {
+        } elseif ($tableName === self::GREYLIST) {
             $table = $greyListTableName;
         }
 
