@@ -162,5 +162,21 @@
   "sp_authorize_notify_button": {
     "en": "Proceed to registration",
     "cs": "Pokračovat na registrační stránku"
+  },
+  "403_is_eligible_default_header": {
+    "en": "Access denied",
+    "cs": "Přístup zamítnut"
+  },
+  "403_is_eligible_default_text": {
+    "en": "Your account does not meet the criteria for accessing the service. Please log in with other account.",
+    "cs": "Přístup ke službě byl zamítnut, protože Váš účet nesplňuje pomdínky přístupu. Přihlaste se, prosíme, pomocí jiného účtu."
+  },
+  "403_is_eligible_default_button": {
+    "en": "Continue with other account",
+    "cs": "Pokračovat"
+  },
+  "403_is_eligible_default_contact": {
+    "en": "If you think you have used an account which meets the criteria, and you are still prevented from logging in to the service, please contact us at",
+    "cs": "Pokud si myslíte, že používáte správný účet a přístup je Vám odmítnut neprávem, prosíme kontakujte nás na"
   }
 }
