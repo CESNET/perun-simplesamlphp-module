@@ -37,48 +37,79 @@ use SimpleSAML\Utils\HTTP;
 class SpAuthorization extends ProcessingFilter
 {
     public const STAGE = 'perun:SpAuthorization';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const CALLBACK = 'perun/sp_authorization_callback.php';
+
     public const REDIRECT_NOTIFY = 'perun/sp_authorization_notify.php';
+
     public const TEMPLATE_NOTIFY = 'perun:sp-authorization-notify-tpl.php';
+
     public const REDIRECT_SELECT = 'perun/sp_authorization_select.php';
+
     public const TEMPLATE_SELECT = 'perun:sp-authorization-select-tpl.php';
+
     public const REDIRECT_403 = 'perun/sp_authorization_403.php';
+
     public const TEMPLATE_403 = 'perun:sp-authorization-403-tpl.php';
 
     public const REDIRECT_PARAMS = 'redirect_params';
 
     public const PARAM_STATE_ID = PerunConstants::STATE_ID;
+
     public const PARAM_SP_METADATA = PerunConstants::SP_METADATA;
+
     public const PARAM_REGISTRATION_URL = 'registrationUrl';
+
     public const PARAM_REGISTRATION_DATA = 'registrationData';
+
     public const PARAM_CALLBACK = 'callback';
 
     public const INTERFACE = 'interface';
+
     public const REGISTRAR_URL = 'registrar_url';
+
     public const CHECK_GROUP_MEMBERSHIP_ATTR = 'check_group_membership_attr';
+
     public const VO_SHORT_NAMES_ATTR = 'vo_short_names_attr';
+
     public const HANDLE_UNSATISFIED_MEMBERSHIP = 'handle_unsatisfied_membership';
+
     public const REGISTRATION_LINK_ATTR = 'registration_link_attr';
+
     public const ALLOW_REGISTRATION_ATTR = 'allow_registration_attr';
 
     public const SKIP_NOTIFICATION_SPS = 'skip_notification_sps';
+
     public const CHECK_GROUP_MEMBERSHIP = 'check_group_membership';
+
     public const VO_SHORT_NAMES = 'vo_short_names';
+
     public const ALLOW_REGISTRATION = 'allow_registration';
+
     public const REGISTRATION_LINK = 'registration_link';
 
     private $adapter;
+
     private $rpcAdapter;
+
     private $checkGroupMembershipAttr;
+
     private $voShortNamesAttr;
+
     private $allowRegistrationAttr;
+
     private $registrationLinkAttr;
+
     private $skipNotificationSps;
+
     private $handleUnsatisfiedMembership;
+
     private $registrarUrl;
+
     private $config;
+
     private $filterConfig;
 
     public function __construct($config, $reserved)
@@ -147,7 +178,7 @@ class SpAuthorization extends ProcessingFilter
         }
         $user = $request[PerunConstants::PERUN][PerunConstants::USER];
         $facility = $this->adapter->getFacilityByEntityId($spEntityId);
-        if (null === $facility) {
+        if ($facility === null) {
             Logger::debug(
                 self::DEBUG_PREFIX . 'No facility found for SP \'' . $spEntityId . '\', skip processing filter'
             );
@@ -249,7 +280,7 @@ class SpAuthorization extends ProcessingFilter
 
     public function register(array $request, array $registrationData, bool $skipNotification)
     {
-        $singleRegistration = 1 === count($registrationData);
+        $singleRegistration = count($registrationData) === 1;
         if ($singleRegistration) {
             Logger::debug(
                 self::DEBUG_PREFIX . 'Registration possible to only single VO and GROUP, '
@@ -323,7 +354,7 @@ class SpAuthorization extends ProcessingFilter
 
         $nameParts = explode(':', $group->getUniqueName(), 2);
         $params[PerunConstants::VO] = $nameParts[0];
-        if (!empty($group) && PerunConstants::GROUP_MEMBERS !== $nameParts[1]) {
+        if (!empty($group) && $nameParts[1] !== PerunConstants::GROUP_MEMBERS) {
             $params[PerunConstants::GROUP] = $nameParts[1];
         }
         $params[PerunConstants::TARGET_NEW] = $callback;
@@ -373,7 +404,7 @@ class SpAuthorization extends ProcessingFilter
         string $spEntityId,
         array $facilityAttributes
     ): array {
-        if (null === $this->rpcAdapter) {
+        if ($this->rpcAdapter === null) {
             throw new Exception(self::DEBUG_PREFIX . 'No RPC adapter available, cannot fetch registration data');
         }
         $voShortNames = $facilityAttributes[self::VO_SHORT_NAMES];
@@ -402,14 +433,14 @@ class SpAuthorization extends ProcessingFilter
                     continue;
                 }
                 $member = $this->rpcAdapter->getMemberByUser($user, $vo);
-                if (Member::VALID === $member->getStatus()) {
+                if ($member->getStatus() === Member::VALID) {
                     // VALID HERE, CAN REGISTER INTO GROUPS
                     $activeMemberVos[] = $voShortName;
                     Logger::debug(
                         self::DEBUG_PREFIX . 'User is valid in VO with short name \'' . $voShortName
                         . '\', groups of this VO will be included in registration list.'
                     );
-                } elseif (Member::EXPIRED === $member->getStatus()) {
+                } elseif ($member->getStatus() === Member::EXPIRED) {
                     // EXPIRED HERE, LETS CHECK IF IT HAS REG. FORM SO MEMBERSHIP CAN BE EXTENDED
                     Logger::debug(
                         self::DEBUG_PREFIX . 'User is expired in the VO with short name \'' . $voShortName
@@ -463,7 +494,7 @@ class SpAuthorization extends ProcessingFilter
                 continue;
             }
 
-            if (PerunConstants::GROUP_MEMBERS === $groupName) {
+            if ($groupName === PerunConstants::GROUP_MEMBERS) {
                 // this is covered by the VO, which has got the reg. form instead of this group
                 Logger::debug(
                     self::DEBUG_PREFIX . 'Group \'' . $group->getUniqueName() . '\' added to the registration list.'

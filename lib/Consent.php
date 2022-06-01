@@ -73,7 +73,7 @@ class Consent
 
     public static function presentAttributesPhotoOrValue($nameraw, $listitem)
     {
-        if ('jpegPhoto' === $nameraw) {
+        if ($nameraw === 'jpegPhoto') {
             return '<img src="data:image/jpeg;base64,' . htmlspecialchars($listitem) . '" alt="User photo" />';
         }
 

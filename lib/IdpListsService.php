@@ -35,10 +35,10 @@ abstract class IdpListsService
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $idpListServiceType = $configuration->getString(self::PROPNAME_IDP_LIST_SERVICE_TYPE, self::CSV);
-        if (self::CSV === $idpListServiceType) {
+        if ($idpListServiceType === self::CSV) {
             return new IdpListsServiceCsv();
         }
-        if (self::DB === $idpListServiceType) {
+        if ($idpListServiceType === self::DB) {
             return new IdpListsServiceDB();
         }
         throw new Exception('Unknown idpListService type. Hint: try ' . self::CSV . ' or ' . self::DB);

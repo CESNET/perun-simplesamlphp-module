@@ -17,20 +17,29 @@ use SimpleSAML\Module\perun\PerunConstants;
 class QualifyNameID extends ProcessingFilter
 {
     public const STAGE = 'perun:QualifyNameID';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const NAME_ID_CLASS = 'SAML2\XML\saml\NameID';
 
     public const NAME_ID_ATTRIBUTE = 'name_id_attribute';
+
     public const NAME_QUALIFIER = 'name_qualifier';
+
     public const NAME_QUALIFIER_ATTRIBUTE = 'name_qualifier_attribute';
+
     public const SP_NAME_QUALIFIER = 'sp_name_qualifier';
+
     public const SP_NAME_QUALIFIER_ATTRIBUTE = 'sp_name_qualifier_attribute';
 
     private $targetedIdAttribute;
+
     private $nameQualifier;
+
     private $nameQualifierAttribute;
+
     private $spNameQualifier;
+
     private $spNameQualifierAttribute;
 
     public function __construct($config, $reserved)
@@ -69,7 +78,7 @@ class QualifyNameID extends ProcessingFilter
 
         if (!empty($request[PerunConstants::ATTRIBUTES][$this->targetedIdAttribute])) {
             $attributeValue = &$request[PerunConstants::ATTRIBUTES][$this->targetedIdAttribute][0];
-            if (self::NAME_ID_CLASS === get_class($attributeValue)) {
+            if (get_class($attributeValue) === self::NAME_ID_CLASS) {
                 $nameQualifier = $request[PerunConstants::ATTRIBUTES][$this->nameQualifierAttribute][0] ?? $this->nameQualifier;
                 if (empty($nameQualifier)) {
                     throw new Exception(self::DEBUG_PREFIX . 'NameQualifier is not available');

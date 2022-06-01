@@ -26,7 +26,7 @@ class KeyLists extends AttributeTransformer
      */
     public function transform(array $attributes)
     {
-        if (1 !== count($attributes)) {
+        if (count($attributes) !== 1) {
             throw new \Exception('KeyLists transformer only works with 1 attribute.');
         }
         foreach ($attributes as $keys) {
@@ -56,7 +56,7 @@ class KeyLists extends AttributeTransformer
             $attributes[$internal] = [];
         }
         foreach ($keys as $key) {
-            if ('X509Certificate' === $key['type'] && !empty($key['X509Certificate'])) {
+            if ($key['type'] === 'X509Certificate' && !empty($key['X509Certificate'])) {
                 foreach ($this->purpose2internal as $purpose => $internal) {
                     if ($key[$purpose]) {
                         $attributes[$internal][] = $key['X509Certificate'];

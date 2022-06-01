@@ -39,7 +39,7 @@ class WarningTestSP extends ProcessingFilter
 
     public function process(&$request)
     {
-        if (isset($request['SPMetadata']['test.sp']) && true === $request['SPMetadata']['test.sp']) {
+        if (isset($request['SPMetadata']['test.sp']) && $request['SPMetadata']['test.sp'] === true) {
             $id = State::saveState($request, 'perun:warningTestSP');
             $url = Module::getModuleURL('perun/warning_test_sp_page.php');
             HTTP::redirectTrustedURL($url, [

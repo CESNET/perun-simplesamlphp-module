@@ -13,16 +13,23 @@ use SimpleSAML\Module\perun\EntitlementUtils;
 class AttributeMap extends \SimpleSAML\Auth\ProcessingFilter
 {
     public const MAP_ATTR_NAME = 'attrMapAttr';
+
     public const KEEP_SOURCE_ATTRIBUTES = 'keepSourceAttributes';
+
     public const ENTITY_ID = 'entityid';
+
     public const INTERFACE_PROPNAME = 'interface';
 
     public const CLASS_PREFIX = 'perun:AttributeMap: ';
+
     public const ATTRIBUTES = 'Attributes';
 
     private $mapAttrName;
+
     private $keepSourceAttributes;
+
     private $entityId;
+
     private $adapter;
 
     public function __construct($config, $reserved)
@@ -45,7 +52,7 @@ class AttributeMap extends \SimpleSAML\Auth\ProcessingFilter
 
     public function process(&$request)
     {
-        if (null === $this->entityId) {
+        if ($this->entityId === null) {
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);
@@ -55,7 +62,7 @@ class AttributeMap extends \SimpleSAML\Auth\ProcessingFilter
 
         $facility = $this->adapter->getFacilityByEntityId($this->entityId);
 
-        if (null === $facility) {
+        if ($facility === null) {
             Logger::info(
                 self::CLASS_PREFIX . 'Facility with entityid ' . $this->entityId . ' not found. Skipping the filter'
             );

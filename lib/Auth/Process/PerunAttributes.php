@@ -75,9 +75,9 @@ class PerunAttributes extends ProcessingFilter
         }
 
         $attributes = [];
-        if (self::MODE_FULL === $this->mode) {
+        if ($this->mode === self::MODE_FULL) {
             $attributes = array_keys($this->attrMap);
-        } elseif (self::MODE_PARTIAL === $this->mode) {
+        } elseif ($this->mode === self::MODE_PARTIAL) {
             // Check if attribute has some value
             foreach ($this->attrMap as $attrName => $attrValue) {
                 if (empty($attrValue)) {
@@ -133,7 +133,7 @@ class PerunAttributes extends ProcessingFilter
             $sspAttr = $this->attrMap[$attrName];
 
             // convert $attrValue into array
-            if (null === $attrValue) {
+            if ($attrValue === null) {
                 $value = [];
             } elseif (is_string($attrValue) || is_numeric($attrValue)) {
                 $value = [$attrValue];

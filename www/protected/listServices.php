@@ -23,7 +23,7 @@ header('Content-Type: text/plain');
 $delimiter = '|';
 
 foreach ($spsMetadata as $entityID => $spMetadata) {
-    if (array_key_exists('showOnServicesList', $spMetadata) && true === $spMetadata['showOnServicesList']) {
+    if (array_key_exists('showOnServicesList', $spMetadata) && $spMetadata['showOnServicesList'] === true) {
         if (array_key_exists('name', $spMetadata)) {
             echo $spMetadata['name']['en'];
         }
@@ -44,7 +44,7 @@ foreach ($spsMetadata as $entityID => $spMetadata) {
         }
         echo $delimiter;
 
-        if (array_key_exists('CoCo', $spMetadata) && true === $spMetadata['CoCo']) {
+        if (array_key_exists('CoCo', $spMetadata) && $spMetadata['CoCo'] === true) {
             echo 'yes';
         } else {
             echo 'no';

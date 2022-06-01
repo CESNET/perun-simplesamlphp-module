@@ -37,10 +37,10 @@ abstract class Adapter
      */
     public static function getInstance($interface)
     {
-        if (self::RPC === $interface) {
+        if ($interface === self::RPC) {
             return new AdapterRpc();
         }
-        if (self::LDAP === $interface) {
+        if ($interface === self::LDAP) {
             return new AdapterLdap();
         }
         throw new Exception('Unknown perun interface. Hint: try ' . self::RPC . ' or ' . self::LDAP);

@@ -33,7 +33,7 @@ class EndpointIndexMap extends AttributeTransformer
      */
     public function transform(array $attributes)
     {
-        if (2 !== count($attributes)) {
+        if (count($attributes) !== 2) {
             throw new \Exception(
                 'Invalid configuration of EndpointIndexMap transformer, exactly 2 input attributes exptected'
             );

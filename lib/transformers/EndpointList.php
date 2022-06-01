@@ -21,7 +21,7 @@ class EndpointList extends SingularAttributeTransformer
     public function __construct(\SimpleSAML\Configuration $config)
     {
         $this->binding = $config->getString('binding');
-        if (0 !== strpos($this->binding, self::BINDING_PREFIX)) {
+        if (strpos($this->binding, self::BINDING_PREFIX) !== 0) {
             $this->binding = self::BINDING_PREFIX . $this->binding;
         }
     }

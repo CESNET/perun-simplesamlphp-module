@@ -15,7 +15,7 @@ use SimpleSAML\XHTML\EMail;
  * example URL (params are POST): https://login.example.org/proxy/module.php/perun/protected/reportIdp.php
  */
 
-if ('POST' !== $_SERVER['REQUEST_METHOD']) {
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     echo 'ERROR request has to be POST';
     die;
 }
@@ -60,7 +60,7 @@ IdP were whitelisted automatically: {$_POST['resultOnProxy']}
 CODE_SAMPLE;
 
 $toAddress = $config->getString('technicalcontact_email', 'N/A');
-if ('N/A' !== $toAddress) {
+if ($toAddress !== 'N/A') {
     $email = new EMail($toAddress, 'Report: ' . $_POST['title'], $_POST['from']);
     $email->setBody($message);
     $email->send();

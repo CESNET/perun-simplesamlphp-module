@@ -29,7 +29,7 @@ $groupsForRegistration = [];
 
 foreach ($spGroups as $group) {
     if (in_array($group->getVoId(), $vosIdForRegistration, true)) {
-        if ('members' === $group->getName() || $rpcAdapter->hasRegistrationForm($group->getId(), 'group')) {
+        if ($group->getName() === 'members' || $rpcAdapter->hasRegistrationForm($group->getId(), 'group')) {
             $vo = $adapter->getVoById($group->getVoId());
             if (!isset($vosForRegistration[$vo->getShortName()])) {
                 $vosForRegistration[$vo->getShortName()] = $vo;
@@ -41,7 +41,7 @@ foreach ($spGroups as $group) {
 
 if (empty($groupsForRegistration)) {
     PerunIdentity::unauthorized($_REQUEST);
-} elseif (1 === count($groupsForRegistration)) {
+} elseif (count($groupsForRegistration) === 1) {
     $params = [];
     $vo = explode(':', $groupsForRegistration[0]->getUniqueName(), 2)[0];
     $group = $groupsForRegistration[0]->getName()[0];
@@ -51,7 +51,7 @@ if (empty($groupsForRegistration)) {
 
     $params['vo'] = $vo;
 
-    if ('members' !== $group) {
+    if ($group !== 'members') {
         $params['group'] = $group;
     }
 

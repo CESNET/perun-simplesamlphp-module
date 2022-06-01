@@ -73,7 +73,7 @@ class ForceAup extends ProcessingFilter
         $configuration = Configuration::loadFromArray($config);
         $this->perunAupsAttr = $configuration->getString(self::PERUN_AUPS_ATTR, null);
         $this->perunVoAupAttr = $configuration->getString(self::PERUN_VO_AUP_ATTR, null);
-        if (null === $this->perunAupsAttr && null === $this->perunVoAupAttr) {
+        if ($this->perunAupsAttr === null && $this->perunVoAupAttr === null) {
             throw new Exception(
                 'perun:ForceAup: missing at least one of mandatory configuration options \'' . self::PERUN_AUPS_ATTR . '\' or \'' . self::PERUN_VO_AUP_ATTR . '\'.'
             );
@@ -94,7 +94,7 @@ class ForceAup extends ProcessingFilter
     {
         assert(is_array($request));
 
-        if (null === $this->entityId) {
+        if ($this->entityId === null) {
             $this->entityId = EntitlementUtils::getSpEntityId($request);
         } elseif (is_callable($this->entityId)) {
             $this->entityId = call_user_func($this->entityId, $request);
@@ -120,7 +120,7 @@ class ForceAup extends ProcessingFilter
         try {
             $facility = $this->adapter->getFacilityByEntityId($this->entityId);
 
-            if (null === $facility) {
+            if ($facility === null) {
                 return;
             }
 
@@ -160,7 +160,7 @@ class ForceAup extends ProcessingFilter
                 [$this->perunUserAupAttr]
             )[$this->perunUserAupAttr];
 
-            if (null === $userAups) {
+            if ($userAups === null) {
                 $userAups = [];
             }
 
@@ -225,7 +225,7 @@ class ForceAup extends ProcessingFilter
         $vos = [];
         foreach ($voShortNames as $voShortName) {
             $vo = $this->adapter->getVoByShortName($voShortName);
-            if (null !== $vo) {
+            if ($vo !== null) {
                 array_push($vos, $vo);
             }
         }
@@ -233,7 +233,7 @@ class ForceAup extends ProcessingFilter
         $voAups = [];
         foreach ($vos as $vo) {
             $aups = $this->adapter->getVoAttributesValues($vo, [$this->perunVoAupAttr])[$this->perunVoAupAttr];
-            if (null !== $aups) {
+            if ($aups !== null) {
                 $voAups[$vo->getShortName()] = $aups;
             }
         }
@@ -244,7 +244,7 @@ class ForceAup extends ProcessingFilter
     private function getPerunAups()
     {
         $perunAupsAttr = [];
-        if (null !== $this->perunAupsAttr) {
+        if ($this->perunAupsAttr !== null) {
             $perunAupsAttr = $this->adapter->getEntitylessAttribute($this->perunAupsAttr);
         }
 
@@ -287,14 +287,14 @@ class ForceAup extends ProcessingFilter
             }
             $decodedAups = json_decode($aupsInJson);
             $latestAup = $this->getLatestAup($decodedAups);
-            if (null === $latestAup) {
+            if ($latestAup === null) {
                 continue;
             }
 
             if (!empty($userApprovedAups[$requestedAup])) {
                 $userAupsList = json_decode($userApprovedAups[$requestedAup]);
                 $userLatestAup = $this->getLatestAup($userAupsList);
-                if (null !== $userLatestAup) {
+                if ($userLatestAup !== null) {
                     $latestDate = self::parseDateTime($latestAup->date);
                     $userLatestDate = self::parseDateTime($userLatestAup->date);
                     if ($userLatestDate >= $latestDate) {
@@ -339,11 +339,11 @@ class ForceAup extends ProcessingFilter
      */
     private function parseDateTime(string $date, DateTime $default = null): DateTime
     {
-        if (null === $default) {
+        if ($default === null) {
             $default = DateTime::createFromFormat(self::DATETIME_FORMAT, '1970-01-01');
         }
         $result = DateTime::createFromFormat(self::DATETIME_FORMAT, $date);
-        if (false === $result) {
+        if ($result === false) {
             $result = $default;
         }
 

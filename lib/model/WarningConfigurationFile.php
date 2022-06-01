@@ -46,7 +46,7 @@ class WarningConfigurationFile extends WarningConfiguration
     {
         $conf = self::getSourceOfWarningAttributes();
 
-        if (null !== $conf) {
+        if ($conf !== null) {
             $this->enabled = $conf->getBoolean(WarningConfiguration::ENABLED, false);
         }
 

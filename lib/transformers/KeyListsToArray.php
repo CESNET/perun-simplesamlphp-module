@@ -60,7 +60,7 @@ class KeyListsToArray extends AttributeTransformer
         }
         // one key for everything (certData)
         if (
-            !empty($this->outputCertData) && 1 === count($keys)
+            !empty($this->outputCertData) && count($keys) === 1
             && count(array_filter(current($keys))) === count($this->purposes)
         ) {
             return array_merge($result, [

@@ -54,7 +54,7 @@ class AdapterRpc extends Adapter
 
     public function __construct($configFileName = null)
     {
-        if (null === $configFileName) {
+        if ($configFileName === null) {
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
@@ -98,10 +98,10 @@ class AdapterRpc extends Adapter
 
                 return new User($user['id'], $name);
             } catch (PerunException $e) {
-                if ('UserExtSourceNotExistsException' === $e->getName()) {
+                if ($e->getName() === 'UserExtSourceNotExistsException') {
                     continue;
                 }
-                if ('ExtSourceNotExistsException' === $e->getName()) {
+                if ($e->getName() === 'ExtSourceNotExistsException') {
                     // Because use of original/source entityID as extSourceName
                     continue;
                 }
@@ -205,7 +205,7 @@ class AdapterRpc extends Adapter
     {
         $facility = $this->getFacilityByEntityId($spEntityId);
 
-        if (null === $facility) {
+        if ($facility === null) {
             return [];
         }
 
@@ -394,7 +394,7 @@ class AdapterRpc extends Adapter
 
     public function getUsersGroupsOnSp($facility, $userId)
     {
-        if (null === $facility) {
+        if ($facility === null) {
             return [];
         }
 
@@ -412,7 +412,7 @@ class AdapterRpc extends Adapter
 
         foreach ($usersGroupsOnFacility as $usersGroupOnFacility) {
             if (isset($usersGroupOnFacility['attributes'][0]['friendlyName']) &&
-                'voShortName' === $usersGroupOnFacility['attributes'][0]['friendlyName']) {
+                $usersGroupOnFacility['attributes'][0]['friendlyName'] === 'voShortName') {
                 $uniqueName = $usersGroupOnFacility['attributes'][0]['value'] . ':' . $usersGroupOnFacility['name'];
 
                 array_push($groups, new Group(
@@ -503,7 +503,7 @@ class AdapterRpc extends Adapter
             'user' => $user->getId(),
             'vo' => $vo->getId(),
         ]);
-        if (null === $member) {
+        if ($member === null) {
             throw new Exception(
                 'Member for User with name ' . $user->getName() . ' and Vo with shortName ' . $vo->getShortName() . 'does not exist in Perun!'
             );
@@ -522,13 +522,13 @@ class AdapterRpc extends Adapter
         }
 
         $vo = $this->getVoByShortName($voShortName);
-        if (null === $vo) {
+        if ($vo === null) {
             Logger::debug('isUserInVo - No VO found, returning false');
 
             return false;
         }
 
-        return Member::VALID === $this->getMemberStatusByUserAndVo($user, $vo);
+        return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
     }
 
     /**
@@ -653,7 +653,7 @@ class AdapterRpc extends Adapter
     {
         $facility = $this->getFacilityByEntityId($entityId);
 
-        if (null === $facility) {
+        if ($facility === null) {
             return [];
         }
 
@@ -677,7 +677,7 @@ class AdapterRpc extends Adapter
                 'attributeName' => 'urn:perun:resource:attribute-def:def:capabilities',
             ])['value'];
 
-            if (null === $resourceCapabilities) {
+            if ($resourceCapabilities === null) {
                 continue;
             }
 
@@ -698,7 +698,7 @@ class AdapterRpc extends Adapter
     {
         $facility = $this->getFacilityByEntityId($entityId);
 
-        if (null === $facility) {
+        if ($facility === null) {
             return [];
         }
 

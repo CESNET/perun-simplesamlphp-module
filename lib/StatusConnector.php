@@ -36,7 +36,7 @@ abstract class StatusConnector
     {
         $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
         $statusType = $configuration->getString(self::STATUS_TYPE, 'NAGIOS');
-        if (self::NAGIOS === $statusType) {
+        if ($statusType === self::NAGIOS) {
             return new NagiosStatusConnector();
         }
         throw new Exception(
@@ -63,10 +63,10 @@ abstract class StatusConnector
     {
         $statusAsInt = intval($status);
 
-        if (self::OK === $statusAsInt) {
+        if ($statusAsInt === self::OK) {
             return '<span class="status label label-success">OK</span>';
         }
-        if (self::WARNING === $statusAsInt) {
+        if ($statusAsInt === self::WARNING) {
             return '<span class="status label label-warning">WARNING</span>';
         }
 

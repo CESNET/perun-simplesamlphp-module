@@ -121,7 +121,7 @@ try {
     Logger::debug(DEBUG_PREFIX . 'Extracted extSourceName: \'' . $extSourceName . '\'');
 
     $userExtSource = findUserExtSource($adapter, $extSourceName, $attributesFromIdP, $identifierAttributes);
-    if (null === $userExtSource) {
+    if ($userExtSource === null) {
         throw new Exception(
             DEBUG_PREFIX . 'There is no UserExtSource that could be used for user ' . $perunUserId . ' and IdP ' . $extSourceName
         );
@@ -160,7 +160,7 @@ function findUserExtSource($adapter, $extSourceName, $attributesFromIdp, $identi
         foreach ($attrValue as $extLogin) {
             $userExtSource = getUserExtSource($adapter, $extSourceName, $extLogin);
 
-            if (null !== $userExtSource) {
+            if ($userExtSource !== null) {
                 Logger::debug(
                     DEBUG_PREFIX . 'Found user ext source for combination extSourceName \''
                     . $extSourceName . '\' and extLogin \'' . $extLogin . '\''

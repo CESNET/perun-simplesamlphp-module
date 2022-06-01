@@ -67,7 +67,7 @@ class AdapterLdap extends Adapter
 
     public function __construct($configFileName = null)
     {
-        if (null === $configFileName) {
+        if ($configFileName === null) {
             $configFileName = self::DEFAULT_CONFIG_FILE_NAME;
         }
 
@@ -248,7 +248,7 @@ class AdapterLdap extends Adapter
             '(&(objectClass=perunGroup)(perunUniqueGroupName=' . $name . '))',
             ['perunGroupId', 'cn', 'perunUniqueGroupName', 'perunVoId', 'uuid', 'description']
         );
-        if (null === $group) {
+        if ($group === null) {
             throw new Exception('Group with name: $name in VO: ' . $vo->getName() . ' does not exists in Perun LDAP.');
         }
 
@@ -269,7 +269,7 @@ class AdapterLdap extends Adapter
             '(&(objectClass=perunVo)(o=' . $voShortName . '))',
             ['perunVoId', 'o', 'description']
         );
-        if (null === $vo) {
+        if ($vo === null) {
             throw new Exception('Vo with name: ' . $voShortName . ' does not exists in Perun LDAP.');
         }
 
@@ -284,7 +284,7 @@ class AdapterLdap extends Adapter
             ['o', 'description']
         );
 
-        if (null === $vo) {
+        if ($vo === null) {
             throw new Exception('Vo with id: ' . $id . ' does not exists in Perun LDAP.');
         }
 
@@ -480,7 +480,7 @@ class AdapterLdap extends Adapter
 
     public function getUsersGroupsOnSp($facility, $userId)
     {
-        if (null === $facility) {
+        if ($facility === null) {
             return [];
         }
         $id = $facility->getId();
@@ -492,7 +492,7 @@ class AdapterLdap extends Adapter
         );
         Logger::debug('Resources - ' . json_encode($resources));
 
-        if (null === $resources) {
+        if ($resources === null) {
             throw new Exception('Service with ID: ' . $id . ' hasn\'t assigned any resource.');
         }
         $resourcesString = '(|';
@@ -551,20 +551,20 @@ class AdapterLdap extends Adapter
         }
 
         $vo = $this->getVoByShortName($voShortName);
-        if (null === $vo) {
+        if ($vo === null) {
             Logger::debug('isUserInVo - No VO found, returning false');
 
             return false;
         }
 
-        return Member::VALID === $this->getMemberStatusByUserAndVo($user, $vo);
+        return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
     }
 
     public function getResourceCapabilities($entityId, $userGroups)
     {
         $facility = $this->getFacilityByEntityId($entityId);
 
-        if (null === $facility) {
+        if ($facility === null) {
             return [];
         }
 
@@ -620,7 +620,7 @@ class AdapterLdap extends Adapter
 
     private function mapUser($user)
     {
-        if (null === $user) {
+        if ($user === null) {
             return null;
         }
         if (isset($user['displayName'][0])) {
@@ -637,19 +637,19 @@ class AdapterLdap extends Adapter
     private function resolveAttrValue($attrsNameTypeMap, $attrsFromLdap, $attr)
     {
         if (!array_key_exists($attr, $attrsFromLdap)) {
-            if (self::TYPE_BOOL === $attrsNameTypeMap[$attr][self::TYPE]) {
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
                 return false;
             }
-            if (self::TYPE_MAP === $attrsNameTypeMap[$attr][self::TYPE]
-                || self::TYPE_DICTIONARY === $attrsNameTypeMap[$attr][self::TYPE]
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP
+                || $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY
             ) {
                 return [];
             }
         } else {
-            if (self::TYPE_MAP === $attrsNameTypeMap[$attr][self::TYPE]) {
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
                 return $attrsFromLdap[$attr];
             }
-            if (self::TYPE_DICTIONARY === $attrsNameTypeMap[$attr][self::TYPE]) {
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY) {
                 return $this->convertToMap($attrsFromLdap[$attr]);
             }
 

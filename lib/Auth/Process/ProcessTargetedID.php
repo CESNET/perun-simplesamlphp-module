@@ -53,7 +53,7 @@ class ProcessTargetedID extends \SimpleSAML\Auth\ProcessingFilter
         }
 
         // Do not continue if we have user id with scope
-        if (false !== strpos($uid, '@')) {
+        if (strpos($uid, '@') !== false) {
             return;
         }
 

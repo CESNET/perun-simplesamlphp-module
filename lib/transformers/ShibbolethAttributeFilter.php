@@ -51,7 +51,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $this->throwOnMismatch = $config->getBoolean('throwOnMismatch', false);
 
         $data = $config->getString('file', null);
-        if (null !== $data) {
+        if ($data !== null) {
             $data_is_url = true;
         } else {
             $data_is_url = false;
@@ -72,7 +72,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $entityCategories = $attributes[$this->entityCategoriesAttribute] ?? [];
 
         $releasedAttributes = $this->getReleasedAttributes($entityId, $entityCategories);
-        if (null === $releasedAttributes) {
+        if ($releasedAttributes === null) {
             return [
                 $this->entityIdAttribute => null,
             ];
@@ -91,7 +91,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         $result = [
             $this->attributesAttribute => $releasedAttributes,
         ];
-        if (null !== $this->tagsAttribute && !empty($this->tags[$entityId])) {
+        if ($this->tagsAttribute !== null && !empty($this->tags[$entityId])) {
             $result[$this->tagsAttribute] = $this->tags[$entityId];
         }
 
@@ -140,7 +140,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
                 $description
             ),
         ];
-        if (null !== $this->tagsAttribute) {
+        if ($this->tagsAttribute !== null) {
             $d[$this->tagsAttribute] = sprintf('internal tags from Shibboleth configuration');
         }
 
@@ -163,7 +163,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
         foreach ($attributeFilterPolicyGroup->AttributeFilterPolicy as $policy) {
             $sps = [];
             $notSps = [];
-            if (1 !== count($policy->PolicyRequirementRule)) {
+            if (count($policy->PolicyRequirementRule) !== 1) {
                 self::error('Not exactly one PolicyRequirementRule');
             }
             $requirement = $policy->PolicyRequirementRule;
@@ -204,7 +204,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
     {
         $arr = array_unique(array_merge($attributes, $this->getDefaultAttributes($entityCategories)));
         $arr = array_filter($arr, function ($attr) use ($attributes) {
-            return self::DENIED_ATTRIBUTE_PREFIX !== substr($attr, 0, strlen(self::DENIED_ATTRIBUTE_PREFIX))
+            return substr($attr, 0, strlen(self::DENIED_ATTRIBUTE_PREFIX)) !== self::DENIED_ATTRIBUTE_PREFIX
                 && !in_array(self::DENIED_ATTRIBUTE_PREFIX . $attr, $attributes, true);
         });
         sort($arr);
@@ -223,7 +223,7 @@ class ShibbolethAttributeFilter extends AttributeTransformer
     {
         $sps = [];
         foreach ($requirement->children('basic', true) as $rule) {
-            if ('Rule' !== $rule->getName()) {
+            if ($rule->getName() !== 'Rule') {
                 continue;
             }
             switch ($rule->attributes('xsi', true)->type) {

@@ -53,7 +53,7 @@ $this->data['head'] .= '<link rel="stylesheet" href="'
 $this->includeAtTemplateBase('includes/header.php');
 
 // Prepare error case to show it in UI if needed
-if (null !== $this->data['errorCode']) {
+if ($this->data['errorCode'] !== null) {
     ?>
 
     <div class="alert alert-dismissable alert-danger" role="alert">
@@ -83,7 +83,7 @@ if (null !== $this->data['errorCode']) {
             <h2><?php echo $this->t('{privacyidea:privacyidea:webauthn}'); ?></h2>
             <p id="message" role="alert"><?php
                 $messageOverride = $this->data['messageOverride'] ?? null;
-                if (null === $messageOverride || is_string($messageOverride)) {
+                if ($messageOverride === null || is_string($messageOverride)) {
                     echo htmlspecialchars($messageOverride ?? $this->data['message'] ?? '', ENT_QUOTES);
                 } elseif (is_callable($messageOverride)) {
                     echo call_user_func($messageOverride, $this->data['message'] ?? '');

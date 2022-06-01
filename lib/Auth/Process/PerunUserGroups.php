@@ -19,6 +19,7 @@ use SimpleSAML\Module\perun\PerunConstants;
 class PerunUserGroups extends ProcessingFilter
 {
     public const STAGE = 'perun:PerunUserGroups';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const INTERFACE = 'interface';

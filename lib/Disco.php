@@ -197,7 +197,7 @@ class Disco extends PowerIdPDisco
             $this->authId = $id;
             $state = State::loadState($id, self::SAML_SP_SSO, true);
 
-            if (null !== $state) {
+            if ($state !== null) {
                 if (isset($state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF])) {
                     $this->originalAuthnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF];
 
@@ -236,14 +236,14 @@ class Disco extends PowerIdPDisco
         // no choice possible. Show discovery service page
         $idpList = $this->getIdPList();
         if (isset($this->originalsp[self::METADATA_ADD_INSTITUTION_APP])
-            && true === $this->originalsp[self::METADATA_ADD_INSTITUTION_APP]
+            && $this->originalsp[self::METADATA_ADD_INSTITUTION_APP] === true
         ) {
             $idpList = $this->filterAddInstitutionList($idpList);
         } else {
             $idpList = $this->filterList($idpList);
         }
 
-        if (1 === sizeof($idpList)) {
+        if (sizeof($idpList) === 1) {
             $idp = array_keys($idpList)[0];
             $url = self::buildContinueUrl($this->spEntityId, $this->returnURL, $this->returnIdParam, $idp);
             Logger::info('perun.Disco: Only one Idp left. Redirecting automatically. IdP: ' . $idp);
@@ -255,12 +255,12 @@ class Disco extends PowerIdPDisco
 
         // IF IS SET AUTHN CONTEXT CLASS REF, REDIRECT USER TO THE IDP
         if (isset($this->originalAuthnContextClassRef)) {
-            if (null !== $this->originalAuthnContextClassRef) {
+            if ($this->originalAuthnContextClassRef !== null) {
                 // Check authnContextClassRef and select IdP directly if the correct value is set
                 foreach ($this->originalAuthnContextClassRef as $value) {
                     // VERIFY THE PREFIX IS CORRECT AND WE CAN PERFORM THE REDIRECT
                     $acrStartSubstr = substr($value, 0, strlen(self::URN_CESNET_PROXYIDP_IDPENTITYID));
-                    if (self::URN_CESNET_PROXYIDP_IDPENTITYID === $acrStartSubstr) {
+                    if ($acrStartSubstr === self::URN_CESNET_PROXYIDP_IDPENTITYID) {
                         $idpEntityId = substr($value, strlen(self::URN_CESNET_PROXYIDP_IDPENTITYID), strlen($value));
                         if ($idpEntityId === $this->proxyIdpEntityId) {
                             continue;
@@ -477,7 +477,7 @@ class Disco extends PowerIdPDisco
     public static function getOr($id = null): string
     {
         $or = '';
-        if (null !== $id) {
+        if ($id !== null) {
             $or .= '<div class="hrline" id="' . $id . '">' . PHP_EOL;
         } else {
             $or .= '<div class=" hrline">' . PHP_EOL;
@@ -502,7 +502,7 @@ class Disco extends PowerIdPDisco
             array_push($idps, $allIdps[$entityId]);
         }
         $idpCount = count($idps);
-        if (0 === $idpCount) {
+        if ($idpCount === 0) {
             return $html;
         }
         $html .= '<div class="col-12 row">' . PHP_EOL;
@@ -514,7 +514,7 @@ class Disco extends PowerIdPDisco
         $class = 'col-xs-12 col-md-6 col-lg-4';
         for ($i = 0; $i < $fullRows; ++$i) {
             for ($j = 0; $j < 3; ++$j) {
-                if (0 === $remainingIdps && $counter === ($idpCount - 1)) {
+                if ($remainingIdps === 0 && $counter === ($idpCount - 1)) {
                     $class .= ' col-md-offset-3 col-lg-offset-0';
                 }
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
@@ -561,7 +561,7 @@ class Disco extends PowerIdPDisco
         $isAddInstitutionApp = $t->isAddInstitutionApp();
         $addInstitutionUrl = '';
         $addInstitutionEmail = '';
-        if (null !== $addInstitution) {
+        if ($addInstitution !== null) {
             $addInstitutionUrl = $addInstitution->getString(self::ADD_INSTITUTION_URL, '');
             $addInstitutionEmail = $addInstitution->getString(self::ADD_INSTITUTION_EMAIL, '');
         }
@@ -603,17 +603,17 @@ class Disco extends PowerIdPDisco
         $result .= '    </div>' . PHP_EOL;
         // NO ENTRIES BLOCK
         $result .= '    <div id="no-entries" class="no-idp-found alert alert-info entries-warning-block">' . PHP_EOL;
-        if ($disableWhitelisting && null !== $addInstitutionEmail) {
+        if ($disableWhitelisting && $addInstitutionEmail !== null) {
             $result .= '        ' . $t->t('{perun:disco:cannot_find_institution_disabled_whitelisting}') .
                 ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
                 $addInstitutionEmail . '</a>' . PHP_EOL;
-        } elseif ($isAddInstitutionApp && null !== $addInstitutionEmail) {
+        } elseif ($isAddInstitutionApp && $addInstitutionEmail !== null) {
             $result .= '        ' . $t->t('{perun:disco:add_institution_no_entries_contact_us}') .
                 ' <a href="mailto:' . $addInstitutionEmail . '?subject=Request%20for%20adding%20new%20IdP">' .
                 $addInstitutionEmail . '</a>' . PHP_EOL;
         } else {
             $result .= '       ' . $t->t('{perun:disco:institution_search_no_entries_header}');
-            if (null !== $addInstitutionUrl) {
+            if ($addInstitutionUrl !== null) {
                 $result .= '<br/><br/>' . PHP_EOL;
                 $result .= '       ' .
                     ' <a class="btn btn-info btn-block" href="' . $addInstitutionUrl . '">' .
@@ -743,14 +743,14 @@ class Disco extends PowerIdPDisco
                     $unset = false;
                 }
             }
-            if (isset($idp[self::IDP_COCO]) and true === $idp[self::IDP_COCO]) {
+            if (isset($idp[self::IDP_COCO]) and $idp[self::IDP_COCO] === true) {
                 $unset = false;
             }
-            if (isset($idp[self::IDP_RAS]) and true === $idp[self::IDP_RAS]) {
+            if (isset($idp[self::IDP_RAS]) and $idp[self::IDP_RAS] === true) {
                 $unset = false;
             }
 
-            if (true === $unset) {
+            if ($unset === true) {
                 unset($list[$entityId]);
             }
         }
@@ -798,26 +798,26 @@ class Disco extends PowerIdPDisco
         bool $hasFullRows
     ): string {
         $html = '';
-        if (0 === $remainingIdps) {
+        if ($remainingIdps === 0) {
             return $html;
         }
 
         if ($hasFullRows > 0) {
-            if (2 === $remainingIdps) {
+            if ($remainingIdps === 2) {
                 $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-2';
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
                 $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-0 col-md-offset-3';
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
-            } elseif (1 === $remainingIdps) {
+            } elseif ($remainingIdps === 1) {
                 $class = 'col-xs-12 col-md-6 col-lg-4 col-lg-offset-4';
                 $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
                 $html .= '</div>' . PHP_EOL;
             }
-        } elseif (2 === $remainingIdps) {
+        } elseif ($remainingIdps === 2) {
             $class = 'col-xs-12 col-md-6';
             $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter++]], $class);
             $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
-        } elseif (1 === $remainingIdps) {
+        } elseif ($remainingIdps === 1) {
             $class = 'col-lg-12';
             $html .= self::showTaggedEntry($t, $idps[array_keys($idps)[$counter]], $class);
         }
@@ -931,7 +931,7 @@ class Disco extends PowerIdPDisco
     private static function substrInArray($needle, array $haystack)
     {
         foreach ($haystack as $item) {
-            if (false !== strpos($item, $needle)) {
+            if (strpos($item, $needle) !== false) {
                 return $item;
             }
         }
@@ -945,7 +945,7 @@ class Disco extends PowerIdPDisco
 
         $this->adapter = Adapter::getInstance($this->wayfConfiguration->getString(self::INTERFACE, self::RPC));
         try {
-            if (null !== $clientIdWithPrefix) {
+            if ($clientIdWithPrefix !== null) {
                 $this->fillSpNameForOidc($t, $clientIdWithPrefix);
             } else {
                 $this->fillSpNameForSaml($t);
@@ -958,20 +958,20 @@ class Disco extends PowerIdPDisco
 
     private function fillSpNameForOidc($t, $clientIdWithPrefix)
     {
-        if (null === $clientIdWithPrefix) {
+        if ($clientIdWithPrefix === null) {
             return;
         }
         $parts = explode(':', $clientIdWithPrefix);
         $clientId = end($parts);
 
         $clientIdAttr = $this->wayfConfiguration->getString(self::CLIENT_ID_ATTR, null);
-        if (null === $clientIdAttr) {
+        if ($clientIdAttr === null) {
             $facility = $this->adapter->getFacilityByClientId($clientId);
         } else {
             $facility = $this->adapter->getFacilityByClientId($clientId, $clientIdAttr);
         }
 
-        if (null !== $facility) {
+        if ($facility !== null) {
             $spNameAttrName = $this->wayfConfiguration->getString(
                 self::SERVICE_NAME_ATTR,
                 self::SERVICE_NAME_DEFAULT_ATTR_NAME
@@ -989,13 +989,13 @@ class Disco extends PowerIdPDisco
         if (!empty($this->originalsp[self::SP_ENTITY_ID])) {
             $entityId = $this->originalsp[self::SP_ENTITY_ID];
             $entityIdAttr = $this->wayfConfiguration->getString(self::ENTITY_ID_ATTR, null);
-            if (null === $entityIdAttr) {
+            if ($entityIdAttr === null) {
                 $facility = $this->adapter->getFacilityByEntityId($entityId);
             } else {
                 $facility = $this->adapter->getFacilityByEntityId($entityId, $entityIdAttr);
             }
 
-            if (null === $facility) {
+            if ($facility === null) {
                 return;
             }
 
@@ -1024,7 +1024,7 @@ class Disco extends PowerIdPDisco
     {
         $clientIdWithPrefix = self::substrInArray(self::CLIENT_ID_PREFIX, $this->originalAuthnContextClassRef);
 
-        if (null !== $clientIdWithPrefix) {
+        if ($clientIdWithPrefix !== null) {
             $parts = explode(':', $clientIdWithPrefix);
 
             return end($parts); // clientId

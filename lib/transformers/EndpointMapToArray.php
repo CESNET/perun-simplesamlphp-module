@@ -42,7 +42,7 @@ class EndpointMapToArray extends AttributeTransformer
 
     private function getBindingName($binding)
     {
-        if (0 !== strpos($binding, 'urn:')) {
+        if (strpos($binding, 'urn:') !== 0) {
             return self::BINDING_PREFIX . $binding;
         }
 
@@ -68,14 +68,14 @@ class EndpointMapToArray extends AttributeTransformer
         $endpointMap = $fullBindingNames;
 
         // if all endpoints use the default binding and there are no spaces
-        if (1 === count($endpointMap) && isset($endpointMap[$this->defaultBinding])
-            && false === strpos(
+        if (count($endpointMap) === 1 && isset($endpointMap[$this->defaultBinding])
+            && strpos(
                 $endpointMap[$this->defaultBinding],
                 self::MAPLIST_SEPARATOR . self::MAPLIST_SEPARATOR
-            )) {
+            ) === false) {
             $result = explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]);
 
-            return 1 === count($result) ? $result[0] : $result;
+            return count($result) === 1 ? $result[0] : $result;
         }
 
         $result = [];
@@ -83,7 +83,7 @@ class EndpointMapToArray extends AttributeTransformer
         // prefer default binding
         if (isset($endpointMap[$this->defaultBinding])) {
             foreach (explode(self::MAPLIST_SEPARATOR, $endpointMap[$this->defaultBinding]) as $location) {
-                $result[] = $this->getEndpoint($location, $this->defaultBinding, $index++, self::INDEX_MIN === $index);
+                $result[] = $this->getEndpoint($location, $this->defaultBinding, $index++, $index === self::INDEX_MIN);
             }
         }
         foreach ($endpointMap as $binding => $locations) {

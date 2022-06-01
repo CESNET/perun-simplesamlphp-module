@@ -15,11 +15,13 @@ use SimpleSAML\Module\perun\PerunConstants;
 class DropUserAttributes extends ProcessingFilter
 {
     public const STAGE = 'perun:DropUserAttributes';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const ATTRIBUTE_NAMES = 'attribute_names';
 
     private $attributeNames;
+
     private $filterConfig;
 
     public function __construct($config, $reserved)

@@ -43,7 +43,7 @@ if (empty($shownServicesList)) {
     }
 }
 
-if (isset($_GET['output']) && 'json' === $_GET['output']) {
+if (isset($_GET['output']) && $_GET['output'] === 'json') {
     header('Content-type: application/json');
     echo json_encode($shownServices);
     exit;

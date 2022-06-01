@@ -45,7 +45,7 @@ class ListOfSps
 
     public static function printAttributeValue($type, $value)
     {
-        if (empty($value) && 'java.lang.Boolean' !== $type) {
+        if (empty($value) && $type !== 'java.lang.Boolean') {
             return "<td class='center'>&horbar;</td>";
         }
 
@@ -63,7 +63,7 @@ class ListOfSps
                 $string = htmlspecialchars($value);
                 break;
             case 'java.lang.Boolean':
-                if (null !== $value && $value) {
+                if ($value !== null && $value) {
                     $string = '&#x2714;';
                 } else {
                     $string = '&#x2715;';

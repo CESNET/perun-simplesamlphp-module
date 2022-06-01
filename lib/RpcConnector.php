@@ -75,7 +75,7 @@ class RpcConnector
         Logger::debug('perun.RPC: GET call ' . $uri . ' with params: ' . $paramsQuery . ', response : ' .
             $json . ' in: ' . $responseTime . 's.');
 
-        if (false === $json) {
+        if ($json === false) {
             throw new Exception(
                 'Cant\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsQuery . ', Response: ' . $json
             );
@@ -83,7 +83,7 @@ class RpcConnector
 
         $result = json_decode($json, true);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(
                 'Cant\'t decode response from Perun. Call: ' . $uri . ', Params: ' . $paramsQuery . ', Response: ' . $json
             );
@@ -129,7 +129,7 @@ class RpcConnector
         Logger::debug('perun.RPC: POST call ' . $uri . ' with params: ' . $paramsJson . ', response : ' .
             $json . ' in: ' . $responseTime . 's.');
 
-        if (false === $json) {
+        if ($json === false) {
             throw new Exception(
                 'Can\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsJson . ', Response: ' . $json
             );
@@ -137,7 +137,7 @@ class RpcConnector
 
         $result = json_decode($json, true);
 
-        if (JSON_ERROR_NONE !== json_last_error()) {
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new Exception(
                 'Cant\'t decode response from Perun. Call: ' . $uri . ', Params: ' . $paramsJson . ', Response: ' . $json
             );

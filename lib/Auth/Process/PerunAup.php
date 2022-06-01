@@ -20,29 +20,45 @@ use SimpleSAML\Utils\HTTP;
 class PerunAup extends ProcessingFilter
 {
     public const STAGE = 'perun:PerunAup';
+
     public const DEBUG_PREFIX = self::STAGE . ' - ';
 
     public const CALLBACK = 'perun/perun_aup_callback.php';
+
     public const REDIRECT = 'perun/perun_aup.php';
+
     public const TEMPLATE = 'perun:perun-aup-tpl.php';
 
     public const PARAM_STATE_ID = PerunConstants::STATE_ID;
+
     public const PARAM_APPROVAL_URL = 'approvalUrl';
 
     public const INTERFACE = 'interface';
+
     public const AUP_ATTR = 'attribute';
+
     public const AUP_VALUE = 'value';
+
     public const APPROVAL_URL = 'approval_url';
+
     public const CALLBACK_PARAMETER_NAME = 'callback_parameter_name';
+
     public const PERUN_APPROVAL_URL = 'perun_approval_url';
 
     private $adapter;
+
     private $aupAttr;
+
     private $aupValue;
+
     private $approvalUrl;
+
     private $callbackParameterName;
+
     private $perunApprovalUrl;
+
     private $config;
+
     private $filterConfig;
 
     public function __construct($config, $reserved)

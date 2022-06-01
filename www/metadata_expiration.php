@@ -25,7 +25,7 @@ $metaentries = [
 $metaentries['remote']['saml20-idp-remote'] = $metadata->getList('saml20-idp-remote');
 $metaentries['remote']['shib13-idp-remote'] = $metadata->getList('shib13-idp-remote');
 
-if (true === $config->getBoolean('enable.saml20-idp', false)) {
+if ($config->getBoolean('enable.saml20-idp', false) === true) {
     try {
         $metaentries['remote']['saml20-sp-remote'] = $metadata->getList('saml20-sp-remote');
     } catch (Exception $e) {
@@ -33,7 +33,7 @@ if (true === $config->getBoolean('enable.saml20-idp', false)) {
     }
 }
 
-if (true === $config->getBoolean('enable.shib13-idp', false)) {
+if ($config->getBoolean('enable.shib13-idp', false) === true) {
     try {
         $metaentries['remote']['shib13-sp-remote'] = $metadata->getList('shib13-sp-remote');
     } catch (Exception $e) {
@@ -41,7 +41,7 @@ if (true === $config->getBoolean('enable.shib13-idp', false)) {
     }
 }
 
-if (true === $config->getBoolean('enable.adfs-idp', false)) {
+if ($config->getBoolean('enable.adfs-idp', false) === true) {
     try {
         $metaentries['remote']['adfs-sp-remote'] = $metadata->getList('adfs-sp-remote');
     } catch (Exception $e) {
@@ -62,7 +62,7 @@ foreach ($metaentries['remote'] as $setkey => $set) {
     foreach ($set as $entry) {
         if (array_key_exists('expire', $entry)) {
             $expires = number_format(($entry['expire'] - $now) / 3600, 1);
-            null === $closestExpiration ?
+            $closestExpiration === null ?
                 $closestExpiration = $expires : $closestExpiration = min($closestExpiration, $expires);
         }
     }

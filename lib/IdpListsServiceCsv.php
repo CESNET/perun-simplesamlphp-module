@@ -104,7 +104,7 @@ class IdpListsServiceCsv extends IdpListsService
      */
     public function listToArray($listName, $all)
     {
-        if ('whitelist' === $listName) {
+        if ($listName === 'whitelist') {
             $list = $this->whitelistFile;
         } else {
             $list = $this->greylistFile;
