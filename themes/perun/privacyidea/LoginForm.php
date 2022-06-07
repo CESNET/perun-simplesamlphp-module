@@ -104,7 +104,7 @@ if ($this->data['errorCode'] !== null) {
             <div class="form-row">
                 <div class="form-group col-sm-12 col-md-6">
                     <label for="otp" class="sr-only"><?php echo $this->t('{privacyidea:privacyidea:otp}'); ?></label>
-                    <input id="otp" name="otp" tabindex="1" value="" class="form-control" autocomplete="one-time-code" type="text" inputmode="numeric" pattern="[0-9]{6,}" required placeholder="<?php echo htmlspecialchars($otpHint, ENT_QUOTES); ?>"<?php if ($this->data['noAlternatives']) {
+                    <input id="otp" name="otp" tabindex="1" value="" class="form-control" autocomplete="one-time-code" type="number" inputmode="numeric" pattern="[0-9]{6,}" required placeholder="<?php echo htmlspecialchars($otpHint, ENT_QUOTES); ?>"<?php if ($this->data['noAlternatives']) {
                 echo ' autofocus';
             } ?> />
                 </div>
