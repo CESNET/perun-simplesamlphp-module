@@ -1,3 +1,10 @@
+## [8.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.1...v8.0.2) (2022-06-07)
+
+
+### Bug Fixes
+
+* input type number for OTP ([b1d7037](https://github.com/CESNET/perun-simplesamlphp-module/commit/b1d7037b6b47623a11cef3898628d17db930acd8))
+
 ## [8.0.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.0...v8.0.1) (2022-05-20)
 
 
