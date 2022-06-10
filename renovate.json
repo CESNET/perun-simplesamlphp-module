@@ -22,5 +22,14 @@
   ],
   "stabilityDays": 3,
   "ignoreDeps": ["npm"],
-  "transitiveRemediation": true
+  "transitiveRemediation": true,
+  "vulnerabilityAlerts": {
+    "packageRules": [
+      {
+        "matchUpdateTypes": ["patch", "pin", "digest"],
+        "automerge": true,
+        "semanticCommitType": "fix"
+      }
+    ]
+  }
 }
