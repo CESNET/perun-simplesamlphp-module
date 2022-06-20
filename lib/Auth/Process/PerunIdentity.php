@@ -79,6 +79,10 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
     public const MODES = [self::MODE_FULL, self::MODE_USERONLY];
 
+    public const CONFIG_FILE_NAME = 'module_perun.php';
+
+    public const ENTITY_ID_ATTR = 'entityIdAttr';
+
     private $uidsAttr;
 
     private $registerUrlBase;
@@ -116,6 +120,8 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
     private $facilityRegisterUrlAttr;
 
     private $facilityAllowRegistrationToGroupsAttr;
+
+    private $entityIdAttr;
 
     /**
      * @var Adapter
@@ -201,6 +207,13 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
             );
         }
 
+        try {
+            $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
+            $this->entityIdAttr = $configuration->getString(self::ENTITY_ID_ATTR, null);
+        } catch (Exception $e) {
+            $this->entityIdAttr = null;
+        }
+
         $this->adapter = Adapter::getInstance($this->interface);
         $this->rpcAdapter = new AdapterRpc();
     }
@@ -263,7 +276,10 @@ class PerunIdentity extends \SimpleSAML\Auth\ProcessingFilter
 
             $this->checkMemberStateDefaultVo($request, $user, $uids);
 
-            $groups = $this->adapter->getUsersGroupsOnFacility($this->spEntityId, $user->getId());
+            $groups = $this->entityIdAttr === null ? $this->adapter->getUsersGroupsOnFacility(
+                $this->spEntityId,
+                $user->getId()
+            ) : $this->adapter->getUsersGroupsOnFacility($this->spEntityId, $user->getId(), $this->entityIdAttr);
 
             if ($this->checkGroupMembership && empty($groups)) {
                 if ($this->allowRegistrationToGroups) {

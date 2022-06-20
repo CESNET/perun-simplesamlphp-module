@@ -17,12 +17,25 @@ use SimpleSAML\XHTML\Template;
  *
  * See PerunIdentity for mor information.
  */
+const CONFIG_FILE_NAME = 'module_perun.php';
+const ENTITY_ID_ATTR = 'entityIdAttr';
+
+try {
+    $configuration = Configuration::getConfig(CONFIG_FILE_NAME);
+    $entityIdAttr = $configuration->getString(ENTITY_ID_ATTR, null);
+} catch (Exception $e) {
+    $entityIdAttr = null;
+}
+
 $adapter = Adapter::getInstance($_REQUEST[PerunIdentity::INTERFACE_PROPNAME]);
 $rpcAdapter = new AdapterRpc();
 $spEntityId = $_REQUEST['spEntityId'];
 $vosIdForRegistration = $_REQUEST['vosIdForRegistration'];
 $stateId = $_REQUEST['stateId'];
-$spGroups = $adapter->getSpGroups($spEntityId);
+$spGroups = $entityIdAttr === null ? $adapter->getSpGroups($spEntityId) : $adapter->getSpGroups(
+    $spEntityId,
+    $entityIdAttr
+);
 $registerUrlBase = $_REQUEST[PerunIdentity::REGISTER_URL_BASE];
 $vosForRegistration = [];
 $groupsForRegistration = [];

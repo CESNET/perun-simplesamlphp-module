@@ -101,12 +101,13 @@ abstract class Adapter
     abstract public function getGroupsWhereMemberIsActive($user, $vo);
 
     /**
-     * @param string $spEntityId entity id of the sp
+     * @param string $spEntityId   entity id of the sp
+     * @param string $entityIdAttr entity id attribute
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId.
      *                 registering to those groups should should allow access to the service
      */
-    abstract public function getSpGroups(string $spEntityId): array;
+    abstract public function getSpGroups(string $spEntityId, string $entityIdAttr): array;
 
     /**
      * @param Facility $facility representing the SP
@@ -165,7 +166,7 @@ abstract class Adapter
 
     /**
      * @param string $spEntityId   Value of the entityID identifier
-     * @param mixed  $entityIdAttr
+     * @param string $entityIdAttr entity id attribute
      *
      * @return Facility facility
      */
@@ -181,12 +182,13 @@ abstract class Adapter
     abstract public function getFacilityByClientId($clientId, $clientIdAttr);
 
     /**
-     * @param string $spEntityId entity id of the sp
+     * @param string $spEntityId   entity id of the sp
      * @param int    $userId
+     * @param string $entityIdAttr entity id attribute
      *
      * @return Group[] from vo which are assigned to all facilities with spEntityId for this userId
      */
-    abstract public function getUsersGroupsOnFacility($spEntityId, $userId);
+    abstract public function getUsersGroupsOnFacility($spEntityId, $userId, $entityIdAttr);
 
     /**
      * @param Facility $facility entity id of the sp
@@ -263,19 +265,21 @@ abstract class Adapter
     abstract public function isUserInVo($user, $voShortName);
 
     /**
-     * @param int   $entityId   entityId
-     * @param array $userGroups of groups where user belongs to
+     * @param int    $entityId     entityId
+     * @param array  $userGroups   of groups where user belongs to
+     * @param string $entityIdAttr entity id attribute
      *
      * @return array of resource capabilities
      */
-    abstract public function getResourceCapabilities($entityId, $userGroups);
+    abstract public function getResourceCapabilities($entityId, $userGroups, $entityIdAttr);
 
     /**
-     * @param int $entityId entityId
+     * @param int    $entityId     entityId
+     * @param string $entityIdAttr entity id attribute
      *
      * @return array of facility capabilities
      */
-    abstract public function getFacilityCapabilities($entityId);
+    abstract public function getFacilityCapabilities($entityId, $entityIdAttr);
 
     /**
      * @param HasId[] $entities

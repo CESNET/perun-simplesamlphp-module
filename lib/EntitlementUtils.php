@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun;
 
+use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 
@@ -19,6 +20,10 @@ class EntitlementUtils
     public const GROUP_ATTRIBUTES = 'groupAttributes';
 
     public const DISPLAY_NAME = 'displayName';
+
+    public const CONFIG_FILE_NAME = 'module_perun.php';
+
+    public const ENTITY_ID_ATTR = 'entityIdAttr';
 
     public static function getForwardedEduPersonEntitlement(&$request, $adapter, $forwardedEduPersonEntitlement)
     {
@@ -61,8 +66,20 @@ class EntitlementUtils
         $capabilitiesResult = [];
 
         try {
-            $resourceCapabilities = $adapter->getResourceCapabilities($spEntityId, $request['perun']['groups']);
-            $facilityCapabilities = $adapter->getFacilityCapabilities($spEntityId);
+            $configuration = Configuration::getConfig(self::CONFIG_FILE_NAME);
+            $entityIdAttr = $configuration->getString(self::ENTITY_ID_ATTR, null);
+        } catch (Exception $e) {
+            $entityIdAttr = null;
+        }
+
+        try {
+            $resourceCapabilities = $entityIdAttr === null ? $adapter->getResourceCapabilities(
+                $spEntityId,
+                $request['perun']['groups']
+            ) : $adapter->getResourceCapabilities($spEntityId, $request['perun']['groups'], $entityIdAttr);
+            $facilityCapabilities = $entityIdAttr === null ? $adapter->getFacilityCapabilities(
+                $spEntityId
+            ) : $adapter->getFacilityCapabilities($spEntityId, $entityIdAttr);
         } catch (Exception $exception) {
             Logger::error(
                 'perun:EntitlementUtils: Exception ' . $exception->getMessage() .
