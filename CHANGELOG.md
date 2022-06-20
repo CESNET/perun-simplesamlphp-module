@@ -1,3 +1,10 @@
+## [8.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.2...v8.0.3) (2022-06-20)
+
+
+### Bug Fixes
+
+* It is possible to rewrite default value for entityIdAttr ([1e8b21d](https://github.com/CESNET/perun-simplesamlphp-module/commit/1e8b21d36437ff4adc3eb205effaf22a172837d7))
+
 ## [8.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.1...v8.0.2) (2022-06-07)
 
 
