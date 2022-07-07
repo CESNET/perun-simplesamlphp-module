@@ -121,6 +121,10 @@ class ForceAup extends ProcessingFilter
             $facility = $this->adapter->getFacilityByEntityId($this->entityId);
 
             if ($facility === null) {
+                Logger::debug(
+                    'Perun.ForceAup - Skipping AUPs because there is no facility with EntityId: ' .
+                    $this->entityId
+                );
                 return;
             }
 
