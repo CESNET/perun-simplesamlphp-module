@@ -1,3 +1,10 @@
+## [8.0.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.3...v8.0.4) (2022-07-07)
+
+
+### Bug Fixes
+
+* add debug log to ForceAup ([413dac0](https://github.com/CESNET/perun-simplesamlphp-module/commit/413dac074f134b79457cebe3630c46abe64fd55b))
+
 ## [8.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.2...v8.0.3) (2022-06-20)
 
 
