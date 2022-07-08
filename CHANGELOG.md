@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.4...v8.1.0) (2022-07-08)
+
+
+### Features
+
+* 🎸 IsEligible authProc filter ([61dc7ce](https://github.com/CESNET/perun-simplesamlphp-module/commit/61dc7ce15862b72c50c0ff5fc680c38b4a409a7e))
+
 ## [8.0.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.3...v8.0.4) (2022-07-07)
 
 
