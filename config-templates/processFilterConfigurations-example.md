@@ -338,3 +338,55 @@ Configuration options:
     'interface' => 'ldap',
 ],
 ```
+
+## IsEligible
+
+Checks the eligibility timestamp. If the value is not older than `validity_period_months`, it lets the user in. Otherwise, user is forced to reauthenticate using other identity.
+
+Configuration options:
+* `trigger_attribute`: attribute name which has to be consumed by the service (in the SP remote metadata part attributes) to run this filter. If the attribute specified by the option is not released, filter is skipped.
+* `eligible_last_seen_timestamp_attribute`: attribute containing the timestamp of last eligible login (timestamp of this event). Has to be available in `$state[PerunConstants::Attributes]`.
+* `validity_period_months`: if the timestamp is older that this number of months, user won't be let in.
+* `translations`: inline translations for the unauthorized page.
+```php
+25 => [
+    'class' => 'perun:IsEligible',
+    'trigger_attribute' => 'isCesnetEligible',
+    'eligible_last_seen_timestamp_attribute' => 'isCesnetEligibleLastSeen',
+    'validity_period_months' => 12,
+    'translations' => [
+      'old_value_header'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'old_value_text'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'old_value_button'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'old_value_contact'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'no_value_header'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'no_value_text'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'no_value_button'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+      'no_value_contact'=> [
+        'en' => '...',
+        'cs' => '...',
+      ],
+    ]
+],
+```

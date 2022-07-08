@@ -41,4 +41,8 @@ class PerunConstants
     public const SP_ADMINISTRATION_CONTACT = 'administrationContact';
 
     public const SP_NAME = 'name';
+
+    public const DESTINATION = 'Destination';
+
+    public const DESTINATION_ATTRIBUTES = 'attributes';
 }
