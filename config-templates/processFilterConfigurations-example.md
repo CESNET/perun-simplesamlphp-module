@@ -1,3 +1,21 @@
+## ProxyFilter
+
+This filter allows to disable/enable nested filters for particular SP or for users with one of denied/allowed attribute values.
+
+```php
+24 => [
+    'class' => 'perun:ProxyFilter',
+    //'mode' => 'allowlist', // defaults to 'denylist'
+    'filterSPs' => ['entityID1', 'entityID2'], // list of entityIDs
+    'filterAttributes' => ['attrName1'=>['value1','value2'], 'attrName2'=>['value3','value4']], // user attributes in the format attrName => values_list
+    'authproc' => [
+        [/* first filter */],
+        [/* second filter */],
+        /* etc. */
+    ],
+],
+```
+
 ## PerunIdentity
 
 Example how to configure PerunIdentity module:
