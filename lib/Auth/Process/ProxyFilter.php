@@ -4,35 +4,30 @@ declare(strict_types=1);
 
 namespace SimpleSAML\Module\perun\Auth\Process;
 
+use SimpleSAML\Auth\ProcessingFilter;
 use SimpleSAML\Configuration;
-use SimpleSAML\Error\Exception;
+use SimpleSAML\Error\UnserializableException;
 use SimpleSAML\Logger;
+use SimpleSAML\Module;
 
 /**
  * Class sspmod_perun_Auth_Process_ProxyFilter.
  *
- * This filter allows to disable/enable nested filters for particular SP or for users with one of (black/white)listed
- * attribute values. Based on the mode of operation, the nested filters ARE (whitelist) or ARE NOT (blacklist) run when
- * any of the attribute values matches. SPs are defined by theirs entityID in property 'filterSPs'. User attributes are
- * defined as a map 'attrName'=>['value1','value2'] in property 'filterAttributes'. Nested filters are defined in the
- * authproc property in the same format as in config. If only one filter is needed, it can be specified in the config
- * property.
- *
- * example usage:
- *
- * 10 => [ 'class' => 'perun:ProxyFilter', 'filterSPs' => ['disableSpEntityId01', 'disableSpEntityId02'],
- * 'filterAttributes' => [ 'eduPersonPrincipalName' => ['test@example.com'], 'eduPersonAffiliation' =>
- * ['affiliate','member'], ], 'config' => [ 'class' => 'perun:NestedFilter', // ... ], ], 20 => [ 'class' =>
- * 'perun:ProxyFilter', 'mode' => 'whitelist', 'filterSPs' => ['enableSpEntityId01', 'enableSpEntityId02'], 'authproc'
- * => [ [ 'class' => 'perun:NestedFilter1', // ... ], [ 'class' => 'perun:NestedFilter2', // ... ], ], ],
+ * This filter allows to disable/enable nested filters for particular SP or for users with one of denied/allowed
+ * attribute values. Based on the mode of operation, the nested filters are enabled (allowlist) or disabled (denylist)
+ * when any of the attribute values matches.
  */
-class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
+class ProxyFilter extends ProcessingFilter
 {
+    public const MODE_DENYLIST = 'denylist';
+
+    public const MODE_ALLOWLIST = 'allowlist';
+
     public const MODE_BLACKLIST = 'blacklist';
 
     public const MODE_WHITELIST = 'whitelist';
 
-    public const MODES = [self::MODE_BLACKLIST, self::MODE_WHITELIST];
+    public const MODES = [self::MODE_DENYLIST, self::MODE_ALLOWLIST, MODE_BLACKLIST, MODE_WHITELIST];
 
     private $authproc;
 
@@ -53,7 +48,17 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
         $conf = Configuration::loadFromArray($config);
         $this->filterSPs = $conf->getArray('filterSPs', []);
         $this->filterAttributes = $conf->getArray('filterAttributes', []);
-        $this->mode = $conf->getValueValidate('mode', self::MODES, self::MODE_BLACKLIST);
+
+        // TODO: remove
+        $mode = $conf->getValueValidate('mode', self::MODES, self::MODE_DENYLIST);
+        if (in_array($mode, [self::MODE_BLACKLIST, self::MODE_WHITELIST], true)) {
+            Logger::warn(
+                'perun:ProxyFilter: You are using a deprecated value for the option "mode". Please switch to "allowlist" or "denylist".'
+            );
+            $this->mode = $mode === self::MODE_BLACKLIST ? self::MODE_DENYLIST : self::MODE_ALLOWLIST;
+        } else {
+            $this->mode = $mode;
+        }
 
         $this->authproc = $conf->getArray('authproc', []);
         $this->authproc[] = $conf->getArray('config', []);
@@ -72,7 +77,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
     {
         assert(is_array($request));
 
-        $default = $this->mode === self::MODE_BLACKLIST;
+        $default = $this->mode === self::MODE_DENYLIST;
         $shouldRun = $this->shouldRunForSP($request['Destination']['entityid'], $default);
         if ($shouldRun === $default) {
             $shouldRun = $this->shouldRunForAttribute($request['Attributes'], $default);
@@ -80,7 +85,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
 
         if ($shouldRun) {
             $this->processState($request);
-        } elseif ($this->mode === self::MODE_WHITELIST) {
+        } elseif ($this->mode === self::MODE_ALLOWLIST) {
             Logger::info(
                 sprintf(
                     'perun.ProxyFilter: Not running filter %s for SP %s',
@@ -191,11 +196,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
             throw new \Exception('Authentication processing filter without name given.');
         }
 
-        $className = \SimpleSAML\Module::resolveClass(
-            $config['class'],
-            'Auth\Process',
-            '\SimpleSAML\Auth\ProcessingFilter'
-        );
+        $className = Module::resolveClass($config['class'], 'Auth\Process', '\SimpleSAML\Auth\ProcessingFilter');
         $config['%priority'] = $priority;
         unset($config['class']);
 
@@ -239,7 +240,7 @@ class ProxyFilter extends \SimpleSAML\Auth\ProcessingFilter
              * To be consistent with the exception we return after an redirect,
              * we convert this exception before returning it.
              */
-            throw new \SimpleSAML\Error\UnserializableException($e);
+            throw new UnserializableException($e);
         }
 
         // Completed
