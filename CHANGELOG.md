@@ -1,3 +1,10 @@
+## [8.1.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.1.0...v8.1.1) (2022-07-18)
+
+
+### Bug Fixes
+
+* 🐛 Fix fetching capabilities with no facility provided ([0469f41](https://github.com/CESNET/perun-simplesamlphp-module/commit/0469f4116a1cde10959417436630e2960552ae4c))
+
 # [8.1.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.0.4...v8.1.0) (2022-07-08)
 
 
