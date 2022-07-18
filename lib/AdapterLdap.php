@@ -330,6 +330,9 @@ class AdapterLdap extends Adapter
 
     public function getFacilityByEntityId($spEntityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
+        if (empty($spEntityId)) {
+            return null;
+        }
         $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
         if (empty($attrName)) {
             $attrName = 'entityID';
@@ -359,6 +362,9 @@ class AdapterLdap extends Adapter
 
     public function getFacilityByClientId($clientId, $clientIdAttr = 'perunFacilityAttr_OIDCClientID')
     {
+        if (empty($spEntityId)) {
+            return null;
+        }
         $attrName = AttributeUtils::getLdapAttrName($clientIdAttr);
         if (empty($attrName)) {
             $attrName = 'OIDCClientID';
@@ -605,6 +611,9 @@ class AdapterLdap extends Adapter
 
     public function getFacilityCapabilities($entityId, $entityIdAttr = 'perunFacilityAttr_entityID')
     {
+        if (empty($entityId)) {
+            return [];
+        }
         $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
 
         $facilityCapabilities = $this->connector->searchForEntity(
