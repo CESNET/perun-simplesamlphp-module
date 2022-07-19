@@ -15,7 +15,7 @@ $config = [
     'perunFacilityAttr_voShortNames' => [
         'rpc' => 'urn:perun:facility:attribute-def:virt:voShortNames',
         'ldap' => 'voShortNames',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunFacilityAttr_dynamicRegistration' => [
         'rpc' => 'urn:perun:facility:attribute-def:def:dynamicRegistration',
@@ -60,17 +60,17 @@ $config = [
     'perunFacilityAttr_reqAups' => [
         'rpc' => 'urn:perun:facility:attribute-def:def:reqAups',
         'ldap' => 'requiredAups',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunFacilityAttr_capabilities' => [
         'rpc' => 'urn:perun:facility:attribute-def:def:capabilities',
         'ldap' => 'capabilities',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunFacilityAttr_spname' => [
         'rpc' => 'urn:perun:facility:attribute-def:def:serviceName',
         'ldap' => 'serviceName',
-        'type' => 'map',
+        'type' => 'array',
     ],
 
     /*
@@ -150,17 +150,17 @@ $config = [
     'perunUserAttribute_aups' => [
         'rpc' => 'urn:perun:user:attribute-def:def:aups',
         'ldap' => 'aups',
-        'type' => 'map',
+        'type' => 'dictionary',
     ],
     'perunUserAttribute_groupNames' => [
         'rpc' => 'urn:perun:user:attribute-def:virt:groupNames',
         'ldap' => 'groupNames',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunUserAttribute_eduPersonEntitlement' => [
         'rpc' => 'urn:perun:user:attribute-def:virt:eduPersonEntitlement',
         'ldap' => 'eduPersonEntitlement',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunUserAttribute_entitlement' => [
         'rpc' => 'urn:perun:ues:attribute-def:def:entitlement',
@@ -170,12 +170,12 @@ $config = [
     'perunUserAttribute_bonaFideStatus' => [
         'rpc' => 'urn:perun:user:attribute-def:def:bonaFideStatus',
         'ldap' => 'bonaFideStatus',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunUserAttribute_eduPersonScopedAffiliations' => [
         'rpc' => 'urn:perun:user:attribute-def:virt:eduPersonScopedAffiliations',
         'ldap' => 'eduPersonScopedAffiliations',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunUserAttribute_affiliation' => [
         'rpc' => 'urn:perun:ues:attribute-def:def:affiliation',
@@ -190,7 +190,7 @@ $config = [
     'perunUserAttribute_eduPersonPrincipalNames' => [
         'rpc' => 'urn:perun:user:attribute-def:virt:eduPersonPrincipalNames',
         'ldap' => 'eduPersonPrincipalNames',
-        'type' => 'map',
+        'type' => 'array',
     ],
     'perunUserAttribute_cesnet' => [
         'rpc' => 'urn:perun:user:attribute-def:def:login-namespace:cesnet',
@@ -230,7 +230,7 @@ $config = [
     'perunGroupAttribute_groupAffiliations' => [
         'rpc' => 'urn:perun:group:attribute-def:def:groupAffiliations',
         'ldap' => 'groupAffiliations',
-        'type' => 'map',
+        'type' => 'array',
     ],
 
     /*
@@ -250,6 +250,6 @@ $config = [
     'perunResourceAttribute_capabilities' => [
         'rpc' => 'urn:perun:resource:attribute-def:def:capabilities',
         'ldap' => 'capabilities',
-        'type' => 'map',
+        'type' => 'array',
     ],
 ];
