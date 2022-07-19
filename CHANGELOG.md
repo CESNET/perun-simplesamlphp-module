@@ -1,3 +1,10 @@
+## [8.2.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.2.0...v8.2.1) (2022-07-19)
+
+
+### Bug Fixes
+
+* typo in ProxyFilter ([e4036a9](https://github.com/CESNET/perun-simplesamlphp-module/commit/e4036a9acc70f1557ec24dfc90c6d2feb7190aa6))
+
 # [8.2.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.1.1...v8.2.0) (2022-07-19)
 
 
