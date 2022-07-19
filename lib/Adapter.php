@@ -265,21 +265,25 @@ abstract class Adapter
     abstract public function isUserInVo($user, $voShortName);
 
     /**
-     * @param int    $entityId     entityId
-     * @param array  $userGroups   of groups where user belongs to
+     * @param string $spEntityId   entityId
+     * @param array $userGroups    of groups where user belongs to
      * @param string $entityIdAttr entity id attribute
      *
      * @return array of resource capabilities
      */
-    abstract public function getResourceCapabilities($entityId, $userGroups, $entityIdAttr);
+    abstract public function getResourceCapabilities(
+        string $spEntityId,
+        array $userGroups,
+        string $entityIdAttr
+    ): array;
 
     /**
-     * @param int    $entityId     entityId
+     * @param string $spEntityId   entityId
      * @param string $entityIdAttr entity id attribute
      *
      * @return array of facility capabilities
      */
-    abstract public function getFacilityCapabilities($entityId, $entityIdAttr);
+    abstract public function getFacilityCapabilities(string $spEntityId, string $entityIdAttr): array;
 
     /**
      * @param HasId[] $entities
