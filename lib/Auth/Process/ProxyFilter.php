@@ -23,11 +23,7 @@ class ProxyFilter extends ProcessingFilter
 
     public const MODE_ALLOWLIST = 'allowlist';
 
-    public const MODE_BLACKLIST = 'blacklist';
-
-    public const MODE_WHITELIST = 'whitelist';
-
-    public const MODES = [self::MODE_DENYLIST, self::MODE_ALLOWLIST, self::MODE_BLACKLIST, self::MODE_WHITELIST];
+    public const MODES = [self::MODE_DENYLIST, self::MODE_ALLOWLIST];
 
     private $authproc;
 
@@ -49,16 +45,7 @@ class ProxyFilter extends ProcessingFilter
         $this->filterSPs = $conf->getArray('filterSPs', []);
         $this->filterAttributes = $conf->getArray('filterAttributes', []);
 
-        // TODO: remove
-        $mode = $conf->getValueValidate('mode', self::MODES, self::MODE_DENYLIST);
-        if (in_array($mode, [self::MODE_BLACKLIST, self::MODE_WHITELIST], true)) {
-            Logger::warn(
-                'perun:ProxyFilter: You are using a deprecated value for the option "mode". Please switch to "allowlist" or "denylist".'
-            );
-            $this->mode = $mode === self::MODE_BLACKLIST ? self::MODE_DENYLIST : self::MODE_ALLOWLIST;
-        } else {
-            $this->mode = $mode;
-        }
+        $this->mode = $conf->getValueValidate('mode', self::MODES, self::MODE_DENYLIST);
 
         $this->authproc = $conf->getArray('authproc', []);
         $this->authproc[] = $conf->getArray('config', []);
