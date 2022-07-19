@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.1.1...v8.2.0) (2022-07-19)
+
+
+### Features
+
+* inclusive language in ProxyFilter ([b959c1d](https://github.com/CESNET/perun-simplesamlphp-module/commit/b959c1d29882ce1fce6f2c2cab341631401c2a7a))
+
 ## [8.1.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.1.0...v8.1.1) (2022-07-18)
 
 
