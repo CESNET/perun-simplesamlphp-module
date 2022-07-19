@@ -27,7 +27,7 @@ class ProxyFilter extends ProcessingFilter
 
     public const MODE_WHITELIST = 'whitelist';
 
-    public const MODES = [self::MODE_DENYLIST, self::MODE_ALLOWLIST, MODE_BLACKLIST, MODE_WHITELIST];
+    public const MODES = [self::MODE_DENYLIST, self::MODE_ALLOWLIST, self::MODE_BLACKLIST, self::MODE_WHITELIST];
 
     private $authproc;
 
