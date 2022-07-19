@@ -9,8 +9,8 @@ use SimpleSAML\Configuration;
 use SimpleSAML\Error\Exception;
 use SimpleSAML\Logger;
 use SimpleSAML\Module;
+use SimpleSAML\Module\authswitcher\DiscoUtils;
 use SimpleSAML\Module\discopower\PowerIdPDisco;
-use SimpleSAML\Module\perun\Auth\Process\MultifactorAcrs;
 use SimpleSAML\Module\perun\model\WarningConfiguration;
 use SimpleSAML\Utils\HTTP;
 
@@ -52,8 +52,6 @@ class Disco extends PowerIdPDisco
     public const DISABLE_WHITELISTING = 'disable_whitelisting';
 
     public const DISPLAY_SP = 'display_sp_name';
-
-    public const ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA = 'add_authn_context_classes_for_mfa';
 
     public const SKIP_PREVIOUS_SELECTION = 'skip_previous_selection_services';
 
@@ -202,7 +200,7 @@ class Disco extends PowerIdPDisco
                     $this->originalAuthnContextClassRef = $state[self::SAML_REQUESTED_AUTHN_CONTEXT][self::AUTHN_CONTEXT_CLASS_REF];
 
                     $this->removeAuthContextClassRefWithPrefixes($state);
-                    $this->prepareAcrsForMfa($state);
+                    DiscoUtils::setUpstreamRequestedAuthnContext($state);
                     if (isset($state['IdPMetadata']['entityid'])) {
                         $this->proxyIdpEntityId = $state['IdPMetadata']['entityid'];
                     }
@@ -1012,12 +1010,6 @@ class Disco extends PowerIdPDisco
         if (empty($this->spName) && !empty($this->originalsp[self::NAME])) {
             $this->spName = $t->translate->getTranslation($this->originalsp[self::NAME]);
         }
-    }
-
-    private function prepareAcrsForMfa(array &$state)
-    {
-        $contextsToAdd = $this->wayfConfiguration->getArray(self::ADD_AUTHN_CONTEXT_CLASSES_FOR_MFA, []);
-        MultifactorAcrs::addAndStoreAcrs($state, $contextsToAdd);
     }
 
     private function getSpIdentifier()

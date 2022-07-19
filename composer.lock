@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "72597eecfc71cbdd4c5b2b56d670d65b",
+    "content-hash": "2dbf682d55c69e3575899dcdc6feda70",
     "packages": [
         {
             "name": "brick/math",
@@ -65,6 +65,60 @@
                 }
             ],
             "time": "2021-08-15T20:50:18+00:00"
+        },
+        {
+            "name": "cesnet/simplesamlphp-module-authswitcher",
+            "version": "v10.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/CESNET/simplesamlphp-module-authswitcher.git",
+                "reference": "c46afd88c7b28b1af0b04cc28c01e589d2d1991f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/CESNET/simplesamlphp-module-authswitcher/zipball/c46afd88c7b28b1af0b04cc28c01e589d2d1991f",
+                "reference": "c46afd88c7b28b1af0b04cc28c01e589d2d1991f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "ext-json": "*",
+                "mobiledetect/mobiledetectlib": "^2.8",
+                "php": "^7.1 || ^8",
+                "simplesamlphp/composer-module-installer": "~1.0",
+                "simplesamlphp/saml2": "^4.1",
+                "simplesamlphp/simplesamlphp": "^1.19",
+                "web-token/jwt-easy": "^2.2"
+            },
+            "require-dev": {
+                "symplify/easy-coding-standard": "^11.0"
+            },
+            "suggest": {
+                "cesnet/simplesamlphp-module-totp": "TOTP 2FA",
+                "cesnet/simplesamlphp-module-webauthn": "WebAuthn 2FA",
+                "privacyidea/simplesamlphp-module-privacyidea": "privacyIDEA 2FA"
+            },
+            "type": "simplesamlphp-module",
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-2-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Pavel Břoušek",
+                    "email": "433364@muni.cz"
+                },
+                {
+                    "name": "Jan Pavlíček",
+                    "email": "469355@muni.cz"
+                }
+            ],
+            "description": "A SimpleSAMLphp module for applying 2FA modules to specific users",
+            "support": {
+                "issues": "https://github.com/CESNET/simplesamlphp-module-authswitcher/issues",
+                "source": "https://github.com/CESNET/simplesamlphp-module-authswitcher/tree/v10.6.0"
+            },
+            "time": "2022-07-20T09:47:22+00:00"
         },
         {
             "name": "fgrosse/phpasn1",
@@ -295,6 +349,62 @@
                 }
             ],
             "time": "2021-11-11T17:30:39+00:00"
+        },
+        {
+            "name": "mobiledetect/mobiledetectlib",
+            "version": "2.8.39",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/serbanghita/Mobile-Detect.git",
+                "reference": "0fd6753003fc870f6e229bae869cc1337c99bc45"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/serbanghita/Mobile-Detect/zipball/0fd6753003fc870f6e229bae869cc1337c99bc45",
+                "reference": "0fd6753003fc870f6e229bae869cc1337c99bc45",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8.35||~5.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Detection": "namespaced/"
+                },
+                "classmap": [
+                    "Mobile_Detect.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Serban Ghita",
+                    "email": "serbanghita@gmail.com",
+                    "homepage": "http://mobiledetect.net",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Mobile_Detect is a lightweight PHP class for detecting mobile devices. It uses the User-Agent string combined with specific HTTP headers to detect the mobile environment.",
+            "homepage": "https://github.com/serbanghita/Mobile-Detect",
+            "keywords": [
+                "detect mobile devices",
+                "mobile",
+                "mobile detect",
+                "mobile detector",
+                "php mobile detect"
+            ],
+            "support": {
+                "issues": "https://github.com/serbanghita/Mobile-Detect/issues",
+                "source": "https://github.com/serbanghita/Mobile-Detect/tree/2.8.39"
+            },
+            "time": "2022-02-17T19:24:25+00:00"
         },
         {
             "name": "paragonie/constant_time_encoding",
@@ -5569,6 +5679,171 @@
             "time": "2021-03-17T14:55:52+00:00"
         },
         {
+            "name": "web-token/jwt-easy",
+            "version": "v2.2.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/web-token/jwt-easy.git",
+                "reference": "01db23252bb53d4fd36975b55dd58466bab1bb30"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/web-token/jwt-easy/zipball/01db23252bb53d4fd36975b55dd58466bab1bb30",
+                "reference": "01db23252bb53d4fd36975b55dd58466bab1bb30",
+                "shasum": ""
+            },
+            "require": {
+                "web-token/jwt-checker": "^2.1",
+                "web-token/jwt-encryption": "^2.1",
+                "web-token/jwt-signature": "^2.1"
+            },
+            "suggest": {
+                "web-token/jwt-encryption-algorithm-aescbc": "Adds AES-CBC based encryption algorithms",
+                "web-token/jwt-encryption-algorithm-aesgcm": "Adds AES-GCM based encryption algorithms",
+                "web-token/jwt-encryption-algorithm-aesgcmkw": "Adds AES-GCM Key Wrapping based encryption algorithms",
+                "web-token/jwt-encryption-algorithm-aeskw": "Adds AES Key Wrapping based encryption algorithms",
+                "web-token/jwt-encryption-algorithm-dir": "Adds Direct encryption algorithm",
+                "web-token/jwt-encryption-algorithm-ecdh-es": "Adds ECDH-ES based encryption algorithms",
+                "web-token/jwt-encryption-algorithm-pbes2": "Adds PBES2 based encryption algorithms",
+                "web-token/jwt-encryption-algorithm-rsa": "Adds RSA based encryption algorithms",
+                "web-token/jwt-signature-algorithm-ecdsa": "Adds ECDSA based signature algorithms",
+                "web-token/jwt-signature-algorithm-eddsa": "Adds EdDSA based signature algorithms",
+                "web-token/jwt-signature-algorithm-hmac": "Adds HMAC based signature algorithms",
+                "web-token/jwt-signature-algorithm-none": "Adds none signature algorithms",
+                "web-token/jwt-signature-algorithm-rsa": "Adds RSA based signature algorithms"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jose\\Easy\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky"
+                },
+                {
+                    "name": "All contributors",
+                    "homepage": "https://github.com/web-token/jwt-framework/contributors"
+                }
+            ],
+            "description": "Easy toolset to use the JWT Framework.",
+            "homepage": "https://github.com/web-token",
+            "keywords": [
+                "JOSE",
+                "JWE",
+                "JWK",
+                "JWKSet",
+                "JWS",
+                "Jot",
+                "RFC7515",
+                "RFC7516",
+                "RFC7517",
+                "RFC7518",
+                "RFC7519",
+                "RFC7520",
+                "bundle",
+                "jwa",
+                "jwt",
+                "symfony"
+            ],
+            "support": {
+                "source": "https://github.com/web-token/jwt-easy/tree/v2.2.11"
+            },
+            "funding": [
+                {
+                    "url": "https://www.patreon.com/FlorentMorselli",
+                    "type": "patreon"
+                }
+            ],
+            "abandoned": true,
+            "time": "2021-03-17T14:55:52+00:00"
+        },
+        {
+            "name": "web-token/jwt-encryption",
+            "version": "v2.2.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/web-token/jwt-encryption.git",
+                "reference": "3b8d67d7c5c013750703e7c27f1001544407bbb2"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/web-token/jwt-encryption/zipball/3b8d67d7c5c013750703e7c27f1001544407bbb2",
+                "reference": "3b8d67d7c5c013750703e7c27f1001544407bbb2",
+                "shasum": ""
+            },
+            "require": {
+                "web-token/jwt-core": "^2.1"
+            },
+            "suggest": {
+                "web-token/jwt-encryption-algorithm-aescbc": "AES CBC Based Content Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-aesgcm": "AES GCM Based Content Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-aesgcmkw": "AES GCM Key Wrapping Based Key Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-aeskw": "AES Key Wrapping Based Key Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-dir": "Direct Key Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-ecdh-es": "ECDH-ES Based Key Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-experimental": "Experimental Key and Signature Algorithms",
+                "web-token/jwt-encryption-algorithm-pbes2": "PBES2 Based Key Encryption Algorithms",
+                "web-token/jwt-encryption-algorithm-rsa": "RSA Based Key Encryption Algorithms"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Jose\\Component\\Encryption\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Florent Morselli",
+                    "homepage": "https://github.com/Spomky"
+                },
+                {
+                    "name": "All contributors",
+                    "homepage": "https://github.com/web-token/jwt-encryption/contributors"
+                }
+            ],
+            "description": "Encryption component of the JWT Framework.",
+            "homepage": "https://github.com/web-token",
+            "keywords": [
+                "JOSE",
+                "JWE",
+                "JWK",
+                "JWKSet",
+                "JWS",
+                "Jot",
+                "RFC7515",
+                "RFC7516",
+                "RFC7517",
+                "RFC7518",
+                "RFC7519",
+                "RFC7520",
+                "bundle",
+                "jwa",
+                "jwt",
+                "symfony"
+            ],
+            "support": {
+                "source": "https://github.com/web-token/jwt-encryption/tree/v2.2.11"
+            },
+            "funding": [
+                {
+                    "url": "https://www.patreon.com/FlorentMorselli",
+                    "type": "patreon"
+                }
+            ],
+            "time": "2021-03-17T14:55:52+00:00"
+        },
+        {
             "name": "web-token/jwt-key-mgmt",
             "version": "v2.2.11",
             "source": {
@@ -5979,5 +6254,5 @@
     "platform-overrides": {
         "php": "7.4"
     },
-    "plugin-api-version": "2.3.0"
+    "plugin-api-version": "2.2.0"
 }
