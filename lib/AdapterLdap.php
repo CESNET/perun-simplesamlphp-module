@@ -50,9 +50,6 @@ class AdapterLdap extends Adapter
 
     public const TYPE_ARRAY = 'array';
 
-    //TODO: remove in future major release and replace with self::TYPE_ARRAY
-    public const TYPE_MAP = 'map';
-
     public const TYPE_DICTIONARY = 'dictionary';
 
     public const INTERNAL_ATTR_NAME = 'internalAttrName';
@@ -651,13 +648,13 @@ class AdapterLdap extends Adapter
             if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_BOOL) {
                 return false;
             }
-            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_ARRAY
                 || $attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY
             ) {
                 return [];
             }
         } else {
-            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_MAP) {
+            if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_ARRAY) {
                 return $attrsFromLdap[$attr];
             }
             if ($attrsNameTypeMap[$attr][self::TYPE] === self::TYPE_DICTIONARY) {
