@@ -1,3 +1,27 @@
+# [9.0.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.2.1...v9.0.0) (2022-07-20)
+
+
+### Bug Fixes
+
+* use types array and dictionary instead of map ([d1d19f1](https://github.com/CESNET/perun-simplesamlphp-module/commit/d1d19f1fc9ac700f98dae6929a9bf49c8380be3c))
+
+
+### chore
+
+* remove deprecated mode values from ProxyFilter ([f2ec1fc](https://github.com/CESNET/perun-simplesamlphp-module/commit/f2ec1fc0430c6eb84aab8abe23061ed1b1bf53fa))
+
+
+### Features
+
+* use authswitcher in Disco to handle MFA ([244ae9e](https://github.com/CESNET/perun-simplesamlphp-module/commit/244ae9ee37a4f576790c14c77fde40c16cac65ae))
+
+
+### BREAKING CHANGES
+
+* replace "map" in attribute config with either "array" (ArrayList) or "dictionary" (LinkedHashMap)
+* dropped filter MultifactorAcrs
+* removed support for deprecated values blacklist and whitelist
+
 ## [8.2.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.2.0...v8.2.1) (2022-07-19)
 
 
