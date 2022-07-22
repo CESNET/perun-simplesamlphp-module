@@ -1,3 +1,10 @@
+## [9.0.1](https://github.com/CESNET/perun-simplesamlphp-module/compare/v9.0.0...v9.0.1) (2022-07-22)
+
+
+### Bug Fixes
+
+* 🐛 Fix and refactor generating capabilities (resource and facility) ([009160a](https://github.com/CESNET/perun-simplesamlphp-module/commit/009160adf66c137d1c35b04a89abf29d90140f18))
+
 # [9.0.0](https://github.com/CESNET/perun-simplesamlphp-module/compare/v8.2.1...v9.0.0) (2022-07-20)
 
 
