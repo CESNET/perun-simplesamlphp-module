@@ -42,6 +42,8 @@ class AdapterRpc extends Adapter
 
     public const TYPE_MAP = 'java.util.LinkedHashMap';
 
+    private const DEBUG_PREFIX = 'perun:AdapterRpc - ';
+
     protected $connector;
 
     private $rpcUrl;
@@ -649,69 +651,134 @@ class AdapterRpc extends Adapter
         return $member->getStatus();
     }
 
-    public function getResourceCapabilities($entityId, $userGroups, $entityIdAttr = 'perunFacilityAttr_entityID')
+    public function getResourceCapabilities(string $spEntityId, array $userGroups, string $entityIdAttr): array
     {
-        $facility = $this->getFacilityByEntityId($entityId, $entityIdAttr);
-
-        if ($facility === null) {
+        if (empty($spEntityId)) {
+            Logger::warning(
+                self::DEBUG_PREFIX . 'getResourceCapabilities - empty spEntityId provided, returning empty list of resource capabilities.'
+            );
+            return [];
+        } elseif (empty($userGroups)) {
+            Logger::warning(
+                self::DEBUG_PREFIX . 'getResourceCapabilities - empty userGroups provided, returning empty list of resource capabilities.'
+            );
             return [];
         }
 
-        $resources = $this->connector->get('facilitiesManager', 'getAssignedResources', [
-            'facility' => $facility->getId(),
-        ]);
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
+        if ($facility === null || $facility->getId() === null) {
+            Logger::warning(
+                self::DEBUG_PREFIX . sprintf(
+                    'getResourceCapabilities - no facility (or facility with null ID) found four EntityID \'%s\', returning empty list of resource capabilities.',
+                    $spEntityId
+                )
+            );
+            return [];
+        }
+
+        $resources = $this->getAssignedResources($facility->getId());
+        if (empty($resources)) {
+            Logger::debug(
+                self::DEBUG_PREFIX . sprintf(
+                    'getResourceCapabilities - no resources found for SP with EntityID \'%s\', returning empty list of resource capabilities.',
+                    $spEntityId
+                )
+            );
+            return [];
+        }
 
         $userGroupsIds = [];
         foreach ($userGroups as $userGroup) {
-            array_push($userGroupsIds, $userGroup->getId());
+            if ($userGroup === null || $userGroup->getId() === null) {
+                Logger::debug(
+                    self::DEBUG_PREFIX . 'getResourceCapabilities - skipping user group due to null group or null group ID.'
+                );
+                continue;
+            }
+            $userGroupsIds[] = $userGroup->getId();
         }
 
         $capabilities = [];
         foreach ($resources as $resource) {
+            if ($resource === null || $resource->getId() === null) {
+                Logger::debug(
+                    self::DEBUG_PREFIX . 'getResourceCapabilities - skipping resource due to null resource or null resource ID.'
+                );
+                continue;
+            }
+            $resourceCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
+                'resource' => $resource['id'],
+                'attributeName' => 'urn:perun:resource:attribute-def:def:capabilities',
+            ]);
+
+            if (empty($resourceCapabilities['value'])) {
+                Logger::debug(
+                    self::DEBUG_PREFIX . 'getResourceCapabilities - skipping resource due to empty capabilities.'
+                );
+                continue;
+            }
+            $resourceCapabilities = $resourceCapabilities['value'];
+
             $resourceGroups = $this->connector->get('resourcesManager', 'getAssignedGroups', [
                 'resource' => $resource['id'],
             ]);
 
-            $resourceCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
-                'resource' => $resource['id'],
-                'attributeName' => 'urn:perun:resource:attribute-def:def:capabilities',
-            ])['value'];
-
-            if ($resourceCapabilities === null) {
+            if (empty($resourceGroups)) {
                 continue;
             }
 
             foreach ($resourceGroups as $resourceGroup) {
+                if (($resourceGroup['id'] ?? null) === null) {
+                    Logger::debug(
+                        self::DEBUG_PREFIX . 'getResourceCapabilities - skipping resource group due to missing group ID.'
+                    );
+                    continue;
+                }
                 if (in_array($resourceGroup['id'], $userGroupsIds, true)) {
-                    foreach ($resourceCapabilities as $capability) {
-                        array_push($capabilities, $capability);
-                    }
+                    $capabilities = array_merge($capabilities, $resourceCapabilities);
                     break;
                 }
             }
         }
 
-        return $capabilities;
+        return array_values(array_unique($capabilities));
     }
 
-    public function getFacilityCapabilities($entityId, $entityIdAttr = 'perunFacilityAttr_entityID')
+    public function getFacilityCapabilities(string $spEntityId, string $entityIdAttr): array
     {
-        $facility = $this->getFacilityByEntityId($entityId, $entityIdAttr);
+        if (empty($spEntityId)) {
+            Logger::warning(
+                self::DEBUG_PREFIX . 'getFacilityCapabilities - empty spEntityId provided, returning empty list of facility capabilities.'
+            );
+            return [];
+        }
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
 
         if ($facility === null) {
+            Logger::warning(
+                self::DEBUG_PREFIX . sprintf(
+                    'getFacilityCapabilities - no facility found four EntityID \'%s\', returning empty list of facility capabilities.',
+                    $spEntityId
+                )
+            );
             return [];
         }
 
         $facilityCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
             'facility' => $facility->getId(),
             'attributeName' => 'urn:perun:facility:attribute-def:def:capabilities',
-        ])['value'];
+        ]);
 
-        if (empty($facilityCapabilities)) {
-            $facilityCapabilities = [];
+        if (empty($facilityCapabilities['value'])) {
+            Logger::debug(
+                self::DEBUG_PREFIX . 'getFacilityCapabilities - empty or missing value of facility capabilities attribute detected, returning empty list of facility capabilities.'
+            );
+            return [];
         }
-
-        return $facilityCapabilities;
+        if (!is_array($facilityCapabilities['value'])) {
+            $facilityCapabilities['value'] = [$facilityCapabilities['value']];
+        }
+        return array_values(array_unique($facilityCapabilities['value']));
     }
 
     public function getAttributesDefinition()
@@ -748,5 +815,16 @@ class AdapterRpc extends Adapter
         }
 
         return $attributes;
+    }
+
+    private function getAssignedResources(int $facilityId): array
+    {
+        $perunResources = $this->connector->get('facilitiesManager', 'getAssignedResources', [
+            'facility' => $facilityId,
+        ]);
+
+        return empty($perunResources) ? [] : array_map(function ($resource) {
+            return new Resource($resource['id'], $resource['voId'], $resource['facilityId'], $resource['name']);
+        }, array_filter($perunResources));
     }
 }

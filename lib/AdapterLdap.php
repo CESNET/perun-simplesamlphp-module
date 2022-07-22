@@ -56,6 +56,8 @@ class AdapterLdap extends Adapter
 
     public const TYPE = 'type';
 
+    private const DEBUG_PREFIX = 'perun:AdapterLdap - ';
+
     protected $connector;
 
     private $ldapBase;
@@ -563,67 +565,121 @@ class AdapterLdap extends Adapter
         return $this->getMemberStatusByUserAndVo($user, $vo) === Member::VALID;
     }
 
-    public function getResourceCapabilities($entityId, $userGroups, $entityIdAttr = 'perunFacilityAttr_entityID')
+    public function getResourceCapabilities(string $spEntityId, array $userGroups, string $entityIdAttr): array
     {
-        $facility = $this->getFacilityByEntityId($entityId, $entityIdAttr);
-
-        if ($facility === null) {
+        if (empty($spEntityId)) {
+            Logger::warning(
+                self::DEBUG_PREFIX . 'getResourceCapabilities - empty spEntityId provided, returning empty list of resource capabilities.'
+            );
+            return [];
+        } elseif (empty($userGroups)) {
+            Logger::warning(
+                self::DEBUG_PREFIX . 'getResourceCapabilities - empty userGroups provided, returning empty list of resource capabilities.'
+            );
+            return [];
+        }
+        $facility = $this->getFacilityByEntityId($spEntityId, $entityIdAttr);
+        if ($facility === null || $facility->getId() === null) {
+            Logger::warning(
+                self::DEBUG_PREFIX . sprintf(
+                    'getResourceCapabilities - no facility (or facility with null ID) found four EntityID \'%s\', returning empty list of resource capabilities.',
+                    $spEntityId
+                )
+            );
             return [];
         }
 
-        $facilityId = $facility->getId();
-
         $resources = $this->connector->searchForEntities(
             $this->ldapBase,
-            '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $facilityId . ','
+            '(&(objectClass=perunResource)(perunFacilityDn=perunFacilityId=' . $facility->getId() . ','
             . $this->ldapBase . '))',
             [self::CAPABILITIES, self::ASSIGNED_GROUP_ID]
         );
+        if (empty($resources)) {
+            Logger::debug(
+                self::DEBUG_PREFIX . sprintf(
+                    'getResourceCapabilities - no resources found for SP with EntityID \'%s\', returning empty list of resource capabilities.',
+                    $spEntityId
+                )
+            );
+            return [];
+        }
 
         $userGroupsIds = [];
         foreach ($userGroups as $userGroup) {
-            array_push($userGroupsIds, $userGroup->getId());
-        }
-
-        $resourceCapabilities = [];
-        foreach ($resources as $resource) {
-            if (
-                !array_key_exists(self::ASSIGNED_GROUP_ID, $resource) ||
-                !array_key_exists(self::CAPABILITIES, $resource)
-            ) {
+            if ($userGroup === null || $userGroup->getId() === null) {
+                Logger::debug(
+                    self::DEBUG_PREFIX . 'getResourceCapabilities - skipping user group due to null group or null group ID.'
+                );
                 continue;
             }
+            $userGroupsIds[] = $userGroup->getId();
+        }
+
+        $capabilities = [];
+        foreach ($resources as $resource) {
+            if (($resource[self::ASSIGNED_GROUP_ID] ?? null) === null) {
+                Logger::debug(
+                    self::DEBUG_PREFIX . 'getResourceCapabilities - skipping resource due to null resource or null assigned group ID.'
+                );
+                continue;
+            } elseif (empty($resource[self::CAPABILITIES])) {
+                Logger::debug(
+                    self::DEBUG_PREFIX . 'getResourceCapabilities - skipping resource due to empty capabilities.'
+                );
+                continue;
+            }
+
             foreach ($resource[self::ASSIGNED_GROUP_ID] as $groupId) {
                 if (in_array($groupId, $userGroupsIds, true)) {
-                    foreach ($resource[self::CAPABILITIES] as $resourceCapability) {
-                        array_push($resourceCapabilities, $resourceCapability);
-                    }
+                    $capabilities = array_merge($capabilities, $resources[self::CAPABILITIES]);
                     break;
                 }
             }
         }
 
-        return $resourceCapabilities;
+        return array_values(array_unique($capabilities));
     }
 
-    public function getFacilityCapabilities($entityId, $entityIdAttr = 'perunFacilityAttr_entityID')
+    public function getFacilityCapabilities(string $spEntityId, string $entityIdAttr): array
     {
-        if (empty($entityId)) {
+        if (empty($spEntityId)) {
+            Logger::warning(
+                self::DEBUG_PREFIX . 'getFacilityCapabilities - empty spEntityId provided, returning empty list of facility capabilities.'
+            );
             return [];
         }
+
         $attrName = AttributeUtils::getLdapAttrName($entityIdAttr);
+        if (empty($attrName)) {
+            $attrName = 'entityID';
+            Logger::warning(
+                self::DEBUG_PREFIX .
+                sprintf(
+                    'getFacilityCapabilities - no LDAP mapping found for attribute \'%s\', using \'%s\'as fallback value',
+                    $entityIdAttr,
+                    $attrName
+                )
+            );
+        }
 
         $facilityCapabilities = $this->connector->searchForEntity(
             $this->ldapBase,
-            '(&(objectClass=perunFacility)(' . $attrName . '=' . $entityId . '))',
+            '(&(objectClass=perunFacility)(' . $attrName . '=' . $spEntityId . '))',
             [self::CAPABILITIES]
         );
 
-        if (empty($facilityCapabilities)) {
+        if (empty($facilityCapabilities[self::CAPABILITIES])) {
+            Logger::debug(
+                self::DEBUG_PREFIX . 'getFacilityCapabilities - empty or missing value of facility capabilities attribute detected, returning empty list of facility capabilities.'
+            );
             return [];
         }
+        if (!is_array($facilityCapabilities[self::CAPABILITIES])) {
+            $facilityCapabilities[self::CAPABILITIES] = [$facilityCapabilities[self::CAPABILITIES]];
+        }
 
-        return $facilityCapabilities['capabilities'];
+        return array_values(array_unique($facilityCapabilities[self::CAPABILITIES]));
     }
 
     private function mapUser($user)
