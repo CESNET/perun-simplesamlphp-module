@@ -632,7 +632,7 @@ class AdapterLdap extends Adapter
 
             foreach ($resource[self::ASSIGNED_GROUP_ID] as $groupId) {
                 if (in_array($groupId, $userGroupsIds, true)) {
-                    $capabilities = array_merge($capabilities, $resources[self::CAPABILITIES]);
+                    $capabilities = array_merge($capabilities, $resource[self::CAPABILITIES]);
                     break;
                 }
             }
