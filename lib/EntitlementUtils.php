@@ -73,13 +73,12 @@ class EntitlementUtils
         }
 
         try {
-            $resourceCapabilities = $entityIdAttr === null ? $adapter->getResourceCapabilities(
+            $resourceCapabilities = $adapter->getResourceCapabilities(
                 $spEntityId,
-                $request['perun']['groups']
-            ) : $adapter->getResourceCapabilities($spEntityId, $request['perun']['groups'], $entityIdAttr);
-            $facilityCapabilities = $entityIdAttr === null ? $adapter->getFacilityCapabilities(
-                $spEntityId
-            ) : $adapter->getFacilityCapabilities($spEntityId, $entityIdAttr);
+                $request['perun']['groups'],
+                $entityIdAttr ?? ''
+            );
+            $facilityCapabilities = $adapter->getFacilityCapabilities($spEntityId, $entityIdAttr ?? '');
         } catch (Exception $exception) {
             Logger::error(
                 'perun:EntitlementUtils: Exception ' . $exception->getMessage() .
