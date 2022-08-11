@@ -707,7 +707,7 @@ class AdapterRpc extends Adapter
                 continue;
             }
             $resourceCapabilities = $this->connector->get('attributesManager', 'getAttribute', [
-                'resource' => $resource['id'],
+                'resource' => $resource->getId(),
                 'attributeName' => 'urn:perun:resource:attribute-def:def:capabilities',
             ]);
 
@@ -720,7 +720,7 @@ class AdapterRpc extends Adapter
             $resourceCapabilities = $resourceCapabilities['value'];
 
             $resourceGroups = $this->connector->get('resourcesManager', 'getAssignedGroups', [
-                'resource' => $resource['id'],
+                'resource' => $resource->getId(),
             ]);
 
             if (empty($resourceGroups)) {
