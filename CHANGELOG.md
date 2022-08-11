@@ -1,3 +1,10 @@
+## [9.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v9.0.2...v9.0.3) (2022-08-11)
+
+
+### Bug Fixes
+
+* do not use object as array in getResourceCapabilities ([4075137](https://github.com/CESNET/perun-simplesamlphp-module/commit/40751372805a678901aa2c80436cbc5cafb7cf6c))
+
 ## [9.0.2](https://github.com/CESNET/perun-simplesamlphp-module/compare/v9.0.1...v9.0.2) (2022-07-22)
 
 
