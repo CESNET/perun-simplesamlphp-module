@@ -62,7 +62,7 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
                         . $group->getDescription()
                         . '</option>';
                 }
-                ?>
+?>
             </select>
             <input type="submit" value="<?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_continue}'); ?>"
                    class="btn btn-lg btn-primary btn-block mt-4">

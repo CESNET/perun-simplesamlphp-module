@@ -29,7 +29,7 @@ $this->includeAtTemplateBase('includes/header.php');
         if ($customTextEnabled) {
             echo '<div>' . $this->t(WarningTestSP::CUSTOM_TEXT_KEY) . '</div>' . PHP_EOL;
         }
-        ?>
+?>
         <br/>
         <div class="form-group">
             <input type="submit" value="<?php echo $this->t('{perun:perun:continue}'); ?>"

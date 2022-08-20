@@ -122,7 +122,7 @@ $this->includeAtTemplateBase('includes/header.php');
                                 echo '<th>' . $displayName . '</th>';
                             }
                         }
-                        ?>
+?>
                     </tr>
                     </thead>
                     <tbody>
@@ -158,7 +158,7 @@ $this->includeAtTemplateBase('includes/header.php');
                         }
                     }
                     echo '</tr>';
-                    ?>
+?>
                     </tbody>
                 </table>
             </div>

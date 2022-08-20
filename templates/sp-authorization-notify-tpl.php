@@ -18,13 +18,13 @@ $this->includeAtTemplateBase('includes/header.php');
     <p>
         <?php
         echo $this->t('{perun:perun:sp_authorize_notify_text}') . '<b>' . $serviceName . '</b>.';
-        if (!empty($informationUrl)) {
-            echo ' (' . $this->t('{perun:perun:sp_authorize_notify_information_page}') .
-                '<a target="_blank" href="' . $informationUrl . '">'
-                . $this->t('{perun:perun:sp_authorize_notify_information_page_link_text}') . '</a>). ';
-        }
-        echo $this->t('{perun:perun:sp_authorize_notify_text2}');
-        ?>
+if (!empty($informationUrl)) {
+    echo ' (' . $this->t('{perun:perun:sp_authorize_notify_information_page}') .
+        '<a target="_blank" href="' . $informationUrl . '">'
+        . $this->t('{perun:perun:sp_authorize_notify_information_page_link_text}') . '</a>). ';
+}
+echo $this->t('{perun:perun:sp_authorize_notify_text2}');
+?>
     </p>
     <div>
         <a href="<?php echo htmlspecialchars($redirectUrl); ?>" class="btn btn-lg btn-primary btn-block">

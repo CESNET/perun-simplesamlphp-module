@@ -17,18 +17,18 @@ if ($this->data['errorcode'] !== null) {
               style="float:left; font-size: 38px; margin-right: 10px;"></span>
 
         <strong>
-            <?php
-            echo htmlspecialchars($this->t(
+<?php
+echo htmlspecialchars($this->t(
         '{errors:title_' . $this->data['errorcode'] . '}',
         $this->data['errorparams']
     )); ?>
         </strong>
 
-        <?php
-        echo htmlspecialchars($this->t(
-        '{errors:descr_' . $this->data['errorcode'] . '}',
-        $this->data['errorparams']
-    )); ?>
+<?php
+echo htmlspecialchars($this->t(
+    '{errors:descr_' . $this->data['errorcode'] . '}',
+    $this->data['errorparams']
+)); ?>
     </div>
 
     <?php
@@ -50,7 +50,7 @@ if ($this->data['errorcode'] !== null) {
                     if (!$this->data['forceUsername']) {
                         echo 'tabindex="1"';
                     }
-                    ?> value="<?php echo htmlspecialchars($this->data['username']); ?>"/>
+?> value="<?php echo htmlspecialchars($this->data['username']); ?>"/>
             </div>
         </div>
 
@@ -78,11 +78,11 @@ if ($this->data['errorcode'] !== null) {
             </div>
             <?php
         }
-        ?>
+?>
 
         <?php
-        if ($this->data['rememberMeEnabled']) {
-            // display the remember me checkbox (keep me logged in)?>
+if ($this->data['rememberMeEnabled']) {
+    // display the remember me checkbox (keep me logged in)?>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <div class="checkbox">
@@ -96,45 +96,45 @@ if ($this->data['errorcode'] !== null) {
                 </div>
             </div>
             <?php
-        }
-        ?>
+}
+?>
 
         <?php
-        if (array_key_exists('organizations', $this->data)) {
-            ?>
+if (array_key_exists('organizations', $this->data)) {
+    ?>
             <div class="form-group">
                 <label for="organization"
                        class="col-sm-2 control-label"><?php echo $this->t('{login:organization}'); ?></label>
                 <div class="col-sm-10">
                     <select name="organization" tabindex="3" class="form-control">
                         <?php
-                        if (array_key_exists('selectedOrg', $this->data)) {
-                            $selectedOrg = $this->data['selectedOrg'];
-                        } else {
-                            $selectedOrg = null;
-                        }
-
-            foreach ($this->data['organizations'] as $orgId => $orgDesc) {
-                if (is_array($orgDesc)) {
-                    $orgDesc = $this->t($orgDesc);
-                }
-
-                if ($orgId === $selectedOrg) {
-                    $selected = 'selected="selected" ';
+                if (array_key_exists('selectedOrg', $this->data)) {
+                    $selectedOrg = $this->data['selectedOrg'];
                 } else {
-                    $selected = '';
+                    $selectedOrg = null;
                 }
 
-                echo '<option ' .
-                                $selected . 'value="' . htmlspecialchars($orgId) . '">' . htmlspecialchars($orgDesc) .
-                                '</option>';
-            } ?>
+    foreach ($this->data['organizations'] as $orgId => $orgDesc) {
+        if (is_array($orgDesc)) {
+            $orgDesc = $this->t($orgDesc);
+        }
+
+        if ($orgId === $selectedOrg) {
+            $selected = 'selected="selected" ';
+        } else {
+            $selected = '';
+        }
+
+        echo '<option ' .
+                        $selected . 'value="' . htmlspecialchars($orgId) . '">' . htmlspecialchars($orgDesc) .
+                        '</option>';
+    } ?>
                     </select>
                 </div>
             </div>
             <?php
-        }
-        ?>
+}
+?>
 
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
@@ -147,12 +147,12 @@ if ($this->data['errorcode'] !== null) {
         </div>
 
         <?php
-        foreach ($this->data['stateparams'] as $name => $value) {
-            echo '<input type="hidden" name="' . htmlspecialchars($name) .
-                '" value="' . htmlspecialchars($value) . '" />'
-            ;
-        }
-        ?>
+foreach ($this->data['stateparams'] as $name => $value) {
+    echo '<input type="hidden" name="' . htmlspecialchars($name) .
+        '" value="' . htmlspecialchars($value) . '" />'
+    ;
+}
+?>
     </form>
 
 <?php

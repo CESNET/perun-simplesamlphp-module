@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use SimpleSAML\Configuration;
 use SimpleSAML\Module;
@@ -29,20 +31,19 @@ $this->includeAtTemplateBase('includes/header.php');
 <div class="row">
     <div>
         <p><?php echo $this->t($textKey); ?></p>
-        <?php if (!empty($restartUrl)): ?>
+<?php if (!empty($restartUrl)): ?>
         <p>
             <a class="btn btn-lg btn-block btn-primary" href="<?php echo $restartUrl ?>">
                 <?php echo $this->t($buttonKey); ?>
             </a>
         </p>
-        <?php endif ?>
-        <p><?php echo $this->t(
-    $contactKey
-); ?> <a href="mailto:<?php echo $supportAddress; ?>"><?php echo $supportAddress; ?></a></p>
+<?php endif ?>
+        <p><?php echo $this->t($contactKey); ?>
+        <a href="mailto:<?php echo $supportAddress; ?>"><?php echo $supportAddress; ?></a>
+        </p>
     </div>
 </div>
 
 
 <?php
-
 $this->includeAtTemplateBase('includes/footer.php');

@@ -83,11 +83,11 @@ if ($this->data['errorCode'] !== null) {
             <h2><?php echo $this->t('{privacyidea:privacyidea:webauthn}'); ?></h2>
             <p id="message" role="alert"><?php
                 $messageOverride = $this->data['messageOverride'] ?? null;
-                if ($messageOverride === null || is_string($messageOverride)) {
-                    echo htmlspecialchars($messageOverride ?? $this->data['message'] ?? '', ENT_QUOTES);
-                } elseif (is_callable($messageOverride)) {
-                    echo call_user_func($messageOverride, $this->data['message'] ?? '');
-                }
+            if ($messageOverride === null || is_string($messageOverride)) {
+                echo htmlspecialchars($messageOverride ?? $this->data['message'] ?? '', ENT_QUOTES);
+            } elseif (is_callable($messageOverride)) {
+                echo call_user_func($messageOverride, $this->data['message'] ?? '');
+            }
             ?></p>
             <p>
                 <button id="useWebAuthnButton" name="useWebAuthnButton" class="btn btn-primary btn-s" type="button">
@@ -105,8 +105,8 @@ if ($this->data['errorCode'] !== null) {
                 <div class="form-group col-sm-12 col-md-6">
                     <label for="otp" class="sr-only"><?php echo $this->t('{privacyidea:privacyidea:otp}'); ?></label>
                     <input id="otp" name="otp" tabindex="1" value="" class="form-control" autocomplete="one-time-code" type="number" inputmode="numeric" pattern="[0-9]{6,}" required placeholder="<?php echo htmlspecialchars($otpHint, ENT_QUOTES); ?>"<?php if ($this->data['noAlternatives']) {
-                echo ' autofocus';
-            } ?> />
+                        echo ' autofocus';
+                    } ?> />
                 </div>
                 <div class="form-group col-sm-12 col-md-6">
                     <button id="submitButton" tabindex="1" class="btn btn-primary btn-block text-nowrap" type="submit" name="Submit">

@@ -29,7 +29,7 @@ $this->includeAtTemplateBase('includes/header.php');
                 $aup->link . '">' . $this->t('{perun:perun:here}') . '</a></p>';
             echo '</div>';
         }
-        ?>
+?>
 
         <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId']; ?>">
 

@@ -21,11 +21,11 @@ $this->includeAtTemplateBase('includes/header.php');
     <p>
         <?php
         echo $this->t('{perun:perun:sp_authorize_403_text}') . '<b>' . $serviceName . '</b>.';
-        if (!empty($informationUrl)) {
-            echo ' (' . $this->t('{perun:perun:sp_authorize_403_information_page}') .
-                '<a target="_blank" href="' . $informationUrl . '">'
-                . $this->t('{perun:perun:sp_authorize_403_information_page_link_text}') . '</a>.)';
-        } ?>
+if (!empty($informationUrl)) {
+    echo ' (' . $this->t('{perun:perun:sp_authorize_403_information_page}') .
+        '<a target="_blank" href="' . $informationUrl . '">'
+        . $this->t('{perun:perun:sp_authorize_403_information_page_link_text}') . '</a>.)';
+} ?>
     </p>
     <p>
         <?php echo $this->t('{perun:perun:sp_authorize_403_contact_support}'); ?>

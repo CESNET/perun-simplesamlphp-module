@@ -110,7 +110,7 @@ echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-
                 . '<label for="saveconsent">' . $this->t('{perun:consent:remember}') . '</label>
             </div>';
             }
-            ?>
+?>
         </div>
     </div>
 
@@ -119,12 +119,12 @@ echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-
 
             <form action="<?php echo htmlspecialchars($this->data['yesTarget']); ?>" id="yesform">
                 <?php
-                // Embed hidden fields...
-                foreach ($this->data['yesData'] as $name => $value) {
-                    echo '<input type="hidden" name="' . htmlspecialchars($name) .
-                        '" value="' . htmlspecialchars($value) . '" />';
-                }
-                ?>
+    // Embed hidden fields...
+    foreach ($this->data['yesData'] as $name => $value) {
+        echo '<input type="hidden" name="' . htmlspecialchars($name) .
+            '" value="' . htmlspecialchars($value) . '" />';
+    }
+?>
 
                 <button type="submit" name="yes" class="btn btn-lg btn-primary btn-success btn-block" id="yesbutton">
                     <span><?php echo htmlspecialchars($this->t('{consent:consent:yes}')); ?></span>
@@ -138,11 +138,11 @@ echo Consent::perunPresentAttributes($this, $attributes, '', $this->data['label-
             <form action="<?php echo htmlspecialchars($this->data['noTarget']); ?>">
 
                 <?php
-                foreach ($this->data['noData'] as $name => $value) {
-                    echo '<input type="hidden" name="' . htmlspecialchars($name) .
-                        '" value="' . htmlspecialchars($value) . '" />';
-                }
-                ?>
+foreach ($this->data['noData'] as $name => $value) {
+    echo '<input type="hidden" name="' . htmlspecialchars($name) .
+        '" value="' . htmlspecialchars($value) . '" />';
+}
+?>
                 <button type="submit" class="btn btn-lg btn-default btn-block  btn-no" name="no" id="nobutton">
                     <span><?php echo htmlspecialchars($this->t('{consent:consent:no}')); ?></span>
                 </button>

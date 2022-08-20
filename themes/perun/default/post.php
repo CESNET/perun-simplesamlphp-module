@@ -41,7 +41,7 @@
     foreach ($post as $name => $value) {
         Post::printItem($name, $value);
     }
-    ?>
+            ?>
 
     <noscript>
         <button type="submit" class="btn"><?php echo $this->t('{perun:perun:continue}'); ?></button>

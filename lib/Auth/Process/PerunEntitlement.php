@@ -147,7 +147,7 @@ class PerunEntitlement extends ProcessingFilter
     {
         if (
             isset($request['SPMetadata']['groupMapping'], $request['SPMetadata']['groupMapping'][$groupName])
-            ) {
+        ) {
             Logger::debug(
                 'Mapping ' . $groupName . ' to ' . $request['SPMetadata']['groupMapping'][$groupName] .
                 ' for SP ' . $this->entityId

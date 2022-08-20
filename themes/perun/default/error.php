@@ -21,7 +21,7 @@ $this->includeAtTemplateBase('includes/header.php');
     <p>
         <?php
         echo htmlspecialchars($this->t($this->data['dictDescr'], $this->data['parameters']));
-        ?>
+?>
         <a href="#moreInfo" data-toggle="collapse"><?php echo $this->t('{perun:error:more}'); ?><span
                 class="caret"></span></a>
     </p>
@@ -39,8 +39,8 @@ if (isset($this->data['includeTemplate'])) {
         <p id="trackid" class="input-left">
             <?php
             echo $this->t('{perun:error:error_number}');
-            echo $this->data['error']['trackId'];
-            ?>
+echo $this->data['error']['trackId'];
+?>
         </p>
         <?php
         // print out exception only if the exception is available
@@ -52,7 +52,7 @@ if (isset($this->data['includeTemplate'])) {
             </pre>
             <?php
         }
-        ?>
+?>
     </div>
 
 <?php

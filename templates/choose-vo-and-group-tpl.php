@@ -84,7 +84,7 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
                 foreach ($vos as $key => $vo) {
                     echo '<option  value="' . $key . '" >' . $vo->getName() . '</option>';
                 }
-                ?>
+?>
             </select>
 
             <h4 class="selectGroup"
@@ -92,11 +92,11 @@ echo '<div class="msg">' . $this->t('{perun:perun:choose-vo-and-group-tpl_messag
             <select class="selectGroup form-control" name="selectedGroup" class="form-control" style="display: none"
                     required>
                 <?php
-                foreach ($groups as $group) {
-                    echo '<option class="groupOption" value="' . $group->getUniqueName() . '" >' .
-                        $group->getDescription() . '</option>';
-                }
-                ?>
+foreach ($groups as $group) {
+    echo '<option class="groupOption" value="' . $group->getUniqueName() . '" >' .
+        $group->getDescription() . '</option>';
+}
+?>
             </select>
 
             <input type="submit" value="<?php echo $this->t('{perun:perun:choose-vo-and-group-tpl_continue}'); ?>"
