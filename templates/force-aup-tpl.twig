@@ -1,0 +1,24 @@
+{% set pagetitle = '' %}
+{% extends "base.twig" %}
+
+{% block content %}
+<h3>{{ '{perun:perun:force-aup-tpl_aup_accept}'|trans }}</h3>
+<form method="post" action="/{{ baseurlpath }}module.php/perun/force_aup_continue.php">
+    {% for key, aup in newAups %}
+        <div>
+            <p style="font-size: 16px; padding: 0; margin: 0;">
+                {{ '{perun:perun:organization}'|trans }}<strong>{{ key }}</strong>
+            </p>
+            <p>
+                {{ '{perun:perun:force-aup-tpl_aup_redirect}'|trans }}{{ aup.version }} <a href="{{ aup.link }}">{{ '{perun:perun:here}'|trans }}</a>
+            </p>
+        </div>
+    {% endfor %}
+    <input type="hidden" name="StateId" value="{{ StateId }}">
+    <div class="form-group">
+        <button type="submit" class="btn btn-lg btn-primary btn-block">
+            <span>{{ '{perun:perun:force-aup-tpl_agree}'|trans }}</span>
+        </button>
+    </div>
+</form>
+{% endblock %}

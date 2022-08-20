@@ -1,0 +1,163 @@
+
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: SimpleSAMLphp 1.15\n"
+"Report-Msgid-Bugs-To: simplesamlphp-translation@googlegroups.com\n"
+"POT-Creation-Date: 2022-08-20 09:29+0200\n"
+"PO-Revision-Date: 2022-08-20 09:29+0200\n"
+"Last-Translator: \n"
+"Language: cs\n"
+"Language-Team: \n"
+"Plural-Forms: nplurals=3; plural=((n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+msgid "{perun:perun:choose-vo-and-group-tpl_header-part1}"
+msgstr "Přístup ke službě "
+
+msgid "{perun:perun:choose-vo-and-group-tpl_header-part2}"
+msgstr " byl zamítnut"
+
+msgid "{perun:perun:choose-vo-and-group-tpl_message}"
+msgstr ""
+"Pro získání přístupu k dané službě je nutné být členem jedné z "
+"následujících skupin. Pokračujte výběrem příslušné organizace a skupiny."
+
+msgid "{perun:perun:choose-vo-and-group-tpl_select-vo}"
+msgstr "Vyberte virtuální organizaci: "
+
+msgid "{perun:perun:choose-vo-and-group-tpl_select-group}"
+msgstr "Vyberte skupinu pro registraci: "
+
+msgid "{perun:perun:choose-vo-and-group-tpl_continue}"
+msgstr "Pokračovat na registrační stránku do vybrané skupiny"
+
+msgid "{perun:perun:go-to-registration_header1}"
+msgstr "Pro přístup ke službě "
+
+msgid "{perun:perun:go-to-registration_header2}"
+msgstr " je vyžadována Vaše aktivita"
+
+msgid "{perun:perun:go-to-registration_continue}"
+msgstr "Pokračovat na stránku s doplňujícími informacemi"
+
+msgid "{perun:perun:disco-tpl_previous-selection}"
+msgstr "vaše předchozí volba"
+
+msgid "{perun:perun:disco-tpl_institutional-account}"
+msgstr "váš univerzitní účet"
+
+msgid "{perun:perun:dico-tpl_or}"
+msgstr "nebo"
+
+msgid "{perun:perun:force-aup-tpl_aup}"
+msgstr "Podmínky užití"
+
+msgid "{perun:perun:force-aup-tpl_aup_organization}"
+msgstr "Podmínky užití služeb v organizaci "
+
+msgid "{perun:perun:force-aup-tpl_aup_redirect}"
+msgstr "Podmínky užití ve verzi "
+
+msgid "{perun:perun:force-aup-tpl_aup_accept}"
+msgstr "Musíte souhlasit s následujícími podmínkami užití: "
+
+msgid "{perun:perun:force-aup-tpl_agree}"
+msgstr "Souhlasím s podmínkami užití"
+
+msgid "{perun:perun:warning-test-sp-tpl_text}"
+msgstr "Přistupujete ke službě, která je v testovacím režimu. "
+
+msgid "{perun:perun:continue}"
+msgstr "Pokračovat"
+
+msgid "{perun:perun:here}"
+msgstr "zde."
+
+msgid "{perun:perun:organization}"
+msgstr "Organizace / Virtuální organizace "
+
+msgid "{perun:perun:unsupported_redirection}"
+msgstr "Nepodporované přesměrování"
+
+msgid "{perun:perun:go_back}"
+msgstr "Vraťte se zpět na "
+
+msgid "{perun:perun:unauthorized-access_redirect_to_registration}"
+msgstr "Nyní budete přesměrování na registraci do systému Perun."
+
+msgid "{perun:perun:register_header}"
+msgstr "Uživatelský ůčet nebyl nalezen"
+
+msgid "{perun:perun:register_text}"
+msgstr ""
+"Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz AAI, no Váš "
+"účet z domovské organizace použitý pro přihlášení není asociován s žádným"
+" uživatelským účtem v AAI. Pojďme to napravit!"
+
+msgid "{perun:perun:register_button}"
+msgstr "Pokračovat na registraci ůčtu"
+
+msgid "{perun:perun:aup_header}"
+msgstr " Podmínky užití služby (AUP)"
+
+msgid "{perun:perun:aup_text}"
+msgstr ""
+"Ups! Zdá se, že jste se pokousil(a) přihlásit ke službě skrz AAI, no "
+"neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
+
+msgid "{perun:perun:aup_button}"
+msgstr "Pokračovat na potvrzení souhlasu s AUP"
+
+msgid "{perun:perun:sp_authorize_403_header}"
+msgstr "Přístup zamítnut"
+
+msgid "{perun:perun:sp_authorize_403_text}"
+msgstr "Nesplňujete autorizační pravidla pro přístup ke službě "
+
+msgid "{perun:perun:sp_authorize_403_information_page}"
+msgstr "Pro více informací o službě, navštivte "
+
+msgid "{perun:perun:sp_authorize_403_information_page_link_text}"
+msgstr "tuhle stránku"
+
+msgid "{perun:perun:sp_authorize_403_contact_support}"
+msgstr "Jestli máte mít přístup ke službě, kontaktujte správce služby na "
+
+msgid "{perun:perun:sp_authorize_403_subject}"
+msgstr "Přístup zamítnut"
+
+msgid "{perun:perun:sp_authorize_notify_text}"
+msgstr "Nesplňujete autorizační pravidla pro přístup ke službě"
+
+msgid "{perun:perun:sp_authorize_notify_information_page}"
+msgstr "Pro více informací o službě, navštivte "
+
+msgid "{perun:perun:sp_authorize_notify_information_page_link_text}"
+msgstr "tuhle stránku"
+
+msgid "{perun:perun:sp_authorize_notify_text2}"
+msgstr "Budete přesmerován(a) na stránku, kde můžete o p%rístup na službu zažádat."
+
+msgid "{perun:perun:sp_authorize_notify_button}"
+msgstr "Pokračovat na registrační stránku"
+
+msgid "{perun:perun:403_is_eligible_default_header}"
+msgstr "Přístup zamítnut"
+
+msgid "{perun:perun:403_is_eligible_default_text}"
+msgstr ""
+"Přístup ke službě byl zamítnut, protože Váš účet nesplňuje pomdínky "
+"přístupu. Přihlaste se, prosíme, pomocí jiného účtu."
+
+msgid "{perun:perun:403_is_eligible_default_button}"
+msgstr "Pokračovat"
+
+msgid "{perun:perun:403_is_eligible_default_contact}"
+msgstr ""
+"Pokud si myslíte, že používáte správný účet a přístup je Vám odmítnut "
+"neprávem, prosíme kontakujte nás na"
+

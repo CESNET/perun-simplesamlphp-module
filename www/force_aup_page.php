@@ -13,4 +13,5 @@ $config = Configuration::getInstance();
 
 $t = new Template($config, 'perun:force-aup-tpl.php');
 $t->data['newAups'] = $state['newAups'];
+$t->data['StateId'] = $_REQUEST['StateId'];
 $t->show();

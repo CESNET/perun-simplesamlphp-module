@@ -31,7 +31,7 @@ $this->includeAtTemplateBase('includes/header.php');
         }
 ?>
 
-        <input type="hidden" name="StateId" value="<?php echo $_REQUEST['StateId']; ?>">
+        <input type="hidden" name="StateId" value="<?php echo $this->data['StateId']; ?>">
 
         <div class="form-group">
             <button type="submit" class="btn btn-lg btn-primary btn-block">
