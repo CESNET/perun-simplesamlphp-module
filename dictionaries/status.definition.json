@@ -1,42 +1,32 @@
 {
   "header": {
-    "en": "Service status",
-    "cs": "Status služeb"
+    "en": "Service status"
   },
   "text": {
-    "en": "On this page you can find info about the status of different components that are part of the ",
-    "cs": "Na této stránce naleznete informace o provozu jednotlivých komponent "
+    "en": "On this page you can find info about the status of different components that are part of the "
   },
   "aai" : {
-    "en": "AAI",
-    "cs": "AAI"
+    "en": "AAI"
   },
   "legend": {
-    "en": "Legend",
-    "cs": "Legenda"
+    "en": "Legend"
   },
   "status_ok": {
-    "en": "OK",
-    "cs": "OK"
+    "en": "OK"
   },
   "status_ok_legend": {
-    "en": "No issues",
-    "cs": "Služba v pořádku"
+    "en": "No issues"
   },
   "status_warning": {
-    "en": "WARNING",
-    "cs": "WARNING"
+    "en": "WARNING"
   },
   "status_warning_legend": {
-    "en": "Service degradation",
-    "cs": "Omezený provoz"
+    "en": "Service degradation"
   },
   "status_critical": {
-    "en": "CRITICAL",
-    "cs": "CRITICAL"
+    "en": "CRITICAL"
   },
   "status_critical_legend": {
-    "en": "Service outage",
-    "cs": "Služba mimo provoz"
+    "en": "Service outage"
   }
 }

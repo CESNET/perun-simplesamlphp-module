@@ -1,86 +1,65 @@
 {
   "header": {
-    "en": "Choose how to log in",
-    "cs": "Vyberte, čím se chcete přihlásit"
+    "en": "Choose how to log in"
   },
   "header_display_service": {
-    "en": "to the service",
-    "cs": "ke službě"
+    "en": "to the service"
   },
   "institutional_account": {
-    "en": "your institutional account",
-    "cs": "váš univerzitní účet"
+    "en": "your institutional account"
   },
   "sign_with_other_institution": {
-    "en": "Sign in using another institute or account",
-    "cs": "Přihlásit se účtem jiné instituce"
+    "en": "Sign in using another institute or account"
   },
   "previous_selection": {
-      "en": "use your previous selection",
-      "cs": "vaše předchozí volba"
+      "en": "use your previous selection"
   },
   "sign_in_with": {
-    "en": "Sign in with ",
-    "cs": "Přihlásit se pomocí "
+    "en": "Sign in with "
   },
   "warning": {
-    "en": "Warning!",
-    "cs": "Varování!"
+    "en": "Warning!"
   },
   "preferred_idps_hint": {
-    "en": "Use one of the preferred options",
-    "cs": "Použijte některou z preferovaných možností"
+    "en": "Use one of the preferred options"
   },
   "social_idps_hint" : {
-    "en": "Use one of the social identity providers",
-    "cs": "Použijte některého ze sociálných poskytovatelů identit "
+    "en": "Use one of the social identity providers"
   },
   "institution_search_hint": {
-    "en": "You can log in using your institutional account or another account you have on the web.",
-    "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
+    "en": "You can log in using your institutional account or another account you have on the web."
   },
   "institution_search_input_placeholder": {
-    "en": "Type the name of your institute",
-    "cs": "Zadejte název instituce"
+    "en": "Type the name of your institute"
   },
   "institution_search_display_too_much_entries_header": {
-    "en": "Too many (<COUNT_HTML>) entries match the given criteria. Try to specify your query a bit more.",
-    "cs": "Příliš mnoho (<COUNT_HTML>) položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
+    "en": "Too many (<COUNT_HTML>) entries match the given criteria. Try to specify your query a bit more."
   },
   "institution_search_display_too_much_entries_btn": {
-    "en": "Display results anyway",
-    "cs": "Zobrazit všechny výsledky"
+    "en": "Display results anyway"
   },
   "institution_search_no_entries_header": {
-    "en": "No entries match the given query.",
-    "cs": "Nebyly nalezeny žádne odpovídající záznamy."
+    "en": "No entries match the given query."
   },
   "institution_search_no_entries_add_institution_text": {
-    "en": "Cannot find your institution? ",
-    "cs": "Nemúžete nalézt vaši organizaci?"
+    "en": "Cannot find your institution? "
   },
   "institution_search_no_entries_add_institution_btn": {
-    "en": "Try to find it in the list of not yet integrated options",
-    "cs": "Zkuste ji najít v seznamu dosud neintegrovaných možností"
+    "en": "Try to find it in the list of not yet integrated options"
   },
   "add_institution": {
-    "en": "Add your institution",
-    "cs": "Přidat vaši instituci"
+    "en": "Add your institution"
   },
   "add_institution_no_entries_contact_us": {
-    "en": "Still can't find your institution? Contact us at",
-    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
+    "en": "Still can't find your institution? Contact us at"
   },
   "cannot_find_institution_disabled_whitelisting": {
-    "en": "Cannot find your institution? Contact us at",
-    "cs": "Nemúžete nalézt vaši organizaci? Kontaktujte nás na"
+    "en": "Cannot find your institution? Contact us at"
   },
   "js_not_loaded_message": {
-    "en": "Your browser does not support the required functionality to display this page. Please use a different browser and try again. We apologize for the caused difficulties.",
-    "cs": "Váš prohlížeč nepodporuje funkcionalitu potřebnou pro správné zobrazení této stránky. Zkuste, prosím, použít jiný prohlížeč. Omlouváme se za vzniklé problémy."
+    "en": "Your browser does not support the required functionality to display this page. Please use a different browser and try again. We apologize for the caused difficulties."
   },
   "search_start_hint": {
-    "en": "Type in at least 3 characters to start the search",
-    "cs": "Zadejte alespoň 3 znaky pro zahájení vyhledávání"
+    "en": "Type in at least 3 characters to start the search"
   }
 }

@@ -1,42 +1,32 @@
 {
   "remember": {
-    "en": "Remember",
-    "cs": "Zapamatovat"
+    "en": "Remember"
   },
   "consent_attributes_header": {
-    "en": "Information sent to SPNAME",
-    "cs": "Atributy pro službu SPNAME"
+    "en": "Information sent to SPNAME"
   },
   "forwardedscopedaffiliation": {
-    "en": "Home organization affiliation",
-    "cs": "Vztah k domovské(ým) organizaci(cím)"
+    "en": "Home organization affiliation"
   },
   "edupersonscopedaffiliation": {
-    "en": "Community affiliation",
-    "cs": "Vztah k AAI"
+    "en": "Community affiliation"
   },
   "loa":{
-    "en": "Level of Assurance",
-    "cs": "Úroveň jistoty"
+    "en": "Level of Assurance"
   },
   "edupersonuniqueid":{
-    "en": "Person’s unique Id",
-    "cs": "Unikátní identifikátor osoby"
+    "en": "Person’s unique Id"
   },
   "edupersonprincipalname":{
-    "en": "Person’s principal name",
-    "cs": "Identifikátor osoby v organizaci"
+    "en": "Person’s principal name"
   },
   "forwardedpersonprincipalnames":{
-    "en": "Person’s principal names from home organization(s)",
-    "cs": "Identifikátor(y) osoby z domovské(ých) organizace(cí)"
+    "en": "Person’s principal names from home organization(s)"
   },
   "displayname": {
-    "en": "Person's name",
-    "cs": "Jméno uživatele"
+    "en": "Person's name"
   },
   "consent_privacypolicy": {
-    "en": "Privacy policy for the service",
-    "cs": "Zásady zpracování osobních údajů"
+    "en": "Privacy policy for the service"
   }
 }

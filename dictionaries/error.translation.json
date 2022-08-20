@@ -1,0 +1,14 @@
+{
+  "error_id": {
+    "cs": "ID chyby"
+  },
+  "error_number": {
+    "cs": "Kód chyby: "
+  },
+  "error_report_email_message": {
+    "cs": "Zadejte prosím váš email, abychom Vás mohli kontaktovat v případě potřeby doplnění informací nebo Vás informovat o vyřešení daného problému."
+  },
+  "more": {
+    "cs": "zobrazit více"
+  }
+}

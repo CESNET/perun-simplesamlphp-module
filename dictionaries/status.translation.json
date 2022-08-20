@@ -1,0 +1,32 @@
+{
+  "header": {
+    "cs": "Status služeb"
+  },
+  "text": {
+    "cs": "Na této stránce naleznete informace o provozu jednotlivých komponent "
+  },
+  "aai" : {
+    "cs": "AAI"
+  },
+  "legend": {
+    "cs": "Legenda"
+  },
+  "status_ok": {
+    "cs": "OK"
+  },
+  "status_ok_legend": {
+    "cs": "Služba v pořádku"
+  },
+  "status_warning": {
+    "cs": "WARNING"
+  },
+  "status_warning_legend": {
+    "cs": "Omezený provoz"
+  },
+  "status_critical": {
+    "cs": "CRITICAL"
+  },
+  "status_critical_legend": {
+    "cs": "Služba mimo provoz"
+  }
+}

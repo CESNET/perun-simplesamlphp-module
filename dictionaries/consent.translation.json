@@ -1,0 +1,32 @@
+{
+  "remember": {
+    "cs": "Zapamatovat"
+  },
+  "consent_attributes_header": {
+    "cs": "Atributy pro službu SPNAME"
+  },
+  "forwardedscopedaffiliation": {
+    "cs": "Vztah k domovské(ým) organizaci(cím)"
+  },
+  "edupersonscopedaffiliation": {
+    "cs": "Vztah k AAI"
+  },
+  "loa":{
+    "cs": "Úroveň jistoty"
+  },
+  "edupersonuniqueid":{
+    "cs": "Unikátní identifikátor osoby"
+  },
+  "edupersonprincipalname":{
+    "cs": "Identifikátor osoby v organizaci"
+  },
+  "forwardedpersonprincipalnames":{
+    "cs": "Identifikátor(y) osoby z domovské(ých) organizace(cí)"
+  },
+  "displayname": {
+    "cs": "Jméno uživatele"
+  },
+  "consent_privacypolicy": {
+    "cs": "Zásady zpracování osobních údajů"
+  }
+}

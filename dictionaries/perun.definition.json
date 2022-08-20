@@ -1,182 +1,137 @@
 {
   "choose-vo-and-group-tpl_header-part1": {
-    "en": "Access to the service ",
-    "cs": "Přístup ke službě "
+    "en": "Access to the service "
   },
   "choose-vo-and-group-tpl_header-part2": {
-    "en": " has been forbidden",
-    "cs": " byl zamítnut"
+    "en": " has been forbidden"
   },
   "choose-vo-and-group-tpl_message": {
-    "en": "To access the service it is necessary to have a valid membership in one of the following groups. Please proceed with selection of organization and group for registration.",
-    "cs": "Pro získání přístupu k dané službě je nutné být členem jedné z následujících skupin. Pokračujte výběrem příslušné organizace a skupiny."
+    "en": "To access the service it is necessary to have a valid membership in one of the following groups. Please proceed with selection of organization and group for registration."
   },
   "choose-vo-and-group-tpl_select-vo": {
-	"en": "Select virtual organization for registration: ",
-	"cs": "Vyberte virtuální organizaci: "
+    "en": "Select virtual organization for registration: "
   },
   "choose-vo-and-group-tpl_select-group": {
-    "en": "Select group for registration: ",
-    "cs": "Vyberte skupinu pro registraci: "
+    "en": "Select group for registration: "
   },
   "choose-vo-and-group-tpl_continue": {
-    "en": "Continue to the registration page for selected group",
-    "cs": "Pokračovat na registrační stránku do vybrané skupiny"
+    "en": "Continue to the registration page for selected group"
   },
   "go-to-registration_header1" : {
-    "en": "Your activity is necessary to access the ",
-    "cs": "Pro přístup ke službě "
+    "en": "Your activity is necessary to access the "
   },
   "go-to-registration_header2" : {
-    "en": " service",
-    "cs": " je vyžadována Vaše aktivita"
+    "en": " service"
   },
   "go-to-registration_continue" : {
-    "en": "Continue to a page with additional information",
-    "cs": "Pokračovat na stránku s doplňujícími informacemi"
+    "en": "Continue to a page with additional information"
   },
   "disco-tpl_previous-selection": {
-	"en": "your previous selection",
-	"cs": "vaše předchozí volba"
+    "en": "your previous selection"
   },
   "disco-tpl_institutional-account": {
-	"en": "your institutional account",
-	"cs": "váš univerzitní účet"
+    "en": "your institutional account"
   },
   "dico-tpl_or": {
-	"en": "or",
-	"cs": "nebo"
+    "en": "or"
   },
   "force-aup-tpl_aup": {
-	"en": "Acceptable usage policy",
-	"cs": "Podmínky užití"
+    "en": "Acceptable usage policy"
   },
   "force-aup-tpl_aup_organization": {
-    "en": "Acceptable usage policy for organization ",
-    "cs": "Podmínky užití služeb v organizaci "
+    "en": "Acceptable usage policy for organization "
   },
   "force-aup-tpl_aup_redirect": {
-    "en": "See the acceptable usage policy in version ",
-    "cs": "Podmínky užití ve verzi "
+    "en": "See the acceptable usage policy in version "
   },
   "force-aup-tpl_aup_accept": {
-    "en": "You must agree to the following acceptable usage policies: ",
-    "cs": "Musíte souhlasit s následujícími podmínkami užití: "
+    "en": "You must agree to the following acceptable usage policies: "
   },
   "force-aup-tpl_agree": {
-	"en": "I agree with the acceptable usage policy",
-	"cs": "Souhlasím s podmínkami užití"
+    "en": "I agree with the acceptable usage policy"
   },
   "warning-test-sp-tpl_text": {
-	"en": "You are about to access service, which is in testing environment.",
-	"cs": "Přistupujete ke službě, která je v testovacím režimu. "
+    "en": "You are about to access service, which is in testing environment."
   },
   "continue": {
-	"en": "Continue",
-	"cs": "Pokračovat"
+    "en": "Continue"
   },
   "here": {
-    "en": "here.",
-    "cs": "zde."
+    "en": "here."
   },
   "organization": {
-    "en": "Organization / Virtual Organization ",
-    "cs": "Organizace / Virtuální organizace "
+    "en": "Organization / Virtual Organization "
   },
   "unsupported_redirection": {
-    "en": "Unsupported redirection",
-    "cs": "Nepodporované přesměrování"
+    "en": "Unsupported redirection"
   },
   "go_back": {
-    "en": "Go back to ",
-    "cs": "Vraťte se zpět na "
+    "en": "Go back to "
   },
   "unauthorized-access_redirect_to_registration": {
-    "en": "Now you will be redirected to registration to Perun system.",
-    "cs": "Nyní budete přesměrování na registraci do systému Perun."
+    "en": "Now you will be redirected to registration to Perun system."
   },
   "register_header": {
-    "en": "No user account found",
-    "cs": "Uživatelský ůčet nebyl nalezen"
+    "en": "No user account found"
   },
   "register_text": {
-    "en": "Oops! It seems you have tried to access service via the AAI, but the home organization account you have used is not associated with any AAI user account. Let's fix that!",
-    "cs": "Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz AAI, no Váš účet z domovské organizace použitý pro přihlášení není asociován s žádným uživatelským účtem v AAI. Pojďme to napravit!"
+    "en": "Oops! It seems you have tried to access service via the AAI, but the home organization account you have used is not associated with any AAI user account. Let's fix that!"
   },
   "register_button": {
-    "en": "Proceed to register for an account",
-    "cs": "Pokračovat na registraci ůčtu"
+    "en": "Proceed to register for an account"
   },
   "aup_header": {
-    "en": "Acceptable Use Policy",
-    "cs": " Podmínky užití služby (AUP)"
+    "en": "Acceptable Use Policy"
   },
   "aup_text": {
-    "en": "Oops! It seems you have tried to access service via the AAI, but you have not approved the Acceptable Use Policy (AUP). Let's fix that!",
-    "cs": "Ups! Zdá se, že jste se pokousil(a) přihlásit ke službě skrz AAI, no neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
+    "en": "Oops! It seems you have tried to access service via the AAI, but you have not approved the Acceptable Use Policy (AUP). Let's fix that!"
   },
   "aup_button": {
-    "en": "Proceed to approval of the AUP",
-    "cs": "Pokračovat na potvrzení souhlasu s AUP"
+    "en": "Proceed to approval of the AUP"
   },
   "sp_authorize_403_header": {
-    "en": "Unauthorized",
-    "cs": "Přístup zamítnut"
+    "en": "Unauthorized"
   },
   "sp_authorize_403_text": {
-    "en": "You are not authorized to access the service ",
-    "cs": "Nesplňujete autorizační pravidla pro přístup ke službě "
+    "en": "You are not authorized to access the service "
   },
   "sp_authorize_403_information_page": {
-    "en": "For more information about the service, visit ",
-    "cs": "Pro více informací o službě, navštivte "
+    "en": "For more information about the service, visit "
   },
   "sp_authorize_403_information_page_link_text": {
-    "en": "this page",
-    "cs": "tuhle stránku"
+    "en": "this page"
   },
   "sp_authorize_403_contact_support": {
-    "en": "If you think you should have access to the service, please contact the service administrator at ",
-    "cs": "Jestli máte mít přístup ke službě, kontaktujte správce služby na "
+    "en": "If you think you should have access to the service, please contact the service administrator at "
   },
   "sp_authorize_403_subject": {
-    "en": "Unauthorized access",
-    "cs": "Přístup zamítnut"
+    "en": "Unauthorized access"
   },
   "sp_authorize_notify_text": {
-    "en": "You are not authorized to access the service ",
-    "cs": "Nesplňujete autorizační pravidla pro přístup ke službě"
+    "en": "You are not authorized to access the service "
   },
   "sp_authorize_notify_information_page": {
-    "en": "For more information about the service, visit ",
-    "cs": "Pro více informací o službě, navštivte "
+    "en": "For more information about the service, visit "
   },
   "sp_authorize_notify_information_page_link_text": {
-    "en": "this page",
-    "cs": "tuhle stránku"
+    "en": "this page"
   },
   "sp_authorize_notify_text2": {
-    "en": "We will now redirect you to a registration page, where you will apply for the access.",
-    "cs": "Budete přesmerován(a) na stránku, kde můžete o p%rístup na službu zažádat."
+    "en": "We will now redirect you to a registration page, where you will apply for the access."
   },
   "sp_authorize_notify_button": {
-    "en": "Proceed to registration",
-    "cs": "Pokračovat na registrační stránku"
+    "en": "Proceed to registration"
   },
   "403_is_eligible_default_header": {
-    "en": "Access denied",
-    "cs": "Přístup zamítnut"
+    "en": "Access denied"
   },
   "403_is_eligible_default_text": {
-    "en": "Your account does not meet the criteria for accessing the service. Please log in with other account.",
-    "cs": "Přístup ke službě byl zamítnut, protože Váš účet nesplňuje pomdínky přístupu. Přihlaste se, prosíme, pomocí jiného účtu."
+    "en": "Your account does not meet the criteria for accessing the service. Please log in with other account."
   },
   "403_is_eligible_default_button": {
-    "en": "Continue with other account",
-    "cs": "Pokračovat"
+    "en": "Continue with other account"
   },
   "403_is_eligible_default_contact": {
-    "en": "If you think you have used an account which meets the criteria, and you are still prevented from logging in to the service, please contact us at",
-    "cs": "Pokud si myslíte, že používáte správný účet a přístup je Vám odmítnut neprávem, prosíme kontakujte nás na"
+    "en": "If you think you have used an account which meets the criteria, and you are still prevented from logging in to the service, please contact us at"
   }
 }

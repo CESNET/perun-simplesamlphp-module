@@ -1,0 +1,137 @@
+{
+  "choose-vo-and-group-tpl_header-part1": {
+    "cs": "Přístup ke službě "
+  },
+  "choose-vo-and-group-tpl_header-part2": {
+    "cs": " byl zamítnut"
+  },
+  "choose-vo-and-group-tpl_message": {
+    "cs": "Pro získání přístupu k dané službě je nutné být členem jedné z následujících skupin. Pokračujte výběrem příslušné organizace a skupiny."
+  },
+  "choose-vo-and-group-tpl_select-vo": {
+    "cs": "Vyberte virtuální organizaci: "
+  },
+  "choose-vo-and-group-tpl_select-group": {
+    "cs": "Vyberte skupinu pro registraci: "
+  },
+  "choose-vo-and-group-tpl_continue": {
+    "cs": "Pokračovat na registrační stránku do vybrané skupiny"
+  },
+  "go-to-registration_header1" : {
+    "cs": "Pro přístup ke službě "
+  },
+  "go-to-registration_header2" : {
+    "cs": " je vyžadována Vaše aktivita"
+  },
+  "go-to-registration_continue" : {
+    "cs": "Pokračovat na stránku s doplňujícími informacemi"
+  },
+  "disco-tpl_previous-selection": {
+    "cs": "vaše předchozí volba"
+  },
+  "disco-tpl_institutional-account": {
+    "cs": "váš univerzitní účet"
+  },
+  "dico-tpl_or": {
+    "cs": "nebo"
+  },
+  "force-aup-tpl_aup": {
+    "cs": "Podmínky užití"
+  },
+  "force-aup-tpl_aup_organization": {
+    "cs": "Podmínky užití služeb v organizaci "
+  },
+  "force-aup-tpl_aup_redirect": {
+    "cs": "Podmínky užití ve verzi "
+  },
+  "force-aup-tpl_aup_accept": {
+    "cs": "Musíte souhlasit s následujícími podmínkami užití: "
+  },
+  "force-aup-tpl_agree": {
+    "cs": "Souhlasím s podmínkami užití"
+  },
+  "warning-test-sp-tpl_text": {
+    "cs": "Přistupujete ke službě, která je v testovacím režimu. "
+  },
+  "continue": {
+    "cs": "Pokračovat"
+  },
+  "here": {
+    "cs": "zde."
+  },
+  "organization": {
+    "cs": "Organizace / Virtuální organizace "
+  },
+  "unsupported_redirection": {
+    "cs": "Nepodporované přesměrování"
+  },
+  "go_back": {
+    "cs": "Vraťte se zpět na "
+  },
+  "unauthorized-access_redirect_to_registration": {
+    "cs": "Nyní budete přesměrování na registraci do systému Perun."
+  },
+  "register_header": {
+    "cs": "Uživatelský ůčet nebyl nalezen"
+  },
+  "register_text": {
+    "cs": "Ups! Zdá se, že jste se pokusil(a) přihlásit ke službě skrz AAI, no Váš účet z domovské organizace použitý pro přihlášení není asociován s žádným uživatelským účtem v AAI. Pojďme to napravit!"
+  },
+  "register_button": {
+    "cs": "Pokračovat na registraci ůčtu"
+  },
+  "aup_header": {
+    "cs": " Podmínky užití služby (AUP)"
+  },
+  "aup_text": {
+    "cs": "Ups! Zdá se, že jste se pokousil(a) přihlásit ke službě skrz AAI, no neschválili jste Podmínky užití služby (AUP). Pojďme to napravit!"
+  },
+  "aup_button": {
+    "cs": "Pokračovat na potvrzení souhlasu s AUP"
+  },
+  "sp_authorize_403_header": {
+    "cs": "Přístup zamítnut"
+  },
+  "sp_authorize_403_text": {
+    "cs": "Nesplňujete autorizační pravidla pro přístup ke službě "
+  },
+  "sp_authorize_403_information_page": {
+    "cs": "Pro více informací o službě, navštivte "
+  },
+  "sp_authorize_403_information_page_link_text": {
+    "cs": "tuhle stránku"
+  },
+  "sp_authorize_403_contact_support": {
+    "cs": "Jestli máte mít přístup ke službě, kontaktujte správce služby na "
+  },
+  "sp_authorize_403_subject": {
+    "cs": "Přístup zamítnut"
+  },
+  "sp_authorize_notify_text": {
+    "cs": "Nesplňujete autorizační pravidla pro přístup ke službě"
+  },
+  "sp_authorize_notify_information_page": {
+    "cs": "Pro více informací o službě, navštivte "
+  },
+  "sp_authorize_notify_information_page_link_text": {
+    "cs": "tuhle stránku"
+  },
+  "sp_authorize_notify_text2": {
+    "cs": "Budete přesmerován(a) na stránku, kde můžete o p%rístup na službu zažádat."
+  },
+  "sp_authorize_notify_button": {
+    "cs": "Pokračovat na registrační stránku"
+  },
+  "403_is_eligible_default_header": {
+    "cs": "Přístup zamítnut"
+  },
+  "403_is_eligible_default_text": {
+    "cs": "Přístup ke službě byl zamítnut, protože Váš účet nesplňuje pomdínky přístupu. Přihlaste se, prosíme, pomocí jiného účtu."
+  },
+  "403_is_eligible_default_button": {
+    "cs": "Pokračovat"
+  },
+  "403_is_eligible_default_contact": {
+    "cs": "Pokud si myslíte, že používáte správný účet a přístup je Vám odmítnut neprávem, prosíme kontakujte nás na"
+  }
+}

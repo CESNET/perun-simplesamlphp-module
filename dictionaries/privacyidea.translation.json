@@ -1,0 +1,11 @@
+{
+  "close": {
+    "cs": "Zavřít"
+  },
+  "info_text": {
+    "cs": "Služba ke které přistupujete vyžádala vícefaktorovout autentizaci. Použijte jednu z vašich zaregistrovaných metod kliknutím na jedno z tlačítek nížě."
+  },
+  "otp_help": {
+    "cs": "Vložte jednorázový kód, například z TOTP aplikace."
+  }
+}

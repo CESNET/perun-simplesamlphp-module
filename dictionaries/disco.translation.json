@@ -1,0 +1,65 @@
+{
+  "header": {
+    "cs": "Vyberte, čím se chcete přihlásit"
+  },
+  "header_display_service": {
+    "cs": "ke službě"
+  },
+  "institutional_account": {
+    "cs": "váš univerzitní účet"
+  },
+  "sign_with_other_institution": {
+    "cs": "Přihlásit se účtem jiné instituce"
+  },
+  "previous_selection": {
+    "cs": "vaše předchozí volba"
+  },
+  "sign_in_with": {
+    "cs": "Přihlásit se pomocí "
+  },
+  "warning": {
+    "cs": "Varování!"
+  },
+  "preferred_idps_hint": {
+    "cs": "Použijte některou z preferovaných možností"
+  },
+  "social_idps_hint" : {
+    "cs": "Použijte některého ze sociálných poskytovatelů identit "
+  },
+  "institution_search_hint": {
+    "cs": "K přihlášení můžete využít Váš institucionální účet nebo jiný účet."
+  },
+  "institution_search_input_placeholder": {
+    "cs": "Zadejte název instituce"
+  },
+  "institution_search_display_too_much_entries_header": {
+    "cs": "Příliš mnoho (<COUNT_HTML>) položek odpovídá Vašemu zadání. Více specifikujte Váš dotaz."
+  },
+  "institution_search_display_too_much_entries_btn": {
+    "cs": "Zobrazit všechny výsledky"
+  },
+  "institution_search_no_entries_header": {
+    "cs": "Nebyly nalezeny žádne odpovídající záznamy."
+  },
+  "institution_search_no_entries_add_institution_text": {
+    "cs": "Nemúžete nalézt vaši organizaci?"
+  },
+  "institution_search_no_entries_add_institution_btn": {
+    "cs": "Zkuste ji najít v seznamu dosud neintegrovaných možností"
+  },
+  "add_institution": {
+    "cs": "Přidat vaši instituci"
+  },
+  "add_institution_no_entries_contact_us": {
+    "cs": "Stále nemůžete nalézt vaši instituci? Kontaktujte nás na"
+  },
+  "cannot_find_institution_disabled_whitelisting": {
+    "cs": "Nemúžete nalézt vaši organizaci? Kontaktujte nás na"
+  },
+  "js_not_loaded_message": {
+    "cs": "Váš prohlížeč nepodporuje funkcionalitu potřebnou pro správné zobrazení této stránky. Zkuste, prosím, použít jiný prohlížeč. Omlouváme se za vzniklé problémy."
+  },
+  "search_start_hint": {
+    "cs": "Zadejte alespoň 3 znaky pro zahájení vyhledávání"
+  }
+}
