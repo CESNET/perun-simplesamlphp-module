@@ -21,7 +21,7 @@ class RpcConnector
 {
     public const COOKIE_FILE = '/tmp/proxyidp_cookie.txt';
 
-    public const CONNECT_TIMEOUT = 1;
+    public const CONNECT_TIMEOUT = 5;
 
     public const TIMEOUT = 15;
 
@@ -131,7 +131,7 @@ class RpcConnector
 
         if ($json === false) {
             throw new Exception(
-                'Can\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsJson . ', Response: ' . $json
+                'Can\'t get response from Perun. Call: ' . $uri . ', Params: ' . $paramsJson . ', Error: ' . curl_error($ch)
             );
         }
 
