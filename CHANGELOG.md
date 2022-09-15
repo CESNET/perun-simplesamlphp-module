@@ -1,3 +1,10 @@
+## [9.0.4](https://github.com/CESNET/perun-simplesamlphp-module/compare/v9.0.3...v9.0.4) (2022-09-15)
+
+
+### Bug Fixes
+
+* htmlspecialchars in AUP template ([2581915](https://github.com/CESNET/perun-simplesamlphp-module/commit/258191552c30ada4c64fa140f5d31d5592592689))
+
 ## [9.0.3](https://github.com/CESNET/perun-simplesamlphp-module/compare/v9.0.2...v9.0.3) (2022-08-11)
 
 
