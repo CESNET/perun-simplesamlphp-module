@@ -3,6 +3,8 @@
 [![CI](https://github.com/CESNET/perun-simplesamlphp-module/actions/workflows/build_and_check.yml/badge.svg)](https://github.com/CESNET/perun-simplesamlphp-module/actions/workflows/build_and_check.yml)
 [![License](https://poser.pugx.org/cesnet/simplesamlphp-module-perun/license)](https://packagist.org/packages/cesnet/simplesamlphp-module-perun)
 
+**REPOSITORY HAS BEEN MOVED TO: https://gitlab.ics.muni.cz/perun-proxy-aai/simplesamlphp/simplesamlphp-module-perun**
+
 Module which allows simpleSAMLphp to get data from Perun.
 
 ## Contribution
